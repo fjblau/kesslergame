@@ -82,19 +82,23 @@ Use Redux Toolkit with the following slice structure:
 
 **Turn Execution Flow**:
 ```
-1. Player makes launch decision
+1. Player makes launch decision (satellite OR debris removal vehicle)
 2. Validate budget availability
-3. Create satellite if affordable
+3. Create satellite/DRV if affordable
 4. Age all satellites (increment age counter)
-5. Remove expired LEO satellites
-6. Detect collisions (O(n²) within each layer)
-7. Resolve collisions (create debris, destroy satellites)
-8. Process insurance payouts
-9. Trigger random events (solar storms)
-10. Update metrics and risk level
-11. Check mission completion
-12. Check end game conditions
-13. Advance step counter
+5. Age all DRVs (increment age counter)
+6. Execute DRV debris removal operations
+7. Remove expired LEO satellites
+8. Decommission expired DRVs (convert to debris)
+9. Detect collisions (O(n²) within each layer)
+10. Resolve collisions (create debris with types, destroy satellites)
+11. Process insurance payouts
+12. Trigger random events (solar storms)
+13. Update metrics and risk level
+14. Update debris type statistics
+15. Check mission completion
+16. Check end game conditions
+17. Advance step counter
 ```
 
 ### Collision Detection Algorithm
@@ -150,30 +154,38 @@ src/
 │   │   ├── GameBoard.tsx             # Main game visualization
 │   │   ├── OrbitVisualization.tsx    # Canvas rendering
 │   │   ├── SatelliteSprite.tsx       # Satellite rendering
-│   │   └── DebrisParticle.tsx        # Debris rendering
+│   │   ├── DRVSprite.tsx             # DRV rendering
+│   │   └── DebrisParticle.tsx        # Debris rendering (with type variants)
 │   ├── ControlPanel/
 │   │   ├── ControlPanel.tsx          # Launch controls
+│   │   ├── LaunchSelector.tsx        # Satellite vs DRV selector
 │   │   ├── OrbitSelector.tsx         # LEO/MEO/GEO buttons
+│   │   ├── DRVConfiguration.tsx      # Cooperative vs Uncooperative DRV
 │   │   ├── InsuranceToggle.tsx       # Insurance checkbox
-│   │   └── StatusDisplay.tsx         # Metrics display
+│   │   └── StatusDisplay.tsx         # Metrics display (including DRVs)
+│   ├── StatsPanel/
+│   │   ├── StatsPanel.tsx            # Overall stats container
+│   │   └── DebrisBreakdown.tsx       # Cooperative vs Uncooperative debris
 │   ├── MissionPanel/
 │   │   ├── MissionPanel.tsx          # Mission list
 │   │   ├── MissionCard.tsx           # Individual mission
 │   │   └── MissionProgress.tsx       # Progress indicator
 │   ├── Charts/
 │   │   ├── DebrisChart.tsx           # Debris over time
-│   │   └── SatelliteChart.tsx        # Satellites over time
+│   │   ├── SatelliteChart.tsx        # Satellites over time
+│   │   └── DebrisRemovalChart.tsx    # Debris removed over time
 │   └── EventLog/
 │       ├── EventLog.tsx              # Game events display
 │       └── EventItem.tsx             # Single event entry
 ├── game/
 │   ├── engine/
-│   │   ├── collision.ts              # Collision detection
-│   │   ├── simulation.ts             # Turn processing
+│   │   ├── collision.ts              # Collision detection (with debris typing)
+│   │   ├── simulation.ts             # Turn processing (with DRV operations)
+│   │   ├── debrisRemoval.ts          # DRV debris removal logic
 │   │   ├── events.ts                 # Random events
-│   │   └── missions.ts               # Mission logic
-│   ├── constants.ts                  # Game configuration
-│   ├── types.ts                      # TypeScript types
+│   │   └── missions.ts               # Mission logic (including DRV missions)
+│   ├── constants.ts                  # Game configuration (including DRV costs)
+│   ├── types.ts                      # TypeScript types (including DRV types)
 │   └── utils.ts                      # Helper functions
 ├── hooks/
 │   ├── useGameLoop.ts                # Game loop hook
@@ -214,6 +226,8 @@ type OrbitLayer = 'LEO' | 'MEO' | 'GEO';
 type SatelliteType = 'Weather' | 'Comms' | 'GPS';
 type RiskLevel = 'LOW' | 'MEDIUM' | 'CRITICAL';
 type MissionId = string;
+type DebrisType = 'cooperative' | 'uncooperative';
+type DRVType = 'cooperative' | 'uncooperative';
 
 // Core entities
 interface Satellite {
@@ -231,6 +245,20 @@ interface Debris {
   x: number;
   y: number;
   layer: OrbitLayer;
+  type: DebrisType;  // cooperative (70%) or uncooperative (30%)
+}
+
+interface DebrisRemovalVehicle {
+  id: string;
+  x: number;
+  y: number;
+  layer: OrbitLayer;
+  removalType: DRVType;
+  age: number;
+  maxAge: number;
+  capacity: number;  // Debris removed per turn
+  successRate: number;  // Probability of successful removal
+  debrisRemoved: number;  // Total debris removed
 }
 
 interface Mission {
@@ -251,6 +279,7 @@ interface GameState {
   // Assets
   satellites: Satellite[];
   debris: Debris[];
+  debrisRemovalVehicles: DebrisRemovalVehicle[];
   
   // Economy
   budget: number;
@@ -262,6 +291,11 @@ interface GameState {
   // Metrics
   debrisHistory: number[];
   satelliteHistory: number[];
+  cooperativeDebrisCount: number;
+  uncooperativeDebrisCount: number;
+  totalDebrisRemoved: number;
+  activeDRVs: number;
+  debrisRemovedHistory: number[];
   
   // Trackers
   gpsLaunched: number;
@@ -275,9 +309,13 @@ interface GameState {
 }
 
 // Actions
+type LaunchType = 'satellite' | 'debris-removal';
+
 interface LaunchAction {
+  type: LaunchType;
   orbit: OrbitLayer;
-  insured: boolean;
+  insured?: boolean;  // Only for satellites
+  drvType?: DRVType;  // Only for debris removal vehicles
 }
 
 interface CollisionResult {
@@ -301,7 +339,43 @@ interface GameConfig {
   solarActivityChance: number;
   debrisDecayRate: number;
   cascadeThreshold: number;
+  
+  // Debris Removal Vehicle configuration
+  drvCosts: Record<OrbitLayer, Record<DRVType, number>>;
+  drvCapacity: Record<DRVType, [number, number]>;  // [min, max] per turn
+  drvSuccessRate: Record<DRVType, number>;
+  drvDuration: Record<DRVType, number>;  // Active turns
+  drvFailureDebrisMultiplier: number;  // Debris created on failure
+  debrisTypeDistribution: Record<DebrisType, number>;  // 70% cooperative, 30% uncooperative
 }
+
+// Debris Removal Vehicle Configuration Constants
+const DRV_CONFIG = {
+  costs: {
+    LEO: { cooperative: 4_000_000, uncooperative: 8_000_000 },
+    MEO: { cooperative: 6_000_000, uncooperative: 12_000_000 },
+    GEO: { cooperative: 10_000_000, uncooperative: 20_000_000 },
+  },
+  capacity: {
+    cooperative: [2, 3],    // Remove 2-3 debris per turn
+    uncooperative: [1, 2],  // Remove 1-2 debris per turn
+  },
+  successRate: {
+    cooperative: 0.85,      // 85% success rate
+    uncooperative: 0.60,    // 60% success rate
+  },
+  duration: {
+    cooperative: 10,        // Active for 10 turns
+    uncooperative: 8,       // Active for 8 turns
+  },
+  failureDebrisMultiplier: 2,  // Failed removal creates 2 debris
+};
+
+// Debris type distribution (on collision)
+const DEBRIS_TYPE_DISTRIBUTION = {
+  cooperative: 0.70,      // 70% of debris is cooperative
+  uncooperative: 0.30,    // 30% of debris is uncooperative
+};
 ```
 
 ### Redux Actions
@@ -310,11 +384,16 @@ interface GameConfig {
 // Game actions
 const gameActions = {
   launchSatellite: (orbit: OrbitLayer, insured: boolean) => {},
+  launchDebrisRemovalVehicle: (orbit: OrbitLayer, drvType: DRVType) => {},
   skipTurn: () => {},
   ageSatellites: () => {},
+  ageDRVs: () => {},
+  processDRVOperations: () => {},
+  decommissionExpiredDRVs: () => {},
   processCollisions: () => {},
   triggerSolarEvent: () => {},
   updateMetrics: () => {},
+  updateDebrisStats: () => {},
   checkMissions: () => {},
   endGame: () => {},
   resetGame: () => {},
@@ -403,6 +482,222 @@ npm run preview
 
 ---
 
+## UI Wireframes and Screens
+
+### 1. Enhanced Control Panel with Debris Removal
+
+```
+┌─────────────────────────────────────────────┐
+│  LAUNCH CONTROLS                            │
+├─────────────────────────────────────────────┤
+│                                             │
+│  Launch Type:                               │
+│  ● Satellite    ○ Debris Removal Vehicle   │
+│                                             │
+│  Orbit Layer:                               │
+│  ○ LEO    ● MEO    ○ GEO                    │
+│                                             │
+│  Insurance: ☑                               │
+│  Cost: $3,000,000 + $500,000 insurance     │
+│                                             │
+│  ┌──────────────┐                          │
+│  │    LAUNCH    │                          │
+│  └──────────────┘                          │
+│                                             │
+│  Budget: $45,000,000                       │
+└─────────────────────────────────────────────┘
+```
+
+### 2. DRV Launch Configuration
+
+```
+┌─────────────────────────────────────────────┐
+│  LAUNCH CONTROLS                            │
+├─────────────────────────────────────────────┤
+│                                             │
+│  Launch Type:                               │
+│  ○ Satellite    ● Debris Removal Vehicle   │
+│                                             │
+│  Orbit Layer:                               │
+│  ○ LEO    ○ MEO    ● GEO                    │
+│                                             │
+│  DRV Type:                                  │
+│  ● Cooperative    ○ Uncooperative          │
+│                                             │
+│  Cost: $10,000,000                         │
+│  Removes: 2-3 debris/turn (85% success)   │
+│  Active: 10 turns                          │
+│                                             │
+│  ┌──────────────┐                          │
+│  │ LAUNCH  DRV  │                          │
+│  └──────────────┘                          │
+│                                             │
+│  Budget: $45,000,000                       │
+└─────────────────────────────────────────────┘
+```
+
+### 3. Enhanced Status Display with Debris Types
+
+```
+┌─────────────────────────────────────────────┐
+│  ORBITAL STATUS                             │
+├─────────────────────────────────────────────┤
+│                                             │
+│  Active Satellites: 12                     │
+│  Active DRVs: 3                            │
+│                                             │
+│  Total Debris: 156                         │
+│    ├─ Cooperative: 109 (70%)              │
+│    └─ Uncooperative: 47 (30%)             │
+│                                             │
+│  Debris Removed: 34                        │
+│                                             │
+│  Risk Level: 🟡 MEDIUM                     │
+│                                             │
+│  Step: 25 / 100                            │
+└─────────────────────────────────────────────┘
+```
+
+### 4. DRV Visualization on Orbit Display
+
+**Visual Representation**:
+
+```
+Orbital Display Key:
+┌─────────────────────────────────────────────┐
+│                                             │
+│   ⬤  Satellites (GPS/Weather/Comms)        │
+│   ⬟  DRVs (Pentagon/Shield shape)          │
+│      - Cooperative: Blue/Cyan              │
+│      - Uncooperative: Orange/Red           │
+│   ·  Debris                                │
+│      - Cooperative: Gray dots              │
+│      - Uncooperative: Red dots             │
+│                                             │
+│   Animation: DRVs show "capture effect"    │
+│              when removing debris           │
+│                                             │
+└─────────────────────────────────────────────┘
+```
+
+**Orbital Layout Example**:
+```
+       GEO (outer ring)
+         ⬟ ·· ⬤ · ⬟
+      
+       MEO (middle ring)
+       ⬤ · ⬟ ·· ⬤ ··
+      
+       LEO (inner ring)
+      ⬤ ··· ⬟ · ⬤ ·
+      
+      🌍 Earth
+```
+
+### 5. Enhanced Charts - Debris Removal Tracking
+
+```
+┌─────────────────────────────────────────────┐
+│  DEBRIS REMOVAL OVER TIME                   │
+├─────────────────────────────────────────────┤
+│                                             │
+│  Cumulative Debris Removed                 │
+│   50 │                              ╱──    │
+│      │                         ╱────       │
+│   25 │                   ╱─────            │
+│      │             ╱─────                  │
+│    0 │─────────────                        │
+│      └────────────────────────────────      │
+│      0    25    50    75   100 (turns)    │
+└─────────────────────────────────────────────┘
+```
+
+### 6. Mission Panel with Debris Removal Missions
+
+```
+┌─────────────────────────────────────────────┐
+│  MISSIONS                                   │
+├─────────────────────────────────────────────┤
+│                                             │
+│  ☐ Debris Cleaner                          │
+│     Launch 2 debris removal vehicles       │
+│     Progress: 1/2                          │
+│                                             │
+│  ☐ Clean Sweep                             │
+│     Remove 50 debris pieces total          │
+│     Progress: 34/50                        │
+│                                             │
+│  ☐ Risk Reduction                          │
+│     Reduce debris from 200+ to below 100   │
+│     Progress: 156/200 → < 100              │
+│                                             │
+│  ✓ GPS Priority (COMPLETED)                │
+│                                             │
+│  ✓ Multi-Layer Network (COMPLETED)         │
+└─────────────────────────────────────────────┘
+```
+
+### 7. Debris Type Breakdown Visualization
+
+```
+┌─────────────────────────────────────────────┐
+│  DEBRIS BREAKDOWN                           │
+├─────────────────────────────────────────────┤
+│                                             │
+│      Cooperative: 109 (70%)                │
+│      ┌──────────────────────────┐          │
+│      │████████████████████████  │          │
+│      └──────────────────────────┘          │
+│                                             │
+│      Uncooperative: 47 (30%)               │
+│      ┌──────────────────────────┐          │
+│      │██████████                │          │
+│      └──────────────────────────┘          │
+│                                             │
+│  Pie Chart:                                │
+│       ╭─────╮                              │
+│      ╱       ╲                             │
+│     │  70%    │30%                         │
+│      ╲       ╱                             │
+│       ╰─────╯                              │
+│                                             │
+└─────────────────────────────────────────────┘
+```
+
+---
+
+## Game Missions
+
+The game includes 18 missions total (13 original + 5 new debris removal missions). At game start, 3 missions are randomly selected for the player to complete.
+
+### Original Missions (13)
+
+1. **GPS_Priority**: Launch 3 GPS satellites
+2. **Weather_Watch**: Launch 2 weather satellites
+3. **Comms_Network**: Launch 3 communications satellites
+4. **Multi_Layer**: Launch satellites in all three orbital layers
+5. **Insurance_Master**: Insure 5 satellites
+6. **Budget_Management**: Maintain budget above $20M for 10 turns
+7. **Risk_Avoidance**: Keep debris count below 50 for 20 turns
+8. **Survivor**: Have 10 satellites active simultaneously
+9. **Diverse_Portfolio**: Launch 2 of each satellite type
+10. **LEO_Expert**: Launch 5 LEO satellites
+11. **GEO_Master**: Launch 3 GEO satellites
+12. **Cascade_Prevention**: Reach 30 turns without triggering cascade
+13. **Long_Term**: Survive 50 turns
+
+### New Debris Removal Missions (5)
+
+14. **Debris_Cleaner**: Launch 2 debris removal vehicles (any type)
+15. **Clean_Sweep**: Remove 50 total debris pieces using DRVs
+16. **Risk_Reduction**: Reduce debris from 200+ to below 100 using DRVs within 10 turns
+17. **Cooperative_Focus**: Remove 30 cooperative debris pieces
+18. **Challenge_Mode**: Launch 1 uncooperative DRV and successfully remove 10 debris with it
+
+These missions integrate seamlessly with the existing mission system and provide strategic objectives that encourage players to use debris removal vehicles as part of their overall strategy.
+
+---
+
 ## Implementation Plan
 
 Given the **HARD** complexity, breaking down into concrete milestones:
@@ -411,14 +706,16 @@ Given the **HARD** complexity, breaking down into concrete milestones:
 **Files**: `game/engine/`, `store/slices/gameSlice.ts`, `game/types.ts`
 
 **Tasks**:
-- [ ] Set up TypeScript types and interfaces
+- [ ] Set up TypeScript types and interfaces (including DRV and DebrisType)
 - [ ] Implement position generation
-- [ ] Implement collision detection algorithm
-- [ ] Create game state reducer
+- [ ] Implement collision detection algorithm (with debris typing)
+- [ ] Create game state reducer (including DRVs)
+- [ ] Implement debris removal logic (DRV operations)
 - [ ] Write unit tests for collision detection
-- [ ] Implement turn processing logic
+- [ ] Write unit tests for debris removal mechanics
+- [ ] Implement turn processing logic (with DRV processing)
 
-**Verification**: Unit tests pass, can simulate turns programmatically
+**Verification**: Unit tests pass, can simulate turns with DRVs programmatically
 
 ---
 
@@ -427,28 +724,33 @@ Given the **HARD** complexity, breaking down into concrete milestones:
 
 **Tasks**:
 - [ ] Implement budget tracking
-- [ ] Add launch cost deduction
+- [ ] Add launch cost deduction (satellites and DRVs)
 - [ ] Implement insurance system (purchase + payout)
-- [ ] Add budget validation
-- [ ] Write tests for economic calculations
+- [ ] Add DRV cost configuration and validation
+- [ ] Add budget validation (for both satellites and DRVs)
+- [ ] Write tests for economic calculations (including DRV costs)
 
-**Verification**: Can launch satellites with budget constraints, insurance payouts work
+**Verification**: Can launch satellites and DRVs with budget constraints, insurance payouts work
 
 ---
 
 ### Milestone 3: Basic Visualization (1 week)
-**Files**: `components/GameBoard/`, `components/ControlPanel/`
+**Files**: `components/GameBoard/`, `components/ControlPanel/`, `components/StatsPanel/`
 
 **Tasks**:
 - [ ] Create Canvas-based orbital visualization
 - [ ] Render concentric orbit circles
 - [ ] Display satellites as sprites
-- [ ] Display debris as particles
+- [ ] Display DRVs as pentagon/shield sprites (with color coding)
+- [ ] Display debris as particles (with type variants: gray/red)
+- [ ] Add launch type selector (satellite vs DRV)
 - [ ] Add orbit selector buttons
+- [ ] Add DRV configuration selector
 - [ ] Add turn advance button
-- [ ] Display budget and metrics
+- [ ] Display budget and metrics (including DRV stats)
+- [ ] Add debris type breakdown visualization
 
-**Verification**: Visual game playable with basic UI
+**Verification**: Visual game playable with basic UI, can launch both satellites and DRVs
 
 ---
 
@@ -456,14 +758,15 @@ Given the **HARD** complexity, breaking down into concrete milestones:
 **Files**: `store/slices/missionsSlice.ts`, `game/engine/missions.ts`, `components/MissionPanel/`
 
 **Tasks**:
-- [ ] Implement all 13 mission checks
-- [ ] Create mission selection logic (random 3)
+- [ ] Implement all 13 original mission checks
+- [ ] Implement 5 new debris removal mission checks
+- [ ] Create mission selection logic (random 3 from pool of 18)
 - [ ] Build mission display UI
-- [ ] Add mission progress tracking
-- [ ] Write tests for mission completion
+- [ ] Add mission progress tracking (including DRV-related progress)
+- [ ] Write tests for mission completion (including new missions)
 - [ ] Display mission status in UI
 
-**Verification**: Missions can be completed and tracked
+**Verification**: All 18 missions can be completed and tracked
 
 ---
 
@@ -488,11 +791,13 @@ Given the **HARD** complexity, breaking down into concrete milestones:
 **Tasks**:
 - [ ] Implement debris time series chart
 - [ ] Implement satellite count chart
+- [ ] Implement debris removal over time chart
+- [ ] Add debris type breakdown chart/visualization
 - [ ] Add real-time chart updates
 - [ ] Display risk trend indicator
 - [ ] Show budget projection
 
-**Verification**: Charts display correctly and update each turn
+**Verification**: Charts display correctly and update each turn, debris removal tracking visible
 
 ---
 
@@ -573,8 +878,11 @@ Given the **HARD** complexity, breaking down into concrete milestones:
 ## Success Metrics
 
 - ✅ Game is playable and engaging
-- ✅ All 13 missions achievable
-- ✅ Performance >60fps
+- ✅ All 18 missions achievable (13 original + 5 debris removal)
+- ✅ DRVs function correctly and provide strategic value
+- ✅ Debris removal mechanics balanced and intuitive
+- ✅ Debris types (cooperative/uncooperative) tracked accurately
+- ✅ Performance >60fps (with satellites and DRVs)
 - ✅ Mobile responsive
 - ✅ Code coverage >80%
 - ✅ Zero critical bugs
