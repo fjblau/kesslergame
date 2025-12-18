@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Panel - DRV Launch</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .panel {
+            background: #16213e;
+            border: 2px solid #0f3460;
+            border-radius: 8px;
+            padding: 24px;
+            width: 400px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+        }
+        .panel-header {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #0f3460;
+            color: #53a8ff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #aaa;
+            font-weight: 500;
+        }
+        .radio-group {
+            display: flex;
+            gap: 16px;
+        }
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .radio-option:hover {
+            background: rgba(83, 168, 255, 0.1);
+        }
+        .radio-option input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #53a8ff;
+        }
+        .radio-option label {
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .radio-option input[type="radio"]:checked + label {
+            color: #53a8ff;
+            font-weight: 600;
+        }
+        .drv-stats {
+            background: #0f3460;
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 8px;
+            font-size: 13px;
+        }
+        .stat-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            color: #ddd;
+        }
+        .stat-line:last-child {
+            margin-bottom: 0;
+        }
+        .stat-label {
+            color: #aaa;
+        }
+        .stat-value {
+            font-weight: 600;
+            color: #ffd700;
+        }
+        .launch-button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .launch-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 87, 108, 0.4);
+        }
+        .launch-button:active {
+            transform: translateY(0);
+        }
+        .budget-display {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #0f3460;
+            font-size: 14px;
+            color: #aaa;
+        }
+        .budget-amount {
+            color: #4ade80;
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .active {
+            background: rgba(83, 168, 255, 0.15);
+        }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <div class="panel-header">Launch Controls</div>
+        
+        <div class="form-group">
+            <div class="form-label">Launch Type:</div>
+            <div class="radio-group">
+                <div class="radio-option">
+                    <input type="radio" id="satellite" name="launchType">
+                    <label for="satellite">Satellite</label>
+                </div>
+                <div class="radio-option active">
+                    <input type="radio" id="drv" name="launchType" checked>
+                    <label for="drv">Debris Removal Vehicle</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="form-label">Orbit Layer:</div>
+            <div class="radio-group">
+                <div class="radio-option">
+                    <input type="radio" id="leo" name="orbit">
+                    <label for="leo">LEO</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="meo" name="orbit">
+                    <label for="meo">MEO</label>
+                </div>
+                <div class="radio-option active">
+                    <input type="radio" id="geo" name="orbit" checked>
+                    <label for="geo">GEO</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="form-label">DRV Type:</div>
+            <div class="radio-group">
+                <div class="radio-option active">
+                    <input type="radio" id="cooperative" name="drvType" checked>
+                    <label for="cooperative">Cooperative</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="uncooperative" name="drvType">
+                    <label for="uncooperative">Uncooperative</label>
+                </div>
+            </div>
+            <div class="drv-stats">
+                <div class="stat-line">
+                    <span class="stat-label">Cost:</span>
+                    <span class="stat-value">$10,000,000</span>
+                </div>
+                <div class="stat-line">
+                    <span class="stat-label">Removes:</span>
+                    <span class="stat-value">2-3 debris/turn (85% success)</span>
+                </div>
+                <div class="stat-line">
+                    <span class="stat-label">Active:</span>
+                    <span class="stat-value">10 turns</span>
+                </div>
+            </div>
+        </div>
+
+        <button class="launch-button">Launch DRV</button>
+
+        <div class="budget-display">
+            Budget: <span class="budget-amount">$45,000,000</span>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mission Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .panel {
+            background: #16213e;
+            border: 2px solid #0f3460;
+            border-radius: 8px;
+            padding: 24px;
+            width: 450px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+        }
+        .panel-header {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #0f3460;
+            color: #53a8ff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .mission-card {
+            background: #0f3460;
+            border-left: 4px solid #fbbf24;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 16px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .mission-card:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        .mission-card.completed {
+            border-left-color: #4ade80;
+            opacity: 0.8;
+        }
+        .mission-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .mission-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #666;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        .mission-checkbox.incomplete {
+            color: #666;
+        }
+        .mission-checkbox.completed {
+            background: #4ade80;
+            border-color: #4ade80;
+            color: #16213e;
+        }
+        .mission-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+        }
+        .mission-title.completed {
+            text-decoration: line-through;
+            color: #aaa;
+        }
+        .mission-description {
+            font-size: 13px;
+            color: #aaa;
+            margin-left: 30px;
+            margin-bottom: 8px;
+        }
+        .mission-progress {
+            font-size: 12px;
+            color: #fbbf24;
+            margin-left: 30px;
+            font-weight: 600;
+        }
+        .progress-bar-container {
+            height: 6px;
+            background: #1a2744;
+            border-radius: 3px;
+            margin-left: 30px;
+            margin-top: 6px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #fbbf24 0%, #f59e0b 100%);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <div class="panel-header">Missions</div>
+        
+        <div class="mission-card">
+            <div class="mission-header">
+                <div class="mission-checkbox incomplete">☐</div>
+                <div class="mission-title">Debris Cleaner</div>
+            </div>
+            <div class="mission-description">Launch 2 debris removal vehicles</div>
+            <div class="mission-progress">Progress: 1/2</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" style="width: 50%;"></div>
+            </div>
+        </div>
+
+        <div class="mission-card">
+            <div class="mission-header">
+                <div class="mission-checkbox incomplete">☐</div>
+                <div class="mission-title">Clean Sweep</div>
+            </div>
+            <div class="mission-description">Remove 50 debris pieces total</div>
+            <div class="mission-progress">Progress: 34/50</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" style="width: 68%;"></div>
+            </div>
+        </div>
+
+        <div class="mission-card">
+            <div class="mission-header">
+                <div class="mission-checkbox incomplete">☐</div>
+                <div class="mission-title">Risk Reduction</div>
+            </div>
+            <div class="mission-description">Reduce debris from 200+ to below 100</div>
+            <div class="mission-progress">Progress: 156/200 → &lt; 100</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" style="width: 22%;"></div>
+            </div>
+        </div>
+
+        <div class="mission-card completed">
+            <div class="mission-header">
+                <div class="mission-checkbox completed">✓</div>
+                <div class="mission-title completed">GPS Priority</div>
+            </div>
+            <div class="mission-description">Launch 3 GPS satellites</div>
+        </div>
+
+        <div class="mission-card completed">
+            <div class="mission-header">
+                <div class="mission-checkbox completed">✓</div>
+                <div class="mission-title completed">Multi-Layer Network</div>
+            </div>
+            <div class="mission-description">Launch satellites in all three orbital layers</div>
+        </div>
+    </div>
+</body>
+</html>

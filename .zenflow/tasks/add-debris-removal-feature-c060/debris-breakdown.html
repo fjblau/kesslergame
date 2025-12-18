@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debris Breakdown</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .panel {
+            background: #16213e;
+            border: 2px solid #0f3460;
+            border-radius: 8px;
+            padding: 24px;
+            width: 450px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+        }
+        .panel-header {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #0f3460;
+            color: #53a8ff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .bar-section {
+            margin-bottom: 30px;
+        }
+        .bar-item {
+            margin-bottom: 20px;
+        }
+        .bar-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .bar-name {
+            font-weight: 600;
+        }
+        .bar-value {
+            color: #aaa;
+        }
+        .bar-container {
+            height: 24px;
+            background: #0f3460;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .bar-fill {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            transition: width 0.5s ease;
+        }
+        .bar-cooperative {
+            background: linear-gradient(90deg, #6b7280 0%, #9ca3af 100%);
+            color: #fff;
+        }
+        .bar-uncooperative {
+            background: linear-gradient(90deg, #dc2626 0%, #ef4444 100%);
+            color: #fff;
+        }
+        .pie-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+            border-top: 2px solid #0f3460;
+        }
+        .pie-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #aaa;
+        }
+        .pie-chart {
+            position: relative;
+            width: 200px;
+            height: 200px;
+        }
+        svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+        .pie-slice {
+            transition: opacity 0.2s;
+        }
+        .pie-slice:hover {
+            opacity: 0.8;
+        }
+        .pie-labels {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        .pie-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+        .pie-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+        }
+        .color-cooperative {
+            background: #9ca3af;
+        }
+        .color-uncooperative {
+            background: #ef4444;
+        }
+        .total-display {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #0f3460;
+            font-size: 14px;
+            color: #aaa;
+        }
+        .total-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fbbf24;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <div class="panel-header">Debris Breakdown</div>
+        
+        <div class="bar-section">
+            <div class="bar-item">
+                <div class="bar-label">
+                    <span class="bar-name">Cooperative:</span>
+                    <span class="bar-value">109 (70%)</span>
+                </div>
+                <div class="bar-container">
+                    <div class="bar-fill bar-cooperative" style="width: 70%;">
+                        70%
+                    </div>
+                </div>
+            </div>
+
+            <div class="bar-item">
+                <div class="bar-label">
+                    <span class="bar-name">Uncooperative:</span>
+                    <span class="bar-value">47 (30%)</span>
+                </div>
+                <div class="bar-container">
+                    <div class="bar-fill bar-uncooperative" style="width: 30%;">
+                        30%
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pie-section">
+            <div class="pie-title">Distribution Chart:</div>
+            <div class="pie-chart">
+                <svg viewBox="0 0 100 100">
+                    <circle class="pie-slice" cx="50" cy="50" r="40" 
+                            fill="none" stroke="#9ca3af" stroke-width="80"
+                            stroke-dasharray="175.93 251.33"
+                            stroke-dashoffset="0"/>
+                    <circle class="pie-slice" cx="50" cy="50" r="40" 
+                            fill="none" stroke="#ef4444" stroke-width="80"
+                            stroke-dasharray="75.40 351.86"
+                            stroke-dashoffset="-175.93"/>
+                </svg>
+            </div>
+            <div class="pie-labels">
+                <div class="pie-label">
+                    <div class="pie-color color-cooperative"></div>
+                    <span>Cooperative (70%)</span>
+                </div>
+                <div class="pie-label">
+                    <div class="pie-color color-uncooperative"></div>
+                    <span>Uncooperative (30%)</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="total-display">
+            Total Debris
+            <div class="total-number">156</div>
+        </div>
+    </div>
+</body>
+</html>
