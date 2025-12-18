@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kessler Simulation Game - Wireframe Index</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #FFFFFF;
+            color: #333333;
+            padding: 48px 24px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            color: #000000;
+        }
+        
+        .subtitle {
+            font-size: 18px;
+            color: #666666;
+            margin-bottom: 48px;
+        }
+        
+        .section {
+            margin-bottom: 48px;
+        }
+        
+        h2 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 24px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #CCCCCC;
+        }
+        
+        .wireframe-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+        }
+        
+        .wireframe-card {
+            background: #F5F5F5;
+            border: 1px solid #CCCCCC;
+            border-radius: 4px;
+            padding: 24px;
+            transition: box-shadow 0.2s;
+        }
+        
+        .wireframe-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .wireframe-card h3 {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #000000;
+        }
+        
+        .wireframe-card p {
+            font-size: 14px;
+            color: #666666;
+            margin-bottom: 16px;
+        }
+        
+        .wireframe-card a {
+            display: inline-block;
+            background: #333333;
+            color: #FFFFFF;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .wireframe-card a:hover {
+            background: #000000;
+        }
+        
+        .footer {
+            margin-top: 64px;
+            padding-top: 24px;
+            border-top: 1px solid #CCCCCC;
+            text-align: center;
+            font-size: 12px;
+            color: #999999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Kessler Simulation Game</h1>
+        <p class="subtitle">UI Wireframe Mockups - Low Fidelity Design</p>
+        
+        <div class="section">
+            <h2>Game Screens</h2>
+            <div class="wireframe-grid">
+                <div class="wireframe-card">
+                    <h3>Start Screen</h3>
+                    <p>Initial landing page with game introduction and mission preview</p>
+                    <a href="game-start.html">View Wireframe →</a>
+                </div>
+                
+                <div class="wireframe-card">
+                    <h3>Main Game Screen</h3>
+                    <p>Primary gameplay interface with all components integrated</p>
+                    <a href="game-main.html">View Wireframe →</a>
+                </div>
+                
+                <div class="wireframe-card">
+                    <h3>Game Over Screen</h3>
+                    <p>End game summary with statistics and mission completion status</p>
+                    <a href="game-over.html">View Wireframe →</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Component Details</h2>
+            <div class="wireframe-grid">
+                <div class="wireframe-card">
+                    <h3>Orbital Visualization</h3>
+                    <p>Detailed view of the orbital canvas with satellites and debris</p>
+                    <a href="component-orbit.html">View Wireframe →</a>
+                </div>
+                
+                <div class="wireframe-card">
+                    <h3>Control Panel</h3>
+                    <p>Launch controls with orbit selection and insurance options</p>
+                    <a href="component-controls.html">View Wireframe →</a>
+                </div>
+                
+                <div class="wireframe-card">
+                    <h3>Mission Panel</h3>
+                    <p>Active missions display with progress tracking</p>
+                    <a href="component-missions.html">View Wireframe →</a>
+                </div>
+                
+                <div class="wireframe-card">
+                    <h3>Metrics Panel</h3>
+                    <p>Charts showing debris and satellite trends over time</p>
+                    <a href="component-metrics.html">View Wireframe →</a>
+                </div>
+                
+                <div class="wireframe-card">
+                    <h3>Event Log</h3>
+                    <p>Chronological list of game events and actions</p>
+                    <a href="component-events.html">View Wireframe →</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Wireframe Mockups for Kessler Simulation Game | Grayscale Low-Fidelity Design</p>
+        </div>
+    </div>
+</body>
+</html>

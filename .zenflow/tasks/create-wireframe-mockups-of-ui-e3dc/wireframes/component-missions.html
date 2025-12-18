@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mission Panel - Component Detail Wireframe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #F5F5F5;
+            color: #333333;
+            padding: 24px;
+        }
+        
+        .nav-back {
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+        
+        .nav-back a {
+            color: #666666;
+            text-decoration: none;
+        }
+        
+        .nav-back a:hover {
+            color: #000000;
+        }
+        
+        .component-container {
+            background: #FFFFFF;
+            border: 2px solid #CCCCCC;
+            border-radius: 4px;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 32px;
+        }
+        
+        h1 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 24px;
+            color: #000000;
+        }
+        
+        .component-content {
+            display: grid;
+            grid-template-columns: 500px 1fr;
+            gap: 32px;
+        }
+        
+        .mission-panel {
+            background: #FFFFFF;
+            border: 2px solid #CCCCCC;
+            border-radius: 4px;
+            padding: 24px;
+            width: 500px;
+        }
+        
+        .dimension-label {
+            font-size: 10px;
+            color: #999999;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+        
+        .panel-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #000000;
+        }
+        
+        .mission-card {
+            background: #F5F5F5;
+            border: 1px solid #CCCCCC;
+            border-radius: 4px;
+            padding: 16px;
+            margin-bottom: 16px;
+            position: relative;
+        }
+        
+        .mission-card.completed {
+            background: #E8E8E8;
+            border-color: #999999;
+        }
+        
+        .mission-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 8px;
+        }
+        
+        .mission-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333333;
+        }
+        
+        .mission-status {
+            font-size: 18px;
+            color: #666666;
+        }
+        
+        .mission-status.complete {
+            color: #000000;
+        }
+        
+        .mission-description {
+            font-size: 13px;
+            color: #666666;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        
+        .mission-metadata {
+            display: flex;
+            gap: 16px;
+            font-size: 11px;
+            color: #999999;
+            margin-bottom: 12px;
+        }
+        
+        .metadata-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .progress-container {
+            margin-top: 12px;
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+        
+        .progress-label {
+            font-size: 11px;
+            color: #666666;
+            font-weight: bold;
+        }
+        
+        .progress-value {
+            font-size: 11px;
+            color: #333333;
+            font-weight: bold;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: #CCCCCC;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #333333;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-fill.complete {
+            background: #000000;
+        }
+        
+        .reward-badge {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: #000000;
+            color: #FFFFFF;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 3px;
+        }
+        
+        .annotations {
+            background: #F5F5F5;
+            border: 1px solid #CCCCCC;
+            border-radius: 4px;
+            padding: 16px;
+        }
+        
+        .annotations h3 {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333333;
+        }
+        
+        .annotations ul {
+            list-style: none;
+            font-size: 12px;
+            color: #666666;
+            line-height: 1.8;
+        }
+        
+        .annotations li::before {
+            content: "• ";
+            color: #999999;
+        }
+        
+        .mission-types {
+            margin-top: 16px;
+            background: #FFFFFF;
+            border: 1px solid #CCCCCC;
+            border-radius: 4px;
+            padding: 12px;
+        }
+        
+        .mission-type {
+            font-size: 11px;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #E8E8E8;
+        }
+        
+        .mission-type:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .mission-type strong {
+            color: #000000;
+            display: block;
+            margin-bottom: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-back">
+        <a href="index.html">← Back to Index</a>
+    </div>
+    
+    <div class="component-container">
+        <h1>[Component: Mission Panel]</h1>
+        
+        <div class="component-content">
+            <div>
+                <div class="mission-panel">
+                    <div class="dimension-label">500px width, flexible height</div>
+                    
+                    <div class="panel-title">Active Missions</div>
+                    
+                    <div class="mission-card">
+                        <div class="reward-badge">+5000 pts</div>
+                        <div class="mission-header">
+                            <div class="mission-title">GPS Priority</div>
+                            <div class="mission-status">◯</div>
+                        </div>
+                        <div class="mission-description">
+                            Launch 3 GPS satellites by turn 20
+                        </div>
+                        <div class="mission-metadata">
+                            <div class="metadata-item">
+                                <span>📡</span>
+                                <span>2/3 launched</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span>⏱</span>
+                                <span>5 turns left</span>
+                            </div>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-header">
+                                <span class="progress-label">PROGRESS</span>
+                                <span class="progress-value">67%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 67%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mission-card">
+                        <div class="reward-badge">+5000 pts</div>
+                        <div class="mission-header">
+                            <div class="mission-title">10x Low Risk</div>
+                            <div class="mission-status">◯</div>
+                        </div>
+                        <div class="mission-description">
+                            Maintain LOW risk level for 10 consecutive turns
+                        </div>
+                        <div class="mission-metadata">
+                            <div class="metadata-item">
+                                <span>⚠️</span>
+                                <span>3/10 turns</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span>📊</span>
+                                <span>Current: MEDIUM</span>
+                            </div>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-header">
+                                <span class="progress-label">PROGRESS</span>
+                                <span class="progress-value">30%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 30%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mission-card completed">
+                        <div class="reward-badge">+5000 pts</div>
+                        <div class="mission-header">
+                            <div class="mission-title">All Layers</div>
+                            <div class="mission-status complete">✓</div>
+                        </div>
+                        <div class="mission-description">
+                            Launch satellites into all three orbital layers (LEO, MEO, GEO)
+                        </div>
+                        <div class="mission-metadata">
+                            <div class="metadata-item">
+                                <span>✓</span>
+                                <span>Completed on turn 12</span>
+                            </div>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-header">
+                                <span class="progress-label">COMPLETED</span>
+                                <span class="progress-value">100%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill complete" style="width: 100%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <div class="annotations">
+                    <h3>Component Behavior</h3>
+                    <ul>
+                        <li>3 missions randomly selected at game start</li>
+                        <li>Progress updates after each turn</li>
+                        <li>Completed missions show checkmark</li>
+                        <li>Hover reveals detailed requirements</li>
+                        <li>Reward points displayed as badge</li>
+                    </ul>
+                    
+                    <h3 style="margin-top: 16px;">Visual States</h3>
+                    <ul>
+                        <li>Active: White background, progress bar</li>
+                        <li>Completed: Gray background, 100% fill</li>
+                        <li>Near completion: Highlight/pulse animation</li>
+                        <li>Failed: Red tint (if time-based)</li>
+                    </ul>
+                    
+                    <div class="mission-types">
+                        <strong style="font-size: 12px; margin-bottom: 12px; display: block;">Mission Type Examples</strong>
+                        
+                        <div class="mission-type">
+                            <strong>Satellite Type Goals</strong>
+                            Launch X of specific satellite type by turn Y
+                        </div>
+                        
+                        <div class="mission-type">
+                            <strong>Risk Management</strong>
+                            Maintain risk level for N consecutive turns
+                        </div>
+                        
+                        <div class="mission-type">
+                            <strong>Layer Coverage</strong>
+                            Launch into specific orbital layers
+                        </div>
+                        
+                        <div class="mission-type">
+                            <strong>Budget Efficiency</strong>
+                            Complete game with X budget remaining
+                        </div>
+                        
+                        <div class="mission-type">
+                            <strong>Collision Avoidance</strong>
+                            Survive N turns with zero collisions
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

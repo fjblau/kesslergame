@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Log - Component Detail Wireframe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #F5F5F5;
+            color: #333333;
+            padding: 24px;
+        }
+        
+        .nav-back {
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+        
+        .nav-back a {
+            color: #666666;
+            text-decoration: none;
+        }
+        
+        .nav-back a:hover {
+            color: #000000;
+        }
+        
+        .component-container {
+            background: #FFFFFF;
+            border: 2px solid #CCCCCC;
+            border-radius: 4px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px;
+        }
+        
+        h1 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 24px;
+            color: #000000;
+        }
+        
+        .component-content {
+            display: grid;
+            grid-template-columns: 600px 1fr;
+            gap: 32px;
+        }
+        
+        .event-log {
+            background: #FFFFFF;
+            border: 2px solid #CCCCCC;
+            border-radius: 4px;
+            padding: 24px;
+            width: 600px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .dimension-label {
+            font-size: 10px;
+            color: #999999;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+        
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .panel-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #000000;
+        }
+        
+        .clear-button {
+            background: transparent;
+            color: #999999;
+            border: 1px solid #CCCCCC;
+            padding: 4px 12px;
+            font-size: 11px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .clear-button:hover {
+            color: #666666;
+            border-color: #999999;
+        }
+        
+        .filter-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #E8E8E8;
+        }
+        
+        .filter-tag {
+            background: #F5F5F5;
+            border: 1px solid #CCCCCC;
+            padding: 4px 12px;
+            font-size: 11px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .filter-tag.active {
+            background: #333333;
+            color: #FFFFFF;
+            border-color: #333333;
+        }
+        
+        .event-list {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+        
+        .event-item {
+            font-size: 13px;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-left: 3px solid #CCCCCC;
+            background: #FFFFFF;
+            border-radius: 0 4px 4px 0;
+            display: flex;
+            align-items: start;
+            gap: 12px;
+            transition: background 0.2s;
+        }
+        
+        .event-item:hover {
+            background: #F5F5F5;
+        }
+        
+        .event-item.collision {
+            border-left-color: #666666;
+            background: #F9F9F9;
+        }
+        
+        .event-item.launch {
+            border-left-color: #333333;
+        }
+        
+        .event-item.event {
+            border-left-color: #999999;
+        }
+        
+        .event-item.insurance {
+            border-left-color: #000000;
+        }
+        
+        .event-item.mission {
+            border-left-color: #333333;
+            background: #F9F9F9;
+        }
+        
+        .event-icon {
+            font-size: 16px;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #F5F5F5;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        
+        .event-content {
+            flex: 1;
+        }
+        
+        .event-turn {
+            font-weight: bold;
+            color: #999999;
+            font-size: 11px;
+            margin-bottom: 2px;
+        }
+        
+        .event-message {
+            color: #333333;
+            line-height: 1.4;
+        }
+        
+        .event-details {
+            font-size: 11px;
+            color: #999999;
+            margin-top: 4px;
+        }
+        
+        .event-timestamp {
+            font-size: 11px;
+            color: #CCCCCC;
+            flex-shrink: 0;
+        }
+        
+        .annotations {
+            background: #F5F5F5;
+            border: 1px solid #CCCCCC;
+            border-radius: 4px;
+            padding: 16px;
+        }
+        
+        .annotations h3 {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333333;
+        }
+        
+        .annotations ul {
+            list-style: none;
+            font-size: 12px;
+            color: #666666;
+            line-height: 1.8;
+        }
+        
+        .annotations li::before {
+            content: "• ";
+            color: #999999;
+        }
+        
+        .event-types {
+            margin-top: 16px;
+            background: #FFFFFF;
+            border: 1px solid #CCCCCC;
+            border-radius: 4px;
+            padding: 12px;
+        }
+        
+        .event-type {
+            font-size: 11px;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #E8E8E8;
+            display: flex;
+            gap: 8px;
+        }
+        
+        .event-type:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .event-type-icon {
+            width: 20px;
+            height: 20px;
+            background: #F5F5F5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+        
+        .event-type-info {
+            flex: 1;
+        }
+        
+        .event-type-info strong {
+            color: #000000;
+            display: block;
+            margin-bottom: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-back">
+        <a href="index.html">← Back to Index</a>
+    </div>
+    
+    <div class="component-container">
+        <h1>[Component: Event Log]</h1>
+        
+        <div class="component-content">
+            <div>
+                <div class="event-log">
+                    <div class="dimension-label">600px width × flexible height</div>
+                    
+                    <div class="panel-header">
+                        <div class="panel-title">Event Log</div>
+                        <button class="clear-button">Clear All</button>
+                    </div>
+                    
+                    <div class="filter-bar">
+                        <div class="filter-tag active">All</div>
+                        <div class="filter-tag">Launch</div>
+                        <div class="filter-tag">Collision</div>
+                        <div class="filter-tag">Mission</div>
+                        <div class="filter-tag">Event</div>
+                    </div>
+                    
+                    <div class="event-list">
+                        <div class="event-item launch">
+                            <div class="event-icon">🚀</div>
+                            <div class="event-content">
+                                <div class="event-turn">TURN 15</div>
+                                <div class="event-message">Launched GPS satellite to MEO</div>
+                                <div class="event-details">Cost: $3,000,000 • Insured</div>
+                            </div>
+                            <div class="event-timestamp">2m ago</div>
+                        </div>
+                        
+                        <div class="event-item collision">
+                            <div class="event-icon">💥</div>
+                            <div class="event-content">
+                                <div class="event-turn">TURN 14</div>
+                                <div class="event-message">Collision detected in LEO layer!</div>
+                                <div class="event-details">2 satellites destroyed • 10 debris created</div>
+                            </div>
+                            <div class="event-timestamp">5m ago</div>
+                        </div>
+                        
+                        <div class="event-item insurance">
+                            <div class="event-icon">💰</div>
+                            <div class="event-content">
+                                <div class="event-turn">TURN 14</div>
+                                <div class="event-message">Insurance payout received</div>
+                                <div class="event-details">Amount: $1,000,000</div>
+                            </div>
+                            <div class="event-timestamp">5m ago</div>
+                        </div>
+                        
+                        <div class="event-item event">
+                            <div class="event-icon">☀️</div>
+                            <div class="event-content">
+                                <div class="event-turn">TURN 13</div>
+                                <div class="event-message">Solar storm event triggered</div>
+                                <div class="event-details">LEO debris reduced by 30%</div>
+                            </div>
+                            <div class="event-timestamp">8m ago</div>
+                        </div>
+                        
+                        <div class="event-item mission">
+                            <div class="event-icon">✓</div>
+                            <div class="event-content">
+                                <div class="event-turn">TURN 12</div>
+                                <div class="event-message">Mission completed: All Layers</div>
+                                <div class="event-details">Reward: +5,000 points</div>
+                            </div>
+                            <div class="event-timestamp">12m ago</div>
+                        </div>
+                        
+                        <div class="event-item launch">
+                            <div class="event-icon">🚀</div>
+                            <div class="event-content">
+                                <div class="event-turn">TURN 12</div>
+                                <div class="event-message">Launched Communications satellite to GEO</div>
+                                <div class="event-details">Cost: $5,500,000 • Insured</div>
+                            </div>
+                            <div class="event-timestamp">12m ago</div>
+                        </div>
+                        
+                        <div class="event-item event">
+                            <div class="event-icon">⚠️</div>
+                            <div class="event-content">
+                                <div class="event-turn">TURN 11</div>
+                                <div class="event-message">Risk level increased to MEDIUM</div>
+                                <div class="event-details">Debris threshold exceeded</div>
+                            </div>
+                            <div class="event-timestamp">15m ago</div>
+                        </div>
+                        
+                        <div class="event-item launch">
+                            <div class="event-icon">🚀</div>
+                            <div class="event-content">
+                                <div class="event-turn">TURN 10</div>
+                                <div class="event-message">Launched GPS satellite to MEO</div>
+                                <div class="event-details">Cost: $2,500,000 • No insurance</div>
+                            </div>
+                            <div class="event-timestamp">18m ago</div>
+                        </div>
+                        
+                        <div class="event-item event">
+                            <div class="event-icon">📡</div>
+                            <div class="event-content">
+                                <div class="event-turn">TURN 9</div>
+                                <div class="event-message">Satellite aging event</div>
+                                <div class="event-details">COM-03 reached 15 turns (high risk)</div>
+                            </div>
+                            <div class="event-timestamp">21m ago</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <div class="annotations">
+                    <h3>Component Behavior</h3>
+                    <ul>
+                        <li>Displays events in reverse chronological order</li>
+                        <li>Auto-scrolls to newest event when added</li>
+                        <li>Filter events by type using tags</li>
+                        <li>Click event for detailed modal view</li>
+                        <li>Timestamps show relative time</li>
+                    </ul>
+                    
+                    <h3 style="margin-top: 16px;">Visual Features</h3>
+                    <ul>
+                        <li>Color-coded left border by event type</li>
+                        <li>Icon indicates event category</li>
+                        <li>Hover highlights entire event row</li>
+                        <li>Scrollable container (last 50 events)</li>
+                        <li>Clear button removes all entries</li>
+                    </ul>
+                    
+                    <div class="event-types">
+                        <strong style="font-size: 12px; margin-bottom: 12px; display: block;">Event Type Reference</strong>
+                        
+                        <div class="event-type">
+                            <div class="event-type-icon">🚀</div>
+                            <div class="event-type-info">
+                                <strong>Launch Event</strong>
+                                Satellite successfully launched to orbit
+                            </div>
+                        </div>
+                        
+                        <div class="event-type">
+                            <div class="event-type-icon">💥</div>
+                            <div class="event-type-info">
+                                <strong>Collision Event</strong>
+                                Collision detected between objects
+                            </div>
+                        </div>
+                        
+                        <div class="event-type">
+                            <div class="event-type-icon">💰</div>
+                            <div class="event-type-info">
+                                <strong>Insurance Payout</strong>
+                                Insurance claim processed
+                            </div>
+                        </div>
+                        
+                        <div class="event-type">
+                            <div class="event-type-icon">☀️</div>
+                            <div class="event-type-info">
+                                <strong>Random Event</strong>
+                                Solar storm, debris cleanup, etc.
+                            </div>
+                        </div>
+                        
+                        <div class="event-type">
+                            <div class="event-type-icon">✓</div>
+                            <div class="event-type-info">
+                                <strong>Mission Complete</strong>
+                                Mission objective achieved
+                            </div>
+                        </div>
+                        
+                        <div class="event-type">
+                            <div class="event-type-icon">⚠️</div>
+                            <div class="event-type-info">
+                                <strong>Risk Change</strong>
+                                Risk level increased or decreased
+                            </div>
+                        </div>
+                        
+                        <div class="event-type">
+                            <div class="event-type-icon">📡</div>
+                            <div class="event-type-info">
+                                <strong>Satellite Aging</strong>
+                                Satellite reached age milestone
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

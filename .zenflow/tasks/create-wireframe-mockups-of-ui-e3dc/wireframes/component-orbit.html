@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orbital Visualization - Component Detail Wireframe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #F5F5F5;
+            color: #333333;
+            padding: 24px;
+        }
+        
+        .nav-back {
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+        
+        .nav-back a {
+            color: #666666;
+            text-decoration: none;
+        }
+        
+        .nav-back a:hover {
+            color: #000000;
+        }
+        
+        .component-container {
+            background: #FFFFFF;
+            border: 2px solid #CCCCCC;
+            border-radius: 4px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px;
+        }
+        
+        h1 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 24px;
+            color: #000000;
+        }
+        
+        .component-content {
+            display: grid;
+            grid-template-columns: 800px 1fr;
+            gap: 32px;
+        }
+        
+        .orbit-visualization {
+            background: #F5F5F5;
+            border: 2px solid #CCCCCC;
+            border-radius: 4px;
+            width: 800px;
+            height: 600px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .dimension-label {
+            position: absolute;
+            font-size: 10px;
+            color: #999999;
+            font-weight: bold;
+        }
+        
+        .orbit-rings {
+            position: relative;
+            width: 700px;
+            height: 700px;
+        }
+        
+        .orbit-ring {
+            position: absolute;
+            border: 2px dashed #CCCCCC;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .orbit-ring-leo {
+            width: 250px;
+            height: 250px;
+        }
+        
+        .orbit-ring-meo {
+            width: 450px;
+            height: 450px;
+        }
+        
+        .orbit-ring-geo {
+            width: 650px;
+            height: 650px;
+        }
+        
+        .orbit-label {
+            position: absolute;
+            font-size: 12px;
+            font-weight: bold;
+            color: #666666;
+            background: #FFFFFF;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #CCCCCC;
+        }
+        
+        .satellite {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            background: #333333;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFFFFF;
+            font-size: 12px;
+            font-weight: bold;
+            border: 2px solid #000000;
+        }
+        
+        .satellite.insured {
+            border-color: #666666;
+            border-width: 3px;
+        }
+        
+        .satellite-label {
+            position: absolute;
+            font-size: 10px;
+            color: #666666;
+            background: #FFFFFF;
+            padding: 2px 4px;
+            border-radius: 2px;
+            white-space: nowrap;
+        }
+        
+        .debris {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #999999;
+            border-radius: 50%;
+        }
+        
+        .debris.large {
+            width: 16px;
+            height: 16px;
+            background: #666666;
+        }
+        
+        .collision-indicator {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border: 3px solid #333333;
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.2); }
+        }
+        
+        .legend {
+            background: #F5F5F5;
+            border: 1px solid #CCCCCC;
+            border-radius: 4px;
+            padding: 24px;
+        }
+        
+        .legend h2 {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            color: #000000;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+        
+        .legend-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .legend-icon-satellite {
+            width: 24px;
+            height: 24px;
+            background: #333333;
+            border-radius: 50%;
+            border: 2px solid #000000;
+        }
+        
+        .legend-icon-insured {
+            width: 24px;
+            height: 24px;
+            background: #333333;
+            border-radius: 50%;
+            border: 3px solid #666666;
+        }
+        
+        .legend-icon-debris {
+            width: 12px;
+            height: 12px;
+            background: #999999;
+            border-radius: 50%;
+        }
+        
+        .legend-icon-orbit {
+            width: 32px;
+            height: 32px;
+            border: 2px dashed #CCCCCC;
+            border-radius: 50%;
+        }
+        
+        .annotations {
+            background: #FFFFFF;
+            border: 1px solid #CCCCCC;
+            border-radius: 4px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+        
+        .annotations h3 {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333333;
+        }
+        
+        .annotations ul {
+            list-style: none;
+            font-size: 12px;
+            color: #666666;
+            line-height: 1.8;
+        }
+        
+        .annotations li::before {
+            content: "• ";
+            color: #999999;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-back">
+        <a href="index.html">← Back to Index</a>
+    </div>
+    
+    <div class="component-container">
+        <h1>[Component: Orbital Visualization]</h1>
+        
+        <div class="component-content">
+            <div>
+                <div class="orbit-visualization">
+                    <span class="dimension-label" style="top: 8px; left: 8px;">800×600px</span>
+                    
+                    <div class="orbit-rings">
+                        <div class="orbit-ring orbit-ring-leo"></div>
+                        <div class="orbit-ring orbit-ring-meo"></div>
+                        <div class="orbit-ring orbit-ring-geo"></div>
+                        
+                        <div class="orbit-label" style="top: 310px; left: 340px;">LEO</div>
+                        <div class="orbit-label" style="top: 210px; left: 340px;">MEO</div>
+                        <div class="orbit-label" style="top: 110px; left: 340px;">GEO</div>
+                        
+                        <div class="satellite" style="top: 280px; left: 420px;">
+                            G
+                        </div>
+                        <div class="satellite-label" style="top: 270px; left: 460px;">GPS-1 (Age: 5)</div>
+                        
+                        <div class="satellite insured" style="top: 250px; left: 280px;">
+                            C
+                        </div>
+                        <div class="satellite-label" style="top: 240px; left: 230px;">COM-2 (Insured)</div>
+                        
+                        <div class="satellite" style="top: 180px; left: 500px;">
+                            S
+                        </div>
+                        <div class="satellite-label" style="top: 170px; left: 540px;">SAT-3 (Age: 12)</div>
+                        
+                        <div class="satellite" style="top: 120px; left: 300px;">
+                            G
+                        </div>
+                        
+                        <div class="satellite insured" style="top: 90px; left: 430px;">
+                            W
+                        </div>
+                        
+                        <div class="debris" style="top: 290px; left: 350px;"></div>
+                        <div class="debris" style="top: 270px; left: 380px;"></div>
+                        <div class="debris large" style="top: 260px; left: 450px;"></div>
+                        <div class="debris" style="top: 200px; left: 320px;"></div>
+                        <div class="debris" style="top: 180px; left: 420px;"></div>
+                        <div class="debris" style="top: 150px; left: 280px;"></div>
+                        <div class="debris large" style="top: 130px; left: 370px;"></div>
+                        <div class="debris" style="top: 100px; left: 500px;"></div>
+                        
+                        <div class="collision-indicator" style="top: 240px; left: 430px;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <div class="legend">
+                    <h2>Legend</h2>
+                    
+                    <div class="legend-item">
+                        <div class="legend-icon">
+                            <div class="legend-icon-satellite"></div>
+                        </div>
+                        <div>
+                            <strong>Satellite (Standard)</strong><br>
+                            <span style="color: #666666; font-size: 12px;">Active satellite without insurance</span>
+                        </div>
+                    </div>
+                    
+                    <div class="legend-item">
+                        <div class="legend-icon">
+                            <div class="legend-icon-insured"></div>
+                        </div>
+                        <div>
+                            <strong>Satellite (Insured)</strong><br>
+                            <span style="color: #666666; font-size: 12px;">Protected with collision insurance</span>
+                        </div>
+                    </div>
+                    
+                    <div class="legend-item">
+                        <div class="legend-icon">
+                            <div class="legend-icon-debris"></div>
+                        </div>
+                        <div>
+                            <strong>Debris Particle</strong><br>
+                            <span style="color: #666666; font-size: 12px;">Collision hazard (varies in size)</span>
+                        </div>
+                    </div>
+                    
+                    <div class="legend-item">
+                        <div class="legend-icon">
+                            <div class="legend-icon-orbit"></div>
+                        </div>
+                        <div>
+                            <strong>Orbit Layer</strong><br>
+                            <span style="color: #666666; font-size: 12px;">LEO / MEO / GEO boundaries</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="annotations">
+                    <h3>Component Behavior</h3>
+                    <ul>
+                        <li>Satellites display type letter (G=GPS, C=Comms, etc.)</li>
+                        <li>Hover shows detailed satellite info tooltip</li>
+                        <li>Collision animations pulse at impact location</li>
+                        <li>Debris accumulates over time in layers</li>
+                        <li>Objects positioned using polar coordinates</li>
+                    </ul>
+                    
+                    <h3 style="margin-top: 16px;">Technical Notes</h3>
+                    <ul>
+                        <li>Render using HTML5 Canvas or SVG</li>
+                        <li>Update on each turn transition</li>
+                        <li>Animate collision events (0.5s duration)</li>
+                        <li>Scale objects for visual clarity</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

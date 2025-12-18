@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start Screen - Kessler Simulation Game Wireframe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #F5F5F5;
+            color: #333333;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .nav-back {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            font-size: 14px;
+        }
+        
+        .nav-back a {
+            color: #666666;
+            text-decoration: none;
+        }
+        
+        .nav-back a:hover {
+            color: #000000;
+        }
+        
+        .wireframe-container {
+            background: #FFFFFF;
+            border: 2px solid #CCCCCC;
+            width: 600px;
+            padding: 48px;
+            text-align: center;
+            border-radius: 4px;
+        }
+        
+        .settings-icon {
+            position: absolute;
+            top: 48px;
+            right: 48px;
+            width: 32px;
+            height: 32px;
+            border: 2px solid #CCCCCC;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #666666;
+        }
+        
+        h1 {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            color: #000000;
+        }
+        
+        .subtitle {
+            font-size: 18px;
+            color: #666666;
+            margin-bottom: 48px;
+            line-height: 1.6;
+        }
+        
+        .mission-preview {
+            background: #F5F5F5;
+            border: 1px solid #CCCCCC;
+            border-radius: 4px;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+        
+        .mission-preview h2 {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #333333;
+        }
+        
+        .mission-preview p {
+            font-size: 14px;
+            color: #666666;
+            line-height: 1.6;
+        }
+        
+        .button-primary {
+            background: #000000;
+            color: #FFFFFF;
+            border: none;
+            padding: 16px 48px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 16px;
+            width: 100%;
+        }
+        
+        .button-primary:hover {
+            background: #333333;
+        }
+        
+        .button-secondary {
+            background: transparent;
+            color: #666666;
+            border: 2px solid #CCCCCC;
+            padding: 12px 32px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .button-secondary:hover {
+            border-color: #999999;
+            color: #333333;
+        }
+        
+        .annotations {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #FFFFFF;
+            border: 1px solid #CCCCCC;
+            border-radius: 4px;
+            padding: 16px;
+            max-width: 320px;
+            font-size: 12px;
+            color: #666666;
+        }
+        
+        .annotations h3 {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333333;
+        }
+        
+        .annotations ul {
+            list-style: none;
+            line-height: 1.8;
+        }
+        
+        .annotations li::before {
+            content: "• ";
+            color: #999999;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-back">
+        <a href="index.html">← Back to Index</a>
+    </div>
+    
+    <div class="wireframe-container">
+        <div class="settings-icon">⚙</div>
+        
+        <h1>Kessler Syndrome<br>Simulation</h1>
+        
+        <p class="subtitle">
+            Manage satellite launches in Earth's orbit while avoiding catastrophic collision cascades. Balance mission objectives, budget constraints, and debris risk over 100 turns.
+        </p>
+        
+        <div class="mission-preview">
+            <h2>[Mission Preview]</h2>
+            <p>3 random missions will be selected for this game. Complete missions to earn bonus points and demonstrate strategic mastery.</p>
+        </div>
+        
+        <button class="button-primary">New Game</button>
+        <button class="button-secondary">Tutorial</button>
+    </div>
+    
+    <div class="annotations">
+        <h3>Screen Annotations</h3>
+        <ul>
+            <li>Dimensions: 600x800px centered card</li>
+            <li>Settings icon: top-right corner (32x32px)</li>
+            <li>New Game button: Primary CTA</li>
+            <li>Tutorial button: Secondary action</li>
+            <li>Mission preview: Info box with light background</li>
+        </ul>
+        <br>
+        <h3>Interactions</h3>
+        <ul>
+            <li>New Game → Transitions to main game screen</li>
+            <li>Tutorial → Opens help overlay</li>
+            <li>Settings → Opens configuration modal</li>
+        </ul>
+    </div>
+</body>
+</html>

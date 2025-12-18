@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Over Screen - Kessler Simulation Wireframe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: rgba(0, 0, 0, 0.5);
+            color: #333333;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        
+        .nav-back {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            font-size: 14px;
+        }
+        
+        .nav-back a {
+            color: #FFFFFF;
+            text-decoration: none;
+        }
+        
+        .nav-back a:hover {
+            color: #CCCCCC;
+        }
+        
+        .modal-overlay {
+            background: #FFFFFF;
+            border: 2px solid #CCCCCC;
+            border-radius: 4px;
+            width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-header {
+            background: #000000;
+            color: #FFFFFF;
+            padding: 24px;
+            text-align: center;
+        }
+        
+        .modal-header h1 {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .modal-header p {
+            font-size: 14px;
+            color: #CCCCCC;
+        }
+        
+        .modal-body {
+            padding: 32px;
+        }
+        
+        .stats-section {
+            margin-bottom: 32px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            color: #000000;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #CCCCCC;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .stat-card {
+            background: #F5F5F5;
+            border: 1px solid #CCCCCC;
+            border-radius: 4px;
+            padding: 16px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666666;
+            margin-bottom: 4px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #000000;
+        }
+        
+        .mission-list {
+            list-style: none;
+        }
+        
+        .mission-item {
+            background: #F5F5F5;
+            border: 1px solid #CCCCCC;
+            border-radius: 4px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .mission-status {
+            font-size: 24px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        
+        .mission-status.completed {
+            background: #333333;
+            color: #FFFFFF;
+        }
+        
+        .mission-status.incomplete {
+            background: #CCCCCC;
+            color: #666666;
+        }
+        
+        .mission-info h3 {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: #333333;
+        }
+        
+        .mission-info p {
+            font-size: 12px;
+            color: #666666;
+        }
+        
+        .score-breakdown {
+            background: #000000;
+            color: #FFFFFF;
+            border-radius: 4px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .score-breakdown h2 {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            color: #FFFFFF;
+        }
+        
+        .score-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #333333;
+        }
+        
+        .score-item:last-child {
+            border-bottom: none;
+            font-size: 18px;
+            font-weight: bold;
+            padding-top: 16px;
+        }
+        
+        .score-label {
+            color: #CCCCCC;
+            font-size: 14px;
+        }
+        
+        .score-value {
+            color: #FFFFFF;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 16px;
+        }
+        
+        .button-primary {
+            background: #000000;
+            color: #FFFFFF;
+            border: none;
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            flex: 1;
+        }
+        
+        .button-primary:hover {
+            background: #333333;
+        }
+        
+        .button-secondary {
+            background: transparent;
+            color: #333333;
+            border: 2px solid #CCCCCC;
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            flex: 1;
+        }
+        
+        .button-secondary:hover {
+            border-color: #999999;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-back">
+        <a href="index.html">← Back to Index</a>
+    </div>
+    
+    <div class="modal-overlay">
+        <div class="modal-header">
+            <h1>Mission Complete!</h1>
+            <p>You successfully avoided Kessler Syndrome</p>
+        </div>
+        
+        <div class="modal-body">
+            <div class="stats-section">
+                <div class="section-title">Final Statistics</div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">TURNS SURVIVED</div>
+                        <div class="stat-value">87</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-label">SATELLITES LAUNCHED</div>
+                        <div class="stat-value">24</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-label">FINAL DEBRIS COUNT</div>
+                        <div class="stat-value">156</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-label">BUDGET REMAINING</div>
+                        <div class="stat-value">$67M</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stats-section">
+                <div class="section-title">Mission Completion (2/3)</div>
+                
+                <ul class="mission-list">
+                    <li class="mission-item">
+                        <div class="mission-status completed">✓</div>
+                        <div class="mission-info">
+                            <h3>GPS Priority</h3>
+                            <p>Launch 3 GPS satellites by turn 20</p>
+                        </div>
+                    </li>
+                    
+                    <li class="mission-item">
+                        <div class="mission-status incomplete">✗</div>
+                        <div class="mission-info">
+                            <h3>10x Low Risk</h3>
+                            <p>Maintain LOW risk for 10 consecutive turns</p>
+                        </div>
+                    </li>
+                    
+                    <li class="mission-item">
+                        <div class="mission-status completed">✓</div>
+                        <div class="mission-info">
+                            <h3>All Layers</h3>
+                            <p>Launch into all orbital layers</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="score-breakdown">
+                <h2>Score Calculation</h2>
+                
+                <div class="score-item">
+                    <span class="score-label">Base Score (Turns Survived)</span>
+                    <span class="score-value">+8,700</span>
+                </div>
+                
+                <div class="score-item">
+                    <span class="score-label">Missions Completed (2 × 5,000)</span>
+                    <span class="score-value">+10,000</span>
+                </div>
+                
+                <div class="score-item">
+                    <span class="score-label">Active Satellites (12 × 500)</span>
+                    <span class="score-value">+6,000</span>
+                </div>
+                
+                <div class="score-item">
+                    <span class="score-label">Budget Remaining (67M × 0.1)</span>
+                    <span class="score-value">+6,700</span>
+                </div>
+                
+                <div class="score-item">
+                    <span class="score-label">TOTAL SCORE</span>
+                    <span class="score-value">31,400</span>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="button-primary">Play Again</button>
+                <button class="button-secondary">Share Results</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
