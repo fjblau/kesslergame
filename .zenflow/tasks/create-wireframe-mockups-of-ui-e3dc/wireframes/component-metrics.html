@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metrics Panel - Component Detail Wireframe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #F5F5F5;
+            color: #333333;
+            padding: 24px;
+        }
+        
+        .nav-back {
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+        
+        .nav-back a {
+            color: #666666;
+            text-decoration: none;
+        }
+        
+        .nav-back a:hover {
+            color: #000000;
+        }
+        
+        .component-container {
+            background: #FFFFFF;
+            border: 2px solid #CCCCCC;
+            border-radius: 4px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px;
+        }
+        
+        h1 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 24px;
+            color: #000000;
+        }
+        
+        .component-content {
+            display: grid;
+            grid-template-columns: 600px 1fr;
+            gap: 32px;
+        }
+        
+        .metrics-panel {
+            background: #F5F5F5;
+            border: 2px solid #CCCCCC;
+            border-radius: 4px;
+            padding: 24px;
+            width: 600px;
+        }
+        
+        .dimension-label {
+            font-size: 10px;
+            color: #999999;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+        
+        .panel-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #000000;
+        }
+        
+        .chart-container {
+            background: #FFFFFF;
+            border: 1px solid #CCCCCC;
+            border-radius: 4px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .chart-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333333;
+        }
+        
+        .chart-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #000000;
+        }
+        
+        .chart-subtitle {
+            font-size: 11px;
+            color: #999999;
+            margin-bottom: 12px;
+        }
+        
+        .chart-canvas {
+            width: 100%;
+            height: 140px;
+            background: #F5F5F5;
+            border-radius: 4px;
+            position: relative;
+            padding: 16px;
+        }
+        
+        .chart-grid {
+            position: absolute;
+            top: 16px;
+            left: 40px;
+            right: 16px;
+            bottom: 32px;
+            border-left: 2px solid #CCCCCC;
+            border-bottom: 2px solid #CCCCCC;
+        }
+        
+        .chart-grid-line {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #E8E8E8;
+        }
+        
+        .y-axis-labels {
+            position: absolute;
+            left: 0;
+            top: 16px;
+            bottom: 32px;
+            width: 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding-right: 4px;
+            font-size: 10px;
+            color: #999999;
+        }
+        
+        .x-axis-labels {
+            position: absolute;
+            left: 40px;
+            right: 16px;
+            bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: #999999;
+        }
+        
+        .chart-line-path {
+            position: absolute;
+            left: 40px;
+            right: 16px;
+            top: 16px;
+            bottom: 32px;
+        }
+        
+        .line-debris {
+            stroke: #666666;
+            stroke-width: 2;
+            fill: none;
+        }
+        
+        .line-satellites {
+            stroke: #333333;
+            stroke-width: 2;
+            fill: none;
+        }
+        
+        .data-point {
+            fill: #FFFFFF;
+            stroke-width: 2;
+        }
+        
+        .data-point-debris {
+            stroke: #666666;
+        }
+        
+        .data-point-satellite {
+            stroke: #333333;
+        }
+        
+        .chart-legend {
+            display: flex;
+            gap: 16px;
+            margin-top: 8px;
+            font-size: 11px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .legend-color {
+            width: 16px;
+            height: 3px;
+            border-radius: 2px;
+        }
+        
+        .legend-color-debris {
+            background: #666666;
+        }
+        
+        .legend-color-satellite {
+            background: #333333;
+        }
+        
+        .annotations {
+            background: #F5F5F5;
+            border: 1px solid #CCCCCC;
+            border-radius: 4px;
+            padding: 16px;
+        }
+        
+        .annotations h3 {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333333;
+        }
+        
+        .annotations ul {
+            list-style: none;
+            font-size: 12px;
+            color: #666666;
+            line-height: 1.8;
+        }
+        
+        .annotations li::before {
+            content: "• ";
+            color: #999999;
+        }
+        
+        .chart-features {
+            margin-top: 16px;
+            background: #FFFFFF;
+            border: 1px solid #CCCCCC;
+            border-radius: 4px;
+            padding: 12px;
+        }
+        
+        .feature-item {
+            font-size: 11px;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #E8E8E8;
+        }
+        
+        .feature-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .feature-item strong {
+            color: #000000;
+            display: block;
+            margin-bottom: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-back">
+        <a href="index.html">← Back to Index</a>
+    </div>
+    
+    <div class="component-container">
+        <h1>[Component: Metrics Panel]</h1>
+        
+        <div class="component-content">
+            <div>
+                <div class="metrics-panel">
+                    <div class="dimension-label">600px width × 280px height</div>
+                    
+                    <div class="panel-title">Metrics & Trends</div>
+                    
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <div class="chart-title">Debris Count</div>
+                            <div class="chart-value">127</div>
+                        </div>
+                        <div class="chart-subtitle">Total debris particles in orbit</div>
+                        
+                        <div class="chart-canvas">
+                            <div class="y-axis-labels">
+                                <span>200</span>
+                                <span>150</span>
+                                <span>100</span>
+                                <span>50</span>
+                                <span>0</span>
+                            </div>
+                            
+                            <div class="chart-grid">
+                                <div class="chart-grid-line" style="top: 0%;"></div>
+                                <div class="chart-grid-line" style="top: 25%;"></div>
+                                <div class="chart-grid-line" style="top: 50%;"></div>
+                                <div class="chart-grid-line" style="top: 75%;"></div>
+                            </div>
+                            
+                            <svg class="chart-line-path" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                <polyline 
+                                    class="line-debris"
+                                    points="0,80 10,75 20,70 30,68 40,72 50,65 60,68 70,60 80,58 90,55 100,52"
+                                    vector-effect="non-scaling-stroke"/>
+                                <circle class="data-point data-point-debris" cx="0" cy="80" r="3" vector-effect="non-scaling-stroke"/>
+                                <circle class="data-point data-point-debris" cx="20" cy="70" r="3" vector-effect="non-scaling-stroke"/>
+                                <circle class="data-point data-point-debris" cx="40" cy="72" r="3" vector-effect="non-scaling-stroke"/>
+                                <circle class="data-point data-point-debris" cx="60" cy="68" r="3" vector-effect="non-scaling-stroke"/>
+                                <circle class="data-point data-point-debris" cx="80" cy="58" r="3" vector-effect="non-scaling-stroke"/>
+                                <circle class="data-point data-point-debris" cx="100" cy="52" r="3" vector-effect="non-scaling-stroke"/>
+                            </svg>
+                            
+                            <div class="x-axis-labels">
+                                <span>T0</span>
+                                <span>T5</span>
+                                <span>T10</span>
+                                <span>T15</span>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-legend">
+                            <div class="legend-item">
+                                <div class="legend-color legend-color-debris"></div>
+                                <span>Debris over time</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <div class="chart-title">Active Satellites</div>
+                            <div class="chart-value">8</div>
+                        </div>
+                        <div class="chart-subtitle">Operational satellites in all layers</div>
+                        
+                        <div class="chart-canvas">
+                            <div class="y-axis-labels">
+                                <span>20</span>
+                                <span>15</span>
+                                <span>10</span>
+                                <span>5</span>
+                                <span>0</span>
+                            </div>
+                            
+                            <div class="chart-grid">
+                                <div class="chart-grid-line" style="top: 0%;"></div>
+                                <div class="chart-grid-line" style="top: 25%;"></div>
+                                <div class="chart-grid-line" style="top: 50%;"></div>
+                                <div class="chart-grid-line" style="top: 75%;"></div>
+                            </div>
+                            
+                            <svg class="chart-line-path" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                <polyline 
+                                    class="line-satellites"
+                                    points="0,100 10,95 20,85 30,80 40,70 50,60 60,55 70,50 80,48 90,55 100,60"
+                                    vector-effect="non-scaling-stroke"/>
+                                <circle class="data-point data-point-satellite" cx="0" cy="100" r="3" vector-effect="non-scaling-stroke"/>
+                                <circle class="data-point data-point-satellite" cx="20" cy="85" r="3" vector-effect="non-scaling-stroke"/>
+                                <circle class="data-point data-point-satellite" cx="40" cy="70" r="3" vector-effect="non-scaling-stroke"/>
+                                <circle class="data-point data-point-satellite" cx="60" cy="55" r="3" vector-effect="non-scaling-stroke"/>
+                                <circle class="data-point data-point-satellite" cx="80" cy="48" r="3" vector-effect="non-scaling-stroke"/>
+                                <circle class="data-point data-point-satellite" cx="100" cy="60" r="3" vector-effect="non-scaling-stroke"/>
+                            </svg>
+                            
+                            <div class="x-axis-labels">
+                                <span>T0</span>
+                                <span>T5</span>
+                                <span>T10</span>
+                                <span>T15</span>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-legend">
+                            <div class="legend-item">
+                                <div class="legend-color legend-color-satellite"></div>
+                                <span>Satellites over time</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <div class="annotations">
+                    <h3>Component Behavior</h3>
+                    <ul>
+                        <li>Updates after each turn with new data point</li>
+                        <li>Shows last 20 turns of history</li>
+                        <li>Auto-scales Y-axis to fit data range</li>
+                        <li>Hover on data points shows exact value</li>
+                        <li>Current value displayed in header</li>
+                    </ul>
+                    
+                    <h3 style="margin-top: 16px;">Chart Details</h3>
+                    <ul>
+                        <li>X-axis: Turn number (0-100)</li>
+                        <li>Y-axis: Count (auto-scaled)</li>
+                        <li>Grid lines for easier reading</li>
+                        <li>Data points marked with circles</li>
+                        <li>Smooth line interpolation</li>
+                    </ul>
+                    
+                    <div class="chart-features">
+                        <strong style="font-size: 12px; margin-bottom: 12px; display: block;">Visualization Features</strong>
+                        
+                        <div class="feature-item">
+                            <strong>Trend Indicators</strong>
+                            Arrow icons showing up/down/stable trends
+                        </div>
+                        
+                        <div class="feature-item">
+                            <strong>Threshold Lines</strong>
+                            Dashed lines for critical thresholds (e.g., 200 debris = HIGH risk)
+                        </div>
+                        
+                        <div class="feature-item">
+                            <strong>Event Annotations</strong>
+                            Vertical lines marking significant events (collisions, etc.)
+                        </div>
+                        
+                        <div class="feature-item">
+                            <strong>Zoom Controls</strong>
+                            Optional zoom to focus on specific turn ranges
+                        </div>
+                        
+                        <div class="feature-item">
+                            <strong>Export Option</strong>
+                            Button to download chart as image
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

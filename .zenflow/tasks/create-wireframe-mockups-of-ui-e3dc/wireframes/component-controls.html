@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Panel - Component Detail Wireframe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #F5F5F5;
+            color: #333333;
+            padding: 24px;
+        }
+        
+        .nav-back {
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+        
+        .nav-back a {
+            color: #666666;
+            text-decoration: none;
+        }
+        
+        .nav-back a:hover {
+            color: #000000;
+        }
+        
+        .component-container {
+            background: #FFFFFF;
+            border: 2px solid #CCCCCC;
+            border-radius: 4px;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 32px;
+        }
+        
+        h1 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 24px;
+            color: #000000;
+        }
+        
+        .component-content {
+            display: grid;
+            grid-template-columns: 800px 1fr;
+            gap: 32px;
+        }
+        
+        .control-panel {
+            background: #F5F5F5;
+            border: 2px solid #CCCCCC;
+            border-radius: 4px;
+            padding: 24px;
+            width: 800px;
+            height: 200px;
+        }
+        
+        .dimension-label {
+            font-size: 10px;
+            color: #999999;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+        
+        .control-section {
+            margin-bottom: 20px;
+        }
+        
+        .control-label {
+            font-size: 12px;
+            font-weight: bold;
+            color: #666666;
+            margin-bottom: 8px;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .orbit-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .orbit-option {
+            background: #FFFFFF;
+            border: 2px solid #CCCCCC;
+            border-radius: 4px;
+            padding: 16px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        
+        .orbit-option:hover {
+            border-color: #999999;
+        }
+        
+        .orbit-option.selected {
+            background: #333333;
+            color: #FFFFFF;
+            border-color: #333333;
+        }
+        
+        .orbit-name {
+            font-size: 16px;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 4px;
+        }
+        
+        .orbit-cost {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .orbit-details {
+            font-size: 10px;
+            margin-top: 4px;
+            opacity: 0.6;
+        }
+        
+        .insurance-section {
+            background: #FFFFFF;
+            border: 1px solid #CCCCCC;
+            border-radius: 4px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+        }
+        
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #CCCCCC;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        
+        .checkbox.checked {
+            background: #333333;
+            border-color: #333333;
+            color: #FFFFFF;
+        }
+        
+        .checkbox-label {
+            font-size: 14px;
+            flex: 1;
+        }
+        
+        .checkbox-cost {
+            font-size: 14px;
+            font-weight: bold;
+            color: #666666;
+        }
+        
+        .button-group {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 12px;
+        }
+        
+        .button-launch {
+            background: #000000;
+            color: #FFFFFF;
+            border: none;
+            padding: 16px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .button-launch:hover {
+            background: #333333;
+        }
+        
+        .button-launch:disabled {
+            background: #CCCCCC;
+            color: #999999;
+            cursor: not-allowed;
+        }
+        
+        .button-skip {
+            background: transparent;
+            color: #666666;
+            border: 2px solid #CCCCCC;
+            padding: 16px 24px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .button-skip:hover {
+            border-color: #999999;
+            color: #333333;
+        }
+        
+        .budget-warning {
+            background: #F5F5F5;
+            border: 2px solid #666666;
+            border-radius: 4px;
+            padding: 12px;
+            margin-top: 12px;
+            font-size: 12px;
+            color: #666666;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .warning-icon {
+            font-size: 16px;
+        }
+        
+        .annotations {
+            background: #F5F5F5;
+            border: 1px solid #CCCCCC;
+            border-radius: 4px;
+            padding: 16px;
+        }
+        
+        .annotations h3 {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333333;
+        }
+        
+        .annotations ul {
+            list-style: none;
+            font-size: 12px;
+            color: #666666;
+            line-height: 1.8;
+        }
+        
+        .annotations li::before {
+            content: "• ";
+            color: #999999;
+        }
+        
+        .state-examples {
+            margin-top: 16px;
+        }
+        
+        .state-example {
+            background: #FFFFFF;
+            border: 1px solid #CCCCCC;
+            border-radius: 4px;
+            padding: 8px;
+            margin-bottom: 8px;
+            font-size: 11px;
+        }
+        
+        .state-example strong {
+            color: #000000;
+            display: block;
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-back">
+        <a href="index.html">← Back to Index</a>
+    </div>
+    
+    <div class="component-container">
+        <h1>[Component: Control Panel]</h1>
+        
+        <div class="component-content">
+            <div>
+                <div class="control-panel">
+                    <div class="dimension-label">800×200px</div>
+                    
+                    <div class="control-section">
+                        <span class="control-label">Select Orbit Layer</span>
+                        <div class="orbit-selector">
+                            <div class="orbit-option">
+                                <span class="orbit-name">LEO</span>
+                                <span class="orbit-cost">$1.5M</span>
+                                <span class="orbit-details">Low risk, short lifespan</span>
+                            </div>
+                            <div class="orbit-option selected">
+                                <span class="orbit-name">MEO</span>
+                                <span class="orbit-cost">$2.5M</span>
+                                <span class="orbit-details">Medium risk, balanced</span>
+                            </div>
+                            <div class="orbit-option">
+                                <span class="orbit-name">GEO</span>
+                                <span class="orbit-cost">$5.0M</span>
+                                <span class="orbit-details">High risk, long lifespan</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="insurance-section">
+                        <div class="checkbox-wrapper">
+                            <div class="checkbox checked">✓</div>
+                            <span class="checkbox-label">Add collision insurance</span>
+                            <span class="checkbox-cost">+$500K</span>
+                        </div>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="button-launch">Launch Satellite ($3.0M total)</button>
+                        <button class="button-skip">Skip Turn</button>
+                    </div>
+                </div>
+                
+                <div class="budget-warning">
+                    <span class="warning-icon">⚠</span>
+                    <span>Total cost: $3.0M (Budget remaining: $94.0M)</span>
+                </div>
+            </div>
+            
+            <div class="annotations">
+                <h3>Interactions</h3>
+                <ul>
+                    <li>Click orbit options to select layer</li>
+                    <li>Toggle insurance checkbox</li>
+                    <li>Launch button shows total cost</li>
+                    <li>Launch disabled if budget insufficient</li>
+                    <li>Skip turn advances without launch</li>
+                </ul>
+                
+                <h3 style="margin-top: 16px;">Cost Calculation</h3>
+                <ul>
+                    <li>Base cost varies by orbit layer</li>
+                    <li>Insurance adds fixed $500K</li>
+                    <li>Total updates dynamically</li>
+                    <li>Budget check before submission</li>
+                </ul>
+                
+                <div class="state-examples">
+                    <div class="state-example">
+                        <strong>State: Insufficient Funds</strong>
+                        Launch button becomes disabled (gray), shows "Insufficient budget" tooltip
+                    </div>
+                    <div class="state-example">
+                        <strong>State: Processing Turn</strong>
+                        All controls disabled, launch button shows loading spinner
+                    </div>
+                    <div class="state-example">
+                        <strong>State: Game Over</strong>
+                        All controls hidden or fully disabled
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
