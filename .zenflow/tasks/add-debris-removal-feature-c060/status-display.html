@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orbital Status Display</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .panel {
+            background: #16213e;
+            border: 2px solid #0f3460;
+            border-radius: 8px;
+            padding: 24px;
+            width: 380px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+        }
+        .panel-header {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #0f3460;
+            color: #53a8ff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(15, 52, 96, 0.5);
+            font-size: 14px;
+        }
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+        .stat-label {
+            color: #aaa;
+        }
+        .stat-value {
+            font-weight: 600;
+            color: #53a8ff;
+        }
+        .debris-section {
+            margin: 16px 0;
+            padding: 16px;
+            background: #0f3460;
+            border-radius: 6px;
+        }
+        .debris-header {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #ffd700;
+        }
+        .debris-breakdown {
+            margin-left: 16px;
+        }
+        .debris-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 13px;
+        }
+        .debris-type {
+            color: #ccc;
+        }
+        .debris-type::before {
+            content: '├─ ';
+            color: #555;
+        }
+        .debris-item:last-child .debris-type::before {
+            content: '└─ ';
+        }
+        .debris-count {
+            color: #fff;
+            font-weight: 600;
+        }
+        .debris-removed {
+            color: #4ade80;
+            font-weight: 700;
+        }
+        .risk-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        .risk-medium {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+        }
+        .step-display {
+            color: #888;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <div class="panel-header">Orbital Status</div>
+        
+        <div class="stat-row">
+            <span class="stat-label">Active Satellites:</span>
+            <span class="stat-value">12</span>
+        </div>
+
+        <div class="stat-row">
+            <span class="stat-label">Active DRVs:</span>
+            <span class="stat-value">3</span>
+        </div>
+
+        <div class="debris-section">
+            <div class="debris-header">Total Debris: 156</div>
+            <div class="debris-breakdown">
+                <div class="debris-item">
+                    <span class="debris-type">Cooperative:</span>
+                    <span class="debris-count">109 (70%)</span>
+                </div>
+                <div class="debris-item">
+                    <span class="debris-type">Uncooperative:</span>
+                    <span class="debris-count">47 (30%)</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-row">
+            <span class="stat-label">Debris Removed:</span>
+            <span class="debris-removed">34</span>
+        </div>
+
+        <div class="stat-row">
+            <span class="stat-label">Risk Level:</span>
+            <span class="risk-badge risk-medium">🟡 MEDIUM</span>
+        </div>
+
+        <div class="stat-row">
+            <span class="stat-label">Step:</span>
+            <span class="step-display">25 / 100</span>
+        </div>
+    </div>
+</body>
+</html>

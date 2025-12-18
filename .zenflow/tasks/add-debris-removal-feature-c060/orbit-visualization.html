@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orbit Visualization</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a1a;
+            color: #eee;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: #53a8ff;
+        }
+        .legend {
+            background: #16213e;
+            border: 2px solid #0f3460;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            width: 500px;
+        }
+        .legend-header {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #53a8ff;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+        .legend-item:last-child {
+            margin-bottom: 0;
+        }
+        .sprite {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .sprite-satellite {
+            color: #60a5fa;
+        }
+        .sprite-drv {
+            color: #34d399;
+        }
+        .sprite-drv-uncoop {
+            color: #fb923c;
+        }
+        .sprite-debris {
+            font-size: 12px;
+        }
+        .sprite-debris-coop {
+            color: #9ca3af;
+        }
+        .sprite-debris-uncoop {
+            color: #ef4444;
+        }
+        .legend-text {
+            flex: 1;
+        }
+        .legend-subtext {
+            color: #888;
+            font-size: 12px;
+            margin-left: 36px;
+            margin-top: 4px;
+        }
+        .visualization {
+            position: relative;
+            width: 600px;
+            height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .earth {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+        }
+        .orbit {
+            position: absolute;
+            border: 2px solid rgba(83, 168, 255, 0.3);
+            border-radius: 50%;
+        }
+        .orbit-leo {
+            width: 200px;
+            height: 200px;
+        }
+        .orbit-meo {
+            width: 350px;
+            height: 350px;
+        }
+        .orbit-geo {
+            width: 500px;
+            height: 500px;
+        }
+        .orbit-label {
+            position: absolute;
+            color: #53a8ff;
+            font-size: 12px;
+            font-weight: 600;
+            background: rgba(10, 10, 26, 0.8);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .label-leo {
+            top: 0;
+            left: 50%;
+            transform: translate(-50%, -30px);
+        }
+        .label-meo {
+            top: 0;
+            left: 50%;
+            transform: translate(-50%, -30px);
+        }
+        .label-geo {
+            top: 0;
+            left: 50%;
+            transform: translate(-50%, -30px);
+        }
+        .object {
+            position: absolute;
+            font-size: 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .note {
+            margin-top: 30px;
+            padding: 16px;
+            background: #16213e;
+            border-left: 4px solid #53a8ff;
+            border-radius: 4px;
+            width: 500px;
+            font-size: 13px;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <div class="title">Orbital Visualization Key</div>
+
+    <div class="legend">
+        <div class="legend-header">Display Elements</div>
+        
+        <div class="legend-item">
+            <div class="sprite sprite-satellite">⬤</div>
+            <div class="legend-text">Satellites (GPS/Weather/Comms)</div>
+        </div>
+
+        <div class="legend-item">
+            <div class="sprite sprite-drv">⬟</div>
+            <div class="legend-text">DRVs (Pentagon/Shield shape)</div>
+        </div>
+        <div class="legend-subtext">- Cooperative: Blue/Cyan</div>
+        <div class="legend-subtext">- Uncooperative: Orange/Red</div>
+
+        <div class="legend-item">
+            <div class="sprite sprite-debris sprite-debris-coop">••</div>
+            <div class="legend-text">Debris</div>
+        </div>
+        <div class="legend-subtext">- Cooperative: Gray dots</div>
+        <div class="legend-subtext">- Uncooperative: Red dots</div>
+
+        <div class="legend-item" style="margin-top: 12px;">
+            <div class="sprite">✨</div>
+            <div class="legend-text">Animation: DRVs show "capture effect" when removing debris</div>
+        </div>
+    </div>
+
+    <div class="visualization">
+        <div class="orbit orbit-geo">
+            <div class="orbit-label label-geo">GEO (outer ring)</div>
+        </div>
+        <div class="orbit orbit-meo">
+            <div class="orbit-label label-meo">MEO (middle ring)</div>
+        </div>
+        <div class="orbit orbit-leo">
+            <div class="orbit-label label-leo">LEO (inner ring)</div>
+        </div>
+        
+        <div class="earth">🌍</div>
+
+        <div class="object sprite-drv" style="top: 50px; left: 280px;">⬟</div>
+        <div class="object sprite-debris-uncoop" style="top: 80px; left: 320px; font-size: 12px;">••</div>
+        <div class="object sprite-satellite" style="top: 70px; left: 400px;">⬤</div>
+        <div class="object sprite-debris-coop" style="top: 100px; left: 450px; font-size: 12px;">•</div>
+        <div class="object sprite-drv-uncoop" style="top: 120px; left: 520px;">⬟</div>
+
+        <div class="object sprite-satellite" style="top: 180px; left: 200px;">⬤</div>
+        <div class="object sprite-debris-coop" style="top: 200px; left: 240px; font-size: 12px;">•</div>
+        <div class="object sprite-drv" style="top: 220px; left: 280px;">⬟</div>
+        <div class="object sprite-debris-uncoop" style="top: 240px; left: 330px; font-size: 12px;">••</div>
+        <div class="object sprite-satellite" style="top: 260px; left: 380px;">⬤</div>
+        <div class="object sprite-debris-coop" style="top: 280px; left: 420px; font-size: 12px;">••</div>
+
+        <div class="object sprite-satellite" style="top: 330px; left: 150px;">⬤</div>
+        <div class="object sprite-debris-coop" style="top: 350px; left: 190px; font-size: 12px;">•••</div>
+        <div class="object sprite-drv" style="top: 370px; left: 230px;">⬟</div>
+        <div class="object sprite-debris-coop" style="top: 390px; left: 280px; font-size: 12px;">•</div>
+        <div class="object sprite-satellite" style="top: 410px; left: 330px;">⬤</div>
+        <div class="object sprite-debris-coop" style="top: 430px; left: 380px; font-size: 12px;">•</div>
+    </div>
+
+    <div class="note">
+        <strong>Note:</strong> Debris removal vehicles actively patrol their assigned orbital layer, removing debris pieces within range. The capture effect animation plays when a DRV successfully removes debris.
+    </div>
+</body>
+</html>
