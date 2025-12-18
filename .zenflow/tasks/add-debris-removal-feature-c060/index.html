@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debris Removal Feature - UI Wireframes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a1a;
+            color: #eee;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .title {
+            font-size: 36px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+        }
+        .subtitle {
+            font-size: 18px;
+            color: #888;
+            font-weight: 400;
+        }
+        .description {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+            background: #16213e;
+            border-left: 4px solid #53a8ff;
+            border-radius: 6px;
+            font-size: 15px;
+            line-height: 1.6;
+            color: #ccc;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        .card {
+            background: #16213e;
+            border: 2px solid #0f3460;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(83, 168, 255, 0.3);
+            border-color: #53a8ff;
+        }
+        .card-image {
+            width: 100%;
+            height: 220px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 2px solid #0f3460;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(83, 168, 255, 0.1) 0%, transparent 70%);
+        }
+        .card-icon {
+            font-size: 64px;
+            opacity: 0.6;
+            z-index: 1;
+        }
+        .card-content {
+            padding: 20px;
+        }
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #53a8ff;
+            margin-bottom: 8px;
+        }
+        .card-description {
+            font-size: 14px;
+            color: #aaa;
+            line-height: 1.5;
+        }
+        .card-link {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 8px 16px;
+            background: rgba(83, 168, 255, 0.1);
+            color: #53a8ff;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        .card-link:hover {
+            background: rgba(83, 168, 255, 0.2);
+        }
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 2px solid #0f3460;
+            color: #666;
+            font-size: 14px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: rgba(74, 222, 128, 0.2);
+            color: #4ade80;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">Debris Removal Feature</h1>
+            <p class="subtitle">UI Wireframes & Design Mockups</p>
+        </div>
+
+        <div class="description">
+            <strong>Overview:</strong> This feature adds debris removal vehicles (DRVs) to the Kessler Simulation game, 
+            allowing players to actively clean up orbital debris. DRVs come in two types: Cooperative (targets large, 
+            trackable debris) and Uncooperative (targets small, untracked debris). The following wireframes demonstrate 
+            the UI updates needed to support this strategic gameplay mechanic.
+        </div>
+
+        <div class="grid">
+            <div class="card" onclick="window.location.href='control-panel-satellite.html'">
+                <div class="card-image">
+                    <div class="card-icon">🛰️</div>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">1. Control Panel - Satellite Launch</h3>
+                    <p class="card-description">
+                        Standard satellite launch interface showing orbit selection, insurance toggle, 
+                        and cost calculation. This is the default view when "Satellite" launch type is selected.
+                    </p>
+                    <a href="control-panel-satellite.html" class="card-link">View Wireframe →</a>
+                </div>
+            </div>
+
+            <div class="card" onclick="window.location.href='control-panel-drv.html'">
+                <div class="card-image">
+                    <div class="card-icon">⬟</div>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">2. Control Panel - DRV Launch <span class="badge">NEW</span></h3>
+                    <p class="card-description">
+                        DRV launch configuration showing cooperative/uncooperative selection with live stats preview 
+                        (cost, removal capacity, success rate, duration).
+                    </p>
+                    <a href="control-panel-drv.html" class="card-link">View Wireframe →</a>
+                </div>
+            </div>
+
+            <div class="card" onclick="window.location.href='status-display.html'">
+                <div class="card-image">
+                    <div class="card-icon">📊</div>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">3. Orbital Status Display <span class="badge">ENHANCED</span></h3>
+                    <p class="card-description">
+                        Enhanced status panel showing active satellites, active DRVs, total debris with type breakdown 
+                        (cooperative/uncooperative), debris removed count, and risk level.
+                    </p>
+                    <a href="status-display.html" class="card-link">View Wireframe →</a>
+                </div>
+            </div>
+
+            <div class="card" onclick="window.location.href='orbit-visualization.html'">
+                <div class="card-image">
+                    <div class="card-icon">🌍</div>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">4. Orbit Visualization Key <span class="badge">NEW</span></h3>
+                    <p class="card-description">
+                        Visual legend showing sprite types for satellites, DRVs (pentagon shapes with color coding), 
+                        and debris (color-coded by type). Includes example orbital layout.
+                    </p>
+                    <a href="orbit-visualization.html" class="card-link">View Wireframe →</a>
+                </div>
+            </div>
+
+            <div class="card" onclick="window.location.href='debris-removal-chart.html'">
+                <div class="card-image">
+                    <div class="card-icon">📈</div>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">5. Debris Removal Chart <span class="badge">NEW</span></h3>
+                    <p class="card-description">
+                        Line chart tracking cumulative debris removed over time with supporting statistics 
+                        (total removed, active DRVs, average per turn).
+                    </p>
+                    <a href="debris-removal-chart.html" class="card-link">View Wireframe →</a>
+                </div>
+            </div>
+
+            <div class="card" onclick="window.location.href='mission-panel.html'">
+                <div class="card-image">
+                    <div class="card-icon">🎯</div>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">6. Mission Panel <span class="badge">ENHANCED</span></h3>
+                    <p class="card-description">
+                        Mission list showing new debris removal missions with progress tracking. Includes 
+                        progress bars and completion status for both active and completed missions.
+                    </p>
+                    <a href="mission-panel.html" class="card-link">View Wireframe →</a>
+                </div>
+            </div>
+
+            <div class="card" onclick="window.location.href='debris-breakdown.html'">
+                <div class="card-image">
+                    <div class="card-icon">📉</div>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">7. Debris Type Breakdown <span class="badge">NEW</span></h3>
+                    <p class="card-description">
+                        Comprehensive debris visualization showing cooperative vs uncooperative debris distribution 
+                        with both bar charts and pie chart representations.
+                    </p>
+                    <a href="debris-breakdown.html" class="card-link">View Wireframe →</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Kessler Simulation - Debris Removal Feature Specification</p>
+            <p style="margin-top: 8px;">7 wireframes • 5 new missions • 2 DRV types</p>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                if (e.target.tagName !== 'A') {
+                    const link = this.querySelector('.card-link');
+                    if (link) {
+                        window.location.href = link.getAttribute('href');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
