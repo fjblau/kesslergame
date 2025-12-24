@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kessler Simulation - Orbital Visualization</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 1200px;
+            background: #1a1a1a;
+            border: 2px solid #333;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .header {
+            background: #222;
+            padding: 15px 20px;
+            border-bottom: 2px solid #333;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            letter-spacing: 2px;
+            color: #fff;
+        }
+
+        .main-content {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .canvas-container {
+            flex: 1;
+            background: #000;
+            border: 2px solid #333;
+            position: relative;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .sidebar {
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .panel {
+            background: #222;
+            border: 2px solid #333;
+            padding: 15px;
+        }
+
+        .panel h2 {
+            font-size: 16px;
+            margin-bottom: 12px;
+            color: #fff;
+            border-bottom: 1px solid #444;
+            padding-bottom: 8px;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .status-label {
+            color: #999;
+        }
+
+        .status-value {
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .risk-indicator {
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .risk-LOW {
+            background: #10B981;
+            color: #000;
+        }
+
+        .risk-MEDIUM {
+            background: #F59E0B;
+            color: #000;
+        }
+
+        .risk-CRITICAL {
+            background: #EF4444;
+            color: #fff;
+        }
+
+        .event-log {
+            height: 250px;
+            overflow-y: auto;
+            font-size: 12px;
+        }
+
+        .event-entry {
+            padding: 6px;
+            margin-bottom: 4px;
+            background: #1a1a1a;
+            border-left: 3px solid #444;
+        }
+
+        .event-entry.launch {
+            border-left-color: #3B82F6;
+        }
+
+        .event-entry.collision {
+            border-left-color: #EF4444;
+        }
+
+        .event-entry.storm {
+            border-left-color: #FBBF24;
+        }
+
+        .event-entry.drv {
+            border-left-color: #10B981;
+        }
+
+        .event-time {
+            color: #666;
+            font-size: 10px;
+        }
+
+        .footer {
+            background: #222;
+            padding: 10px 20px;
+            border-top: 2px solid #333;
+            font-size: 12px;
+            text-align: center;
+            color: #999;
+        }
+
+        .legend-item {
+            display: inline-block;
+            margin: 0 15px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>KESSLER SIMULATION - ORBITAL VISUALIZATION</h1>
+        </div>
+        
+        <div class="main-content">
+            <div class="canvas-container">
+                <canvas id="orbitCanvas" width="800" height="600"></canvas>
+            </div>
+            
+            <div class="sidebar">
+                <div class="panel">
+                    <h2>STATUS</h2>
+                    <div class="status-item">
+                        <span class="status-label">Step:</span>
+                        <span class="status-value" id="stepCount">0/100</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Budget:</span>
+                        <span class="status-value" id="budget">$100M</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Satellites:</span>
+                        <span class="status-value" id="satCount">0</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Debris:</span>
+                        <span class="status-value" id="debrisCount">0</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">DRVs:</span>
+                        <span class="status-value" id="drvCount">0</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Risk Level:</span>
+                        <span class="status-value">
+                            <span class="risk-indicator risk-LOW" id="riskLevel">LOW</span>
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="panel">
+                    <h2>EVENT LOG</h2>
+                    <div class="event-log" id="eventLog"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <span class="legend-item">○ Satellite</span>
+            <span class="legend-item">× Debris</span>
+            <span class="legend-item">◆ DRV</span>
+            <span class="legend-item">⚡ Event</span>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('orbitCanvas');
+        const ctx = canvas.getContext('2d');
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+
+        const ORBIT_CONFIG = {
+            LEO: {
+                radius: 100,
+                color: '#3B82F6',
+                speed: Math.PI / 5,
+                bounds: [80, 120],
+                label: 'LEO'
+            },
+            MEO: {
+                radius: 180,
+                color: '#10B981',
+                speed: Math.PI / 7.5,
+                bounds: [160, 200],
+                label: 'MEO'
+            },
+            GEO: {
+                radius: 260,
+                color: '#F59E0B',
+                speed: Math.PI / 10,
+                bounds: [240, 280],
+                label: 'GEO'
+            }
+        };
+
+        const state = {
+            step: 0,
+            budget: 100000000,
+            satellites: [],
+            debris: [],
+            drvs: [],
+            riskLevel: 'LOW',
+            eventLog: [],
+            animations: []
+        };
+
+        let animationTime = 0;
+        let lastTimestamp = 0;
+
+        class Satellite {
+            constructor(layer, type, angle, insured = true) {
+                this.id = 'sat_' + Date.now() + Math.random();
+                this.layer = layer;
+                this.type = type;
+                this.angle = angle;
+                this.radius = ORBIT_CONFIG[layer].radius;
+                this.insured = insured;
+                this.size = 8;
+            }
+
+            update(deltaTime) {
+                this.angle += ORBIT_CONFIG[this.layer].speed * deltaTime;
+            }
+
+            draw(ctx) {
+                const x = centerX + Math.cos(this.angle) * this.radius;
+                const y = centerY + Math.sin(this.angle) * this.radius;
+
+                ctx.save();
+                ctx.strokeStyle = '#fff';
+                ctx.fillStyle = ORBIT_CONFIG[this.layer].color;
+                ctx.lineWidth = 2;
+
+                ctx.beginPath();
+                ctx.arc(x, y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.fillStyle = '#fff';
+                ctx.font = '10px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText(this.type[0], x, y + 3);
+
+                ctx.restore();
+            }
+
+            getPosition() {
+                return {
+                    x: centerX + Math.cos(this.angle) * this.radius,
+                    y: centerY + Math.sin(this.angle) * this.radius
+                };
+            }
+        }
+
+        class Debris {
+            constructor(layer, angle, velocity = 0) {
+                this.id = 'debris_' + Date.now() + Math.random();
+                this.layer = layer;
+                this.angle = angle;
+                this.radius = ORBIT_CONFIG[layer].radius;
+                this.velocity = velocity;
+                this.size = 4;
+                this.type = Math.random() > 0.5 ? 'cooperative' : 'uncooperative';
+            }
+
+            update(deltaTime) {
+                this.angle += (ORBIT_CONFIG[this.layer].speed + this.velocity) * deltaTime;
+                this.velocity *= 0.99;
+            }
+
+            draw(ctx) {
+                const x = centerX + Math.cos(this.angle) * this.radius;
+                const y = centerY + Math.sin(this.angle) * this.radius;
+
+                ctx.save();
+                ctx.strokeStyle = '#EF4444';
+                ctx.lineWidth = 2;
+
+                ctx.beginPath();
+                ctx.moveTo(x - this.size, y - this.size);
+                ctx.lineTo(x + this.size, y + this.size);
+                ctx.moveTo(x + this.size, y - this.size);
+                ctx.lineTo(x - this.size, y + this.size);
+                ctx.stroke();
+
+                ctx.restore();
+            }
+
+            getPosition() {
+                return {
+                    x: centerX + Math.cos(this.angle) * this.radius,
+                    y: centerY + Math.sin(this.angle) * this.radius
+                };
+            }
+        }
+
+        class DebrisRemovalVehicle {
+            constructor(layer, angle, type = 'cooperative') {
+                this.id = 'drv_' + Date.now() + Math.random();
+                this.layer = layer;
+                this.type = type;
+                this.angle = angle;
+                this.radius = ORBIT_CONFIG[layer].radius;
+                this.size = 10;
+                this.target = null;
+                this.capturing = false;
+            }
+
+            update(deltaTime) {
+                if (this.target && !this.capturing) {
+                    const targetAngle = this.target.angle;
+                    let diff = targetAngle - this.angle;
+                    
+                    while (diff > Math.PI) diff -= 2 * Math.PI;
+                    while (diff < -Math.PI) diff += 2 * Math.PI;
+                    
+                    const moveSpeed = ORBIT_CONFIG[this.layer].speed * 2;
+                    this.angle += Math.sign(diff) * Math.min(Math.abs(diff), moveSpeed * deltaTime);
+                    
+                    const pos1 = this.getPosition();
+                    const pos2 = this.target.getPosition();
+                    const dist = Math.sqrt((pos1.x - pos2.x) ** 2 + (pos1.y - pos2.y) ** 2);
+                    
+                    if (dist < 15) {
+                        this.capturing = true;
+                    }
+                } else {
+                    this.angle += ORBIT_CONFIG[this.layer].speed * deltaTime;
+                }
+            }
+
+            draw(ctx) {
+                const x = centerX + Math.cos(this.angle) * this.radius;
+                const y = centerY + Math.sin(this.angle) * this.radius;
+
+                ctx.save();
+                ctx.strokeStyle = '#FBBF24';
+                ctx.fillStyle = '#FBBF24';
+                ctx.lineWidth = 2;
+
+                ctx.beginPath();
+                ctx.moveTo(x, y - this.size);
+                ctx.lineTo(x + this.size * 0.866, y + this.size / 2);
+                ctx.lineTo(x - this.size * 0.866, y + this.size / 2);
+                ctx.closePath();
+                ctx.stroke();
+                ctx.fill();
+
+                ctx.restore();
+            }
+
+            getPosition() {
+                return {
+                    x: centerX + Math.cos(this.angle) * this.radius,
+                    y: centerY + Math.sin(this.angle) * this.radius
+                };
+            }
+
+            targetDebris(debrisList) {
+                if (!this.target || this.capturing) {
+                    const layerDebris = debrisList.filter(d => d.layer === this.layer);
+                    if (layerDebris.length > 0) {
+                        this.target = layerDebris[0];
+                        this.capturing = false;
+                    }
+                }
+            }
+        }
+
+        class LaunchAnimation {
+            constructor(targetLayer, entity) {
+                this.targetLayer = targetLayer;
+                this.entity = entity;
+                this.progress = 0;
+                this.duration = 1.5;
+                this.startX = centerX;
+                this.startY = centerY + 280;
+                this.complete = false;
+            }
+
+            update(deltaTime) {
+                this.progress += deltaTime / this.duration;
+                if (this.progress >= 1) {
+                    this.progress = 1;
+                    this.complete = true;
+                }
+            }
+
+            draw(ctx) {
+                const targetRadius = ORBIT_CONFIG[this.targetLayer].radius;
+                const targetAngle = this.entity.angle;
+                const targetX = centerX + Math.cos(targetAngle) * targetRadius;
+                const targetY = centerY + Math.sin(targetAngle) * targetRadius;
+
+                const t = this.easeOutCubic(this.progress);
+                const x = this.startX + (targetX - this.startX) * t;
+                const y = this.startY + (targetY - this.startY) * t;
+
+                ctx.save();
+                ctx.strokeStyle = ORBIT_CONFIG[this.targetLayer].color;
+                ctx.setLineDash([5, 5]);
+                ctx.lineWidth = 1;
+                ctx.globalAlpha = 0.5;
+
+                ctx.beginPath();
+                ctx.moveTo(this.startX, this.startY);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+
+                ctx.restore();
+
+                if (this.entity instanceof Satellite) {
+                    ctx.save();
+                    ctx.strokeStyle = '#fff';
+                    ctx.fillStyle = ORBIT_CONFIG[this.targetLayer].color;
+                    ctx.lineWidth = 2;
+                    ctx.globalAlpha = t;
+
+                    ctx.beginPath();
+                    ctx.arc(x, y, this.entity.size, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.stroke();
+
+                    ctx.restore();
+                }
+            }
+
+            easeOutCubic(t) {
+                return 1 - Math.pow(1 - t, 3);
+            }
+        }
+
+        class CollisionAnimation {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.progress = 0;
+                this.duration = 0.5;
+                this.complete = false;
+            }
+
+            update(deltaTime) {
+                this.progress += deltaTime / this.duration;
+                if (this.progress >= 1) {
+                    this.complete = true;
+                }
+            }
+
+            draw(ctx) {
+                ctx.save();
+                
+                const radius = this.progress * 50;
+                const alpha = 1 - this.progress;
+
+                ctx.strokeStyle = '#EF4444';
+                ctx.lineWidth = 3;
+                ctx.globalAlpha = alpha;
+
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, radius, 0, Math.PI * 2);
+                ctx.stroke();
+
+                if (this.progress < 0.3) {
+                    ctx.fillStyle = '#fff';
+                    ctx.globalAlpha = (0.3 - this.progress) / 0.3;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, 10, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                ctx.restore();
+            }
+        }
+
+        class SolarStormAnimation {
+            constructor() {
+                this.progress = 0;
+                this.duration = 2;
+                this.complete = false;
+            }
+
+            update(deltaTime) {
+                this.progress += deltaTime / this.duration;
+                if (this.progress >= 1) {
+                    this.complete = true;
+                }
+            }
+
+            draw(ctx) {
+                ctx.save();
+
+                const alpha = Math.sin(this.progress * Math.PI) * 0.3;
+                ctx.fillStyle = `rgba(251, 191, 36, ${alpha})`;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                for (let i = 0; i < 5; i++) {
+                    const startAngle = (this.progress * Math.PI * 2 + i * Math.PI / 2.5) % (Math.PI * 2);
+                    const length = 150 + Math.sin(this.progress * Math.PI * 4) * 50;
+                    
+                    const x1 = centerX + Math.cos(startAngle) * 40;
+                    const y1 = centerY + Math.sin(startAngle) * 40;
+                    const x2 = centerX + Math.cos(startAngle) * length;
+                    const y2 = centerY + Math.sin(startAngle) * length;
+
+                    ctx.strokeStyle = `rgba(251, 191, 36, ${alpha * 2})`;
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(x1, y1);
+                    ctx.lineTo(x2, y2);
+                    ctx.stroke();
+                }
+
+                ctx.restore();
+            }
+        }
+
+        const animationSequence = [
+            { time: 2, action: 'launchSatellite', params: { orbit: 'LEO', type: 'GPS' } },
+            { time: 3.5, action: 'launchSatellite', params: { orbit: 'MEO', type: 'Comms' } },
+            { time: 5, action: 'launchSatellite', params: { orbit: 'GEO', type: 'Weather' } },
+            { time: 6.5, action: 'launchSatellite', params: { orbit: 'LEO', type: 'GPS' } },
+            { time: 8, action: 'launchSatellite', params: { orbit: 'MEO', type: 'Comms' } },
+            { time: 9, action: 'addDebris', params: { count: 3, layer: 'LEO' } },
+            { time: 10, action: 'launchDRV', params: { orbit: 'LEO', type: 'cooperative' } },
+            { time: 15, action: 'triggerCollision', params: { layer: 'MEO' } },
+            { time: 20, action: 'updateRisk', params: { level: 'MEDIUM' } },
+            { time: 25, action: 'triggerSolarStorm' },
+            { time: 30, action: 'showSummary' },
+            { time: 45, action: 'restart' }
+        ];
+
+        let executedEvents = new Set();
+
+        function drawOrbits() {
+            ctx.save();
+            ctx.setLineDash([5, 5]);
+            ctx.lineWidth = 1;
+
+            for (const [name, config] of Object.entries(ORBIT_CONFIG)) {
+                ctx.strokeStyle = config.color;
+                ctx.globalAlpha = 0.3;
+
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, config.radius, 0, Math.PI * 2);
+                ctx.stroke();
+
+                ctx.globalAlpha = 0.7;
+                ctx.font = '12px monospace';
+                ctx.fillStyle = config.color;
+                ctx.fillText(config.label, centerX + config.radius + 10, centerY);
+            }
+
+            ctx.restore();
+        }
+
+        function drawEarth() {
+            ctx.save();
+            ctx.fillStyle = '#1a5f7a';
+            ctx.strokeStyle = '#2d8fb8';
+            ctx.lineWidth = 2;
+
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 30, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        function launchSatellite(params) {
+            const angle = Math.random() * Math.PI * 2;
+            const satellite = new Satellite(params.orbit, params.type, angle);
+            
+            const launchAnim = new LaunchAnimation(params.orbit, satellite);
+            state.animations.push(launchAnim);
+            
+            setTimeout(() => {
+                state.satellites.push(satellite);
+                state.budget -= 10000000;
+                state.step += 2;
+                updateUI();
+            }, 1500);
+
+            logEvent('launch', `Launched ${params.type} satellite to ${params.orbit}`);
+        }
+
+        function launchDRV(params) {
+            const angle = Math.random() * Math.PI * 2;
+            const drv = new DebrisRemovalVehicle(params.orbit, angle, params.type);
+            
+            const launchAnim = new LaunchAnimation(params.orbit, drv);
+            state.animations.push(launchAnim);
+            
+            setTimeout(() => {
+                state.drvs.push(drv);
+                state.budget -= 15000000;
+                state.step += 3;
+                updateUI();
+            }, 1500);
+
+            logEvent('drv', `Deployed DRV to ${params.orbit}`);
+        }
+
+        function triggerCollision(params) {
+            const layerSats = state.satellites.filter(s => s.layer === params.layer);
+            if (layerSats.length >= 2) {
+                const sat1 = layerSats[0];
+                const sat2 = layerSats[1];
+                const pos = sat1.getPosition();
+
+                const collisionAnim = new CollisionAnimation(pos.x, pos.y);
+                state.animations.push(collisionAnim);
+
+                state.satellites = state.satellites.filter(s => s !== sat1 && s !== sat2);
+
+                for (let i = 0; i < 5; i++) {
+                    const angle = sat1.angle + (Math.random() - 0.5) * 0.3;
+                    const velocity = (Math.random() - 0.5) * 0.5;
+                    state.debris.push(new Debris(params.layer, angle, velocity));
+                }
+
+                state.step += 5;
+                state.budget += 5000000;
+                updateUI();
+
+                logEvent('collision', `Collision in ${params.layer}! Insurance payout: $5M`);
+            }
+        }
+
+        function addDebris(params) {
+            for (let i = 0; i < params.count; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                state.debris.push(new Debris(params.layer, angle));
+            }
+            updateUI();
+        }
+
+        function triggerSolarStorm() {
+            const stormAnim = new SolarStormAnimation();
+            state.animations.push(stormAnim);
+
+            setTimeout(() => {
+                const leoDebris = state.debris.filter(d => d.layer === 'LEO');
+                const toRemove = Math.floor(leoDebris.length * 0.3);
+                
+                for (let i = 0; i < toRemove; i++) {
+                    const index = state.debris.indexOf(leoDebris[i]);
+                    if (index > -1) {
+                        state.debris.splice(index, 1);
+                    }
+                }
+                
+                state.step += 3;
+                updateUI();
+            }, 1000);
+
+            logEvent('storm', 'Solar storm! 30% of LEO debris removed');
+        }
+
+        function updateRisk(params) {
+            state.riskLevel = params.level;
+            updateUI();
+            logEvent('risk', `Risk level increased to ${params.level}`);
+        }
+
+        function showSummary() {
+            logEvent('summary', `Simulation complete. Final stats - Sats: ${state.satellites.length}, Debris: ${state.debris.length}`);
+        }
+
+        function restart() {
+            state.satellites = [];
+            state.debris = [];
+            state.drvs = [];
+            state.budget = 100000000;
+            state.step = 0;
+            state.riskLevel = 'LOW';
+            state.eventLog = [];
+            state.animations = [];
+            animationTime = 0;
+            executedEvents.clear();
+            updateUI();
+        }
+
+        function logEvent(type, message) {
+            const event = {
+                type,
+                message,
+                time: Math.floor(animationTime)
+            };
+            state.eventLog.unshift(event);
+            
+            const logContainer = document.getElementById('eventLog');
+            const entry = document.createElement('div');
+            entry.className = `event-entry ${type}`;
+            entry.innerHTML = `
+                <div class="event-time">T+${event.time}s</div>
+                <div>${event.message}</div>
+            `;
+            logContainer.insertBefore(entry, logContainer.firstChild);
+
+            if (state.eventLog.length > 20) {
+                state.eventLog.pop();
+                if (logContainer.lastChild) {
+                    logContainer.removeChild(logContainer.lastChild);
+                }
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('stepCount').textContent = `${state.step}/100`;
+            document.getElementById('budget').textContent = `$${Math.round(state.budget / 1000000)}M`;
+            document.getElementById('satCount').textContent = state.satellites.length;
+            document.getElementById('debrisCount').textContent = state.debris.length;
+            document.getElementById('drvCount').textContent = state.drvs.length;
+            
+            const riskElem = document.getElementById('riskLevel');
+            riskElem.textContent = state.riskLevel;
+            riskElem.className = `risk-indicator risk-${state.riskLevel}`;
+        }
+
+        function update(deltaTime) {
+            state.satellites.forEach(sat => sat.update(deltaTime));
+            state.debris.forEach(debris => debris.update(deltaTime));
+            state.drvs.forEach(drv => {
+                drv.targetDebris(state.debris);
+                drv.update(deltaTime);
+
+                if (drv.capturing && drv.target) {
+                    const index = state.debris.indexOf(drv.target);
+                    if (index > -1) {
+                        state.debris.splice(index, 1);
+                        logEvent('drv', `DRV captured debris in ${drv.layer}`);
+                        drv.target = null;
+                        drv.capturing = false;
+                        updateUI();
+                    }
+                }
+            });
+
+            state.animations = state.animations.filter(anim => {
+                anim.update(deltaTime);
+                return !anim.complete;
+            });
+
+            for (const event of animationSequence) {
+                const eventKey = `${event.time}_${event.action}`;
+                if (animationTime >= event.time && !executedEvents.has(eventKey)) {
+                    executedEvents.add(eventKey);
+                    
+                    switch (event.action) {
+                        case 'launchSatellite':
+                            launchSatellite(event.params);
+                            break;
+                        case 'launchDRV':
+                            launchDRV(event.params);
+                            break;
+                        case 'triggerCollision':
+                            triggerCollision(event.params);
+                            break;
+                        case 'addDebris':
+                            addDebris(event.params);
+                            break;
+                        case 'updateRisk':
+                            updateRisk(event.params);
+                            break;
+                        case 'triggerSolarStorm':
+                            triggerSolarStorm();
+                            break;
+                        case 'showSummary':
+                            showSummary();
+                            break;
+                        case 'restart':
+                            restart();
+                            break;
+                    }
+                }
+            }
+        }
+
+        function draw() {
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            drawOrbits();
+            drawEarth();
+
+            state.debris.forEach(debris => debris.draw(ctx));
+            state.satellites.forEach(sat => sat.draw(ctx));
+            state.drvs.forEach(drv => drv.draw(ctx));
+            state.animations.forEach(anim => anim.draw(ctx));
+        }
+
+        function animate(timestamp) {
+            if (lastTimestamp === 0) {
+                lastTimestamp = timestamp;
+            }
+
+            const deltaTime = (timestamp - lastTimestamp) / 1000;
+            lastTimestamp = timestamp;
+            animationTime += deltaTime;
+
+            update(deltaTime);
+            draw();
+
+            requestAnimationFrame(animate);
+        }
+
+        updateUI();
+        requestAnimationFrame(animate);
+    </script>
+</body>
+</html>
