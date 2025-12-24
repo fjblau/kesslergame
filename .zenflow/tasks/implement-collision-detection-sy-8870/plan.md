@@ -62,7 +62,8 @@ Implement core collision detection logic in `src/game/engine/collision.ts`:
 
 ---
 
-### [ ] Step: Implement Debris Generation Logic
+### [x] Step: Implement Debris Generation Logic
+<!-- chat-id: c3e0b48f-c447-4b00-8484-61a7744f2cf7 -->
 
 Extend `src/game/engine/collision.ts` with debris generation:
 - Add `generateDebrisFromCollision()` function

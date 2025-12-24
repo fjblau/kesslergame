@@ -1,5 +1,11 @@
-import type { Satellite, Debris, OrbitLayer } from '../types';
-import { INSURANCE_CONFIG, COLLISION_THRESHOLDS } from '../constants';
+import type { Satellite, Debris, OrbitLayer, DebrisType } from '../types';
+import { 
+  INSURANCE_CONFIG, 
+  COLLISION_THRESHOLDS, 
+  DEBRIS_PER_COLLISION, 
+  DEBRIS_TYPE_DISTRIBUTION,
+  LAYER_BOUNDS 
+} from '../constants';
 
 export function calculateInsurancePayout(satellite: Satellite): number {
   return INSURANCE_CONFIG[satellite.insuranceTier].payout;
@@ -51,4 +57,40 @@ export function detectCollisions(
   }
 
   return collisions;
+}
+
+function clampToLayer(value: number, layer: OrbitLayer): number {
+  const [min, max] = LAYER_BOUNDS[layer];
+  return Math.max(min, Math.min(max, value));
+}
+
+function generateDebrisType(): DebrisType {
+  return Math.random() < DEBRIS_TYPE_DISTRIBUTION.cooperative 
+    ? 'cooperative' 
+    : 'uncooperative';
+}
+
+export function generateDebrisFromCollision(
+  x: number,
+  y: number,
+  layer: OrbitLayer,
+  generateId: () => string
+): Debris[] {
+  const debris: Debris[] = [];
+  const offsetRange = 5;
+
+  for (let i = 0; i < DEBRIS_PER_COLLISION; i++) {
+    const xOffset = (Math.random() - 0.5) * offsetRange * 2;
+    const yOffset = (Math.random() - 0.5) * offsetRange * 2;
+
+    debris.push({
+      id: generateId(),
+      x: clampToLayer(x + xOffset, layer),
+      y: clampToLayer(y + yOffset, layer),
+      layer,
+      type: generateDebrisType(),
+    });
+  }
+
+  return debris;
 }
