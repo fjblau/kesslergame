@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { GameState, OrbitLayer, SatelliteType, InsuranceTier, DRVType, DRVTargetPriority, BudgetDifficulty } from '../../game/types';
 import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG } from '../../game/constants';
+import { processDRVRemoval } from '../../game/engine/debrisRemoval';
 import { detectCollisions, generateDebrisFromCollision, calculateTotalPayout } from '../../game/engine/collision';
 
 const generateId = () => Math.random().toString(36).substring(2, 11);
@@ -92,6 +93,18 @@ export const gameSlice = createSlice({
       state.budget += action.payload;
     },
 
+    processDRVOperations: (state) => {
+      const activeDRVs = state.debrisRemovalVehicles.filter(drv => drv.age < drv.maxAge);
+
+      activeDRVs.forEach(drv => {
+        const result = processDRVRemoval(drv, state.debris);
+
+        drv.debrisRemoved += result.removedDebrisIds.length;
+
+        state.debris = state.debris.filter(d => !result.removedDebrisIds.includes(d.id));
+      });
+    },
+
     advanceTurn: (state) => {
       state.step += 1;
 
@@ -106,6 +119,53 @@ export const gameSlice = createSlice({
 
       state.satellites.forEach(sat => sat.age++);
       state.debrisRemovalVehicles.forEach(drv => drv.age++);
+
+      gameSlice.caseReducers.processDRVOperations(state);
+    },
+
+    processCollisions: (state) => {
+      const collisions = detectCollisions(state.satellites, state.debris);
+
+      if (collisions.length === 0) {
+        return;
+      }
+
+      const destroyedSatelliteIds = new Set<string>();
+      const newDebris = [];
+
+      for (const collision of collisions) {
+        const { obj1, obj2, layer } = collision;
+
+        const isSat1 = 'purpose' in obj1;
+        const isSat2 = 'purpose' in obj2;
+
+        if (isSat1) {
+          destroyedSatelliteIds.add(obj1.id);
+        }
+        if (isSat2) {
+          destroyedSatelliteIds.add(obj2.id);
+        }
+
+        const collisionX = (obj1.x + obj2.x) / 2;
+        const collisionY = (obj1.y + obj2.y) / 2;
+
+        const debris = generateDebrisFromCollision(collisionX, collisionY, layer, generateId);
+        newDebris.push(...debris);
+      }
+
+      const destroyedSatellites = state.satellites.filter(sat => 
+        destroyedSatelliteIds.has(sat.id)
+      );
+
+      const insurancePayout = calculateTotalPayout(destroyedSatellites);
+
+      state.satellites = state.satellites.filter(sat => 
+        !destroyedSatelliteIds.has(sat.id)
+      );
+
+      state.debris.push(...newDebris);
+
+      state.budget += insurancePayout;
     },
 
     processCollisions: (state) => {
@@ -161,6 +221,7 @@ export const {
   launchDRV,
   spendBudget,
   addBudget,
+  processDRVOperations,
   advanceTurn,
   processCollisions,
 } = gameSlice.actions;
