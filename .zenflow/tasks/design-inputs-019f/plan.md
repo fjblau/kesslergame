@@ -51,7 +51,7 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Step: Phase 1 Implementation
+### [x] Step: Phase 1 Implementation
 
 Implement the 5 core interactive inputs according to `phase1-spec.md`.
 
