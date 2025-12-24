@@ -51,15 +51,28 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Step: Implementation
+### [ ] Step: Phase 1 Implementation
 
-Implement the task according to the technical specification and general engineering best practices.
+Implement the 5 core interactive inputs according to `phase1-spec.md`.
 
-1. Break the task into steps where possible.
-2. Implement the required changes in the codebase.
-3. Add and run relevant tests and linters.
-4. Perform basic manual verification if applicable.
-5. After completion, write a report to `{@artifacts_path}/report.md` describing:
-   - What was implemented
-   - How the solution was tested
-   - The biggest issues or challenges encountered
+**Inputs to Implement**:
+1. Game Speed Selector (Time Control)
+2. Insurance Tier Selector (Budget Management)
+3. DRV Target Priority (DRV Configuration)
+4. Satellite Purpose Selector (Satellite Config)
+5. Budget Difficulty Modifier (Game Setup)
+
+**Implementation Order**:
+1. Data model updates (types, constants, slices)
+2. Core components (Insurance, Purpose, DRV Priority)
+3. Game logic updates (collision, debris removal, launch actions)
+4. UI controls (Game Speed)
+5. Setup screen (Budget Difficulty)
+6. Integration & testing
+
+**Deliverables**:
+- 11 new files
+- 8 modified files
+- All tests passing
+- Manual verification complete
+- Report written to `{@artifacts_path}/report.md`
