@@ -27,12 +27,12 @@ Created a self-contained HTML wireframe animation demonstrating the Kessler Simu
 
 #### 4. Event Sequence (45-second loop)
 ```
-T+0s:  Initial state display
 T+2s:  Launch GPS satellite to LEO
 T+3.5s: Launch Comms satellite to MEO
 T+5s:  Launch Weather satellite to GEO
 T+6.5s: Launch second GPS satellite to LEO
-T+8s:  Add debris to LEO
+T+8s:  Launch second Comms satellite to MEO
+T+9s:  Add debris to LEO
 T+10s: Deploy DRV to LEO
 T+15s: Trigger collision in MEO (generates 5 debris)
 T+20s: Risk level increases to MEDIUM
@@ -116,11 +116,11 @@ T+45s: Restart animation loop
 
 ## Implementation Statistics
 
-- **Total Lines**: ~800 (HTML + CSS + JavaScript)
+- **Total Lines**: 892 (HTML + CSS + JavaScript)
 - **Entity Types**: 3 (Satellite, Debris, DRV)
 - **Animation Types**: 4 (Launch, Collision, Solar Storm, DRV Capture)
 - **Timed Events**: 12 in sequence
-- **File Size**: ~24KB
+- **File Size**: 29KB
 - **Development Time**: Single session
 - **Browser Compatibility**: Chrome, Firefox, Safari, Edge (Chromium)
 

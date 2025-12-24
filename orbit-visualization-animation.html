@@ -281,8 +281,7 @@
             drvs: [],
             riskLevel: 'LOW',
             eventLog: [],
-            animations: [],
-            particles: []
+            animations: []
         };
 
         let animationTime = 0;
@@ -596,12 +595,12 @@
         }
 
         const animationSequence = [
-            { time: 0, action: 'showInitialState' },
             { time: 2, action: 'launchSatellite', params: { orbit: 'LEO', type: 'GPS' } },
             { time: 3.5, action: 'launchSatellite', params: { orbit: 'MEO', type: 'Comms' } },
             { time: 5, action: 'launchSatellite', params: { orbit: 'GEO', type: 'Weather' } },
             { time: 6.5, action: 'launchSatellite', params: { orbit: 'LEO', type: 'GPS' } },
-            { time: 8, action: 'addDebris', params: { count: 3, layer: 'LEO' } },
+            { time: 8, action: 'launchSatellite', params: { orbit: 'MEO', type: 'Comms' } },
+            { time: 9, action: 'addDebris', params: { count: 3, layer: 'LEO' } },
             { time: 10, action: 'launchDRV', params: { orbit: 'LEO', type: 'cooperative' } },
             { time: 15, action: 'triggerCollision', params: { layer: 'MEO' } },
             { time: 20, action: 'updateRisk', params: { level: 'MEDIUM' } },
@@ -810,6 +809,7 @@
                     const index = state.debris.indexOf(drv.target);
                     if (index > -1) {
                         state.debris.splice(index, 1);
+                        logEvent('drv', `DRV captured debris in ${drv.layer}`);
                         drv.target = null;
                         drv.capturing = false;
                         updateUI();
