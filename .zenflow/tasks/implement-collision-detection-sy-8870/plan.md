@@ -75,7 +75,8 @@ Extend `src/game/engine/collision.ts` with debris generation:
 
 ---
 
-### [ ] Step: Add processCollisions Redux Action
+### [x] Step: Add processCollisions Redux Action
+<!-- chat-id: e3ca9abd-c107-42e3-a92c-a3b77f03b6d9 -->
 
 Update `src/store/slices/gameSlice.ts`:
 - Add `processCollisions` reducer action
