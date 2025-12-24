@@ -1,9 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { GameState, OrbitLayer, SatelliteType, InsuranceTier, DRVType, DRVTargetPriority, BudgetDifficulty } from '../../game/types';
-import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG } from '../../game/constants';
-import { processDRVRemoval } from '../../game/engine/debrisRemoval';
-import { detectCollisions, generateDebrisFromCollision, calculateTotalPayout } from '../../game/engine/collision';
+import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG, LEO_LIFETIME } from '../../game/constants';
 
 const generateId = () => Math.random().toString(36).substring(2, 11);
 
@@ -120,7 +118,9 @@ export const gameSlice = createSlice({
       state.satellites.forEach(sat => sat.age++);
       state.debrisRemovalVehicles.forEach(drv => drv.age++);
 
-      gameSlice.caseReducers.processDRVOperations(state);
+      state.satellites = state.satellites.filter(
+        sat => sat.layer !== 'LEO' || sat.age < LEO_LIFETIME
+      );
     },
 
     processCollisions: (state) => {
