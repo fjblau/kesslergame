@@ -50,7 +50,8 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Step: Implement Collision Detection Functions
+### [x] Step: Implement Collision Detection Functions
+<!-- chat-id: 139dabe3-6638-4074-931d-a25e88266a96 -->
 
 Implement core collision detection logic in `src/game/engine/collision.ts`:
 - Add `detectCollisions()` function to check distance between objects
