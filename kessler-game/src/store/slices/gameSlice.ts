@@ -2,6 +2,8 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { GameState, OrbitLayer, SatelliteType, InsuranceTier, DRVType, DRVTargetPriority, BudgetDifficulty } from '../../game/types';
 import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG, LEO_LIFETIME } from '../../game/constants';
+import { detectCollisions, generateDebrisFromCollision, calculateTotalPayout } from '../../game/engine/collision';
+import { processDRVRemoval } from '../../game/engine/debrisRemoval';
 
 const generateId = () => Math.random().toString(36).substring(2, 11);
 
