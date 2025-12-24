@@ -18,7 +18,7 @@ Do not make assumptions on important decisions — get clarification first.
 
 ## Workflow Steps
 
-### [ ] Step: Technical Specification
+### [x] Step: Technical Specification
 
 Assess the task's difficulty, as underestimating it leads to poor outcomes.
 - easy: Straightforward implementation, trivial bug fix or feature
@@ -50,15 +50,50 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Step: Implementation
+### [ ] Step: Implement Collision Detection Functions
 
-Implement the task according to the technical specification and general engineering best practices.
+Implement core collision detection logic in `src/game/engine/collision.ts`:
+- Add `detectCollisions()` function to check distance between objects
+- Implement layer-based filtering and threshold comparison
+- Return collision pairs for processing
 
-1. Break the task into steps where possible.
-2. Implement the required changes in the codebase.
-3. Add and run relevant tests and linters.
-4. Perform basic manual verification if applicable.
-5. After completion, write a report to `{@artifacts_path}/report.md` describing:
-   - What was implemented
-   - How the solution was tested
-   - The biggest issues or challenges encountered
+**Verification**: TypeScript compilation passes, no type errors
+
+---
+
+### [ ] Step: Implement Debris Generation Logic
+
+Extend `src/game/engine/collision.ts` with debris generation:
+- Add `generateDebrisFromCollision()` function
+- Generate 5 debris pieces per collision at satellite position
+- Implement 70/30 cooperative/uncooperative type distribution
+- Ensure debris stays within layer bounds
+
+**Verification**: TypeScript compilation passes, bounds logic is correct
+
+---
+
+### [ ] Step: Add processCollisions Redux Action
+
+Update `src/store/slices/gameSlice.ts`:
+- Add `processCollisions` reducer action
+- Integrate collision detection and debris generation functions
+- Remove destroyed satellites from state
+- Add generated debris to state
+- Calculate and add insurance payouts to budget
+- Export action in actions list
+
+**Verification**: Redux state updates correctly, no mutations outside reducer
+
+---
+
+### [ ] Step: Verification and Testing
+
+Run build and lint checks, perform manual testing:
+1. Run `npm run build` - ensure clean build
+2. Run `npm run lint` - ensure no linting errors
+3. Start dev server and test collision scenarios
+4. Verify edge cases (multiple collisions, boundary conditions)
+5. Write completion report to `{@artifacts_path}/report.md`
+
+**Report includes**: What was implemented, testing approach, challenges encountered
