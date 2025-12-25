@@ -10,24 +10,24 @@ export function OrbitVisualization() {
   const debrisRemovalVehicles = useAppSelector(state => state.game.debrisRemovalVehicles);
 
   return (
-    <div className="relative flex items-center justify-center bg-slate-950" style={{ width: '600px', height: '600px' }}>
+    <div style={{ position: 'relative', width: '600px', height: '600px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#0f172a' }}>
       {/* GEO orbit */}
-      <div className="absolute" style={{ width: '500px', height: '500px', border: '2px solid rgba(96, 165, 250, 0.5)', borderRadius: '50%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-8 text-xs font-semibold text-blue-400 bg-slate-950/80 px-2 py-1 rounded">
+      <div style={{ position: 'absolute', width: '500px', height: '500px', border: '2px solid rgba(96, 165, 250, 0.5)', borderRadius: '50%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+        <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translate(-50%, -32px)', fontSize: '12px', fontWeight: 600, color: '#60a5fa', backgroundColor: 'rgba(15, 23, 42, 0.8)', padding: '4px 8px', borderRadius: '4px' }}>
           GEO
         </div>
       </div>
       
       {/* MEO orbit */}
-      <div className="absolute" style={{ width: '350px', height: '350px', border: '2px solid rgba(96, 165, 250, 0.5)', borderRadius: '50%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-8 text-xs font-semibold text-blue-400 bg-slate-950/80 px-2 py-1 rounded">
+      <div style={{ position: 'absolute', width: '350px', height: '350px', border: '2px solid rgba(96, 165, 250, 0.5)', borderRadius: '50%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+        <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translate(-50%, -32px)', fontSize: '12px', fontWeight: 600, color: '#60a5fa', backgroundColor: 'rgba(15, 23, 42, 0.8)', padding: '4px 8px', borderRadius: '4px' }}>
           MEO
         </div>
       </div>
       
       {/* LEO orbit */}
-      <div className="absolute" style={{ width: '200px', height: '200px', border: '2px solid rgba(96, 165, 250, 0.5)', borderRadius: '50%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-8 text-xs font-semibold text-blue-400 bg-slate-950/80 px-2 py-1 rounded">
+      <div style={{ position: 'absolute', width: '200px', height: '200px', border: '2px solid rgba(96, 165, 250, 0.5)', borderRadius: '50%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+        <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translate(-50%, -32px)', fontSize: '12px', fontWeight: 600, color: '#60a5fa', backgroundColor: 'rgba(15, 23, 42, 0.8)', padding: '4px 8px', borderRadius: '4px' }}>
           LEO
         </div>
       </div>
