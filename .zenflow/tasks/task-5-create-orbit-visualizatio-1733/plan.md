@@ -165,7 +165,8 @@ Add sprite rendering to the main visualization component.
 
 ---
 
-### [ ] Step: Integrate OrbitVisualization into App.tsx
+### [x] Step: Integrate OrbitVisualization into App.tsx
+<!-- chat-id: 5818adcd-f8c8-4c23-84bb-2c22e3a94f78 -->
 
 Add the visualization to the main app layout.
 
