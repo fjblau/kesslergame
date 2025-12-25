@@ -46,9 +46,29 @@ Add a new reducer to `gameSlice` that:
 ### 2. Integration Pattern
 
 The action should be:
-- Called after age increment in turn processing
-- Exported from gameSlice for use by game engine/UI
+- Called immediately after `advanceTurn()` dispatch in all locations
+- Current dispatch locations:
+  - `kessler-game/src/components/ControlPanel/ControlPanel.tsx:53` (after manual launch)
+  - `kessler-game/src/hooks/useGameSpeed.ts:23` (in game speed loop)
+- Exported from gameSlice for use by UI components
 - Pure function with no side effects (standard Redux pattern)
+
+**Implementation locations**:
+```typescript
+// In ControlPanel.tsx:53, change:
+dispatch(advanceTurn());
+
+// To:
+dispatch(advanceTurn());
+dispatch(decommissionExpiredDRVs());
+
+// In useGameSpeed.ts:23, change:
+dispatch(advanceTurn());
+
+// To:
+dispatch(advanceTurn());
+dispatch(decommissionExpiredDRVs());
+```
 
 ## Source Code Changes
 
@@ -56,29 +76,53 @@ The action should be:
 
 **`kessler-game/src/store/slices/gameSlice.ts`**
 - Add `decommissionExpiredDRVs` reducer (no payload needed)
-- Export action in the destructured exports (line 112-119)
+- Export action in the destructured exports (line 112-119):
+  ```typescript
+  export const {
+    initializeGame,
+    launchSatellite,
+    launchDRV,
+    spendBudget,
+    addBudget,
+    advanceTurn,
+    decommissionExpiredDRVs, // ADD THIS
+  } = gameSlice.actions;
+  ```
+
+**`kessler-game/src/components/ControlPanel/ControlPanel.tsx`**
+- Import `decommissionExpiredDRVs` action (line 3)
+- Dispatch after `advanceTurn()` call (line 53)
+
+**`kessler-game/src/hooks/useGameSpeed.ts`**
+- Import `decommissionExpiredDRVs` action (line 3)
+- Dispatch after `advanceTurn()` call (line 23)
 
 ### Implementation Details
 
+**Optimized single-pass implementation**:
 ```typescript
 decommissionExpiredDRVs: (state) => {
-  const expired = state.debrisRemovalVehicles.filter(drv => drv.age >= drv.maxAge);
+  const remaining = [];
   
-  expired.forEach(drv => {
-    state.debris.push({
-      id: generateId(),
-      x: drv.x,
-      y: drv.y,
-      layer: drv.layer,
-      type: 'cooperative',
-    });
+  state.debrisRemovalVehicles.forEach(drv => {
+    if (drv.age >= drv.maxAge) {
+      state.debris.push({
+        id: generateId(),
+        x: drv.x,
+        y: drv.y,
+        layer: drv.layer,
+        type: 'cooperative',
+      });
+    } else {
+      remaining.push(drv);
+    }
   });
   
-  state.debrisRemovalVehicles = state.debrisRemovalVehicles.filter(
-    drv => drv.age < drv.maxAge
-  );
+  state.debrisRemovalVehicles = remaining;
 }
 ```
+
+This implementation uses a single iteration instead of filtering twice for better performance.
 
 ## Data Model Changes
 
@@ -89,22 +133,27 @@ No interface or type changes required. All necessary types exist:
 
 ## Verification Approach
 
-### Manual Testing
-1. Launch a DRV (cooperative or uncooperative)
-2. Advance turns until DRV reaches maxAge
-3. Verify DRV is removed from the vehicles array
-4. Verify cooperative debris appears at the DRV's position
+### Manual Testing Steps
+1. Launch a cooperative DRV in any orbit (maxAge = 10 turns)
+2. Use fast game speed or manual advance to reach turn 10+
+3. Verify the DRV disappears from the visualization
+4. Check Redux DevTools: `state.game.debrisRemovalVehicles` should not contain the expired DRV
+5. Check Redux DevTools: `state.game.debris` should have a new cooperative debris item at the DRV's position
+6. Repeat test with uncooperative DRV (maxAge = 8 turns)
 
-### Code Quality Checks
-- Run TypeScript compiler to verify type correctness
-- Run project linter if configured
-- Verify no console errors in development build
+### Code Quality Commands
+```bash
+npm run build   # Runs TypeScript compiler (tsc -b) and build
+npm run lint    # Runs ESLint
+```
 
-### Integration Verification
-The action needs to be called appropriately in the game loop. Determine where:
-- Check existing game engine files for turn processing
-- Verify the action is dispatched after `advanceTurn`
-- This may require checking files like game hooks or engine modules
+### Verification Checklist
+- [ ] TypeScript compiles without errors
+- [ ] ESLint passes with no new warnings
+- [ ] DRVs are removed when age >= maxAge
+- [ ] Cooperative debris created at correct position and layer
+- [ ] No console errors in browser dev tools
+- [ ] Game continues normally after decommissioning
 
 ## Complexity Assessment
 
