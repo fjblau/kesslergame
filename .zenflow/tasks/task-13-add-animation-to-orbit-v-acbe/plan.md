@@ -85,7 +85,8 @@ Each sprite should rotate based on entity's x-coordinate (x/100 * 360°).
 
 ---
 
-### [ ] Step: Add Launch Animations
+### [x] Step: Add Launch Animations
+<!-- chat-id: fa4f0195-b901-4d8c-b4cc-6ad5e9b662cb -->
 
 Implement launch animation sequence:
 1. Detect newly launched entities by tracking IDs
