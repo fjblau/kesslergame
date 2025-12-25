@@ -29,7 +29,7 @@ export function GameSetupScreen({ onStart }: GameSetupScreenProps) {
 
         <button
           onClick={handleStart}
-          className="mt-8 w-full py-4 px-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white rounded-lg font-bold text-lg uppercase tracking-wide transition-all shadow-lg hover:shadow-xl"
+          className="mt-8 w-full py-5 px-8 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white rounded-xl font-bold text-lg uppercase tracking-wide transition-all shadow-lg hover:shadow-xl"
         >
           Start Game
         </button>

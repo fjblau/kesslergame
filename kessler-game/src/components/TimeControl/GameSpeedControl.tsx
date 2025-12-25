@@ -13,14 +13,14 @@ export function GameSpeedControl() {
   ];
 
   return (
-    <div className="flex gap-2 bg-slate-800 border border-slate-700 rounded-lg p-2">
+    <div className="flex gap-3 bg-slate-800 border border-slate-700 rounded-xl p-3">
       {speeds.map(({ value, label, icon }) => (
         <button
           key={value}
           onClick={() => dispatch(setGameSpeed(value))}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+          className={`px-6 py-3 rounded-xl font-medium transition-colors ${
             speed === value
-              ? 'bg-blue-600 text-white'
+              ? 'bg-blue-600 text-white shadow-lg'
               : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
           }`}
         >

@@ -18,15 +18,15 @@ export function Tabs({ tabs, defaultTab }: TabsProps) {
 
   return (
     <div className="w-full">
-      <div className="flex gap-2 mb-6 bg-slate-800/50 p-2 rounded-lg">
+      <div className="flex gap-3 mb-6 bg-slate-800/50 p-3 rounded-xl">
         {tabs.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`
-              px-6 py-3 rounded-lg font-medium transition-colors duration-200
+              px-8 py-4 rounded-xl font-semibold text-lg transition-colors duration-200
               ${activeTab === tab.id 
-                ? 'bg-blue-600 text-white' 
+                ? 'bg-blue-600 text-white shadow-lg' 
                 : 'bg-slate-700/50 text-gray-300 hover:bg-slate-700 hover:text-white'
               }
             `}
