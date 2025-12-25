@@ -1,8 +1,10 @@
 import { useEffect, useRef } from 'react';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
-import { advanceTurn, decommissionExpiredDRVs } from '../store/slices/gameSlice';
+import { advanceTurn, decommissionExpiredDRVs, triggerSolarStorm } from '../store/slices/gameSlice';
 import { setGameSpeed } from '../store/slices/uiSlice';
 import { updateMissionProgress, notifyMissionComplete, selectActiveMissions } from '../store/slices/missionsSlice';
+import { addEvent } from '../store/slices/eventSlice';
+import { checkSolarStorm } from '../game/engine/events';
 
 export function useGameSpeed() {
   const speed = useAppSelector(state => state.ui.gameSpeed);
@@ -45,6 +47,21 @@ export function useGameSpeed() {
 
     const interval = setInterval(() => {
       dispatch(advanceTurn());
+
+      if (checkSolarStorm()) {
+        const leoDebrisCountBefore = gameState.debris.filter(d => d.layer === 'LEO').length;
+        dispatch(triggerSolarStorm());
+        const leoDebrisCountAfter = gameState.debris.filter(d => d.layer === 'LEO').length;
+        const removedCount = leoDebrisCountBefore - leoDebrisCountAfter;
+        
+        dispatch(addEvent({
+          type: 'solar-storm',
+          turn: gameState.step + 1,
+          message: `☀️ Solar storm cleared ${removedCount} debris from LEO!`,
+          details: { debrisRemoved: removedCount }
+        }));
+      }
+
       dispatch(updateMissionProgress(gameState));
       dispatch(decommissionExpiredDRVs());
     }, 2000);

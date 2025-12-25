@@ -128,3 +128,6 @@ export const DEBRIS_PER_COLLISION = 5;
 export const DEBRIS_TYPE_DISTRIBUTION = { cooperative: 0.70, uncooperative: 0.30 };
 export const MAX_STEPS = 100;
 export const LEO_LIFETIME = 20;
+
+export const SOLAR_STORM_PROBABILITY = 0.10;
+export const SOLAR_STORM_LEO_REMOVAL_RATE = 0.30;

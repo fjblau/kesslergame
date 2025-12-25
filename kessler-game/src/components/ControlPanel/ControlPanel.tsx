@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { launchSatellite, launchDRV, spendBudget, advanceTurn, decommissionExpiredDRVs } from '../../store/slices/gameSlice';
+import { launchSatellite, launchDRV, spendBudget, advanceTurn, decommissionExpiredDRVs, triggerSolarStorm } from '../../store/slices/gameSlice';
 import { updateMissionProgress, trackDRVLaunch } from '../../store/slices/missionsSlice';
+import { addEvent } from '../../store/slices/eventSlice';
 import type { OrbitLayer, SatelliteType, InsuranceTier, DRVType, DRVTargetPriority } from '../../game/types';
 import { LAUNCH_COSTS, INSURANCE_CONFIG, DRV_CONFIG, DRV_PRIORITY_CONFIG, SATELLITE_PURPOSE_CONFIG } from '../../game/constants';
+import { checkSolarStorm } from '../../game/engine/events';
 import { InsuranceTierSelector } from './InsuranceTierSelector';
 import { SatellitePurposeSelector } from '../SatelliteConfig/SatellitePurposeSelector';
 import { DRVTargetPriority as DRVTargetPrioritySelector } from '../DRVPanel/DRVTargetPriority';
@@ -54,6 +56,21 @@ export function ControlPanel() {
     }
 
     dispatch(advanceTurn());
+
+    if (checkSolarStorm()) {
+      const leoDebrisCountBefore = gameState.debris.filter(d => d.layer === 'LEO').length;
+      dispatch(triggerSolarStorm());
+      const leoDebrisCountAfter = gameState.debris.filter(d => d.layer === 'LEO').length;
+      const removedCount = leoDebrisCountBefore - leoDebrisCountAfter;
+      
+      dispatch(addEvent({
+        type: 'solar-storm',
+        turn: gameState.step + 1,
+        message: `☀️ Solar storm cleared ${removedCount} debris from LEO!`,
+        details: { debrisRemoved: removedCount }
+      }));
+    }
+
     dispatch(updateMissionProgress(gameState));
     dispatch(decommissionExpiredDRVs());
   };
