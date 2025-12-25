@@ -4,6 +4,7 @@ import type { GameState, OrbitLayer, SatelliteType, InsuranceTier, DRVType, DRVT
 import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG, LEO_LIFETIME } from '../../game/constants';
 import { detectCollisions, generateDebrisFromCollision, calculateTotalPayout } from '../../game/engine/collision';
 import { processDRVRemoval } from '../../game/engine/debrisRemoval';
+import { calculateRiskLevel } from '../../game/engine/risk';
 
 const generateId = () => Math.random().toString(36).substring(2, 11);
 
@@ -28,6 +29,7 @@ const initialState: GameState = {
   budgetDrainAmount: BUDGET_DIFFICULTY_CONFIG.normal.drainAmount,
   nextIncomeAt: BUDGET_DIFFICULTY_CONFIG.normal.incomeInterval,
   history: [],
+  riskLevel: 'LOW',
 };
 
 export const gameSlice = createSlice({
@@ -45,6 +47,7 @@ export const gameSlice = createSlice({
         budgetDrainAmount: config.drainAmount,
         nextIncomeAt: config.incomeInterval,
         history: [],
+        riskLevel: 'LOW',
       };
     },
 
@@ -105,6 +108,8 @@ export const gameSlice = createSlice({
 
         state.debris = state.debris.filter(d => !result.removedDebrisIds.includes(d.id));
       });
+
+      state.riskLevel = calculateRiskLevel(state.debris.length);
     },
 
     advanceTurn: (state) => {
@@ -186,6 +191,8 @@ export const gameSlice = createSlice({
       state.debris.push(...newDebris);
 
       state.budget += insurancePayout;
+
+      state.riskLevel = calculateRiskLevel(state.debris.length);
     },
 
     decommissionExpiredDRVs: (state) => {
@@ -206,6 +213,8 @@ export const gameSlice = createSlice({
       });
       
       state.debrisRemovalVehicles = remaining;
+
+      state.riskLevel = calculateRiskLevel(state.debris.length);
     },
   },
 });
