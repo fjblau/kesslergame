@@ -48,6 +48,13 @@ export interface TurnHistory {
   activeDRVCount: number;
 }
 
+export interface CollisionEvent {
+  id: string;
+  x: number;
+  y: number;
+  timestamp: number;
+}
+
 export interface GameState {
   step: number;
   maxSteps: number;
@@ -63,6 +70,7 @@ export interface GameState {
   history: TurnHistory[];
   riskLevel: RiskLevel;
   gameOver: boolean;
+  recentCollisions: CollisionEvent[];
 }
 
 export interface UIState {

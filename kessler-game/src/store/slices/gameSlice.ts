@@ -32,6 +32,7 @@ const initialState: GameState = {
   history: [],
   riskLevel: 'LOW',
   gameOver: false,
+  recentCollisions: [],
 };
 
 export const gameSlice = createSlice({
@@ -51,6 +52,7 @@ export const gameSlice = createSlice({
         history: [],
         riskLevel: 'LOW',
         gameOver: false,
+        recentCollisions: [],
       };
     },
 
@@ -189,6 +191,7 @@ export const gameSlice = createSlice({
 
       const destroyedSatelliteIds = new Set<string>();
       const newDebris = [];
+      const collisionEvents = [];
 
       for (const collision of collisions) {
         const { obj1, obj2, layer } = collision;
@@ -205,6 +208,13 @@ export const gameSlice = createSlice({
 
         const collisionX = (obj1.x + obj2.x) / 2;
         const collisionY = (obj1.y + obj2.y) / 2;
+
+        collisionEvents.push({
+          id: generateId(),
+          x: collisionX,
+          y: collisionY,
+          timestamp: Date.now(),
+        });
 
         const debris = generateDebrisFromCollision(collisionX, collisionY, layer, generateId);
         newDebris.push(...debris);
@@ -223,6 +233,8 @@ export const gameSlice = createSlice({
       state.debris.push(...newDebris);
 
       state.budget += insurancePayout;
+
+      state.recentCollisions.push(...collisionEvents);
 
       state.riskLevel = calculateRiskLevel(state.debris.length);
 
@@ -264,6 +276,13 @@ export const gameSlice = createSlice({
         state.gameOver = true;
       }
     },
+
+    clearOldCollisions: (state) => {
+      const now = Date.now();
+      state.recentCollisions = state.recentCollisions.filter(
+        collision => now - collision.timestamp < 1000
+      );
+    },
   },
 });
 
@@ -279,6 +298,7 @@ export const {
   decommissionExpiredDRVs,
   triggerSolarStorm,
   checkGameOver,
+  clearOldCollisions,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

@@ -98,6 +98,7 @@ Implement launch animation sequence:
 ---
 
 ### [ ] Step: Integrate Collision Flash Effects
+<!-- chat-id: 40d8795c-ccb7-4372-96b9-53cb2b475c33 -->
 
 Add collision effect rendering:
 1. Subscribe to collision events from Redux store

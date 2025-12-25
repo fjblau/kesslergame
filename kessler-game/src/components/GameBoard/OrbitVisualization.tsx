@@ -1,10 +1,12 @@
 import { useRef, useEffect, useState } from 'react';
-import { useAppSelector } from '../../store/hooks';
+import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { SatelliteSprite } from './SatelliteSprite';
 import { DebrisParticle } from './DebrisParticle';
 import { DRVSprite } from './DRVSprite';
 import { LaunchAnimation } from './LaunchAnimation';
+import { CollisionEffect } from './CollisionEffect';
 import { mapToPixels } from './utils';
+import { clearOldCollisions } from '../../store/slices/gameSlice';
 
 interface LaunchingEntity {
   id: string;
@@ -13,15 +15,18 @@ interface LaunchingEntity {
 }
 
 export function OrbitVisualization() {
+  const dispatch = useAppDispatch();
   const satellites = useAppSelector(state => state.game.satellites);
   const debris = useAppSelector(state => state.game.debris);
   const debrisRemovalVehicles = useAppSelector(state => state.game.debrisRemovalVehicles);
+  const recentCollisions = useAppSelector(state => state.game.recentCollisions);
 
   const prevSatelliteIds = useRef<Set<string>>(new Set());
   const prevDRVIds = useRef<Set<string>>(new Set());
   const [launchingSatellites, setLaunchingSatellites] = useState<Set<string>>(new Set());
   const [launchingDRVs, setLaunchingDRVs] = useState<Set<string>>(new Set());
   const [activeTrails, setActiveTrails] = useState<LaunchingEntity[]>([]);
+  const [activeCollisions, setActiveCollisions] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const currentSatelliteIds = new Set(satellites.map(s => s.id));
