@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { launchSatellite, launchDRV, spendBudget, advanceTurn } from '../../store/slices/gameSlice';
+import { launchSatellite, launchDRV, spendBudget, advanceTurn, decommissionExpiredDRVs } from '../../store/slices/gameSlice';
 import type { OrbitLayer, SatelliteType, InsuranceTier, DRVType, DRVTargetPriority } from '../../game/types';
 import { LAUNCH_COSTS, INSURANCE_CONFIG, DRV_CONFIG, DRV_PRIORITY_CONFIG, SATELLITE_PURPOSE_CONFIG } from '../../game/constants';
 import { InsuranceTierSelector } from './InsuranceTierSelector';
@@ -51,6 +51,7 @@ export function ControlPanel() {
     }
 
     dispatch(advanceTurn());
+    dispatch(decommissionExpiredDRVs());
   };
 
   return (

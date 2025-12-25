@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
-import { advanceTurn } from '../store/slices/gameSlice';
+import { advanceTurn, decommissionExpiredDRVs } from '../store/slices/gameSlice';
 import { setGameSpeed } from '../store/slices/uiSlice';
 
 export function useGameSpeed() {
@@ -21,6 +21,7 @@ export function useGameSpeed() {
 
     const interval = setInterval(() => {
       dispatch(advanceTurn());
+      dispatch(decommissionExpiredDRVs());
     }, 2000);
 
     return () => clearInterval(interval);
