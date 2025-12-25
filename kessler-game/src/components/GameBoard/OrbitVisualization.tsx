@@ -10,23 +10,23 @@ export function OrbitVisualization() {
   const debrisRemovalVehicles = useAppSelector(state => state.game.debrisRemovalVehicles);
 
   return (
-    <div className="relative w-[600px] h-[600px] flex items-center justify-center bg-slate-950">
+    <div className="relative flex items-center justify-center bg-slate-950" style={{ width: '600px', height: '600px' }}>
       {/* GEO orbit */}
-      <div className="absolute w-[500px] h-[500px] border-4 rounded-full" style={{ borderColor: '#60a5fa', backgroundColor: 'rgba(96, 165, 250, 0.05)' }}>
+      <div className="absolute rounded-full" style={{ width: '500px', height: '500px', border: '2px solid rgba(96, 165, 250, 0.5)' }}>
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-8 text-xs font-semibold text-blue-400 bg-slate-950/80 px-2 py-1 rounded">
           GEO
         </div>
       </div>
       
       {/* MEO orbit */}
-      <div className="absolute w-[350px] h-[350px] border-2 rounded-full" style={{ borderColor: 'rgba(96, 165, 250, 0.8)' }}>
+      <div className="absolute rounded-full" style={{ width: '350px', height: '350px', border: '2px solid rgba(96, 165, 250, 0.5)' }}>
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-8 text-xs font-semibold text-blue-400 bg-slate-950/80 px-2 py-1 rounded">
           MEO
         </div>
       </div>
       
       {/* LEO orbit */}
-      <div className="absolute w-[200px] h-[200px] border-2 rounded-full" style={{ borderColor: 'rgba(96, 165, 250, 0.8)' }}>
+      <div className="absolute rounded-full" style={{ width: '200px', height: '200px', border: '2px solid rgba(96, 165, 250, 0.5)' }}>
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-8 text-xs font-semibold text-blue-400 bg-slate-950/80 px-2 py-1 rounded">
           LEO
         </div>
