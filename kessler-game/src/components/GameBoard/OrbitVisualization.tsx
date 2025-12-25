@@ -12,7 +12,7 @@ export function OrbitVisualization() {
   return (
     <div className="relative w-[600px] h-[600px] flex items-center justify-center bg-slate-950">
       {/* GEO orbit */}
-      <div className="absolute w-[500px] h-[500px] border-2 rounded-full" style={{ borderColor: 'rgba(96, 165, 250, 0.8)' }}>
+      <div className="absolute w-[500px] h-[500px] border-4 rounded-full" style={{ borderColor: '#60a5fa', backgroundColor: 'rgba(96, 165, 250, 0.05)' }}>
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-8 text-xs font-semibold text-blue-400 bg-slate-950/80 px-2 py-1 rounded">
           GEO
         </div>
