@@ -1,7 +1,8 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-body {
-  @apply bg-slate-900 text-gray-100 min-h-screen font-sans;
+@layer base {
+  body {
+    @apply bg-slate-900 text-gray-100 min-h-screen;
+    font-family: Calibri, Candara, 'Segoe UI', Arial, sans-serif;
+  }
 }
