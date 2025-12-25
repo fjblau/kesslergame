@@ -12,32 +12,46 @@
 - **State Management**: Redux Toolkit 2.11.2
 - **Charts**: Recharts 3.6.0
 
+### Project Structure
+- Main application located in `kessler-game/` subdirectory
+- React source files in `kessler-game/src/`
+- Existing `kessler-game/src/components/ui/` directory with reusable components
+
+### Available npm Scripts
+- `npm run dev` - Development server
+- `npm run build` - TypeScript compilation and production build
+- `npm run lint` - ESLint code quality checks
+
 ### Current Architecture
 - Single-page application with conditional rendering (setup screen vs game screen)
+- Setup screen shown when `gameStarted = false` (`kessler-game/src/App.tsx:19-20`)
+- Game view shown when `gameStarted = true` with all gameplay components
 - Components organized by feature (Setup, ControlPanel, Charts, GameBoard, etc.)
-- Tailwind CSS for styling with some inline styles
-- Already uses rounded corners (`rounded-lg`) in many components
+- Tailwind CSS for styling with some inline styles in `App.tsx:37, 42`
+- Already uses rounded corners (`rounded-lg`) in most components
 - Already has button hover states and selected states with color changes
 
 ## Requirements Analysis
 
 ### 1. Multi-Tab Window
-Transform the current single-page game layout into a tabbed interface with three tabs:
-- **Tab 1: Setup** - Game configuration and difficulty settings
-- **Tab 2: Orbital Visualization/Launch** - Orbital visualization, control panel, and stats
-- **Tab 3: Analytics/Charts** - Three charts showing debris count, satellite count, and debris removal over time
+Transform the current single-page game layout into a tabbed interface with **two tabs**:
+- **Tab 1: Launch** - Orbital visualization, control panel, stats, and game speed controls
+- **Tab 2: Analytics** - Three charts showing debris count, satellite count, and debris removal over time
+
+**Important:** The Setup screen remains as a pre-game screen (shown before `gameStarted = true`). It is NOT a tab in the game interface.
 
 ### 2. Rounded Corners
 Ensure all content boxes use consistent rounded corners:
-- Already implemented in most components using Tailwind's `rounded-lg`
+- Already implemented in most components using Tailwind's `rounded-lg` (8px)
+- `OrbitVisualization.tsx:13` already uses `borderRadius: '8px'` (equivalent to `rounded-lg`)
 - Need to verify consistency across all components
-- Update any remaining rectangular borders to use `rounded-lg` or `rounded-xl`
+- Update any remaining inline border styles to use Tailwind classes
 
-### 3. Calibri Font
-Apply Calibri font family across the application:
-- Add font configuration to Tailwind config
-- Add fallback fonts (system fonts) for compatibility
-- Apply to body element in index.css
+### 3. Helvetica Font
+Apply Helvetica font family across the application:
+- Add font configuration to Tailwind config with proper fallback chain
+- Fallback: `'Helvetica Neue', 'Helvetica', 'Arial', sans-serif`
+- Apply to body element via Tailwind utilities in `index.css`
 
 ### 4. Button Styling
 Ensure all buttons have:
@@ -48,56 +62,59 @@ Ensure all buttons have:
 ## Implementation Approach
 
 ### 1. Create Tab Component
-Create a new reusable tab component (`src/components/ui/Tabs.tsx`) that handles:
-- Tab header navigation
-- Active tab state
-- Tab content rendering
+Create a new reusable tab component in the existing `ui/` directory (`kessler-game/src/components/ui/Tabs.tsx`) that handles:
+- Tab header navigation with clean, rounded design
+- Active tab state management (local useState)
+- Tab content rendering (conditional rendering for performance optimization)
 - Styling consistent with the app's design language
+- TypeScript interfaces for type safety
 
 ### 2. Restructure App.tsx
-Modify `src/components/App.tsx` to:
-- Integrate the tab component
-- Reorganize the layout to show tabs after game start
-- Distribute components across three tabs:
-  - **Setup Tab**: `GameSetupScreen` and `BudgetDifficultySettings`
+Modify `kessler-game/src/App.tsx` to:
+- Integrate the Tabs component after game starts (`gameStarted = true`)
+- Add tab state management (useState for active tab)
+- Distribute components across **two tabs**:
   - **Launch Tab**: `OrbitVisualization`, `ControlPanel`, `StatsPanel`, `GameSpeedControl`
   - **Analytics Tab**: `DebrisChart`, `SatelliteChart`, `DebrisRemovalChart`
+- Keep `GameSetupScreen` as pre-game screen (unchanged behavior)
+- Convert inline styles (`App.tsx:37, 42`) to Tailwind classes
 - Maintain game state and Redux integration
 
 ### 3. Update Font Configuration
-- Modify `tailwind.config.js` to add Calibri font family
-- Update `src/index.css` to apply the font to the body element
-- Add web-safe fallbacks
+- Modify `kessler-game/tailwind.config.js` to add Helvetica font family to `theme.extend.fontFamily`
+- Include fallback chain: `'Helvetica Neue', 'Helvetica', 'Arial', sans-serif`
+- Update `kessler-game/src/index.css` to apply the font using Tailwind's font utility class
 
 ### 4. Audit and Update Styling
-- Review all components for consistent rounded corners
-- Ensure all containers use `rounded-lg` or `rounded-xl`
-- Verify button styling consistency
-- Update any inline styles to use Tailwind classes where possible
+- Convert inline styles in `App.tsx:37, 42` to Tailwind classes
+- Verify `OrbitVisualization.tsx:13` rounded corners (currently `borderRadius: '8px'` is consistent)
+- Verify `ControlPanel.tsx:58` rounded corners (already using inline `borderRadius: '8px'`)
+- Ensure all containers use consistent `rounded-lg` class
+- Verify button styling consistency across all components
 
 ## Source Code Changes
 
 ### New Files
-- `src/components/ui/Tabs.tsx` - Reusable tab component with TypeScript interfaces
+- `kessler-game/src/components/ui/Tabs.tsx` - Reusable tab component with TypeScript interfaces
 
 ### Modified Files
-1. **src/App.tsx**
-   - Add tab state management
-   - Integrate Tabs component
-   - Reorganize component layout into three tab panels
-   - Keep setup screen as initial view, show tabs after game starts
+1. **kessler-game/src/App.tsx**
+   - Add tab state management (`useState` for active tab)
+   - Integrate Tabs component in game view
+   - Reorganize component layout into two tab panels (Launch, Analytics)
+   - Convert inline styles at lines 37, 42 to Tailwind classes
+   - Keep setup screen as initial view (no changes to setup flow)
 
-2. **tailwind.config.js**
-   - Add Calibri font to theme.extend.fontFamily
-   - Include system font fallbacks
+2. **kessler-game/tailwind.config.js**
+   - Add Helvetica font to `theme.extend.fontFamily`
+   - Font stack: `['Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif']`
 
-3. **src/index.css**
-   - Update body font-family to use Calibri from Tailwind config
+3. **kessler-game/src/index.css**
+   - Update body to use Helvetica font via Tailwind's font utility
 
-4. **Component styling audits** (if needed):
-   - `src/components/GameBoard/OrbitVisualization.tsx` - Convert inline styles to use consistent border-radius
-   - `src/components/ControlPanel/ControlPanel.tsx` - Verify rounded corners
-   - Any other components with inconsistent styling
+4. **Optional optimizations** (if time permits):
+   - `kessler-game/src/components/ControlPanel/ControlPanel.tsx:58` - Convert inline border style to Tailwind
+   - `kessler-game/src/components/GameBoard/OrbitVisualization.tsx:13` - Convert inline border to Tailwind (already consistent at 8px)
 
 ## Data Model Changes
 No changes to the Redux store or game state are required. All changes are UI/presentation layer only.
@@ -123,49 +140,76 @@ interface TabsProps {
 
 ### Visual Testing
 1. **Tab Navigation**
-   - Verify tabs render correctly
-   - Click through all three tabs
+   - Verify two tabs (Launch, Analytics) render correctly after game starts
+   - Click between Launch and Analytics tabs
    - Confirm active tab highlighting works
    - Ensure tab content switches correctly
+   - Verify setup screen still appears before game starts (unchanged)
 
 2. **Font Application**
-   - Inspect browser DevTools to verify Calibri is applied
-   - Check fallback font behavior if Calibri unavailable
+   - Inspect browser DevTools to verify Helvetica is applied
+   - Check computed font-family in Elements panel
+   - Verify text renders with clean, professional appearance
 
 3. **Rounded Corners**
-   - Visually inspect all content boxes
-   - Verify consistent border-radius across components
+   - Visually inspect all content boxes for consistent 8px border-radius
+   - Verify OrbitVisualization, ControlPanel, Charts all use rounded corners
+   - Check tab component itself has rounded corners
 
 4. **Button States**
-   - Test button hover states
-   - Verify selected button color changes
-   - Check disabled button states
+   - Test button hover states (color transitions)
+   - Verify selected button color changes (blue-600 active state)
+   - Check disabled button states (greyed out with cursor-not-allowed)
 
 ### Build & Lint Testing
-1. Run `npm run build` to ensure TypeScript compilation succeeds
-2. Run `npm run lint` to verify code quality
-3. Test in development mode with `npm run dev`
+All commands run from `kessler-game/` directory:
+1. `npm run build` - Ensure TypeScript compilation succeeds with no errors
+2. `npm run lint` - Verify ESLint passes with no warnings
+3. `npm run dev` - Test in development mode with hot reload
 
 ### Functional Testing
-1. Start game from setup screen
-2. Navigate between tabs without losing game state
-3. Launch satellites and DRVs from Launch tab
-4. Verify charts update in Analytics tab
-5. Ensure game speed controls work across tabs
+1. **Pre-game Flow**
+   - Verify setup screen appears on initial load
+   - Configure game difficulty
+   - Click "Start Game" button
+   - Confirm transition to tabbed game interface
+
+2. **Launch Tab**
+   - Launch satellites from different orbits (LEO, MEO, GEO)
+   - Launch DRVs with different configurations
+   - Verify orbital visualization updates in real-time
+   - Check stats panel shows current counts
+   - Test game speed controls (pause, 1x, 2x, 5x)
+
+3. **Analytics Tab**
+   - Switch to Analytics tab
+   - Verify all three charts render (Debris, Satellite, Debris Removal)
+   - Confirm charts show historical data from gameplay
+   - Check chart tooltips and interactivity
+
+4. **State Persistence**
+   - Navigate between tabs multiple times
+   - Verify game state persists (satellites, debris, budget)
+   - Ensure charts in Analytics tab reflect actions from Launch tab
 
 ## Design Considerations
 
 ### Tab Persistence
-- Active tab state will be local component state (not persisted to Redux)
+- Active tab state is local component state (not persisted to Redux)
+- Default to "Launch" tab on game start
+- Tab selection persists during gameplay
 - Tab state resets when returning to setup screen (new game)
 
 ### Responsive Design
-- Tabs will work on desktop viewport (800px+)
+- Tabs optimized for desktop viewport (800px+ width)
 - Mobile responsiveness can be addressed in future iterations
+- Minimum viable width: 1024px for comfortable viewing
 
 ### Performance
-- All tab content will be rendered but hidden using CSS
-- No performance impact expected given small component tree
+- **Conditional rendering** used for tab content (only active tab rendered to DOM)
+- Improves performance compared to CSS hiding (especially for OrbitVisualization and Charts)
+- Reduces memory footprint during gameplay
+- Game state maintained in Redux regardless of active tab
 
 ## Risk Assessment
 **Low Risk** - Changes are primarily presentational and don't affect game logic or state management. Existing components can be reused with minimal modifications.
