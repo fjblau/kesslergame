@@ -50,7 +50,8 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Step: Install Framer Motion
+### [x] Step: Install Framer Motion
+<!-- chat-id: f5e3d939-d0c6-43ef-87bf-a0006a97fdd6 -->
 
 Install framer-motion package as a dependency.
 
