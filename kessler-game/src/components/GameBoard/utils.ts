@@ -2,9 +2,9 @@ import type { OrbitLayer } from '../../game/types';
 import { LAYER_BOUNDS } from '../../game/constants';
 
 const ORBIT_RADII = {
-  LEO: { inner: 40, outer: 100 },
-  MEO: { inner: 100, outer: 175 },
-  GEO: { inner: 175, outer: 250 },
+  LEO: { inner: 60, outer: 140 },
+  MEO: { inner: 140, outer: 240 },
+  GEO: { inner: 240, outer: 350 },
 };
 
 interface EntityPosition {
@@ -14,8 +14,8 @@ interface EntityPosition {
 }
 
 export function mapToPixels(entity: EntityPosition) {
-  const centerX = 300;
-  const centerY = 300;
+  const centerX = 400;
+  const centerY = 400;
   const { inner, outer } = ORBIT_RADII[entity.layer];
   
   const [yMin, yMax] = LAYER_BOUNDS[entity.layer];
