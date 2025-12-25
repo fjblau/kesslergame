@@ -18,7 +18,7 @@ Do not make assumptions on important decisions — get clarification first.
 
 ## Workflow Steps
 
-### [ ] Step: Technical Specification
+### [x] Step: Technical Specification
 
 Assess the task's difficulty, as underestimating it leads to poor outcomes.
 - easy: Straightforward implementation, trivial bug fix or feature
@@ -50,15 +50,89 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Step: Implementation
+### [ ] Step: Install Framer Motion
 
-Implement the task according to the technical specification and general engineering best practices.
+Install framer-motion package as a dependency.
 
-1. Break the task into steps where possible.
-2. Implement the required changes in the codebase.
-3. Add and run relevant tests and linters.
-4. Perform basic manual verification if applicable.
-5. After completion, write a report to `{@artifacts_path}/report.md` describing:
-   - What was implemented
-   - How the solution was tested
-   - The biggest issues or challenges encountered
+**Verification**: Check package.json includes framer-motion dependency
+
+---
+
+### [ ] Step: Create Animation Effect Components
+
+Create new components for visual effects:
+1. `CollisionEffect.tsx` - Expanding circle + flash effect
+2. `LaunchAnimation.tsx` - Trail from Earth to target orbit
+3. `SolarStormEffect.tsx` - Full-screen storm overlay
+
+**Verification**: Components compile without errors, accept correct props
+
+---
+
+### [ ] Step: Add Orbital Rotation to Sprite Components
+
+Update sprite components to use Framer Motion:
+1. Convert `SatelliteSprite.tsx` to use `motion.div` with rotation
+2. Convert `DebrisParticle.tsx` to use `motion.div` with rotation
+3. Convert `DRVSprite.tsx` to use `motion.div` with rotation
+
+Each sprite should rotate based on entity's x-coordinate (x/100 * 360°).
+
+**Verification**: Entities visibly rotate around orbits when x-coordinate changes
+
+---
+
+### [ ] Step: Add Launch Animations
+
+Implement launch animation sequence:
+1. Detect newly launched entities by tracking IDs
+2. Apply initial state (center position, scale 0.5, opacity 0)
+3. Animate to target orbit position over 1.5s with ease-out-cubic
+
+**Verification**: New satellites/DRVs smoothly animate from Earth to orbit
+
+---
+
+### [ ] Step: Integrate Collision Flash Effects
+
+Add collision effect rendering:
+1. Subscribe to collision events from Redux store
+2. Render `CollisionEffect` component at collision coordinates
+3. Auto-remove effect after animation completes
+
+**Verification**: Collision events trigger visible flash animation
+
+---
+
+### [ ] Step: Add Debris Spawn Animation
+
+Implement spawn animation for debris:
+1. Apply initial state (scale 0, opacity 0)
+2. Animate to normal state with 0.3s ease-out
+
+**Verification**: New debris pieces fade/scale in smoothly
+
+---
+
+### [ ] Step: Integrate Solar Storm Effect (Optional)
+
+If solar storm events are triggerable:
+1. Subscribe to solar-storm events
+2. Render `SolarStormEffect` overlay
+3. Remove after animation completes
+
+**Verification**: Solar storm events trigger full-screen effect
+
+---
+
+### [ ] Step: Testing and Performance Verification
+
+1. Run build and lint commands
+2. Manual testing:
+   - Launch multiple satellites across all layers
+   - Verify smooth rotation at different speeds per layer
+   - Trigger collisions, verify flash effects
+   - Test with 50+ entities for performance
+3. Write report to `{@artifacts_path}/report.md`
+
+**Verification**: Build passes, no lint errors, animations perform smoothly
