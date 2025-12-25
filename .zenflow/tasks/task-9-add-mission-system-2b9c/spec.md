@@ -93,17 +93,18 @@ export interface MissionDefinition {
   
   // Status
   completed: boolean;
+  failed: boolean; // true when turnLimit exceeded without completion
   completedAt?: number; // turn number when completed
 }
 
 export interface MissionsState {
   availableMissions: MissionDefinition[]; // All 13 missions
-  activeMissions: MissionDefinition[]; // 3 randomly selected at game start
+  activeMissions: MissionDefinition[]; // 3 unique randomly selected at game start
   trackingData: {
     consecutiveLowRiskTurns: number;
     consecutiveBudgetAbove50M: number;
     hasReachedDebris200: boolean; // for Risk Reduction mission
-    layersWithSatellites: Set<OrbitLayer>; // for Multi-Layer Network
+    layersWithSatellites: OrbitLayer[]; // Redux can't serialize Set, use array
   };
 }
 ```
@@ -131,8 +132,8 @@ export const MISSION_DEFINITIONS: Omit<MissionDefinition, 'currentProgress' | 'c
 ];
 
 export function selectRandomMissions(count: number = 3): MissionDefinition[] {
-  // Shuffle and select 3 missions
-  // Initialize with currentProgress: 0, completed: false
+  // Shuffle and select 3 UNIQUE missions (no duplicates)
+  // Initialize with currentProgress: 0, completed: false, failed: false
 }
 
 export function createMissionTrackingData(): MissionsState['trackingData'] {
@@ -147,15 +148,18 @@ export function createMissionTrackingData(): MissionsState['trackingData'] {
 ```typescript
 // Key reducers:
 - initializeMissions(state, action: PayloadAction<number>) 
-  // Select 3 random missions, reset tracking data
+  // Select 3 unique random missions, reset tracking data
 
 - updateMissionProgress(state, action: PayloadAction<GameState>)
   // Called each turn, updates all active mission progress
   // Checks completion criteria
   // Updates tracking data (consecutive counters, thresholds, etc.)
+  // Marks missions as failed when turnLimit exceeded without completion
+  // Triggers autoPauseOnMission when any mission completes
 
 - checkMissionCompletion(state)
   // Mark missions as completed when criteria met
+  // Mark missions as failed when turnLimit exceeded
   // Record completion turn
 
 // Selectors:
@@ -215,12 +219,12 @@ interface MissionCardProps {
 }
 
 export function MissionCard({ mission }: MissionCardProps) {
-  const { title, description, currentProgress, target, completed, turnLimit } = mission;
+  const { title, description, currentProgress, target, completed, failed, completedAt, turnLimit } = mission;
   const progressPercent = Math.min((currentProgress / target) * 100, 100);
   const currentTurn = useAppSelector(state => state.game.step);
   
-  // Determine border color: yellow (in-progress), green (completed)
-  const borderColor = completed ? 'border-green-500' : 'border-yellow-400';
+  // Determine border color: green (completed), red (failed), yellow (in-progress)
+  const borderColor = completed ? 'border-green-500' : failed ? 'border-red-500' : 'border-yellow-400';
   
   return (
     <div className={`bg-slate-700 border-l-4 ${borderColor} rounded-lg p-4 transition-all hover:translate-x-1`}>
@@ -229,12 +233,14 @@ export function MissionCard({ mission }: MissionCardProps) {
         <div className={`w-5 h-5 rounded border-2 flex items-center justify-center text-sm ${
           completed 
             ? 'bg-green-500 border-green-500 text-slate-800' 
+            : failed
+            ? 'bg-red-500 border-red-500 text-slate-800'
             : 'border-gray-500 text-gray-500'
         }`}>
-          {completed ? '✓' : '☐'}
+          {completed ? '✓' : failed ? '✗' : '☐'}
         </div>
         <h3 className={`text-base font-semibold ${
-          completed ? 'text-gray-400 line-through' : 'text-white'
+          completed ? 'text-gray-400 line-through' : failed ? 'text-red-400 line-through' : 'text-white'
         }`}>
           {title}
         </h3>
@@ -243,8 +249,20 @@ export function MissionCard({ mission }: MissionCardProps) {
       {/* Description */}
       <p className="text-sm text-gray-400 ml-8 mb-2">{description}</p>
       
-      {/* Progress (only if not completed) */}
-      {!completed && (
+      {/* Completion/Failure Message */}
+      {completed && completedAt && (
+        <div className="text-xs text-green-400 ml-8 font-semibold">
+          ✓ Completed on turn {completedAt}
+        </div>
+      )}
+      {failed && (
+        <div className="text-xs text-red-400 ml-8 font-semibold">
+          ✗ Failed (time limit exceeded)
+        </div>
+      )}
+      
+      {/* Progress (only if not completed and not failed) */}
+      {!completed && !failed && (
         <>
           <div className="text-xs text-yellow-400 font-semibold ml-8">
             Progress: {currentProgress}/{target}
@@ -264,10 +282,12 @@ export function MissionCard({ mission }: MissionCardProps) {
 ```
 
 **Design Elements**:
-- Border-left color coding (yellow = active, green = completed)
-- Checkbox with checkmark when complete
-- Line-through title when complete
-- Progress bar with gradient (yellow theme)
+- Border-left color coding (yellow = active, green = completed, red = failed)
+- Checkbox: ✓ (completed), ✗ (failed), ☐ (in progress)
+- Line-through title when complete or failed
+- Completion turn display for completed missions
+- Failure message for failed missions
+- Progress bar with gradient (yellow theme) for active missions
 - Hover effect (translate-x)
 - Turn limit indicator if applicable
 
@@ -286,33 +306,37 @@ export const store = configureStore({
 });
 ```
 
-#### B. Game Initialization (`GameSetupScreen` or `gameSlice`)
+#### B. Game Initialization (`src/components/Setup/GameSetupScreen.tsx`)
 ```typescript
-// When game starts, dispatch initializeMissions
-dispatch(initializeMissions(3)); // Select 3 random missions
+// In the handleStart function, after initializeGame:
+const handleStart = () => {
+  dispatch(initializeGame(difficulty));
+  dispatch(initializeMissions(3)); // Select 3 unique random missions
+  onStart();
+};
 ```
 
-#### C. Turn Advancement Hook
+#### C. Turn Advancement Integration
+
+**Location 1**: `src/hooks/useGameSpeed.ts` (automatic turn advancement)
 ```typescript
-// In gameSlice's advanceTurn reducer, or via middleware
-// After updating game state, trigger mission progress update
-
-// Option 1: Direct call in advanceTurn
-advanceTurn: (state) => {
-  // ... existing turn logic
-  
-  // At end, note: we'll dispatch updateMissionProgress separately
-  // (Can't call across slices in same reducer)
-}
-
-// Option 2: Use middleware or component effect
-// In a component/hook that watches for turn changes:
-useEffect(() => {
-  dispatch(updateMissionProgress(gameState));
-}, [step]);
+// After line 34: dispatch(advanceTurn());
+dispatch(advanceTurn());
+dispatch(updateMissionProgress(getState().game)); // ADD THIS
+dispatch(processDRVOperations());
+// ... rest of logic
 ```
 
-**Recommended Approach**: Use a `useGameLoop` hook or enhance `useGameSpeed` hook to dispatch `updateMissionProgress` after each turn.
+**Location 2**: `src/components/ControlPanel/ControlPanel.tsx` (manual turn advancement)
+```typescript
+// After line 53 where satellite/DRV launches, in the turn advancement logic:
+dispatch(advanceTurn());
+dispatch(updateMissionProgress(/* pass current game state */)); // ADD THIS
+dispatch(processDRVOperations());
+// ... rest of logic
+```
+
+**Note**: Since `updateMissionProgress` needs the full `GameState`, use `useAppSelector(state => state.game)` to get current state before dispatching.
 
 #### D. Tab Integration (`src/App.tsx`)
 ```typescript
@@ -349,6 +373,7 @@ export interface MissionDefinition {
   trackingType: MissionTrackingType;
   startThreshold?: number;
   completed: boolean;
+  failed: boolean; // true when turnLimit exceeded without completion
   completedAt?: number;
 }
 
@@ -359,12 +384,11 @@ export interface MissionsState {
     consecutiveLowRiskTurns: number;
     consecutiveBudgetAbove50M: number;
     hasReachedDebris200: boolean;
-    layersWithSatellites: Set<string>; // Note: Redux doesn't serialize Set, convert to array
+    layersWithSatellites: OrbitLayer[]; // Array for Redux serialization
+    totalDRVsLaunched: number; // Track DRVs including decommissioned ones
   };
 }
 ```
-
-**Note**: For Redux compatibility, `layersWithSatellites` should be stored as `string[]` and converted to `Set` in selectors.
 
 ### RootState Update
 
@@ -384,51 +408,137 @@ export type RootState = ReturnType<typeof store.getState>;
 
 ## Progress Tracking Logic Details
 
-### Mission-Specific Tracking
+### Mission-Specific Tracking & Progress Calculation
 
-1. **GPS Priority** (Launch 3 GPS by turn 20)
-   - Count GPS satellites in `gameState.satellites` where `purpose === 'GPS'`
-   - Check `gameState.step <= 20`
-   - Complete when count >= 3 AND within turn limit
+#### 1. Launch Count Missions (Cumulative)
 
-2. **Clean Sweep** (Remove 50 debris total)
-   - Track cumulative from `gameState.debrisRemovalVehicles.reduce((sum, drv) => sum + drv.debrisRemoved, 0)`
-   - Complete when >= 50
+**GPS Priority** - Launch 3 GPS satellites by turn 20
+- **Progress**: `gameState.satellites.filter(s => s.purpose === 'GPS').length`
+- **Display**: "2/3 GPS satellites"
+- **Complete**: `currentProgress >= 3 && gameState.step <= 20`
+- **Fail**: `gameState.step > 20 && !completed`
 
-3. **Safe Skies** (Maintain LOW risk for 10 turns)
-   - Increment `trackingData.consecutiveLowRiskTurns` if `gameState.riskLevel === 'LOW'`
-   - Reset to 0 if `riskLevel !== 'LOW'`
-   - Complete when counter >= 10
+**Weather Network** - Launch 4 Weather satellites by turn 30
+- **Progress**: `gameState.satellites.filter(s => s.purpose === 'Weather').length`
+- **Display**: "3/4 Weather satellites"
+- **Complete**: `currentProgress >= 4 && gameState.step <= 30`
 
-4. **Risk Reduction** (Reduce from 200+ to <100)
-   - First, detect when debris count >= 200, set `trackingData.hasReachedDebris200 = true`
-   - Then, check if debris count < 100 AND `hasReachedDebris200 === true`
-   - Complete when both conditions met
+**Communications Hub** - Launch 5 Comms satellites by turn 40
+- **Progress**: `gameState.satellites.filter(s => s.purpose === 'Comms').length`
+- **Display**: "1/5 Comms satellites"
+- **Complete**: `currentProgress >= 5 && gameState.step <= 40`
 
-5. **Multi-Layer Network** (Satellites in all 3 layers)
-   - Build set of layers: `new Set(gameState.satellites.map(s => s.layer))`
-   - Complete when `set.size === 3`
+**Debris Response Team** - Launch 3 DRVs by turn 25
+- **Progress**: Total DRVs ever launched (active + decommissioned)
+- **Display**: "2/3 DRVs launched"
+- **Complete**: `currentProgress >= 3 && gameState.step <= 25`
+- **Note**: Since gameState only tracks active DRVs, add `totalDRVsLaunched` to MissionsState.trackingData
 
-6. **Budget Mastery** (50M+ for 15 turns)
-   - Increment `trackingData.consecutiveBudgetAbove50M` if `gameState.budget >= 50_000_000`
-   - Reset to 0 otherwise
-   - Complete when counter >= 15
+#### 2. Removal/Cleanup Missions (Cumulative)
+
+**Debris Cleaner** - Launch 2 DRVs (no time limit)
+- **Progress**: Total DRVs ever launched
+- **Display**: "1/2 DRVs launched"
+- **Complete**: `currentProgress >= 2`
+
+**Clean Sweep** - Remove 50 debris by turn 50
+- **Progress**: `gameState.debrisRemovalVehicles.reduce((sum, drv) => sum + drv.debrisRemoved, 0)`
+- **Display**: "34/50 debris removed"
+- **Complete**: `currentProgress >= 50 && gameState.step <= 50`
+
+**Orbital Hygiene** - Remove 100 debris by turn 80
+- **Progress**: Same as Clean Sweep
+- **Display**: "72/100 debris removed"
+- **Complete**: `currentProgress >= 100 && gameState.step <= 80`
+
+#### 3. State Threshold Missions (Threshold/Snapshot)
+
+**Risk Reduction** - Reduce debris from 200+ to <100
+- **Progress**: When `hasReachedDebris200 === true`, show current debris count; else show "Waiting for 200+ debris"
+- **Display**: "156/200 → <100" or "Debris: 89 (threshold reached!)"
+- **Complete**: `trackingData.hasReachedDebris200 === true && gameState.debris.length < 100`
+- **Tracking**: Set `hasReachedDebris200 = true` when `debris.length >= 200`
+
+**Safe Skies** - Maintain LOW risk for 10 consecutive turns
+- **Progress**: `trackingData.consecutiveLowRiskTurns`
+- **Display**: "7/10 consecutive LOW risk turns"
+- **Complete**: `currentProgress >= 10`
+- **Tracking**: Increment if `riskLevel === 'LOW'`, reset to 0 otherwise
+
+**Satellite Fleet** - Have 15+ satellites simultaneously
+- **Progress**: `gameState.satellites.length`
+- **Display**: "12/15 active satellites"
+- **Complete**: `currentProgress >= 15`
+- **Note**: Snapshot check each turn
+
+#### 4. Multi-Layer Missions (Boolean/Count)
+
+**Multi-Layer Network** - Satellites in all 3 layers
+- **Progress**: Number of unique layers with satellites
+- **Display**: "2/3 orbital layers" (LEO, MEO covered; need GEO)
+- **Complete**: `currentProgress >= 3`
+- **Tracking**: 
+  ```typescript
+  const layers = [...new Set(gameState.satellites.map(s => s.layer))];
+  trackingData.layersWithSatellites = layers;
+  currentProgress = layers.length;
+  ```
+
+**Full Coverage** - 2+ satellites in each layer simultaneously
+- **Progress**: Count of layers with 2+ satellites
+- **Display**: "2/3 layers covered" or "LEO: 3, MEO: 2, GEO: 0 → 2/3"
+- **Complete**: `currentProgress >= 3`
+- **Calculation**:
+  ```typescript
+  const layerCounts = { LEO: 0, MEO: 0, GEO: 0 };
+  gameState.satellites.forEach(s => layerCounts[s.layer]++);
+  currentProgress = Object.values(layerCounts).filter(count => count >= 2).length;
+  ```
+
+#### 5. Economic Missions (Consecutive)
+
+**Budget Mastery** - Budget above 50M for 15 consecutive turns
+- **Progress**: `trackingData.consecutiveBudgetAbove50M`
+- **Display**: "12/15 consecutive turns above 50M"
+- **Complete**: `currentProgress >= 15`
+- **Tracking**: Increment if `budget >= 50_000_000`, reset to 0 otherwise
 
 ### Turn-by-Turn Update Flow
 
 ```
 1. Game advances turn (gameSlice.advanceTurn)
 2. Game state updates (satellites age, DRVs operate, collisions, etc.)
-3. Mission system observes updated game state
+3. Mission system observes updated game state (via updateMissionProgress)
 4. updateMissionProgress reducer:
-   a. For each active mission:
+   a. For each active mission (not completed and not failed):
       - Read relevant game state fields
-      - Calculate new currentProgress
-      - Update tracking data (consecutive counters, flags)
+      - Calculate new currentProgress based on tracking type
+      - Update tracking data (consecutive counters, flags, thresholds)
       - Check completion criteria
-      - Mark completed if met
+      - If met: mark completed, record completedAt
+      - If turnLimit exceeded: mark failed
+      - If just completed: trigger autoPauseOnMission (if enabled)
 5. UI re-renders with updated mission data
 ```
+
+### autoPauseOnMission Integration
+
+The `UIState` already includes `autoPauseOnMission: boolean` (`types.ts:72`). This feature should pause the game when **any mission completes**.
+
+**Implementation**:
+1. In `missionsSlice.updateMissionProgress`, detect when a mission transitions from incomplete to completed
+2. Return a flag indicating "mission just completed"
+3. In the component that dispatches `updateMissionProgress`, check this flag:
+   ```typescript
+   const result = dispatch(updateMissionProgress(gameState));
+   const autoPause = useAppSelector(state => state.ui.autoPauseOnMission);
+   
+   if (result.payload.missionCompleted && autoPause) {
+     dispatch(setGameSpeed('paused'));
+   }
+   ```
+
+**Alternative**: Use Redux middleware to listen for mission completion and auto-pause
 
 ---
 
@@ -437,8 +547,12 @@ export type RootState = ReturnType<typeof store.getState>;
 ### 1. Type Checking
 ```bash
 npm run build
-# or
-tsc --noEmit
+# This runs: tsc -b && vite build
+```
+
+For faster type-check only (no build):
+```bash
+npx tsc -b
 ```
 
 ### 2. Linting
@@ -449,29 +563,33 @@ npm run lint
 ### 3. Manual Testing Checklist
 
 #### Mission Initialization
-- [ ] Game starts with 3 random missions selected
+- [ ] Game starts with 3 unique random missions selected
 - [ ] Each run selects different missions (test multiple times)
-- [ ] All missions start with `currentProgress: 0` and `completed: false`
+- [ ] All missions start with `currentProgress: 0`, `completed: false`, `failed: false`
 
 #### UI Rendering
 - [ ] Mission tab appears between Analytics and Documentation
 - [ ] Mission panel matches design (dark slate, blue header, proper spacing)
 - [ ] Mission cards display correctly (title, description, progress)
-- [ ] Completed missions show checkmark and line-through
-- [ ] Progress bars update smoothly
-- [ ] Border colors: yellow (active), green (completed)
+- [ ] Completed missions: green border, checkmark, line-through, completion turn
+- [ ] Failed missions: red border, X mark, line-through, failure message
+- [ ] Active missions: yellow border, progress bar, turn limit indicator
+- [ ] Progress bars update smoothly with gradient
 
 #### Progress Tracking (Test at least 3 mission types)
 - [ ] **Launch missions**: Launch GPS satellites, verify counter increments
 - [ ] **Removal missions**: Launch DRVs, verify debris removal tracking
 - [ ] **Consecutive missions**: Maintain LOW risk, verify counter increments/resets
 - [ ] Turn limits respected (mission fails if not completed in time)
+- [ ] Failed missions display red border and failure message
 
 #### Edge Cases
-- [ ] Mission completes exactly on turn limit
+- [ ] Mission completes exactly on turn limit (should complete, not fail)
+- [ ] Mission exceeds turn limit by 1 turn (should fail)
 - [ ] Multiple missions complete on same turn
 - [ ] Consecutive counter resets when condition breaks
 - [ ] Threshold missions (e.g., Risk Reduction) only complete after crossing initial threshold
+- [ ] autoPauseOnMission triggers when enabled and mission completes
 
 ### 4. Integration Testing
 
@@ -542,15 +660,19 @@ kessler-game/src/
 
 1. **Functionality**
    - 13 missions defined with diverse completion criteria
-   - 3 random missions selected at game start
+   - 3 unique random missions selected at game start
    - Progress tracked accurately each turn
-   - Completion status displayed correctly
+   - Completion and failure status displayed correctly
+   - Turn limits enforced (missions fail when exceeded)
+   - autoPauseOnMission works when mission completes
 
 2. **UI/UX**
    - Mission tab positioned between Analytics and Documentation
    - Visual design matches wireframe and existing panels
    - Progress bars animate smoothly
-   - Completed missions visually distinct (green border, checkmark)
+   - Three distinct states: active (yellow), completed (green), failed (red)
+   - Completion turn displayed for successful missions
+   - Failure message displayed for failed missions
 
 3. **Code Quality**
    - TypeScript compiles without errors
@@ -562,15 +684,36 @@ kessler-game/src/
    - No disruption to existing game mechanics
    - State updates in sync with game loop
    - No performance degradation
+   - Mission progress updates trigger after each turn
+
+---
+
+## Implementation Notes
+
+### Important Considerations
+
+1. **DRV Tracking**: The `GameState` only tracks active DRVs in `debrisRemovalVehicles` array. To track total DRVs launched (including decommissioned), maintain `totalDRVsLaunched` in `MissionsState.trackingData`. Increment this when `launchDRV` is dispatched.
+
+2. **Game Loop Integration**: The mission progress update must happen AFTER all game state updates (satellites aging, DRV operations, collisions) to ensure accurate progress calculation.
+
+3. **Redux Serialization**: Avoid `Set`, `Map`, `Date` objects in state. Use arrays and numbers instead. Convert to specialized types in selectors if needed.
+
+4. **autoPauseOnMission**: Check if `updateMissionProgress` can return payload with completion flag, or use middleware to detect mission completion events.
+
+5. **Turn Limit Edge Case**: A mission that completes ON the exact turn limit (e.g., turn 20/20) should be marked as completed, NOT failed. Only fail if `currentTurn > turnLimit`.
 
 ---
 
 ## Next Steps (Implementation Phase)
 
-1. Create mission definitions (`missions.ts`)
-2. Implement Redux slice (`missionsSlice.ts`)
-3. Build UI components (`MissionPanel.tsx`, `MissionCard.tsx`)
-4. Integrate with store and game loop
-5. Add Missions tab to App.tsx
-6. Test and verify all missions
-7. Write implementation report
+1. Create mission definitions (`missions.ts`) with all 13 missions
+2. Add mission types to `types.ts`
+3. Implement Redux slice (`missionsSlice.ts`) with all reducers and selectors
+4. Build UI components (`MissionPanel.tsx`, `MissionCard.tsx`)
+5. Integrate with store (`index.ts`)
+6. Add mission initialization to `GameSetupScreen.tsx`
+7. Add mission updates to `useGameSpeed.ts` and `ControlPanel.tsx`
+8. Add Missions tab to `App.tsx`
+9. Run type checking and linting
+10. Test all mission types and edge cases
+11. Write implementation report
