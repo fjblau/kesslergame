@@ -27,6 +27,7 @@ const initialState: GameState = {
   budgetIncomeInterval: BUDGET_DIFFICULTY_CONFIG.normal.incomeInterval,
   budgetDrainAmount: BUDGET_DIFFICULTY_CONFIG.normal.drainAmount,
   nextIncomeAt: BUDGET_DIFFICULTY_CONFIG.normal.incomeInterval,
+  history: [],
 };
 
 export const gameSlice = createSlice({
@@ -43,6 +44,7 @@ export const gameSlice = createSlice({
         budgetIncomeInterval: config.incomeInterval,
         budgetDrainAmount: config.drainAmount,
         nextIncomeAt: config.incomeInterval,
+        history: [],
       };
     },
 
@@ -123,6 +125,22 @@ export const gameSlice = createSlice({
       state.satellites = state.satellites.filter(
         sat => sat.layer !== 'LEO' || sat.age < LEO_LIFETIME
       );
+
+      const totalDebrisRemoved = state.debrisRemovalVehicles.reduce(
+        (sum, drv) => sum + drv.debrisRemoved,
+        0
+      );
+      const activeDRVs = state.debrisRemovalVehicles.filter(
+        drv => drv.age < drv.maxAge
+      ).length;
+
+      state.history.push({
+        turn: state.step,
+        debrisCount: state.debris.length,
+        satelliteCount: state.satellites.length,
+        debrisRemoved: totalDebrisRemoved,
+        activeDRVCount: activeDRVs,
+      });
     },
 
     processCollisions: (state) => {

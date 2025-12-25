@@ -39,6 +39,14 @@ export interface DebrisRemovalVehicle {
   debrisRemoved: number;
 }
 
+export interface TurnHistory {
+  turn: number;
+  debrisCount: number;
+  satelliteCount: number;
+  debrisRemoved: number;
+  activeDRVCount: number;
+}
+
 export interface GameState {
   step: number;
   maxSteps: number;
@@ -51,6 +59,7 @@ export interface GameState {
   budgetIncomeInterval: number;
   budgetDrainAmount: number;
   nextIncomeAt: number;
+  history: TurnHistory[];
 }
 
 export interface UIState {
