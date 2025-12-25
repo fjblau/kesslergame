@@ -1,39 +1,31 @@
-import { OrbitLayer } from '../../game/types';
-import { LAYER_BOUNDS } from '../../game/constants';
-
-const ORBIT_RADII = {
-  LEO: { inner: 40, outer: 100 },
-  MEO: { inner: 100, outer: 175 },
-  GEO: { inner: 175, outer: 250 },
-};
-
-interface EntityPosition {
-  x: number;
-  y: number;
-  layer: OrbitLayer;
-}
-
-function mapToPixels(entity: EntityPosition) {
-  const centerX = 300;
-  const centerY = 300;
-  const { inner, outer } = ORBIT_RADII[entity.layer];
-  
-  const [yMin, yMax] = LAYER_BOUNDS[entity.layer];
-  const normalizedY = (entity.y - yMin) / (yMax - yMin);
-  const radius = inner + normalizedY * (outer - inner);
-  
-  const angle = (entity.x / 100) * 2 * Math.PI;
-  
-  return {
-    x: centerX + radius * Math.cos(angle),
-    y: centerY + radius * Math.sin(angle),
-  };
-}
-
 export function OrbitVisualization() {
   return (
     <div className="relative w-[600px] h-[600px] flex items-center justify-center bg-slate-950">
-      <div className="text-blue-400">Orbit Visualization Canvas</div>
+      {/* GEO orbit */}
+      <div className="absolute w-[500px] h-[500px] border-2 border-blue-400/30 rounded-full">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-8 text-xs font-semibold text-blue-400 bg-slate-950/80 px-2 py-1 rounded">
+          GEO
+        </div>
+      </div>
+      
+      {/* MEO orbit */}
+      <div className="absolute w-[350px] h-[350px] border-2 border-blue-400/30 rounded-full">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-8 text-xs font-semibold text-blue-400 bg-slate-950/80 px-2 py-1 rounded">
+          MEO
+        </div>
+      </div>
+      
+      {/* LEO orbit */}
+      <div className="absolute w-[200px] h-[200px] border-2 border-blue-400/30 rounded-full">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-8 text-xs font-semibold text-blue-400 bg-slate-950/80 px-2 py-1 rounded">
+          LEO
+        </div>
+      </div>
+      
+      {/* Earth */}
+      <div className="absolute w-20 h-20 rounded-full bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center text-3xl shadow-[0_0_30px_rgba(59,130,246,0.5)]">
+        🌍
+      </div>
     </div>
   );
 }
