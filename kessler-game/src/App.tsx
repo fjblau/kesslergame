@@ -28,12 +28,12 @@ function App() {
           <GameSpeedControl />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-1">
+        <div style={{ display: 'flex', gap: '24px', justifyContent: 'center', alignItems: 'flex-start' }}>
+          <div>
             <ControlPanel />
           </div>
 
-          <div className="lg:col-span-2">
+          <div>
             <OrbitVisualization />
           </div>
         </div>
