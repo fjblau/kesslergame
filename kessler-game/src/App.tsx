@@ -8,6 +8,7 @@ import { DebrisChart } from './components/Charts/DebrisChart';
 import { SatelliteChart } from './components/Charts/SatelliteChart';
 import { DebrisRemovalChart } from './components/Charts/DebrisRemovalChart';
 import { MissionPanel } from './components/MissionPanel/MissionPanel';
+import { EventLog } from './components/EventLog/EventLog';
 import { Tabs } from './components/ui/Tabs';
 import { useGameSpeed } from './hooks/useGameSpeed';
 import { useAppSelector } from './store/hooks';
@@ -58,6 +59,11 @@ function App() {
       content: <MissionPanel />,
     },
     {
+      id: 'events',
+      label: 'Events',
+      content: <EventLog />,
+    },
+    {
       id: 'documentation',
       label: 'Documentation',
       content: (
@@ -73,7 +79,7 @@ function App() {
       <div className="max-w-7xl mx-auto space-y-6">
         <header className="text-center mb-8">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-            Kessler Simulation
+            Space Debris Removal
           </h1>
         </header>
 

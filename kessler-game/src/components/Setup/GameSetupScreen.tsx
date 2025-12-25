@@ -23,7 +23,7 @@ export function GameSetupScreen({ onStart }: GameSetupScreenProps) {
     <div className="min-h-screen flex items-center justify-center p-8 pl-16">
       <div className="max-w-3xl w-full bg-slate-800 border border-slate-700 rounded-xl p-10 shadow-2xl">
         <h1 className="text-6xl font-bold text-center mb-3 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-          Kessler Simulation
+          Space Debris Removal
         </h1>
         <p className="text-center text-gray-400 mb-10 text-lg">Space Debris Management Game</p>
 
