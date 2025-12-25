@@ -5,6 +5,7 @@ import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG, LEO_LIFE
 import { detectCollisions, generateDebrisFromCollision, calculateTotalPayout } from '../../game/engine/collision';
 import { processDRVRemoval } from '../../game/engine/debrisRemoval';
 import { calculateRiskLevel } from '../../game/engine/risk';
+import { processSolarStorm } from '../../game/engine/events';
 
 const generateId = () => Math.random().toString(36).substring(2, 11);
 
@@ -238,6 +239,12 @@ export const gameSlice = createSlice({
 
       state.riskLevel = calculateRiskLevel(state.debris.length);
     },
+
+    triggerSolarStorm: (state) => {
+      const result = processSolarStorm(state.debris);
+      state.debris = result.remainingDebris;
+      state.riskLevel = calculateRiskLevel(state.debris.length);
+    },
   },
 });
 
@@ -251,6 +258,7 @@ export const {
   advanceTurn,
   processCollisions,
   decommissionExpiredDRVs,
+  triggerSolarStorm,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

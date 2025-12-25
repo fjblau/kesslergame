@@ -102,7 +102,7 @@ export interface MissionsState {
   };
 }
 
-export type EventType = 'satellite-launch' | 'drv-launch' | 'collision' | 'debris-removal' | 'mission-complete' | 'drv-expired';
+export type EventType = 'satellite-launch' | 'drv-launch' | 'collision' | 'debris-removal' | 'mission-complete' | 'drv-expired' | 'solar-storm';
 
 export interface GameEvent {
   id: string;
