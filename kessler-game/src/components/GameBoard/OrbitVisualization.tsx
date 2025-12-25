@@ -33,7 +33,7 @@ export function OrbitVisualization() {
       </div>
       
       {/* Earth */}
-      <div className="absolute w-20 h-20 rounded-full bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center text-3xl shadow-[0_0_30px_rgba(59,130,246,0.5)]">
+      <div style={{ position: 'absolute', width: '80px', height: '80px', borderRadius: '50%', background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '32px', boxShadow: '0 0 30px rgba(59, 130, 246, 0.5)' }}>
         🌍
       </div>
 
