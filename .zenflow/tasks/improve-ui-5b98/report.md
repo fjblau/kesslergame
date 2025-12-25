@@ -47,13 +47,17 @@ All buttons now feature modern, polished styling with:
 1. `kessler-game/src/App.tsx` - Integrated tabs component with Launch and Analytics tabs
 2. `kessler-game/tailwind.config.js` - Added Calibri font configuration
 3. `kessler-game/src/index.css` - Added font-sans class to body to apply Calibri font
-4. `kessler-game/src/components/ControlPanel/ControlPanel.tsx` - Improved button styling with rounded-xl, better spacing (gap-3), and shadow effects
-5. `kessler-game/src/components/GameBoard/OrbitVisualization.tsx` - Converted inline styles to Tailwind classes
+4. `kessler-game/src/components/ControlPanel/ControlPanel.tsx` - Improved button styling with rounded-xl, better spacing (gap-3), shadow effects, and rounded-xl container
+5. `kessler-game/src/components/GameBoard/OrbitVisualization.tsx` - Converted inline styles to Tailwind classes and upgraded to rounded-xl
 6. `kessler-game/src/components/TimeControl/GameSpeedControl.tsx` - Enhanced button styling with rounded-xl and better spacing
 7. `kessler-game/src/components/ui/Tabs.tsx` - Improved tab buttons with larger padding, rounded-xl, and shadow effects
 8. `kessler-game/src/components/ui/RadioOption.tsx` - Enhanced with rounded-xl, better contrast, and shadow effects
-9. `kessler-game/src/components/Setup/GameSetupScreen.tsx` - Improved Start Game button with rounded-xl
+9. `kessler-game/src/components/Setup/GameSetupScreen.tsx` - Improved Start Game button and container with rounded-xl
 10. `kessler-game/src/components/SatelliteConfig/SatellitePurposeSelector.tsx` - Enhanced button styling with rounded-xl and better spacing
+11. `kessler-game/src/components/StatsPanel/StatsPanel.tsx` - Updated container to rounded-xl
+12. `kessler-game/src/components/Charts/DebrisChart.tsx` - Added explicit Calibri font to chart axes and tooltip, upgraded container to rounded-xl
+13. `kessler-game/src/components/Charts/SatelliteChart.tsx` - Added explicit Calibri font to chart axes and tooltip, upgraded container to rounded-xl
+14. `kessler-game/src/components/Charts/DebrisRemovalChart.tsx` - Added explicit Calibri font to chart axes and tooltip, upgraded container to rounded-xl
 
 ## How the Solution Was Tested
 
@@ -79,11 +83,17 @@ Initial attempts to run npm commands failed due to incorrect directory handling.
 ### 3. Inline Styles Conversion
 Several components had inline styles that needed to be converted to Tailwind classes for consistency. Successfully identified and converted all inline border and border-radius styles while maintaining the same visual appearance.
 
-### 4. User Feedback Iteration
+### 4. User Feedback Iteration (Round 1)
 After initial implementation, user feedback identified three areas needing improvement:
 - **Font not applied**: Fixed by adding `font-sans` class to body element in index.css
 - **Button styling**: Enhanced all buttons with rounded-xl, better spacing (gap-3), larger padding, and shadow effects for a modern, polished look
 - **Visual hierarchy**: Improved contrast and visual feedback by adding shadows to selected states
+
+### 5. User Feedback Iteration (Round 2)
+After verifying the UI, additional issues were identified:
+- **Chart fonts still serif**: Added explicit `fontFamily: 'Calibri, Candara, Segoe UI, Arial, sans-serif'` to all Recharts XAxis, YAxis, and Tooltip components inline styles (Recharts doesn't automatically inherit fonts)
+- **Containers still using rounded-lg**: Upgraded all content containers (charts, stats panel, control panel, orbit visualization, setup screen) from `rounded-lg` to `rounded-xl` for consistency
+- **Tooltip corners**: Updated tooltip borderRadius from 6px to 12px to match the rounded-xl standard
 
 ## Summary
 

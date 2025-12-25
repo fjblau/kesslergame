@@ -19,7 +19,7 @@ export function GameSetupScreen({ onStart }: GameSetupScreenProps) {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-8">
-      <div className="max-w-2xl w-full bg-slate-800 border border-slate-700 rounded-lg p-8">
+      <div className="max-w-2xl w-full bg-slate-800 border border-slate-700 rounded-xl p-8">
         <h1 className="text-4xl font-bold text-center mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
           Kessler Simulation
         </h1>
