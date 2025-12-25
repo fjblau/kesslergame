@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { launchSatellite, launchDRV, spendBudget, advanceTurn, decommissionExpiredDRVs } from '../../store/slices/gameSlice';
+import { updateMissionProgress, trackDRVLaunch } from '../../store/slices/missionsSlice';
 import type { OrbitLayer, SatelliteType, InsuranceTier, DRVType, DRVTargetPriority } from '../../game/types';
 import { LAUNCH_COSTS, INSURANCE_CONFIG, DRV_CONFIG, DRV_PRIORITY_CONFIG, SATELLITE_PURPOSE_CONFIG } from '../../game/constants';
 import { InsuranceTierSelector } from './InsuranceTierSelector';
@@ -11,6 +12,7 @@ export function ControlPanel() {
   const dispatch = useAppDispatch();
   const budget = useAppSelector(state => state.game.budget);
   const step = useAppSelector(state => state.game.step);
+  const gameState = useAppSelector(state => state.game);
 
   const [launchType, setLaunchType] = useState<'satellite' | 'drv'>('satellite');
   const [selectedOrbit, setSelectedOrbit] = useState<OrbitLayer>('LEO');
@@ -48,9 +50,11 @@ export function ControlPanel() {
       dispatch(launchSatellite({ orbit: selectedOrbit, insuranceTier, purpose }));
     } else {
       dispatch(launchDRV({ orbit: selectedOrbit, drvType, targetPriority: drvPriority }));
+      dispatch(trackDRVLaunch());
     }
 
     dispatch(advanceTurn());
+    dispatch(updateMissionProgress(gameState));
     dispatch(decommissionExpiredDRVs());
   };
 

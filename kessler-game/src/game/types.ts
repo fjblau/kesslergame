@@ -71,3 +71,33 @@ export interface UIState {
   autoPauseOnBudgetLow: boolean;
   autoPauseOnMission: boolean;
 }
+
+export type MissionCategory = 'launch' | 'removal' | 'state' | 'multi-layer' | 'economic';
+export type MissionTrackingType = 'cumulative' | 'threshold' | 'consecutive' | 'snapshot' | 'boolean';
+
+export interface MissionDefinition {
+  id: string;
+  title: string;
+  description: string;
+  category: MissionCategory;
+  target: number;
+  currentProgress: number;
+  turnLimit?: number;
+  trackingType: MissionTrackingType;
+  startThreshold?: number;
+  completed: boolean;
+  failed: boolean;
+  completedAt?: number;
+}
+
+export interface MissionsState {
+  availableMissions: MissionDefinition[];
+  activeMissions: MissionDefinition[];
+  trackingData: {
+    consecutiveLowRiskTurns: number;
+    consecutiveBudgetAbove50M: number;
+    hasReachedDebris200: boolean;
+    layersWithSatellites: OrbitLayer[];
+    totalDRVsLaunched: number;
+  };
+}

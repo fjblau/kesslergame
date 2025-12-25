@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAppDispatch } from '../../store/hooks';
 import { initializeGame } from '../../store/slices/gameSlice';
+import { initializeMissions } from '../../store/slices/missionsSlice';
 import type { BudgetDifficulty } from '../../game/types';
 import { BudgetDifficultySettings } from './BudgetDifficultySettings';
 
@@ -14,6 +15,7 @@ export function GameSetupScreen({ onStart }: GameSetupScreenProps) {
 
   const handleStart = () => {
     dispatch(initializeGame(difficulty));
+    dispatch(initializeMissions(3));
     onStart();
   };
 
