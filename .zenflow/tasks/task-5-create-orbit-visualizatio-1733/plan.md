@@ -182,7 +182,8 @@ Add the visualization to the main app layout.
 
 ---
 
-### [ ] Step: Final verification and testing
+### [x] Step: Final verification and testing
+<!-- chat-id: 5ca5fa5b-e0fe-43ff-8dc1-ad7c5717c34b -->
 
 Run linters, type checking, and manual testing.
 
