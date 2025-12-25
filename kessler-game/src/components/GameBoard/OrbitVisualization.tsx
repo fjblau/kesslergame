@@ -12,21 +12,21 @@ export function OrbitVisualization() {
   return (
     <div className="relative w-[600px] h-[600px] flex items-center justify-center bg-slate-950">
       {/* GEO orbit */}
-      <div className="absolute w-[500px] h-[500px] border-2 border-blue-400/30 rounded-full">
+      <div className="absolute w-[500px] h-[500px] border-2 rounded-full" style={{ borderColor: 'rgba(96, 165, 250, 0.3)' }}>
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-8 text-xs font-semibold text-blue-400 bg-slate-950/80 px-2 py-1 rounded">
           GEO
         </div>
       </div>
       
       {/* MEO orbit */}
-      <div className="absolute w-[350px] h-[350px] border-2 border-blue-400/30 rounded-full">
+      <div className="absolute w-[350px] h-[350px] border-2 rounded-full" style={{ borderColor: 'rgba(96, 165, 250, 0.3)' }}>
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-8 text-xs font-semibold text-blue-400 bg-slate-950/80 px-2 py-1 rounded">
           MEO
         </div>
       </div>
       
       {/* LEO orbit */}
-      <div className="absolute w-[200px] h-[200px] border-2 border-blue-400/30 rounded-full">
+      <div className="absolute w-[200px] h-[200px] border-2 rounded-full" style={{ borderColor: 'rgba(96, 165, 250, 0.3)' }}>
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-8 text-xs font-semibold text-blue-400 bg-slate-950/80 px-2 py-1 rounded">
           LEO
         </div>
