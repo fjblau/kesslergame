@@ -4,10 +4,15 @@ import { ControlPanel } from './components/ControlPanel/ControlPanel';
 import { GameSpeedControl } from './components/TimeControl/GameSpeedControl';
 import { StatsPanel } from './components/StatsPanel/StatsPanel';
 import { OrbitVisualization } from './components/GameBoard/OrbitVisualization';
+import { DebrisChart } from './components/Charts/DebrisChart';
+import { SatelliteChart } from './components/Charts/SatelliteChart';
+import { DebrisRemovalChart } from './components/Charts/DebrisRemovalChart';
 import { useGameSpeed } from './hooks/useGameSpeed';
+import { useAppSelector } from './store/hooks';
 
 function App() {
   const [gameStarted, setGameStarted] = useState(false);
+  const history = useAppSelector(state => state.game.history);
 
   useGameSpeed();
 
@@ -37,6 +42,12 @@ function App() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <OrbitVisualization />
             <StatsPanel />
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+              <DebrisChart data={history} />
+              <SatelliteChart data={history} />
+              <DebrisRemovalChart data={history} />
+            </div>
           </div>
         </div>
       </div>
