@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { GameSetupScreen } from './components/Setup/GameSetupScreen';
 import { ControlPanel } from './components/ControlPanel/ControlPanel';
 import { GameSpeedControl } from './components/TimeControl/GameSpeedControl';
+import { StatsPanel } from './components/StatsPanel/StatsPanel';
 import { OrbitVisualization } from './components/GameBoard/OrbitVisualization';
 import { useGameSpeed } from './hooks/useGameSpeed';
 
@@ -33,8 +34,9 @@ function App() {
             <ControlPanel />
           </div>
 
-          <div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <OrbitVisualization />
+            <StatsPanel />
           </div>
         </div>
       </div>
