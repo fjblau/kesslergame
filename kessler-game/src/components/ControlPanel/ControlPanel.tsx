@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { launchSatellite, launchDRV, spendBudget, advanceTurn } from '../../store/slices/gameSlice';
+import { launchSatellite, launchDRV, spendBudget, advanceTurn, decommissionExpiredDRVs } from '../../store/slices/gameSlice';
 import type { OrbitLayer, SatelliteType, InsuranceTier, DRVType, DRVTargetPriority } from '../../game/types';
 import { LAUNCH_COSTS, INSURANCE_CONFIG, DRV_CONFIG, DRV_PRIORITY_CONFIG, SATELLITE_PURPOSE_CONFIG } from '../../game/constants';
 import { InsuranceTierSelector } from './InsuranceTierSelector';
@@ -51,10 +51,11 @@ export function ControlPanel() {
     }
 
     dispatch(advanceTurn());
+    dispatch(decommissionExpiredDRVs());
   };
 
   return (
-    <div className="bg-slate-800 border border-slate-700 rounded-lg p-6 space-y-6 max-w-md">
+    <div style={{ border: '2px solid #475569', borderRadius: '8px', padding: '24px' }} className="space-y-6 max-w-md">
       <div>
         <h2 className="text-xl font-bold text-blue-300 mb-4">Launch Controls</h2>
         <div className="text-sm text-gray-400">Turn: {step}</div>

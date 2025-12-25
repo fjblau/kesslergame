@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { GameState, OrbitLayer, SatelliteType, InsuranceTier, DRVType, DRVTargetPriority, BudgetDifficulty } from '../../game/types';
+import type { GameState, OrbitLayer, SatelliteType, InsuranceTier, DRVType, DRVTargetPriority, BudgetDifficulty, DebrisRemovalVehicle } from '../../game/types';
 import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG, LEO_LIFETIME } from '../../game/constants';
 import { detectCollisions, generateDebrisFromCollision, calculateTotalPayout } from '../../game/engine/collision';
 import { processDRVRemoval } from '../../game/engine/debrisRemoval';
@@ -170,6 +170,25 @@ export const gameSlice = createSlice({
       state.budget += insurancePayout;
     },
 
+    decommissionExpiredDRVs: (state) => {
+      const remaining: DebrisRemovalVehicle[] = [];
+      
+      state.debrisRemovalVehicles.forEach(drv => {
+        if (drv.age >= drv.maxAge) {
+          state.debris.push({
+            id: generateId(),
+            x: drv.x,
+            y: drv.y,
+            layer: drv.layer,
+            type: 'cooperative',
+          });
+        } else {
+          remaining.push(drv);
+        }
+      });
+      
+      state.debrisRemovalVehicles = remaining;
+    },
   },
 });
 
@@ -182,6 +201,7 @@ export const {
   processDRVOperations,
   advanceTurn,
   processCollisions,
+  decommissionExpiredDRVs,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

@@ -3,6 +3,7 @@ import { GameSetupScreen } from './components/Setup/GameSetupScreen';
 import { ControlPanel } from './components/ControlPanel/ControlPanel';
 import { GameSpeedControl } from './components/TimeControl/GameSpeedControl';
 import { StatsPanel } from './components/StatsPanel/StatsPanel';
+import { OrbitVisualization } from './components/GameBoard/OrbitVisualization';
 import { useGameSpeed } from './hooks/useGameSpeed';
 
 function App() {
@@ -28,26 +29,14 @@ function App() {
           <GameSpeedControl />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-1">
+        <div style={{ display: 'flex', gap: '24px', justifyContent: 'center', alignItems: 'flex-start' }}>
+          <div>
             <ControlPanel />
           </div>
 
-          <div className="lg:col-span-2 space-y-6">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <OrbitVisualization />
             <StatsPanel />
-
-            <div className="bg-slate-800 border border-slate-700 rounded-lg p-6">
-              <div className="p-4 bg-blue-900/20 border border-blue-500/30 rounded-lg">
-                <h3 className="font-semibold text-blue-300 mb-2">Phase 1 Features Implemented:</h3>
-                <ul className="text-sm text-gray-300 space-y-1">
-                  <li>✅ Game Speed Selector (Pause/Normal/Fast)</li>
-                  <li>✅ Insurance Tier Selector (None/Basic/Premium)</li>
-                  <li>✅ DRV Target Priority (Auto/Cooperative/Uncooperative Focus)</li>
-                  <li>✅ Satellite Purpose Selector (Weather/Comms/GPS/Random)</li>
-                  <li>✅ Budget Difficulty Modifier (Easy/Normal/Hard/Challenge)</li>
-                </ul>
-              </div>
-            </div>
           </div>
         </div>
       </div>
