@@ -18,18 +18,18 @@ export function GameSetupScreen({ onStart }: GameSetupScreenProps) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-8">
-      <div className="max-w-2xl w-full bg-slate-800 border border-slate-700 rounded-xl p-8">
-        <h1 className="text-4xl font-bold text-center mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+    <div className="min-h-screen flex items-center justify-center p-8 pl-16">
+      <div className="max-w-3xl w-full bg-slate-800 border border-slate-700 rounded-xl p-10 shadow-2xl">
+        <h1 className="text-6xl font-bold text-center mb-3 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
           Kessler Simulation
         </h1>
-        <p className="text-center text-gray-400 mb-8">Space Debris Management Game</p>
+        <p className="text-center text-gray-400 mb-10 text-lg">Space Debris Management Game</p>
 
         <BudgetDifficultySettings selected={difficulty} onChange={setDifficulty} />
 
         <button
           onClick={handleStart}
-          className="mt-8 w-full py-5 px-8 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white rounded-xl font-bold text-lg uppercase tracking-wide transition-all shadow-lg hover:shadow-xl"
+          className="mt-10 w-full py-6 px-8 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white rounded-xl font-bold text-xl uppercase tracking-wide transition-all shadow-lg hover:shadow-xl"
         >
           Start Game
         </button>
