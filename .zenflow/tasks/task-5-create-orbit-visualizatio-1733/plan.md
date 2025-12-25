@@ -106,7 +106,8 @@ Create the satellite rendering component with purpose icons.
 
 ---
 
-### [ ] Step: Implement DebrisParticle component
+### [x] Step: Implement DebrisParticle component
+<!-- chat-id: f72cc265-448d-4bbf-86b1-b8eabe9e6888 -->
 
 Create the debris rendering component with cooperative/uncooperative variants.
 
