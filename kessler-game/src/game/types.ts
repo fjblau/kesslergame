@@ -6,6 +6,7 @@ export type DRVTargetPriority = 'auto' | 'cooperative-focus' | 'uncooperative-fo
 export type DebrisType = 'cooperative' | 'uncooperative';
 export type GameSpeed = 'paused' | 'normal' | 'fast';
 export type BudgetDifficulty = 'easy' | 'normal' | 'hard' | 'challenge';
+export type RiskLevel = 'LOW' | 'MEDIUM' | 'CRITICAL';
 
 export interface Satellite {
   id: string;
@@ -60,6 +61,7 @@ export interface GameState {
   budgetDrainAmount: number;
   nextIncomeAt: number;
   history: TurnHistory[];
+  riskLevel: RiskLevel;
 }
 
 export interface UIState {
