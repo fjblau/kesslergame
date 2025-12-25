@@ -30,8 +30,9 @@ function App() {
           <div>
             <ControlPanel />
           </div>
-          <div>
+          <div className="flex flex-col gap-6">
             <OrbitVisualization />
+            <GameSpeedControl />
           </div>
           <div>
             <StatsPanel />
@@ -60,10 +61,6 @@ function App() {
             Kessler Simulation
           </h1>
         </header>
-
-        <div className="flex justify-center mb-6">
-          <GameSpeedControl />
-        </div>
 
         <Tabs tabs={tabs} defaultTab="launch" />
       </div>
