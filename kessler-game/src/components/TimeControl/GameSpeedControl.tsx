@@ -18,7 +18,7 @@ export function GameSpeedControl() {
         <button
           key={value}
           onClick={() => dispatch(setGameSpeed(value))}
-          className={`px-4 py-2 rounded font-medium transition-colors ${
+          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
             speed === value
               ? 'bg-blue-600 text-white'
               : 'bg-slate-700 text-gray-300 hover:bg-slate-600'

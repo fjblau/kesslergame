@@ -55,7 +55,7 @@ export function ControlPanel() {
   };
 
   return (
-    <div style={{ border: '2px solid #475569', borderRadius: '8px', padding: '24px' }} className="space-y-6 max-w-md">
+    <div className="border-2 border-slate-600 rounded-lg p-6 space-y-6 max-w-md">
       <div>
         <h2 className="text-xl font-bold text-blue-300 mb-4">Launch Controls</h2>
         <div className="text-sm text-gray-400">Turn: {step}</div>
