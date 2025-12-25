@@ -51,6 +51,15 @@ function App() {
         </div>
       ),
     },
+    {
+      id: 'documentation',
+      label: 'Documentation',
+      content: (
+        <div className="text-center text-gray-400 py-12">
+          Documentation coming soon...
+        </div>
+      ),
+    },
   ];
 
   return (

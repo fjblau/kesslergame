@@ -68,7 +68,7 @@ export function ControlPanel() {
             <button
               key={type}
               onClick={() => setLaunchType(type)}
-              className={`flex-1 py-3 px-6 rounded-xl font-medium transition-colors ${
+              className={`flex-1 py-2 px-6 rounded-xl font-medium transition-colors ${
                 launchType === type
                   ? 'bg-blue-600 text-white shadow-lg'
                   : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
@@ -87,7 +87,7 @@ export function ControlPanel() {
             <button
               key={orbit}
               onClick={() => setSelectedOrbit(orbit)}
-              className={`flex-1 py-3 px-6 rounded-xl font-medium transition-colors ${
+              className={`flex-1 py-2 px-6 rounded-xl font-medium transition-colors ${
                 selectedOrbit === orbit
                   ? 'bg-blue-600 text-white shadow-lg'
                   : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
@@ -142,7 +142,7 @@ export function ControlPanel() {
         <button
           onClick={handleLaunch}
           disabled={!canAfford}
-          className={`w-full py-4 px-6 rounded-xl font-bold uppercase tracking-wide transition-all ${
+          className={`w-full py-3 px-6 rounded-xl font-bold uppercase tracking-wide transition-all ${
             canAfford
               ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white shadow-lg hover:shadow-xl'
               : 'bg-slate-700 text-slate-500 cursor-not-allowed'
