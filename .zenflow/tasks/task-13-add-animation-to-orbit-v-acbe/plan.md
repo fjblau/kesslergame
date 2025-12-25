@@ -59,7 +59,8 @@ Install framer-motion package as a dependency.
 
 ---
 
-### [ ] Step: Create Animation Effect Components
+### [x] Step: Create Animation Effect Components
+<!-- chat-id: 4c75fc30-951a-4c3c-a8a9-6c6636dfc7ad -->
 
 Create new components for visual effects:
 1. `CollisionEffect.tsx` - Expanding circle + flash effect

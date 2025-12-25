@@ -1,0 +1,69 @@
+import { motion } from 'framer-motion';
+import { useEffect } from 'react';
+import type { OrbitLayer } from '../../game/types';
+
+interface LaunchAnimationProps {
+  targetLayer: OrbitLayer;
+  targetAngle: number;
+  onComplete: () => void;
+}
+
+const ORBIT_RADII = {
+  LEO: 140,
+  MEO: 240,
+  GEO: 350,
+};
+
+const LAYER_COLORS = {
+  LEO: '#3b82f6',
+  MEO: '#10b981',
+  GEO: '#f59e0b',
+};
+
+export function LaunchAnimation({ targetLayer, targetAngle, onComplete }: LaunchAnimationProps) {
+  useEffect(() => {
+    const timer = setTimeout(onComplete, 1500);
+    return () => clearTimeout(timer);
+  }, [onComplete]);
+
+  const centerX = 400;
+  const centerY = 400;
+  const startX = centerX;
+  const startY = centerY + 30;
+
+  const targetRadius = ORBIT_RADII[targetLayer];
+  const targetX = centerX + Math.cos(targetAngle) * targetRadius;
+  const targetY = centerY + Math.sin(targetAngle) * targetRadius;
+
+  return (
+    <svg
+      style={{
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        width: '800px',
+        height: '800px',
+        pointerEvents: 'none',
+      }}
+    >
+      <motion.line
+        x1={startX}
+        y1={startY}
+        x2={startX}
+        y2={startY}
+        animate={{
+          x2: targetX,
+          y2: targetY,
+        }}
+        transition={{
+          duration: 1.5,
+          ease: [0.33, 1, 0.68, 1],
+        }}
+        stroke={LAYER_COLORS[targetLayer]}
+        strokeWidth="1"
+        strokeDasharray="5,5"
+        opacity="0.5"
+      />
+    </svg>
+  );
+}
