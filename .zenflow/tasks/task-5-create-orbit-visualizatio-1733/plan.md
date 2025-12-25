@@ -146,7 +146,8 @@ Create the DRV rendering component with pentagon shapes.
 
 ---
 
-### [ ] Step: Integrate sprites into OrbitVisualization
+### [x] Step: Integrate sprites into OrbitVisualization
+<!-- chat-id: 68be7867-247a-4207-aacf-6543aad1ceb1 -->
 
 Add sprite rendering to the main visualization component.
 
