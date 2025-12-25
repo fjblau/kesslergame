@@ -13,8 +13,8 @@ export function DebrisParticle({ debris, x, y }: DebrisParticleProps) {
   
   return (
     <div
-      className="absolute text-xs"
       style={{
+        position: 'absolute',
         left: `${x}px`,
         top: `${y}px`,
         transform: 'translate(-50%, -50%)',

@@ -12,11 +12,13 @@ export function SatelliteSprite({ satellite, x, y }: SatelliteSpriteProps) {
   
   return (
     <div
-      className="absolute text-blue-400"
       style={{
+        position: 'absolute',
         left: `${x}px`,
         top: `${y}px`,
         transform: 'translate(-50%, -50%)',
+        color: '#60a5fa',
+        fontSize: '20px',
       }}
       title={`${satellite.purpose} Satellite (${satellite.layer})`}
     >

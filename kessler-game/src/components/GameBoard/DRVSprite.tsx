@@ -12,8 +12,8 @@ export function DRVSprite({ drv, x, y }: DRVSpriteProps) {
   
   return (
     <div
-      className="absolute"
       style={{
+        position: 'absolute',
         left: `${x}px`,
         top: `${y}px`,
         transform: 'translate(-50%, -50%)',
