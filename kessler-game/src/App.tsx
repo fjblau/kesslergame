@@ -7,6 +7,7 @@ import { OrbitVisualization } from './components/GameBoard/OrbitVisualization';
 import { DebrisChart } from './components/Charts/DebrisChart';
 import { SatelliteChart } from './components/Charts/SatelliteChart';
 import { DebrisRemovalChart } from './components/Charts/DebrisRemovalChart';
+import { MissionPanel } from './components/MissionPanel/MissionPanel';
 import { Tabs } from './components/ui/Tabs';
 import { useGameSpeed } from './hooks/useGameSpeed';
 import { useAppSelector } from './store/hooks';
@@ -50,6 +51,11 @@ function App() {
           <DebrisRemovalChart data={history} />
         </div>
       ),
+    },
+    {
+      id: 'missions',
+      label: 'Missions',
+      content: <MissionPanel />,
     },
     {
       id: 'documentation',

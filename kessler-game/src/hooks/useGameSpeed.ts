@@ -2,11 +2,13 @@ import { useEffect, useRef } from 'react';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { advanceTurn, decommissionExpiredDRVs } from '../store/slices/gameSlice';
 import { setGameSpeed } from '../store/slices/uiSlice';
+import { updateMissionProgress } from '../store/slices/missionsSlice';
 
 export function useGameSpeed() {
   const speed = useAppSelector(state => state.ui.gameSpeed);
   const budget = useAppSelector(state => state.game.budget);
   const riskLevel = useAppSelector(state => state.game.riskLevel);
+  const gameState = useAppSelector(state => state.game);
   const autoPauseBudgetLow = useAppSelector(state => state.ui.autoPauseOnBudgetLow);
   const autoPauseOnRiskChange = useAppSelector(state => state.ui.autoPauseOnRiskChange);
   const dispatch = useAppDispatch();
@@ -31,9 +33,10 @@ export function useGameSpeed() {
 
     const interval = setInterval(() => {
       dispatch(advanceTurn());
+      dispatch(updateMissionProgress(gameState));
       dispatch(decommissionExpiredDRVs());
     }, 2000);
 
     return () => clearInterval(interval);
-  }, [speed, budget, autoPauseBudgetLow, dispatch]);
+  }, [speed, budget, autoPauseBudgetLow, gameState, dispatch]);
 }
