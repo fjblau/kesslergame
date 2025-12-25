@@ -126,7 +126,8 @@ Create the debris rendering component with cooperative/uncooperative variants.
 
 ---
 
-### [ ] Step: Implement DRVSprite component
+### [x] Step: Implement DRVSprite component
+<!-- chat-id: 071f7bf3-2552-4b2f-bdad-1bad9d7b5f55 -->
 
 Create the DRV rendering component with pentagon shapes.
 
