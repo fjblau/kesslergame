@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { GameState, OrbitLayer, SatelliteType, InsuranceTier, DRVType, DRVTargetPriority, BudgetDifficulty, DebrisRemovalVehicle } from '../../game/types';
-import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG, LEO_LIFETIME } from '../../game/constants';
+import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG, LEO_LIFETIME, MAX_DEBRIS_LIMIT } from '../../game/constants';
 import { detectCollisions, generateDebrisFromCollision, calculateTotalPayout } from '../../game/engine/collision';
 import { processDRVRemoval } from '../../game/engine/debrisRemoval';
 import { calculateRiskLevel } from '../../game/engine/risk';
@@ -31,6 +31,7 @@ const initialState: GameState = {
   nextIncomeAt: BUDGET_DIFFICULTY_CONFIG.normal.incomeInterval,
   history: [],
   riskLevel: 'LOW',
+  gameOver: false,
 };
 
 export const gameSlice = createSlice({
@@ -49,6 +50,7 @@ export const gameSlice = createSlice({
         nextIncomeAt: config.incomeInterval,
         history: [],
         riskLevel: 'LOW',
+        gameOver: false,
       };
     },
 
@@ -115,6 +117,9 @@ export const gameSlice = createSlice({
 
     spendBudget: (state, action: PayloadAction<number>) => {
       state.budget -= action.payload;
+      if (state.budget < 0 || state.step >= state.maxSteps || state.debris.length > MAX_DEBRIS_LIMIT) {
+        state.gameOver = true;
+      }
     },
 
     addBudget: (state, action: PayloadAction<number>) => {
@@ -169,6 +174,10 @@ export const gameSlice = createSlice({
         debrisRemoved: totalDebrisRemoved,
         activeDRVCount: activeDRVs,
       });
+
+      if (state.budget < 0 || state.step >= state.maxSteps || state.debris.length > MAX_DEBRIS_LIMIT) {
+        state.gameOver = true;
+      }
     },
 
     processCollisions: (state) => {
@@ -216,6 +225,10 @@ export const gameSlice = createSlice({
       state.budget += insurancePayout;
 
       state.riskLevel = calculateRiskLevel(state.debris.length);
+
+      if (state.budget < 0 || state.step >= state.maxSteps || state.debris.length > MAX_DEBRIS_LIMIT) {
+        state.gameOver = true;
+      }
     },
 
     decommissionExpiredDRVs: (state) => {
@@ -245,6 +258,12 @@ export const gameSlice = createSlice({
       state.debris = result.remainingDebris;
       state.riskLevel = calculateRiskLevel(state.debris.length);
     },
+
+    checkGameOver: (state) => {
+      if (state.budget < 0 || state.step >= state.maxSteps || state.debris.length > MAX_DEBRIS_LIMIT) {
+        state.gameOver = true;
+      }
+    },
   },
 });
 
@@ -259,6 +278,7 @@ export const {
   processCollisions,
   decommissionExpiredDRVs,
   triggerSolarStorm,
+  checkGameOver,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

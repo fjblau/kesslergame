@@ -12,10 +12,12 @@ import { EventLog } from './components/EventLog/EventLog';
 import { Tabs } from './components/ui/Tabs';
 import { useGameSpeed } from './hooks/useGameSpeed';
 import { useAppSelector } from './store/hooks';
+import { GameOverModal } from './components/GameOver/GameOverModal';
 
 function App() {
   const [gameStarted, setGameStarted] = useState(false);
   const history = useAppSelector(state => state.game.history);
+  const gameOver = useAppSelector(state => state.game.gameOver);
 
   useGameSpeed();
 
@@ -85,6 +87,8 @@ function App() {
 
         <Tabs tabs={tabs} defaultTab="launch" />
       </div>
+
+      {gameOver && <GameOverModal />}
     </div>
   );
 }

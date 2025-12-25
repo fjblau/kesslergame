@@ -62,6 +62,7 @@ export interface GameState {
   nextIncomeAt: number;
   history: TurnHistory[];
   riskLevel: RiskLevel;
+  gameOver: boolean;
 }
 
 export interface UIState {
