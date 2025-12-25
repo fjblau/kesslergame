@@ -2,15 +2,11 @@ import { useState } from 'react';
 import { GameSetupScreen } from './components/Setup/GameSetupScreen';
 import { ControlPanel } from './components/ControlPanel/ControlPanel';
 import { GameSpeedControl } from './components/TimeControl/GameSpeedControl';
+import { StatsPanel } from './components/StatsPanel/StatsPanel';
 import { useGameSpeed } from './hooks/useGameSpeed';
-import { useAppSelector } from './store/hooks';
 
 function App() {
   const [gameStarted, setGameStarted] = useState(false);
-  const satellites = useAppSelector(state => state.game.satellites);
-  const debris = useAppSelector(state => state.game.debris);
-  const drvs = useAppSelector(state => state.game.debrisRemovalVehicles);
-  const step = useAppSelector(state => state.game.step);
 
   useGameSpeed();
 
@@ -37,29 +33,11 @@ function App() {
             <ControlPanel />
           </div>
 
-          <div className="lg:col-span-2">
-            <div className="bg-slate-800 border border-slate-700 rounded-lg p-6">
-              <h2 className="text-xl font-bold text-blue-300 mb-4">Game Stats</h2>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div className="bg-slate-900 p-4 rounded">
-                  <div className="text-gray-400">Turn</div>
-                  <div className="text-2xl font-bold text-white">{step}</div>
-                </div>
-                <div className="bg-slate-900 p-4 rounded">
-                  <div className="text-gray-400">Satellites</div>
-                  <div className="text-2xl font-bold text-green-400">{satellites.length}</div>
-                </div>
-                <div className="bg-slate-900 p-4 rounded">
-                  <div className="text-gray-400">Debris</div>
-                  <div className="text-2xl font-bold text-red-400">{debris.length}</div>
-                </div>
-                <div className="bg-slate-900 p-4 rounded">
-                  <div className="text-gray-400">Active DRVs</div>
-                  <div className="text-2xl font-bold text-blue-400">{drvs.length}</div>
-                </div>
-              </div>
+          <div className="lg:col-span-2 space-y-6">
+            <StatsPanel />
 
-              <div className="mt-6 p-4 bg-blue-900/20 border border-blue-500/30 rounded-lg">
+            <div className="bg-slate-800 border border-slate-700 rounded-lg p-6">
+              <div className="p-4 bg-blue-900/20 border border-blue-500/30 rounded-lg">
                 <h3 className="font-semibold text-blue-300 mb-2">Phase 1 Features Implemented:</h3>
                 <ul className="text-sm text-gray-300 space-y-1">
                   <li>✅ Game Speed Selector (Pause/Normal/Fast)</li>
