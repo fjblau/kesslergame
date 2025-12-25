@@ -12,21 +12,21 @@ export function OrbitVisualization() {
   return (
     <div className="relative flex items-center justify-center bg-slate-950" style={{ width: '600px', height: '600px' }}>
       {/* GEO orbit */}
-      <div className="absolute" style={{ width: '500px', height: '500px', border: '2px solid rgba(96, 165, 250, 0.5)', borderRadius: '50%' }}>
+      <div className="absolute" style={{ width: '500px', height: '500px', border: '2px solid rgba(96, 165, 250, 0.5)', borderRadius: '50%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-8 text-xs font-semibold text-blue-400 bg-slate-950/80 px-2 py-1 rounded">
           GEO
         </div>
       </div>
       
       {/* MEO orbit */}
-      <div className="absolute" style={{ width: '350px', height: '350px', border: '2px solid rgba(96, 165, 250, 0.5)', borderRadius: '50%' }}>
+      <div className="absolute" style={{ width: '350px', height: '350px', border: '2px solid rgba(96, 165, 250, 0.5)', borderRadius: '50%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-8 text-xs font-semibold text-blue-400 bg-slate-950/80 px-2 py-1 rounded">
           MEO
         </div>
       </div>
       
       {/* LEO orbit */}
-      <div className="absolute" style={{ width: '200px', height: '200px', border: '2px solid rgba(96, 165, 250, 0.5)', borderRadius: '50%' }}>
+      <div className="absolute" style={{ width: '200px', height: '200px', border: '2px solid rgba(96, 165, 250, 0.5)', borderRadius: '50%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-8 text-xs font-semibold text-blue-400 bg-slate-950/80 px-2 py-1 rounded">
           LEO
         </div>
