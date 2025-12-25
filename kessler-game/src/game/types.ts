@@ -101,3 +101,17 @@ export interface MissionsState {
     totalDRVsLaunched: number;
   };
 }
+
+export type EventType = 'satellite-launch' | 'drv-launch' | 'collision' | 'debris-removal' | 'mission-complete' | 'drv-expired';
+
+export interface GameEvent {
+  id: string;
+  type: EventType;
+  turn: number;
+  message: string;
+  details?: Record<string, unknown>;
+}
+
+export interface EventsState {
+  events: GameEvent[];
+}

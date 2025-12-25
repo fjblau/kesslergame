@@ -51,43 +51,65 @@ export const gameSlice = createSlice({
       };
     },
 
-    launchSatellite: (state, action: PayloadAction<{
-      orbit: OrbitLayer;
-      insuranceTier: InsuranceTier;
-      purpose: SatelliteType;
-    }>) => {
-      const { orbit, insuranceTier, purpose } = action.payload;
-      const satellite = {
-        id: generateId(),
-        ...randomPositionInLayer(orbit),
-        layer: orbit,
-        purpose,
-        age: 0,
-        insuranceTier,
-      };
-      state.satellites.push(satellite);
+    launchSatellite: {
+      reducer: (state, action: PayloadAction<{
+        orbit: OrbitLayer;
+        insuranceTier: InsuranceTier;
+        purpose: SatelliteType;
+        turn: number;
+      }>) => {
+        const { orbit, insuranceTier, purpose } = action.payload;
+        const satellite = {
+          id: generateId(),
+          ...randomPositionInLayer(orbit),
+          layer: orbit,
+          purpose,
+          age: 0,
+          insuranceTier,
+        };
+        state.satellites.push(satellite);
+      },
+      prepare: (payload: {
+        orbit: OrbitLayer;
+        insuranceTier: InsuranceTier;
+        purpose: SatelliteType;
+        turn?: number;
+      }) => ({
+        payload: { ...payload, turn: payload.turn ?? 0 }
+      })
     },
 
-    launchDRV: (state, action: PayloadAction<{
-      orbit: OrbitLayer;
-      drvType: DRVType;
-      targetPriority: DRVTargetPriority;
-    }>) => {
-      const { orbit, drvType, targetPriority } = action.payload;
-      const [minCapacity, maxCapacity] = DRV_CONFIG.capacity[drvType];
-      const drv = {
-        id: generateId(),
-        ...randomPositionInLayer(orbit),
-        layer: orbit,
-        removalType: drvType,
-        targetPriority,
-        age: 0,
-        maxAge: DRV_CONFIG.duration[drvType],
-        capacity: Math.floor(Math.random() * (maxCapacity - minCapacity + 1)) + minCapacity,
-        successRate: DRV_CONFIG.successRate[drvType],
-        debrisRemoved: 0,
-      };
-      state.debrisRemovalVehicles.push(drv);
+    launchDRV: {
+      reducer: (state, action: PayloadAction<{
+        orbit: OrbitLayer;
+        drvType: DRVType;
+        targetPriority: DRVTargetPriority;
+        turn: number;
+      }>) => {
+        const { orbit, drvType, targetPriority } = action.payload;
+        const [minCapacity, maxCapacity] = DRV_CONFIG.capacity[drvType];
+        const drv = {
+          id: generateId(),
+          ...randomPositionInLayer(orbit),
+          layer: orbit,
+          removalType: drvType,
+          targetPriority,
+          age: 0,
+          maxAge: DRV_CONFIG.duration[drvType],
+          capacity: Math.floor(Math.random() * (maxCapacity - minCapacity + 1)) + minCapacity,
+          successRate: DRV_CONFIG.successRate[drvType],
+          debrisRemoved: 0,
+        };
+        state.debrisRemovalVehicles.push(drv);
+      },
+      prepare: (payload: {
+        orbit: OrbitLayer;
+        drvType: DRVType;
+        targetPriority: DRVTargetPriority;
+        turn?: number;
+      }) => ({
+        payload: { ...payload, turn: payload.turn ?? 0 }
+      })
     },
 
     spendBudget: (state, action: PayloadAction<number>) => {

@@ -140,6 +140,11 @@ export const missionsSlice = createSlice({
     trackDRVLaunch: (state) => {
       state.trackingData.totalDRVsLaunched++;
     },
+
+    notifyMissionComplete: {
+      reducer: () => {},
+      prepare: (payload: { title: string; turn: number }) => ({ payload })
+    },
   },
 });
 
@@ -147,6 +152,7 @@ export const {
   initializeMissions,
   updateMissionProgress,
   trackDRVLaunch,
+  notifyMissionComplete,
 } = missionsSlice.actions;
 
 export const selectActiveMissions = (state: { missions: MissionsState }) => state.missions.activeMissions;
