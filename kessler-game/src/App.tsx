@@ -7,6 +7,7 @@ import { OrbitVisualization } from './components/GameBoard/OrbitVisualization';
 import { DebrisChart } from './components/Charts/DebrisChart';
 import { SatelliteChart } from './components/Charts/SatelliteChart';
 import { DebrisRemovalChart } from './components/Charts/DebrisRemovalChart';
+import { Tabs } from './components/ui/Tabs';
 import { useGameSpeed } from './hooks/useGameSpeed';
 import { useAppSelector } from './store/hooks';
 
@@ -20,6 +21,47 @@ function App() {
     return <GameSetupScreen onStart={() => setGameStarted(true)} />;
   }
 
+  const tabs = [
+    {
+      id: 'launch',
+      label: 'Launch',
+      content: (
+        <div className="flex gap-6 justify-center items-start">
+          <div>
+            <ControlPanel />
+          </div>
+          <div className="flex flex-col gap-6">
+            <OrbitVisualization />
+            <GameSpeedControl />
+          </div>
+          <div>
+            <StatsPanel />
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: 'analytics',
+      label: 'Analytics',
+      content: (
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          <DebrisChart data={history} />
+          <SatelliteChart data={history} />
+          <DebrisRemovalChart data={history} />
+        </div>
+      ),
+    },
+    {
+      id: 'documentation',
+      label: 'Documentation',
+      content: (
+        <div className="text-center text-gray-400 py-12">
+          Documentation coming soon...
+        </div>
+      ),
+    },
+  ];
+
   return (
     <div className="min-h-screen p-8">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -27,29 +69,9 @@ function App() {
           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
             Kessler Simulation
           </h1>
-          <p className="text-gray-400 mt-2">Phase 1: Interactive Inputs Demo</p>
         </header>
 
-        <div className="flex justify-center mb-6">
-          <GameSpeedControl />
-        </div>
-
-        <div style={{ display: 'flex', gap: '24px', justifyContent: 'center', alignItems: 'flex-start' }}>
-          <div>
-            <ControlPanel />
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            <OrbitVisualization />
-            <StatsPanel />
-            
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              <DebrisChart data={history} />
-              <SatelliteChart data={history} />
-              <DebrisRemovalChart data={history} />
-            </div>
-          </div>
-        </div>
+        <Tabs tabs={tabs} defaultTab="launch" />
       </div>
     </div>
   );

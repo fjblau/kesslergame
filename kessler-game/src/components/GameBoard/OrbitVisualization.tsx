@@ -10,7 +10,7 @@ export function OrbitVisualization() {
   const debrisRemovalVehicles = useAppSelector(state => state.game.debrisRemovalVehicles);
 
   return (
-    <div style={{ position: 'relative', width: '800px', height: '800px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#0f172a', border: '2px solid #475569', borderRadius: '8px' }}>
+    <div className="relative w-[800px] h-[800px] flex items-center justify-center bg-slate-900 border-2 border-slate-600 rounded-xl">
       {/* GEO orbit */}
       <div style={{ position: 'absolute', width: '700px', height: '700px', border: '2px solid rgba(96, 165, 250, 0.5)', borderRadius: '50%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
         <div style={{ position: 'absolute', top: '8px', left: '50%', transform: 'translate(-50%, 0)', fontSize: '12px', fontWeight: 600, color: '#60a5fa', backgroundColor: 'rgba(15, 23, 42, 0.8)', padding: '4px 8px', borderRadius: '4px' }}>

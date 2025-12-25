@@ -8,7 +8,7 @@ interface ChartProps {
 export function DebrisChart({ data }: ChartProps) {
   if (data.length === 0) {
     return (
-      <div className="bg-slate-800 border border-slate-700 rounded-lg p-6">
+      <div className="bg-slate-800 border border-slate-700 rounded-xl p-6">
         <h2 className="text-lg font-semibold text-blue-300 mb-4">
           Debris Count
         </h2>
@@ -20,7 +20,7 @@ export function DebrisChart({ data }: ChartProps) {
   }
 
   return (
-    <div className="bg-slate-800 border border-slate-700 rounded-lg p-6">
+    <div className="bg-slate-800 border border-slate-700 rounded-xl p-6">
       <h2 className="text-lg font-semibold text-blue-300 mb-4">
         Debris Count
       </h2>
@@ -31,19 +31,20 @@ export function DebrisChart({ data }: ChartProps) {
             <XAxis 
               dataKey="turn" 
               stroke="#888" 
-              style={{ fontSize: '12px' }}
+              style={{ fontSize: '12px', fontFamily: 'Calibri, Candara, Segoe UI, Arial, sans-serif' }}
               label={{ value: 'Turn', position: 'insideBottom', offset: -5, fill: '#888' }}
             />
             <YAxis 
               stroke="#888" 
-              style={{ fontSize: '12px' }}
+              style={{ fontSize: '12px', fontFamily: 'Calibri, Candara, Segoe UI, Arial, sans-serif' }}
               label={{ value: 'Count', angle: -90, position: 'insideLeft', fill: '#888' }}
             />
             <Tooltip 
               contentStyle={{ 
                 backgroundColor: '#1e293b', 
                 border: '1px solid #334155',
-                borderRadius: '6px'
+                borderRadius: '12px',
+                fontFamily: 'Calibri, Candara, Segoe UI, Arial, sans-serif'
               }}
             />
             <Line 

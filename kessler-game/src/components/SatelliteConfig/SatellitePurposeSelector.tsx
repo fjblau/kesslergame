@@ -12,7 +12,7 @@ export function SatellitePurposeSelector({ selected, onChange }: SatellitePurpos
   return (
     <div className="space-y-2">
       <label className="text-sm font-medium text-gray-300">Satellite Type</label>
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-3">
         {options.map((option) => {
           const config = SATELLITE_PURPOSE_CONFIG[option];
           const isSelected = selected === option;
@@ -22,10 +22,10 @@ export function SatellitePurposeSelector({ selected, onChange }: SatellitePurpos
               key={option}
               onClick={() => onChange(option)}
               className={`
-                p-3 rounded-lg border-2 transition-all
+                p-4 rounded-xl border-2 transition-all
                 ${isSelected 
-                  ? 'border-blue-500 bg-blue-900/30 text-blue-200' 
-                  : 'border-slate-700 bg-slate-800 text-gray-300 hover:bg-slate-700'}
+                  ? 'border-blue-500 bg-blue-600 text-white shadow-lg' 
+                  : 'border-slate-600 bg-slate-700 text-gray-300 hover:bg-slate-600 hover:border-slate-500'}
               `}
             >
               <div className="flex items-center justify-center gap-2">

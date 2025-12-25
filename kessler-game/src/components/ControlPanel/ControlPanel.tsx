@@ -55,7 +55,7 @@ export function ControlPanel() {
   };
 
   return (
-    <div style={{ border: '2px solid #475569', borderRadius: '8px', padding: '24px' }} className="space-y-6 max-w-md">
+    <div className="border-2 border-slate-600 rounded-xl p-6 space-y-6 max-w-md">
       <div>
         <h2 className="text-xl font-bold text-blue-300 mb-4">Launch Controls</h2>
         <div className="text-sm text-gray-400">Turn: {step}</div>
@@ -63,14 +63,14 @@ export function ControlPanel() {
 
       <div className="space-y-2">
         <label className="text-sm font-medium text-gray-300">Launch Type</label>
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           {(['satellite', 'drv'] as const).map(type => (
             <button
               key={type}
               onClick={() => setLaunchType(type)}
-              className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
+              className={`flex-1 py-2 px-6 rounded-xl font-medium transition-colors ${
                 launchType === type
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-blue-600 text-white shadow-lg'
                   : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
               }`}
             >
@@ -82,14 +82,14 @@ export function ControlPanel() {
 
       <div className="space-y-2">
         <label className="text-sm font-medium text-gray-300">Orbit Layer</label>
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           {(['LEO', 'MEO', 'GEO'] as OrbitLayer[]).map(orbit => (
             <button
               key={orbit}
               onClick={() => setSelectedOrbit(orbit)}
-              className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
+              className={`flex-1 py-2 px-6 rounded-xl font-medium transition-colors ${
                 selectedOrbit === orbit
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-blue-600 text-white shadow-lg'
                   : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
               }`}
             >
@@ -108,14 +108,14 @@ export function ControlPanel() {
         <>
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-300">DRV Type</label>
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               {(['cooperative', 'uncooperative'] as DRVType[]).map(type => (
                 <button
                   key={type}
                   onClick={() => setDrvType(type)}
-                  className={`flex-1 py-2 px-4 rounded-lg font-medium capitalize transition-colors ${
+                  className={`flex-1 py-3 px-6 rounded-xl font-medium capitalize transition-colors ${
                     drvType === type
-                      ? 'bg-blue-600 text-white'
+                      ? 'bg-blue-600 text-white shadow-lg'
                       : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
                   }`}
                 >
@@ -142,7 +142,7 @@ export function ControlPanel() {
         <button
           onClick={handleLaunch}
           disabled={!canAfford}
-          className={`w-full py-3 px-4 rounded-lg font-bold uppercase tracking-wide transition-all ${
+          className={`w-full py-3 px-6 rounded-xl font-bold uppercase tracking-wide transition-all ${
             canAfford
               ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white shadow-lg hover:shadow-xl'
               : 'bg-slate-700 text-slate-500 cursor-not-allowed'

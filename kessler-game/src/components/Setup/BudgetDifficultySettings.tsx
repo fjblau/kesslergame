@@ -11,8 +11,11 @@ export function BudgetDifficultySettings({ selected, onChange }: BudgetDifficult
   const difficulties: BudgetDifficulty[] = ['easy', 'normal', 'hard', 'challenge'];
 
   return (
-    <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-blue-300">Budget Difficulty</h3>
+    <div className="space-y-5">
+      <div className="bg-gradient-to-r from-slate-700 to-slate-800 p-4 rounded-xl border border-slate-600">
+        <h3 className="text-2xl font-bold text-blue-300 mb-1">Budget Difficulty</h3>
+        <p className="text-sm text-gray-400">Choose your economic challenge level</p>
+      </div>
       <div className="space-y-3">
         {difficulties.map((diff) => {
           const config = BUDGET_DIFFICULTY_CONFIG[diff];
