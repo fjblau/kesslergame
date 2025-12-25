@@ -30,8 +30,10 @@ function App() {
           <div>
             <ControlPanel />
           </div>
-          <div className="flex flex-col gap-6">
+          <div>
             <OrbitVisualization />
+          </div>
+          <div>
             <StatsPanel />
           </div>
         </div>
