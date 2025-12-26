@@ -56,17 +56,23 @@ export function SatelliteSprite({ satellite, x, y, isLaunching = false, isCaptur
       }}
       title={isCaptured ? `${satellite.purpose} Satellite (${satellite.layer}) - CAPTURED` : `${satellite.purpose} Satellite (${satellite.layer})`}
     >
-      <span style={{ position: 'relative' }}>
+      <span style={{ 
+        position: 'relative',
+        display: 'inline-block',
+      }}>
         {icon}
         {isCaptured && (
           <span style={{ 
-            position: 'absolute', 
-            top: '-8px', 
-            right: '-8px', 
-            fontSize: '10px',
-          }}>
-            🎯
-          </span>
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '28px',
+            height: '28px',
+            border: '2px solid #ef4444',
+            borderRadius: '50%',
+            pointerEvents: 'none',
+          }} />
         )}
       </span>
     </motion.div>

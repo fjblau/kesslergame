@@ -51,8 +51,6 @@ export function selectTarget(
     ...debrisInLayer
   ];
   
-  console.log(`[DRV ${drv.id}] Target selection: ${satellitesInLayer.length} satellites, ${debrisInLayer.length} debris in ${drv.layer}`);
-  
   if (allTargets.length === 0) return null;
   return allTargets[Math.floor(Math.random() * allTargets.length)];
 }
@@ -151,11 +149,9 @@ export function processCooperativeDRVOperations(
     
     if (orbitsRemaining <= 0) {
       if (capturedSatellite) {
-        console.log(`[DRV ${drv.id}] Removing captured satellite ${capturedSatellite.id}`);
         removedSatelliteIds.push(capturedSatellite.id);
       } else if (capturedDebris) {
         const success = attemptDebrisRemoval(drv);
-        console.log(`[DRV ${drv.id}] Removal attempt for debris ${capturedDebris.id}: ${success ? 'SUCCESS' : 'FAILED'}`);
         if (success) {
           removedDebrisIds.push(capturedDebris.id);
         }
@@ -189,7 +185,6 @@ export function processCooperativeDRVOperations(
   
   if (!currentTarget) {
     const newTarget = selectTarget(drv, debris, satellites);
-    console.log(`[DRV ${drv.id}] Target lost or not found, selecting new target: ${newTarget?.id || 'NONE'}`);
     return { 
       removedDebrisIds,
       removedSatelliteIds,

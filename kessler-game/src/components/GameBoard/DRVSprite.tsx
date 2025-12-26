@@ -13,8 +13,8 @@ interface DRVSpriteProps {
 
 export function DRVSprite({ drv, x, y, isLaunching = false }: DRVSpriteProps) {
   const isCooperative = drv.removalType === 'cooperative';
-  const hasCapturedDebris = drv.capturedDebrisId !== undefined;
-  const color = hasCapturedDebris ? '#ef4444' : (isCooperative ? '#34d399' : '#fb923c');
+  const hasCapturedObject = drv.capturedDebrisId !== undefined;
+  const color = hasCapturedObject ? '#ef4444' : (isCooperative ? '#34d399' : '#fb923c');
   const days = useAppSelector(state => state.game.days);
   const baseAngle = (drv.x / 100) * 360;
   const speedMultiplier = getEntitySpeedMultiplier(drv.id);
@@ -26,6 +26,7 @@ export function DRVSprite({ drv, x, y, isLaunching = false }: DRVSpriteProps) {
         position: 'absolute',
         color,
         fontSize: '20px',
+        filter: hasCapturedObject ? 'drop-shadow(0 0 8px #ef4444)' : 'none',
       }}
       initial={isLaunching ? {
         left: 400,
