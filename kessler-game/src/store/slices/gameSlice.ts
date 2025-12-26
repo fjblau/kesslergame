@@ -3,7 +3,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import type { GameState, OrbitLayer, SatelliteType, InsuranceTier, DRVType, DRVTargetPriority, BudgetDifficulty, DebrisRemovalVehicle } from '../../game/types';
 import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG, LEO_LIFETIME, MAX_DEBRIS_LIMIT, ORBITAL_SPEEDS } from '../../game/constants';
 import { detectCollisions, generateDebrisFromCollision, calculateTotalPayout } from '../../game/engine/collision';
-import { processDRVRemoval } from '../../game/engine/debrisRemoval';
+import { processDRVRemoval, processCooperativeDRVOperations, navigateTowardsTarget } from '../../game/engine/debrisRemoval';
 import { calculateRiskLevel } from '../../game/engine/risk';
 import { processSolarStorm } from '../../game/engine/events';
 
@@ -174,11 +174,27 @@ export const gameSlice = createSlice({
       const activeDRVs = state.debrisRemovalVehicles.filter(drv => drv.age < drv.maxAge);
 
       activeDRVs.forEach(drv => {
-        const result = processDRVRemoval(drv, state.debris);
-
-        drv.debrisRemoved += result.removedDebrisIds.length;
-
-        state.debris = state.debris.filter(d => !result.removedDebrisIds.includes(d.id));
+        if (drv.removalType === 'cooperative') {
+          const result = processCooperativeDRVOperations(drv, state.debris);
+          
+          drv.debrisRemoved += result.removedDebrisIds.length;
+          drv.targetDebrisId = result.newTargetId;
+          
+          state.debris = state.debris.filter(d => !result.removedDebrisIds.includes(d.id));
+          
+          const target = state.debris.find(d => d.id === drv.targetDebrisId);
+          if (target) {
+            const newPosition = navigateTowardsTarget(drv, target);
+            drv.x = newPosition.x;
+            drv.y = newPosition.y;
+          }
+        } else {
+          const result = processDRVRemoval(drv, state.debris);
+          
+          drv.debrisRemoved += result.removedDebrisIds.length;
+          
+          state.debris = state.debris.filter(d => !result.removedDebrisIds.includes(d.id));
+        }
       });
 
       state.riskLevel = calculateRiskLevel(state.debris.length);
@@ -203,8 +219,10 @@ export const gameSlice = createSlice({
       });
       state.debrisRemovalVehicles.forEach(drv => {
         drv.age++;
-        const speed = getEntitySpeedVariation(drv.id, drv.layer);
-        drv.x = (drv.x + speed) % 100;
+        if (drv.removalType === 'uncooperative') {
+          const speed = getEntitySpeedVariation(drv.id, drv.layer);
+          drv.x = (drv.x + speed) % 100;
+        }
       });
       state.debris.forEach(deb => {
         const speed = getEntitySpeedVariation(deb.id, deb.layer);
