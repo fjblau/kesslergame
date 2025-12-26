@@ -1,11 +1,27 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { GameState, OrbitLayer, SatelliteType, InsuranceTier, DRVType, DRVTargetPriority, BudgetDifficulty, DebrisRemovalVehicle } from '../../game/types';
-import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG, LEO_LIFETIME, MAX_DEBRIS_LIMIT } from '../../game/constants';
+import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG, LEO_LIFETIME, MAX_DEBRIS_LIMIT, ORBITAL_SPEEDS } from '../../game/constants';
 import { detectCollisions, generateDebrisFromCollision, calculateTotalPayout } from '../../game/engine/collision';
 import { processDRVRemoval } from '../../game/engine/debrisRemoval';
 import { calculateRiskLevel } from '../../game/engine/risk';
 import { processSolarStorm } from '../../game/engine/events';
+
+function hashId(id: string): number {
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) {
+    hash = ((hash << 5) - hash) + id.charCodeAt(i);
+    hash = hash & hash;
+  }
+  return Math.abs(hash);
+}
+
+function getEntitySpeedVariation(id: string, layer: OrbitLayer): number {
+  const baseSpeed = ORBITAL_SPEEDS[layer];
+  const hash = hashId(id);
+  const multiplier = 0.7 + (hash % 600) / 1000;
+  return baseSpeed * multiplier;
+}
 
 const generateId = () => Math.random().toString(36).substring(2, 11);
 
@@ -180,9 +196,17 @@ export const gameSlice = createSlice({
 
       state.satellites.forEach(sat => {
         sat.age++;
+        const speed = getEntitySpeedVariation(sat.id, sat.layer);
+        sat.x = (sat.x + speed) % 100;
       });
       state.debrisRemovalVehicles.forEach(drv => {
         drv.age++;
+        const speed = getEntitySpeedVariation(drv.id, drv.layer);
+        drv.x = (drv.x + speed) % 100;
+      });
+      state.debris.forEach(deb => {
+        const speed = getEntitySpeedVariation(deb.id, deb.layer);
+        deb.x = (deb.x + speed) % 100;
       });
 
       state.satellites = state.satellites.filter(

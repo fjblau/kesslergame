@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import type { DebrisRemovalVehicle } from '../../game/types';
 import { ORBITAL_SPEEDS } from '../../game/constants';
 import { useAppSelector } from '../../store/hooks';
+import { getEntitySpeedMultiplier } from './utils';
 
 interface DRVSpriteProps {
   drv: DebrisRemovalVehicle;
@@ -15,7 +16,8 @@ export function DRVSprite({ drv, x, y, isLaunching = false }: DRVSpriteProps) {
   const color = isCooperative ? '#34d399' : '#fb923c';
   const days = useAppSelector(state => state.game.days);
   const baseAngle = (drv.x / 100) * 360;
-  const rotation = baseAngle + (days * ORBITAL_SPEEDS[drv.layer] * 3.6);
+  const speedMultiplier = getEntitySpeedMultiplier(drv.id);
+  const rotation = baseAngle + (days * ORBITAL_SPEEDS[drv.layer] * speedMultiplier * 3.6);
   
   return (
     <motion.div

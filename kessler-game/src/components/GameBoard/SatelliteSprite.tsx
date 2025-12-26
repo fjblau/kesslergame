@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import type { Satellite } from '../../game/types';
 import { SATELLITE_PURPOSE_CONFIG, ORBITAL_SPEEDS } from '../../game/constants';
 import { useAppSelector } from '../../store/hooks';
+import { getEntitySpeedMultiplier } from './utils';
 
 interface SatelliteSpriteProps {
   satellite: Satellite;
@@ -14,7 +15,8 @@ export function SatelliteSprite({ satellite, x, y, isLaunching = false }: Satell
   const icon = SATELLITE_PURPOSE_CONFIG[satellite.purpose].icon;
   const days = useAppSelector(state => state.game.days);
   const baseAngle = (satellite.x / 100) * 360;
-  const rotation = baseAngle + (days * ORBITAL_SPEEDS[satellite.layer] * 3.6);
+  const speedMultiplier = getEntitySpeedMultiplier(satellite.id);
+  const rotation = baseAngle + (days * ORBITAL_SPEEDS[satellite.layer] * speedMultiplier * 3.6);
   
   return (
     <motion.div
