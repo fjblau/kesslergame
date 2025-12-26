@@ -36,7 +36,7 @@ export function useGameSpeed() {
   }, [missions, dispatch]);
 
   useEffect(() => {
-    if (speed !== 'fast') return;
+    if (speed === 'paused') return;
 
     const shouldPause = autoPauseBudgetLow && budget < 20_000_000;
 
@@ -44,6 +44,8 @@ export function useGameSpeed() {
       dispatch(setGameSpeed('paused'));
       return;
     }
+
+    const intervalDuration = speed === 'fast' ? 2000 : 4000;
 
     const interval = setInterval(() => {
       dispatch(advanceTurn());
@@ -64,7 +66,7 @@ export function useGameSpeed() {
 
       dispatch(updateMissionProgress(gameState));
       dispatch(decommissionExpiredDRVs());
-    }, 2000);
+    }, intervalDuration);
 
     return () => clearInterval(interval);
   }, [speed, budget, autoPauseBudgetLow, gameState, dispatch]);

@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { GameState, OrbitLayer, SatelliteType, InsuranceTier, DRVType, DRVTargetPriority, BudgetDifficulty, DebrisRemovalVehicle } from '../../game/types';
-import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG, LEO_LIFETIME, MAX_DEBRIS_LIMIT } from '../../game/constants';
+import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG, LEO_LIFETIME, MAX_DEBRIS_LIMIT, ORBITAL_SPEEDS } from '../../game/constants';
 import { detectCollisions, generateDebrisFromCollision, calculateTotalPayout } from '../../game/engine/collision';
 import { processDRVRemoval } from '../../game/engine/debrisRemoval';
 import { calculateRiskLevel } from '../../game/engine/risk';
@@ -154,8 +154,17 @@ export const gameSlice = createSlice({
         state.nextIncomeAt += state.budgetIncomeInterval;
       }
 
-      state.satellites.forEach(sat => sat.age++);
-      state.debrisRemovalVehicles.forEach(drv => drv.age++);
+      state.satellites.forEach(sat => {
+        sat.age++;
+        sat.x = (sat.x + ORBITAL_SPEEDS[sat.layer]) % 100;
+      });
+      state.debrisRemovalVehicles.forEach(drv => {
+        drv.age++;
+        drv.x = (drv.x + ORBITAL_SPEEDS[drv.layer]) % 100;
+      });
+      state.debris.forEach(deb => {
+        deb.x = (deb.x + ORBITAL_SPEEDS[deb.layer]) % 100;
+      });
 
       state.satellites = state.satellites.filter(
         sat => sat.layer !== 'LEO' || sat.age < LEO_LIFETIME
