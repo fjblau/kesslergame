@@ -21,6 +21,7 @@ const addEventToState = (
   state: EventsState,
   type: EventType,
   turn: number,
+  day: number,
   message: string,
   details?: Record<string, unknown>
 ) => {
@@ -28,6 +29,8 @@ const addEventToState = (
     id: generateId(),
     type,
     turn,
+    day,
+    timestamp: Date.now() % 86400000,
     message,
     details,
   };
@@ -45,6 +48,7 @@ export const eventSlice = createSlice({
     addEvent: (state, action: PayloadAction<{
       type: EventType;
       turn: number;
+      day: number;
       message: string;
       details?: Record<string, unknown>;
     }>) => {
@@ -52,6 +56,7 @@ export const eventSlice = createSlice({
         state,
         action.payload.type,
         action.payload.turn,
+        action.payload.day,
         action.payload.message,
         action.payload.details
       );
@@ -71,6 +76,7 @@ export const eventSlice = createSlice({
           state,
           'satellite-launch',
           action.payload.turn,
+          action.payload.day ?? 0,
           `Launched ${action.payload.purpose} satellite in ${action.payload.orbit} orbit`,
           { orbit: action.payload.orbit, purpose: action.payload.purpose, insuranceTier: action.payload.insuranceTier }
         );
@@ -80,6 +86,7 @@ export const eventSlice = createSlice({
           state,
           'drv-launch',
           action.payload.turn,
+          action.payload.day ?? 0,
           `Deployed ${action.payload.drvType} DRV to ${action.payload.orbit} orbit`,
           { orbit: action.payload.orbit, drvType: action.payload.drvType, targetPriority: action.payload.targetPriority }
         );
@@ -89,6 +96,7 @@ export const eventSlice = createSlice({
           state,
           'mission-complete',
           action.payload.turn,
+          action.payload.day ?? 0,
           `Mission completed: ${action.payload.title}`,
           { title: action.payload.title }
         );

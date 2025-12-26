@@ -57,6 +57,22 @@ export interface CollisionEvent {
   y: number;
   layer: OrbitLayer;
   timestamp: number;
+  objectIds: string[];
+}
+
+export interface ExpiredDRVInfo {
+  id: string;
+  type: DRVType;
+  layer: OrbitLayer;
+  debrisRemoved: number;
+}
+
+export interface DebrisRemovalInfo {
+  drvId: string;
+  drvType: DRVType;
+  layer: OrbitLayer;
+  debrisType: DebrisType;
+  count: number;
 }
 
 export interface GameState {
@@ -76,6 +92,8 @@ export interface GameState {
   riskLevel: RiskLevel;
   gameOver: boolean;
   recentCollisions: CollisionEvent[];
+  recentlyExpiredDRVs: ExpiredDRVInfo[];
+  recentDebrisRemovals: DebrisRemovalInfo[];
   collisionAngleThreshold: number;
   collisionRadiusMultiplier: number;
   cascadeTriggered: boolean;
@@ -127,6 +145,8 @@ export interface GameEvent {
   id: string;
   type: EventType;
   turn: number;
+  day: number;
+  timestamp: number;
   message: string;
   details?: Record<string, unknown>;
 }
