@@ -26,11 +26,11 @@ export const DRV_CONFIG = {
   },
   capacity: {
     cooperative: [2, 3] as [number, number],
-    uncooperative: [1, 2] as [number, number],
+    uncooperative: [3, 5] as [number, number],
   },
   successRate: {
     cooperative: 0.85,
-    uncooperative: 0.60,
+    uncooperative: 0.80,
   },
   duration: {
     cooperative: 100,
