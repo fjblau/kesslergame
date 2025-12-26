@@ -76,7 +76,7 @@ export const gameSlice = createSlice({
   name: 'game',
   initialState,
   reducers: {
-    initializeGame: (_state, action: PayloadAction<BudgetDifficulty>) => {
+    initializeGame: (state, action: PayloadAction<BudgetDifficulty>) => {
       const config = BUDGET_DIFFICULTY_CONFIG[action.payload];
       return {
         ...initialState,
@@ -87,7 +87,7 @@ export const gameSlice = createSlice({
         budgetIncomeInterval: config.incomeInterval,
         budgetDrainAmount: config.drainAmount,
         nextIncomeAt: config.incomeInterval,
-        history: [],
+        history: state?.history || [],
         riskLevel: 'LOW',
         gameOver: false,
         recentCollisions: [],
@@ -222,6 +222,10 @@ export const gameSlice = createSlice({
 
     advanceTurn: (state) => {
       state.step += 1;
+
+      if (state.step === 1) {
+        state.history = [];
+      }
 
       if (state.budgetDrainAmount > 0) {
         state.budget -= state.budgetDrainAmount;
