@@ -48,8 +48,12 @@ export function selectTarget(
     ...debris.filter(d => d.layer === drv.layer && d.type === 'cooperative')
   ];
   
+  console.log(`[DRV ${drv.id}] Selecting target in ${drv.layer}: ${satellites.filter(s => s.layer === drv.layer).length} satellites, ${debris.filter(d => d.layer === drv.layer && d.type === 'cooperative').length} cooperative debris`);
+  
   if (allTargets.length === 0) return null;
-  return allTargets[Math.floor(Math.random() * allTargets.length)];
+  const selected = allTargets[Math.floor(Math.random() * allTargets.length)];
+  console.log(`[DRV ${drv.id}] Selected target ${selected.id} at (${selected.x.toFixed(2)}, ${selected.y.toFixed(2)})`);
+  return selected;
 }
 
 export function attemptDebrisRemoval(drv: DebrisRemovalVehicle): boolean {
@@ -186,7 +190,10 @@ export function processCooperativeDRVOperations(
   
   const distance = calculateDistance(drv.x, drv.y, currentTarget.x, currentTarget.y);
   
+  console.log(`[DRV ${drv.id}] Position: (${drv.x.toFixed(2)}, ${drv.y.toFixed(2)}), Target ${currentTarget.id}: (${currentTarget.x.toFixed(2)}, ${currentTarget.y.toFixed(2)}), Distance: ${distance.toFixed(2)}`);
+  
   if (distance < CAPTURE_DISTANCE_THRESHOLD) {
+    console.log(`[DRV ${drv.id}] 🎯 CAPTURING ${currentTarget.id}!`);
     return {
       removedDebrisIds,
       removedSatelliteIds,
@@ -214,8 +221,10 @@ export function moveCooperativeDRV(
   let newY = drv.y;
   
   if (target && !drv.capturedDebrisId) {
+    const targetSpeed = getEntitySpeedVariation(target.id!, target.layer);
     const yAdjustment = calculateInterceptionAdjustment(drv, target);
     newY = drv.y + yAdjustment;
+    console.log(`[DRV ${drv.id}] Moving: DRV speed ${baseSpeed.toFixed(3)}, Target speed ${targetSpeed.toFixed(3)}, Speed diff ${(baseSpeed - targetSpeed).toFixed(3)}, Y adjustment ${yAdjustment.toFixed(3)}, New pos: (${newX.toFixed(2)}, ${newY.toFixed(2)})`);
   }
   
   return { x: newX, y: newY };
