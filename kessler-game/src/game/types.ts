@@ -73,6 +73,8 @@ export interface GameState {
   riskLevel: RiskLevel;
   gameOver: boolean;
   recentCollisions: CollisionEvent[];
+  collisionAngleThreshold: number;
+  collisionRadiusMultiplier: number;
 }
 
 export interface UIState {

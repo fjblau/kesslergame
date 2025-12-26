@@ -49,6 +49,8 @@ const initialState: GameState = {
   history: [],
   riskLevel: 'LOW',
   gameOver: false,
+  collisionAngleThreshold: 15,
+  collisionRadiusMultiplier: 1,
   recentCollisions: [],
 };
 
@@ -235,7 +237,12 @@ export const gameSlice = createSlice({
     },
 
     processCollisions: (state) => {
-      const collisions = detectCollisions(state.satellites, state.debris);
+      const collisions = detectCollisions(
+        state.satellites, 
+        state.debris,
+        state.collisionAngleThreshold,
+        state.collisionRadiusMultiplier
+      );
 
       if (collisions.length === 0) {
         return;
@@ -336,6 +343,14 @@ export const gameSlice = createSlice({
         collision => now - collision.timestamp < 1000
       );
     },
+
+    setCollisionAngleThreshold: (state, action: PayloadAction<number>) => {
+      state.collisionAngleThreshold = action.payload;
+    },
+
+    setCollisionRadiusMultiplier: (state, action: PayloadAction<number>) => {
+      state.collisionRadiusMultiplier = action.payload;
+    },
   },
 });
 
@@ -354,6 +369,8 @@ export const {
   triggerSolarStorm,
   checkGameOver,
   clearOldCollisions,
+  setCollisionAngleThreshold,
+  setCollisionRadiusMultiplier,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

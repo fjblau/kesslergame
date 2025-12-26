@@ -56,7 +56,9 @@ function normalizeAngleDiff(diff: number): number {
 
 export function detectCollisions(
   satellites: Satellite[],
-  debris: Debris[]
+  debris: Debris[],
+  angleThresholdDegrees: number = COLLISION_THRESHOLDS.angleDegrees,
+  radiusMultiplier: number = 1
 ): CollisionPair[] {
   const collisions: CollisionPair[] = [];
   const allObjects: GameObject[] = [...satellites, ...debris];
@@ -65,8 +67,8 @@ export function detectCollisions(
 
   for (const layer of layers) {
     const objectsInLayer = allObjects.filter(obj => obj.layer === layer);
-    const radiusThreshold = COLLISION_THRESHOLDS.radiusPixels[layer];
-    const angleThreshold = COLLISION_THRESHOLDS.angleDegrees;
+    const radiusThreshold = COLLISION_THRESHOLDS.radiusPixels[layer] * radiusMultiplier;
+    const angleThreshold = angleThresholdDegrees;
 
     for (let i = 0; i < objectsInLayer.length; i++) {
       for (let j = i + 1; j < objectsInLayer.length; j++) {
