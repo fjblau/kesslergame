@@ -43,10 +43,15 @@ export function selectTarget(
   debris: Debris[],
   satellites: Satellite[]
 ): CapturableObject | null {
+  const satellitesInLayer = satellites.filter(s => s.layer === drv.layer);
+  const debrisInLayer = debris.filter(d => d.layer === drv.layer && d.type === 'cooperative');
+  
   const allTargets: CapturableObject[] = [
-    ...satellites.filter(s => s.layer === drv.layer),
-    ...debris.filter(d => d.layer === drv.layer && d.type === 'cooperative')
+    ...satellitesInLayer,
+    ...debrisInLayer
   ];
+  
+  console.log(`[DRV ${drv.id}] Target selection: ${satellitesInLayer.length} satellites, ${debrisInLayer.length} debris in ${drv.layer}`);
   
   if (allTargets.length === 0) return null;
   return allTargets[Math.floor(Math.random() * allTargets.length)];
@@ -185,6 +190,7 @@ export function processCooperativeDRVOperations(
   
   if (!currentTarget) {
     const newTarget = selectTarget(drv, debris, satellites);
+    console.log(`[DRV ${drv.id}] Target lost or not found, selecting new target: ${newTarget?.id || 'NONE'}`);
     return { 
       removedDebrisIds,
       removedSatelliteIds,
