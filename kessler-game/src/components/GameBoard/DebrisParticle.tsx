@@ -17,12 +17,12 @@ export function DebrisParticle({ debris, x, y }: DebrisParticleProps) {
     <motion.div
       style={{
         position: 'absolute',
-        left: `${x}px`,
-        top: `${y}px`,
         color,
         fontSize: '12px',
       }}
       initial={{
+        left: x,
+        top: y,
         x: '-50%',
         y: '-50%',
         scale: 0,
@@ -30,6 +30,8 @@ export function DebrisParticle({ debris, x, y }: DebrisParticleProps) {
         rotate: rotation,
       }}
       animate={{
+        left: x,
+        top: y,
         x: '-50%',
         y: '-50%',
         scale: 1,
@@ -37,6 +39,8 @@ export function DebrisParticle({ debris, x, y }: DebrisParticleProps) {
         rotate: rotation,
       }}
       transition={{
+        left: { duration: 0.5, ease: 'linear' },
+        top: { duration: 0.5, ease: 'linear' },
         scale: { duration: 0.3, ease: 'easeOut' },
         opacity: { duration: 0.3, ease: 'easeOut' },
         rotate: { duration: 0.5, ease: 'linear' },

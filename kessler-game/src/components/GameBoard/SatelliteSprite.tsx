@@ -17,12 +17,12 @@ export function SatelliteSprite({ satellite, x, y, isLaunching = false }: Satell
     <motion.div
       style={{
         position: 'absolute',
-        left: `${x}px`,
-        top: `${y}px`,
         color: '#60a5fa',
         fontSize: '20px',
       }}
       initial={isLaunching ? {
+        left: 400,
+        top: 400,
         x: '-50%',
         y: '-50%',
         scale: 0.5,
@@ -30,6 +30,8 @@ export function SatelliteSprite({ satellite, x, y, isLaunching = false }: Satell
         rotate: 0,
       } : false}
       animate={{
+        left: x,
+        top: y,
         x: '-50%',
         y: '-50%',
         scale: 1,
@@ -37,11 +39,13 @@ export function SatelliteSprite({ satellite, x, y, isLaunching = false }: Satell
         rotate: rotation,
       }}
       transition={{
+        left: { duration: 0.5, ease: 'linear' },
+        top: { duration: 0.5, ease: 'linear' },
         rotate: { duration: 0.5, ease: 'linear' },
         x: isLaunching ? { duration: 1.5, ease: [0.33, 1, 0.68, 1] } : { duration: 0 },
         y: isLaunching ? { duration: 1.5, ease: [0.33, 1, 0.68, 1] } : { duration: 0 },
-        scale: isLaunching ? { duration: 1.5, ease: [0.33, 1, 0.68, 1] } : { duration: 0 },
-        opacity: isLaunching ? { duration: 1.5, ease: [0.33, 1, 0.68, 1] } : { duration: 0 },
+        scale: isLaunching ? { duration: 1.5, ease: [0.33, 1, 0.68, 1] } : { duration: 0.5, ease: 'linear' },
+        opacity: isLaunching ? { duration: 1.5, ease: [0.33, 1, 0.68, 1] } : { duration: 0.5, ease: 'linear' },
       }}
       title={`${satellite.purpose} Satellite (${satellite.layer})`}
     >
