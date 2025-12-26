@@ -1,7 +1,7 @@
 import type { DebrisRemovalVehicle, Debris, Satellite, OrbitLayer } from '../types';
 import { ORBITAL_SPEEDS } from '../constants';
 
-const CAPTURE_DISTANCE_THRESHOLD = 5;
+const CAPTURE_DISTANCE_THRESHOLD = 8;
 const ORBITS_TO_HOLD = 2;
 
 type CapturableObject = Debris | Satellite;
@@ -67,13 +67,13 @@ export function calculateInterceptionAdjustment(
   target: CapturableObject
 ): number {
   const dy = target.y - drv.y;
-  const maxAdjustment = 0.3;
+  const maxAdjustment = 0.8;
   
   if (Math.abs(dy) < 2) {
     return 0;
   }
   
-  return Math.sign(dy) * Math.min(Math.abs(dy) * 0.1, maxAdjustment);
+  return Math.sign(dy) * Math.min(Math.abs(dy) * 0.2, maxAdjustment);
 }
 
 export function processDRVRemoval(
