@@ -28,17 +28,17 @@ export function LaunchAnimation({ targetLayer, targetAngle, onComplete }: Launch
 
   const centerX = 400;
   const centerY = 400;
-  const startX = centerX;
-  const startY = centerY + 30;
-
-  const targetRadius = ORBIT_RADII[targetLayer] || 140;
-  const angle = (typeof targetAngle === 'number' && !isNaN(targetAngle)) ? targetAngle : 0;
-  const targetX = centerX + Math.cos(angle) * targetRadius;
-  const targetY = centerY + Math.sin(angle) * targetRadius;
-
-  if (isNaN(targetX) || isNaN(targetY)) {
+  
+  const targetRadius = ORBIT_RADII[targetLayer];
+  if (!targetRadius || typeof targetAngle !== 'number' || isNaN(targetAngle)) {
+    useEffect(() => {
+      onComplete();
+    }, [onComplete]);
     return null;
   }
+  
+  const targetX = centerX + Math.cos(targetAngle) * targetRadius;
+  const targetY = centerY + Math.sin(targetAngle) * targetRadius;
 
   return (
     <svg
@@ -52,10 +52,12 @@ export function LaunchAnimation({ targetLayer, targetAngle, onComplete }: Launch
       }}
     >
       <motion.line
-        x1={startX}
-        y1={startY}
-        x2={startX}
-        y2={startY}
+        x1={centerX}
+        y1={centerY + 30}
+        initial={{
+          x2: centerX,
+          y2: centerY + 30,
+        }}
         animate={{
           x2: targetX,
           y2: targetY,
