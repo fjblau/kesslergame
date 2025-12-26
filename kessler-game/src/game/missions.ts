@@ -112,6 +112,14 @@ export const MISSION_DEFINITIONS: Omit<MissionDefinition, 'currentProgress' | 'c
     target: 15,
     trackingType: 'consecutive',
   },
+  {
+    id: 'no-cascades',
+    title: 'Cascade Prevention',
+    description: 'Complete the game without triggering any cascade events (3+ collisions in one turn)',
+    category: 'state',
+    target: 1,
+    trackingType: 'boolean',
+  },
 ];
 
 export function selectRandomMissions(count: number = 3): MissionDefinition[] {

@@ -6,8 +6,10 @@ import { DRVSprite } from './DRVSprite';
 import { LaunchAnimation } from './LaunchAnimation';
 import { CollisionEffect } from './CollisionEffect';
 import { SolarStormEffect } from './SolarStormEffect';
+import { CascadeWarning } from './CascadeWarning';
 import { mapToPixels } from './utils';
-import { clearOldCollisions } from '../../store/slices/gameSlice';
+import { clearOldCollisions, clearCascadeFlag } from '../../store/slices/gameSlice';
+import { playCascadeWarning } from '../../utils/audio';
 
 interface LaunchingEntity {
   id: string;
@@ -21,6 +23,7 @@ export function OrbitVisualization() {
   const debris = useAppSelector(state => state.game.debris);
   const debrisRemovalVehicles = useAppSelector(state => state.game.debrisRemovalVehicles);
   const recentCollisions = useAppSelector(state => state.game.recentCollisions);
+  const cascadeTriggered = useAppSelector(state => state.game.cascadeTriggered);
   const events = useAppSelector(state => state.events.events);
   const days = useAppSelector(state => state.game.days);
 
@@ -32,6 +35,7 @@ export function OrbitVisualization() {
   const [activeTrails, setActiveTrails] = useState<LaunchingEntity[]>([]);
   const [completedCollisions, setCompletedCollisions] = useState<Set<string>>(new Set());
   const [showSolarStorm, setShowSolarStorm] = useState<boolean>(false);
+  const [showCascadeWarning, setShowCascadeWarning] = useState<boolean>(false);
 
   useEffect(() => {
     const currentSatelliteIds = new Set(satellites.map(s => s.id));
@@ -110,6 +114,20 @@ export function OrbitVisualization() {
     setShowSolarStorm(false);
   };
 
+  useEffect(() => {
+    if (cascadeTriggered && !showCascadeWarning) {
+      requestAnimationFrame(() => {
+        setShowCascadeWarning(true);
+        playCascadeWarning();
+      });
+    }
+  }, [cascadeTriggered, showCascadeWarning]);
+
+  const handleCascadeWarningComplete = () => {
+    setShowCascadeWarning(false);
+    dispatch(clearCascadeFlag());
+  };
+
   return (
     <div className="relative w-[800px] h-[800px] flex items-center justify-center bg-slate-900 border-2 border-slate-600 rounded-xl">
       {/* GEO orbit */}
@@ -184,6 +202,9 @@ export function OrbitVisualization() {
 
       {/* Solar Storm Effect */}
       {showSolarStorm && <SolarStormEffect onComplete={handleSolarStormComplete} />}
+
+      {/* Cascade Warning */}
+      {showCascadeWarning && <CascadeWarning onComplete={handleCascadeWarningComplete} />}
     </div>
   );
 }

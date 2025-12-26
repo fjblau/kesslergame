@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { GameState, OrbitLayer, SatelliteType, InsuranceTier, DRVType, DRVTargetPriority, BudgetDifficulty, DebrisRemovalVehicle } from '../../game/types';
-import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG, LEO_LIFETIME, MAX_DEBRIS_LIMIT, ORBITAL_SPEEDS } from '../../game/constants';
+import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG, LEO_LIFETIME, MAX_DEBRIS_LIMIT, ORBITAL_SPEEDS, CASCADE_THRESHOLD } from '../../game/constants';
 import { detectCollisions, generateDebrisFromCollision, calculateTotalPayout } from '../../game/engine/collision';
 import { processDRVRemoval, processCooperativeDRVOperations, moveCooperativeDRV } from '../../game/engine/debrisRemoval';
 import { calculateRiskLevel } from '../../game/engine/risk';
@@ -67,6 +67,9 @@ const initialState: GameState = {
   collisionAngleThreshold: savedCollisionSettings.angle,
   collisionRadiusMultiplier: savedCollisionSettings.radius,
   recentCollisions: [],
+  cascadeTriggered: false,
+  lastCascadeTurn: undefined,
+  totalCascades: 0,
 };
 
 export const gameSlice = createSlice({
@@ -88,6 +91,9 @@ export const gameSlice = createSlice({
         riskLevel: 'LOW',
         gameOver: false,
         recentCollisions: [],
+        cascadeTriggered: false,
+        lastCascadeTurn: undefined,
+        totalCascades: 0,
       };
     },
 
@@ -111,6 +117,9 @@ export const gameSlice = createSlice({
       state.riskLevel = 'LOW';
       state.gameOver = false;
       state.recentCollisions = [];
+      state.cascadeTriggered = false;
+      state.lastCascadeTurn = undefined;
+      state.totalCascades = 0;
     },
 
     launchSatellite: {
@@ -308,6 +317,12 @@ export const gameSlice = createSlice({
         return;
       }
 
+      if (collisions.length >= CASCADE_THRESHOLD) {
+        state.cascadeTriggered = true;
+        state.lastCascadeTurn = state.step;
+        state.totalCascades += 1;
+      }
+
       const destroyedSatelliteIds = new Set<string>();
       const destroyedDRVIds = new Set<string>();
       const newDebris = [];
@@ -433,6 +448,10 @@ export const gameSlice = createSlice({
         // Ignore localStorage errors
       }
     },
+
+    clearCascadeFlag: (state) => {
+      state.cascadeTriggered = false;
+    },
   },
 });
 
@@ -453,6 +472,7 @@ export const {
   clearOldCollisions,
   setCollisionAngleThreshold,
   setCollisionRadiusMultiplier,
+  clearCascadeFlag,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;
