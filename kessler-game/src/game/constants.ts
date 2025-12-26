@@ -118,10 +118,13 @@ export const LAYER_BOUNDS: Record<OrbitLayer, [number, number]> = {
   GEO: [100, 150],
 };
 
-export const COLLISION_THRESHOLDS: Record<OrbitLayer, number> = {
-  LEO: 10,
-  MEO: 15,
-  GEO: 20,
+export const COLLISION_THRESHOLDS = {
+  angleDegrees: 15,
+  radiusPixels: {
+    LEO: 40,
+    MEO: 50,
+    GEO: 60,
+  },
 };
 
 export const DEBRIS_PER_COLLISION = 5;

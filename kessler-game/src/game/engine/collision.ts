@@ -25,8 +25,33 @@ export interface CollisionPair {
   layer: OrbitLayer;
 }
 
-function calculateDistance(x1: number, y1: number, x2: number, y2: number): number {
-  return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+const ORBIT_RADII = {
+  LEO: { inner: 60, outer: 140 },
+  MEO: { inner: 140, outer: 240 },
+  GEO: { inner: 240, outer: 350 },
+};
+
+interface PolarCoordinates {
+  angle: number;
+  radius: number;
+}
+
+function toPolarCoordinates(obj: GameObject): PolarCoordinates {
+  const { x, y, layer } = obj;
+  const angle = (x / 100) * 360;
+  
+  const [yMin, yMax] = LAYER_BOUNDS[layer];
+  const normalizedY = (y - yMin) / (yMax - yMin);
+  const { inner, outer } = ORBIT_RADII[layer];
+  const radius = inner + normalizedY * (outer - inner);
+  
+  return { angle, radius };
+}
+
+function normalizeAngleDiff(diff: number): number {
+  while (diff > 180) diff -= 360;
+  while (diff < -180) diff += 360;
+  return Math.abs(diff);
 }
 
 export function detectCollisions(
@@ -40,16 +65,21 @@ export function detectCollisions(
 
   for (const layer of layers) {
     const objectsInLayer = allObjects.filter(obj => obj.layer === layer);
-    const threshold = COLLISION_THRESHOLDS[layer];
+    const radiusThreshold = COLLISION_THRESHOLDS.radiusPixels[layer];
+    const angleThreshold = COLLISION_THRESHOLDS.angleDegrees;
 
     for (let i = 0; i < objectsInLayer.length; i++) {
       for (let j = i + 1; j < objectsInLayer.length; j++) {
         const obj1 = objectsInLayer[i];
         const obj2 = objectsInLayer[j];
 
-        const distance = calculateDistance(obj1.x, obj1.y, obj2.x, obj2.y);
+        const polar1 = toPolarCoordinates(obj1);
+        const polar2 = toPolarCoordinates(obj2);
 
-        if (distance < threshold) {
+        const angleDiff = normalizeAngleDiff(polar1.angle - polar2.angle);
+        const radiusDiff = Math.abs(polar1.radius - polar2.radius);
+
+        if (angleDiff < angleThreshold && radiusDiff < radiusThreshold) {
           collisions.push({ obj1, obj2, layer });
         }
       }
