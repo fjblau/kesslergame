@@ -38,6 +38,9 @@ export interface DebrisRemovalVehicle {
   capacity: number;
   successRate: number;
   debrisRemoved: number;
+  targetDebrisId?: string;
+  capturedDebrisId?: string;
+  captureOrbitsRemaining?: number;
 }
 
 export interface TurnHistory {
@@ -48,9 +51,18 @@ export interface TurnHistory {
   activeDRVCount: number;
 }
 
+export interface CollisionEvent {
+  id: string;
+  x: number;
+  y: number;
+  layer: OrbitLayer;
+  timestamp: number;
+}
+
 export interface GameState {
   step: number;
   maxSteps: number;
+  days: number;
   satellites: Satellite[];
   debris: Debris[];
   debrisRemovalVehicles: DebrisRemovalVehicle[];
@@ -63,6 +75,9 @@ export interface GameState {
   history: TurnHistory[];
   riskLevel: RiskLevel;
   gameOver: boolean;
+  recentCollisions: CollisionEvent[];
+  collisionAngleThreshold: number;
+  collisionRadiusMultiplier: number;
 }
 
 export interface UIState {

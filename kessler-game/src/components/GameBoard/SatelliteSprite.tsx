@@ -1,28 +1,80 @@
+import { motion } from 'framer-motion';
 import type { Satellite } from '../../game/types';
-import { SATELLITE_PURPOSE_CONFIG } from '../../game/constants';
+import { SATELLITE_PURPOSE_CONFIG, ORBITAL_SPEEDS } from '../../game/constants';
+import { useAppSelector } from '../../store/hooks';
+import { getEntitySpeedMultiplier } from './utils';
 
 interface SatelliteSpriteProps {
   satellite: Satellite;
   x: number;
   y: number;
+  isLaunching?: boolean;
+  isCaptured?: boolean;
 }
 
-export function SatelliteSprite({ satellite, x, y }: SatelliteSpriteProps) {
+export function SatelliteSprite({ satellite, x, y, isLaunching = false, isCaptured = false }: SatelliteSpriteProps) {
   const icon = SATELLITE_PURPOSE_CONFIG[satellite.purpose].icon;
+  const days = useAppSelector(state => state.game.days);
+  const baseAngle = (satellite.x / 100) * 360;
+  const speedMultiplier = getEntitySpeedMultiplier(satellite.id);
+  const rotation = baseAngle + (days * ORBITAL_SPEEDS[satellite.layer] * speedMultiplier * 3.6);
   
   return (
-    <div
+    <motion.div
       style={{
         position: 'absolute',
-        left: `${x}px`,
-        top: `${y}px`,
-        transform: 'translate(-50%, -50%)',
-        color: '#60a5fa',
+        color: isCaptured ? '#ef4444' : '#60a5fa',
         fontSize: '20px',
+        filter: isCaptured ? 'drop-shadow(0 0 8px #ef4444)' : 'none',
       }}
-      title={`${satellite.purpose} Satellite (${satellite.layer})`}
+      initial={isLaunching ? {
+        left: 400,
+        top: 400,
+        x: '-50%',
+        y: '-50%',
+        scale: 0.5,
+        opacity: 0,
+        rotate: 0,
+      } : false}
+      animate={{
+        left: x,
+        top: y,
+        x: '-50%',
+        y: '-50%',
+        scale: 1,
+        opacity: 1,
+        rotate: rotation,
+      }}
+      transition={{
+        left: { duration: 1, ease: 'linear' },
+        top: { duration: 1, ease: 'linear' },
+        rotate: { duration: 1, ease: 'linear' },
+        x: isLaunching ? { duration: 1.5, ease: [0.33, 1, 0.68, 1] } : { duration: 0 },
+        y: isLaunching ? { duration: 1.5, ease: [0.33, 1, 0.68, 1] } : { duration: 0 },
+        scale: isLaunching ? { duration: 1.5, ease: [0.33, 1, 0.68, 1] } : { duration: 1, ease: 'linear' },
+        opacity: isLaunching ? { duration: 1.5, ease: [0.33, 1, 0.68, 1] } : { duration: 1, ease: 'linear' },
+      }}
+      title={isCaptured ? `${satellite.purpose} Satellite (${satellite.layer}) - CAPTURED` : `${satellite.purpose} Satellite (${satellite.layer})`}
     >
-      {icon}
-    </div>
+      <span style={{ 
+        position: 'relative',
+        display: 'inline-block',
+      }}>
+        {icon}
+        {isCaptured && (
+          <span style={{ 
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '28px',
+            height: '28px',
+            border: '2px solid #ef4444',
+            borderRadius: '50%',
+            pointerEvents: 'none',
+          }} />
+        )}
+      </span>
+    </motion.div>
   );
 }

@@ -1,28 +1,50 @@
 import type { OrbitLayer } from '../../game/types';
-import { LAYER_BOUNDS } from '../../game/constants';
+import { LAYER_BOUNDS, ORBITAL_SPEEDS } from '../../game/constants';
 
 const ORBIT_RADII = {
-  LEO: { inner: 60, outer: 140 },
-  MEO: { inner: 140, outer: 240 },
-  GEO: { inner: 240, outer: 350 },
+  LEO: { inner: 60, outer: 205 },
+  MEO: { inner: 205, outer: 292 },
+  GEO: { inner: 292, outer: 350 },
 };
 
 interface EntityPosition {
   x: number;
   y: number;
   layer: OrbitLayer;
+  id?: string;
 }
 
-export function mapToPixels(entity: EntityPosition) {
+function hashId(id: string): number {
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) {
+    hash = ((hash << 5) - hash) + id.charCodeAt(i);
+    hash = hash & hash;
+  }
+  return Math.abs(hash);
+}
+
+export function getEntitySpeedMultiplier(id?: string): number {
+  if (!id) return 1;
+  const hash = hashId(id);
+  return 0.7 + (hash % 600) / 1000;
+}
+
+export function mapToPixels(entity: EntityPosition, days: number = 0) {
   const centerX = 400;
   const centerY = 400;
   const { inner, outer } = ORBIT_RADII[entity.layer];
   
   const [yMin, yMax] = LAYER_BOUNDS[entity.layer];
   const normalizedY = (entity.y - yMin) / (yMax - yMin);
-  const radius = inner + normalizedY * (outer - inner);
+  const baseRadius = inner + normalizedY * (outer - inner);
   
-  const angle = (entity.x / 100) * 2 * Math.PI;
+  const speedMultiplier = getEntitySpeedMultiplier(entity.id);
+  const baseAngle = (entity.x / 100) * 2 * Math.PI;
+  const rotationFromDays = (days * ORBITAL_SPEEDS[entity.layer] * speedMultiplier * 3.6) * (Math.PI / 180);
+  const angle = baseAngle + rotationFromDays;
+  
+  const eccentricity = 0.05 + (normalizedY * 0.1);
+  const radius = baseRadius * (1 + eccentricity * Math.cos(angle * 2));
   
   return {
     x: centerX + radius * Math.cos(angle),

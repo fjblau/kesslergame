@@ -1,0 +1,75 @@
+import { motion } from 'framer-motion';
+import { useEffect } from 'react';
+import type { OrbitLayer } from '../../game/types';
+
+interface LaunchAnimationProps {
+  targetLayer: OrbitLayer;
+  targetAngle: number;
+  onComplete: () => void;
+}
+
+const ORBIT_RADII = {
+  LEO: 132.5,
+  MEO: 248.5,
+  GEO: 321,
+};
+
+const LAYER_COLORS = {
+  LEO: '#3b82f6',
+  MEO: '#10b981',
+  GEO: '#f59e0b',
+};
+
+export function LaunchAnimation({ targetLayer, targetAngle, onComplete }: LaunchAnimationProps) {
+  const centerX = 400;
+  const centerY = 400;
+  
+  const targetRadius = ORBIT_RADII[targetLayer] || 140;
+  const safeAngle = (typeof targetAngle === 'number' && !isNaN(targetAngle)) ? targetAngle : 0;
+  const targetX = centerX + Math.cos(safeAngle) * targetRadius;
+  const targetY = centerY + Math.sin(safeAngle) * targetRadius;
+
+  useEffect(() => {
+    const timer = setTimeout(onComplete, 1500);
+    return () => clearTimeout(timer);
+  }, [onComplete]);
+
+  if (!targetRadius || typeof targetAngle !== 'number' || isNaN(targetAngle)) {
+    return null;
+  }
+
+  return (
+    <svg
+      style={{
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        width: '800px',
+        height: '800px',
+        pointerEvents: 'none',
+      }}
+    >
+      <motion.line
+        x1={centerX}
+        y1={centerY + 30}
+        initial={{
+          x2: centerX,
+          y2: centerY + 30,
+        }}
+        animate={{
+          x2: targetX,
+          y2: targetY,
+          opacity: [0.5, 0.5, 0],
+        }}
+        transition={{
+          duration: 1.5,
+          ease: [0.33, 1, 0.68, 1],
+          opacity: { times: [0, 0.7, 1] },
+        }}
+        stroke={LAYER_COLORS[targetLayer]}
+        strokeWidth="1"
+        strokeDasharray="5,5"
+      />
+    </svg>
+  );
+}

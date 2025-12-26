@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { GameSetupScreen } from './components/Setup/GameSetupScreen';
 import { ControlPanel } from './components/ControlPanel/ControlPanel';
 import { GameSpeedControl } from './components/TimeControl/GameSpeedControl';
+import { DaysCounter } from './components/TimeControl/DaysCounter';
 import { StatsPanel } from './components/StatsPanel/StatsPanel';
 import { OrbitVisualization } from './components/GameBoard/OrbitVisualization';
 import { DebrisChart } from './components/Charts/DebrisChart';
@@ -85,7 +86,7 @@ function App() {
           </h1>
         </header>
 
-        <Tabs tabs={tabs} defaultTab="launch" />
+        <Tabs tabs={tabs} defaultTab="launch" rightContent={<DaysCounter />} />
       </div>
 
       {gameOver && <GameOverModal />}

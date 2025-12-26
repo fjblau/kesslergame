@@ -1,28 +1,63 @@
+import { motion } from 'framer-motion';
 import type { DebrisRemovalVehicle } from '../../game/types';
+import { ORBITAL_SPEEDS } from '../../game/constants';
+import { useAppSelector } from '../../store/hooks';
+import { getEntitySpeedMultiplier } from './utils';
 
 interface DRVSpriteProps {
   drv: DebrisRemovalVehicle;
   x: number;
   y: number;
+  isLaunching?: boolean;
 }
 
-export function DRVSprite({ drv, x, y }: DRVSpriteProps) {
+export function DRVSprite({ drv, x, y, isLaunching = false }: DRVSpriteProps) {
   const isCooperative = drv.removalType === 'cooperative';
-  const color = isCooperative ? '#34d399' : '#fb923c';
+  const hasCapturedObject = drv.capturedDebrisId !== undefined;
+  const color = hasCapturedObject ? '#ef4444' : (isCooperative ? '#34d399' : '#fb923c');
+  const days = useAppSelector(state => state.game.days);
+  const baseAngle = (drv.x / 100) * 360;
+  const speedMultiplier = getEntitySpeedMultiplier(drv.id);
+  const rotation = baseAngle + (days * ORBITAL_SPEEDS[drv.layer] * speedMultiplier * 3.6);
   
   return (
-    <div
+    <motion.div
       style={{
         position: 'absolute',
-        left: `${x}px`,
-        top: `${y}px`,
-        transform: 'translate(-50%, -50%)',
         color,
         fontSize: '20px',
+        filter: hasCapturedObject ? 'drop-shadow(0 0 8px #ef4444)' : 'none',
+      }}
+      initial={isLaunching ? {
+        left: 400,
+        top: 400,
+        x: '-50%',
+        y: '-50%',
+        scale: 0.5,
+        opacity: 0,
+        rotate: 0,
+      } : false}
+      animate={{
+        left: x,
+        top: y,
+        x: '-50%',
+        y: '-50%',
+        scale: 1,
+        opacity: 1,
+        rotate: rotation,
+      }}
+      transition={{
+        left: { duration: 1, ease: 'linear' },
+        top: { duration: 1, ease: 'linear' },
+        rotate: { duration: 1, ease: 'linear' },
+        x: isLaunching ? { duration: 1.5, ease: [0.33, 1, 0.68, 1] } : { duration: 0 },
+        y: isLaunching ? { duration: 1.5, ease: [0.33, 1, 0.68, 1] } : { duration: 0 },
+        scale: isLaunching ? { duration: 1.5, ease: [0.33, 1, 0.68, 1] } : { duration: 1, ease: 'linear' },
+        opacity: isLaunching ? { duration: 1.5, ease: [0.33, 1, 0.68, 1] } : { duration: 1, ease: 'linear' },
       }}
       title={`${drv.removalType} DRV (${drv.layer})`}
     >
       ⬟
-    </div>
+    </motion.div>
   );
 }

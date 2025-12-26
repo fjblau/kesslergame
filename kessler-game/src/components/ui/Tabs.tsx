@@ -9,31 +9,35 @@ interface Tab {
 interface TabsProps {
   tabs: Tab[];
   defaultTab?: string;
+  rightContent?: React.ReactNode;
 }
 
-export function Tabs({ tabs, defaultTab }: TabsProps) {
+export function Tabs({ tabs, defaultTab, rightContent }: TabsProps) {
   const [activeTab, setActiveTab] = useState(defaultTab || tabs[0]?.id);
 
   const activeTabContent = tabs.find(tab => tab.id === activeTab)?.content;
 
   return (
     <div className="w-full">
-      <div className="flex gap-3 mb-6 bg-slate-800/50 p-3 rounded-xl">
-        {tabs.map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`
-              px-8 py-3 rounded-xl font-semibold text-lg transition-colors duration-200
-              ${activeTab === tab.id 
-                ? 'bg-blue-600 text-white shadow-lg' 
-                : 'bg-slate-700/50 text-gray-300 hover:bg-slate-700 hover:text-white'
-              }
-            `}
-          >
-            {tab.label}
-          </button>
-        ))}
+      <div className="flex gap-3 mb-6 bg-slate-800/50 p-3 rounded-xl items-center">
+        <div className="flex gap-3 flex-1">
+          {tabs.map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`
+                px-8 py-3 rounded-xl font-semibold text-lg transition-colors duration-200
+                ${activeTab === tab.id 
+                  ? 'bg-blue-600 text-white shadow-lg' 
+                  : 'bg-slate-700/50 text-gray-300 hover:bg-slate-700 hover:text-white'
+                }
+              `}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        {rightContent && <div>{rightContent}</div>}
       </div>
       
       <div className="w-full">

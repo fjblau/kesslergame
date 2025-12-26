@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
-import { advanceTurn, decommissionExpiredDRVs, triggerSolarStorm } from '../store/slices/gameSlice';
+import { advanceTurn, decommissionExpiredDRVs, triggerSolarStorm, incrementDays, processCollisions, processDRVOperations } from '../store/slices/gameSlice';
 import { setGameSpeed } from '../store/slices/uiSlice';
 import { updateMissionProgress, notifyMissionComplete, selectActiveMissions } from '../store/slices/missionsSlice';
 import { addEvent } from '../store/slices/eventSlice';
@@ -36,7 +36,19 @@ export function useGameSpeed() {
   }, [missions, dispatch]);
 
   useEffect(() => {
-    if (speed !== 'fast') return;
+    if (speed === 'paused') return;
+
+    const daysInterval = setInterval(() => {
+      dispatch(incrementDays());
+    }, 1000);
+
+    return () => clearInterval(daysInterval);
+  }, [speed, dispatch]);
+
+  useEffect(() => {
+    if (speed === 'paused') {
+      return;
+    }
 
     const shouldPause = autoPauseBudgetLow && budget < 20_000_000;
 
@@ -45,8 +57,12 @@ export function useGameSpeed() {
       return;
     }
 
+    const intervalDuration = speed === 'fast' ? 2000 : 4000;
+
     const interval = setInterval(() => {
       dispatch(advanceTurn());
+      dispatch(processDRVOperations());
+      dispatch(processCollisions());
 
       if (checkSolarStorm()) {
         const leoDebrisCountBefore = gameState.debris.filter(d => d.layer === 'LEO').length;
@@ -64,8 +80,9 @@ export function useGameSpeed() {
 
       dispatch(updateMissionProgress(gameState));
       dispatch(decommissionExpiredDRVs());
-    }, 2000);
+    }, intervalDuration);
 
     return () => clearInterval(interval);
-  }, [speed, budget, autoPauseBudgetLow, gameState, dispatch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [speed, budget, autoPauseBudgetLow, dispatch]);
 }

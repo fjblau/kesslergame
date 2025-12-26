@@ -26,15 +26,15 @@ export const DRV_CONFIG = {
   },
   capacity: {
     cooperative: [2, 3] as [number, number],
-    uncooperative: [1, 2] as [number, number],
+    uncooperative: [3, 5] as [number, number],
   },
   successRate: {
     cooperative: 0.85,
-    uncooperative: 0.60,
+    uncooperative: 0.80,
   },
   duration: {
-    cooperative: 10,
-    uncooperative: 8,
+    cooperative: 100,
+    uncooperative: 100,
   },
 };
 
@@ -118,10 +118,13 @@ export const LAYER_BOUNDS: Record<OrbitLayer, [number, number]> = {
   GEO: [100, 150],
 };
 
-export const COLLISION_THRESHOLDS: Record<OrbitLayer, number> = {
-  LEO: 10,
-  MEO: 15,
-  GEO: 20,
+export const COLLISION_THRESHOLDS = {
+  angleDegrees: 15,
+  radiusPixels: {
+    LEO: 40,
+    MEO: 50,
+    GEO: 60,
+  },
 };
 
 export const DEBRIS_PER_COLLISION = 5;
@@ -132,3 +135,9 @@ export const LEO_LIFETIME = 20;
 export const SOLAR_STORM_PROBABILITY = 0.10;
 export const SOLAR_STORM_LEO_REMOVAL_RATE = 0.30;
 export const MAX_DEBRIS_LIMIT = 500;
+
+export const ORBITAL_SPEEDS: Record<OrbitLayer, number> = {
+  LEO: 8,
+  MEO: 5,
+  GEO: 3,
+};

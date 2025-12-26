@@ -1,13 +1,44 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { GameState, OrbitLayer, SatelliteType, InsuranceTier, DRVType, DRVTargetPriority, BudgetDifficulty, DebrisRemovalVehicle } from '../../game/types';
-import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG, LEO_LIFETIME, MAX_DEBRIS_LIMIT } from '../../game/constants';
+import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG, LEO_LIFETIME, MAX_DEBRIS_LIMIT, ORBITAL_SPEEDS } from '../../game/constants';
 import { detectCollisions, generateDebrisFromCollision, calculateTotalPayout } from '../../game/engine/collision';
-import { processDRVRemoval } from '../../game/engine/debrisRemoval';
+import { processDRVRemoval, processCooperativeDRVOperations, moveCooperativeDRV } from '../../game/engine/debrisRemoval';
 import { calculateRiskLevel } from '../../game/engine/risk';
 import { processSolarStorm } from '../../game/engine/events';
 
+function hashId(id: string): number {
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) {
+    hash = ((hash << 5) - hash) + id.charCodeAt(i);
+    hash = hash & hash;
+  }
+  return Math.abs(hash);
+}
+
+function getEntitySpeedVariation(id: string, layer: OrbitLayer): number {
+  const baseSpeed = ORBITAL_SPEEDS[layer];
+  const hash = hashId(id);
+  const multiplier = 0.7 + (hash % 600) / 1000;
+  return baseSpeed * multiplier;
+}
+
 const generateId = () => Math.random().toString(36).substring(2, 11);
+
+function loadCollisionSettings() {
+  try {
+    const angle = localStorage.getItem('collisionAngleThreshold');
+    const radius = localStorage.getItem('collisionRadiusMultiplier');
+    return {
+      angle: angle ? parseFloat(angle) : 5,
+      radius: radius ? parseFloat(radius) : 0.5,
+    };
+  } catch {
+    return { angle: 5, radius: 0.5 };
+  }
+}
+
+const savedCollisionSettings = loadCollisionSettings();
 
 const randomPositionInLayer = (layer: OrbitLayer) => {
   const [yMin, yMax] = LAYER_BOUNDS[layer];
@@ -20,6 +51,7 @@ const randomPositionInLayer = (layer: OrbitLayer) => {
 const initialState: GameState = {
   step: 0,
   maxSteps: MAX_STEPS,
+  days: 0,
   satellites: [],
   debris: [],
   debrisRemovalVehicles: [],
@@ -32,6 +64,9 @@ const initialState: GameState = {
   history: [],
   riskLevel: 'LOW',
   gameOver: false,
+  collisionAngleThreshold: savedCollisionSettings.angle,
+  collisionRadiusMultiplier: savedCollisionSettings.radius,
+  recentCollisions: [],
 };
 
 export const gameSlice = createSlice({
@@ -42,6 +77,7 @@ export const gameSlice = createSlice({
       const config = BUDGET_DIFFICULTY_CONFIG[action.payload];
       return {
         ...initialState,
+        days: 0,
         budget: config.startingBudget,
         budgetDifficulty: action.payload,
         budgetIncomeAmount: config.incomeAmount,
@@ -51,7 +87,30 @@ export const gameSlice = createSlice({
         history: [],
         riskLevel: 'LOW',
         gameOver: false,
+        recentCollisions: [],
       };
+    },
+
+    incrementDays: (state) => {
+      state.days += 1;
+    },
+
+    resetGame: (state) => {
+      const config = BUDGET_DIFFICULTY_CONFIG[state.budgetDifficulty];
+      state.step = 0;
+      state.days = 0;
+      state.satellites = [];
+      state.debris = [];
+      state.debrisRemovalVehicles = [];
+      state.budget = config.startingBudget;
+      state.budgetIncomeAmount = config.incomeAmount;
+      state.budgetIncomeInterval = config.incomeInterval;
+      state.budgetDrainAmount = config.drainAmount;
+      state.nextIncomeAt = config.incomeInterval;
+      state.history = [];
+      state.riskLevel = 'LOW';
+      state.gameOver = false;
+      state.recentCollisions = [];
     },
 
     launchSatellite: {
@@ -130,11 +189,23 @@ export const gameSlice = createSlice({
       const activeDRVs = state.debrisRemovalVehicles.filter(drv => drv.age < drv.maxAge);
 
       activeDRVs.forEach(drv => {
-        const result = processDRVRemoval(drv, state.debris);
-
-        drv.debrisRemoved += result.removedDebrisIds.length;
-
-        state.debris = state.debris.filter(d => !result.removedDebrisIds.includes(d.id));
+        if (drv.removalType === 'cooperative') {
+          const result = processCooperativeDRVOperations(drv, state.debris, state.satellites);
+          
+          drv.debrisRemoved += result.removedDebrisIds.length + result.removedSatelliteIds.length;
+          drv.targetDebrisId = result.newTargetId;
+          drv.capturedDebrisId = result.capturedObjectId;
+          drv.captureOrbitsRemaining = result.captureOrbitsRemaining;
+          
+          state.debris = state.debris.filter(d => !result.removedDebrisIds.includes(d.id));
+          state.satellites = state.satellites.filter(s => !result.removedSatelliteIds.includes(s.id));
+        } else {
+          const result = processDRVRemoval(drv, state.debris);
+          
+          drv.debrisRemoved += result.removedDebrisIds.length;
+          
+          state.debris = state.debris.filter(d => !result.removedDebrisIds.includes(d.id));
+        }
       });
 
       state.riskLevel = calculateRiskLevel(state.debris.length);
@@ -152,8 +223,52 @@ export const gameSlice = createSlice({
         state.nextIncomeAt += state.budgetIncomeInterval;
       }
 
-      state.satellites.forEach(sat => sat.age++);
-      state.debrisRemovalVehicles.forEach(drv => drv.age++);
+      const capturedObjectIds = new Set(
+        state.debrisRemovalVehicles
+          .filter(drv => drv.capturedDebrisId)
+          .map(drv => drv.capturedDebrisId)
+      );
+      
+      state.satellites.forEach(sat => {
+        sat.age++;
+        if (!capturedObjectIds.has(sat.id)) {
+          const speed = getEntitySpeedVariation(sat.id, sat.layer);
+          sat.x = (sat.x + speed) % 100;
+        }
+      });
+      state.debrisRemovalVehicles.forEach(drv => {
+        drv.age++;
+        if (drv.removalType === 'uncooperative') {
+          const speed = getEntitySpeedVariation(drv.id, drv.layer);
+          drv.x = (drv.x + speed) % 100;
+        } else {
+          const targetDebris = state.debris.find(d => d.id === drv.targetDebrisId);
+          const targetSatellite = state.satellites.find(s => s.id === drv.targetDebrisId);
+          const target = targetDebris || targetSatellite;
+          const newPosition = moveCooperativeDRV(drv, target);
+          drv.x = newPosition.x;
+          drv.y = newPosition.y;
+          
+          if (drv.capturedDebrisId) {
+            const capturedDebris = state.debris.find(d => d.id === drv.capturedDebrisId);
+            const capturedSatellite = state.satellites.find(s => s.id === drv.capturedDebrisId);
+            if (capturedDebris) {
+              capturedDebris.x = drv.x;
+              capturedDebris.y = drv.y;
+            } else if (capturedSatellite) {
+              capturedSatellite.x = drv.x;
+              capturedSatellite.y = drv.y;
+            }
+          }
+        }
+      });
+      
+      state.debris.forEach(deb => {
+        if (!capturedObjectIds.has(deb.id)) {
+          const speed = getEntitySpeedVariation(deb.id, deb.layer);
+          deb.x = (deb.x + speed) % 100;
+        }
+      });
 
       state.satellites = state.satellites.filter(
         sat => sat.layer !== 'LEO' || sat.age < LEO_LIFETIME
@@ -181,30 +296,53 @@ export const gameSlice = createSlice({
     },
 
     processCollisions: (state) => {
-      const collisions = detectCollisions(state.satellites, state.debris);
+      const collisions = detectCollisions(
+        state.satellites, 
+        state.debris,
+        state.collisionAngleThreshold,
+        state.collisionRadiusMultiplier,
+        state.debrisRemovalVehicles
+      );
 
       if (collisions.length === 0) {
         return;
       }
 
       const destroyedSatelliteIds = new Set<string>();
+      const destroyedDRVIds = new Set<string>();
       const newDebris = [];
+      const collisionEvents = [];
 
       for (const collision of collisions) {
         const { obj1, obj2, layer } = collision;
 
         const isSat1 = 'purpose' in obj1;
         const isSat2 = 'purpose' in obj2;
+        const isDRV1 = 'removalType' in obj1;
+        const isDRV2 = 'removalType' in obj2;
 
         if (isSat1) {
           destroyedSatelliteIds.add(obj1.id);
+        } else if (isDRV1) {
+          destroyedDRVIds.add(obj1.id);
         }
+        
         if (isSat2) {
           destroyedSatelliteIds.add(obj2.id);
+        } else if (isDRV2) {
+          destroyedDRVIds.add(obj2.id);
         }
 
         const collisionX = (obj1.x + obj2.x) / 2;
         const collisionY = (obj1.y + obj2.y) / 2;
+
+        collisionEvents.push({
+          id: generateId(),
+          x: collisionX,
+          y: collisionY,
+          layer,
+          timestamp: Date.now(),
+        });
 
         const debris = generateDebrisFromCollision(collisionX, collisionY, layer, generateId);
         newDebris.push(...debris);
@@ -220,9 +358,15 @@ export const gameSlice = createSlice({
         !destroyedSatelliteIds.has(sat.id)
       );
 
+      state.debrisRemovalVehicles = state.debrisRemovalVehicles.filter(drv =>
+        !destroyedDRVIds.has(drv.id)
+      );
+
       state.debris.push(...newDebris);
 
       state.budget += insurancePayout;
+
+      state.recentCollisions.push(...collisionEvents);
 
       state.riskLevel = calculateRiskLevel(state.debris.length);
 
@@ -241,7 +385,7 @@ export const gameSlice = createSlice({
             x: drv.x,
             y: drv.y,
             layer: drv.layer,
-            type: 'cooperative',
+            type: drv.removalType === 'cooperative' ? 'cooperative' : 'uncooperative',
           });
         } else {
           remaining.push(drv);
@@ -264,11 +408,38 @@ export const gameSlice = createSlice({
         state.gameOver = true;
       }
     },
+
+    clearOldCollisions: (state) => {
+      const now = Date.now();
+      state.recentCollisions = state.recentCollisions.filter(
+        collision => now - collision.timestamp < 1000
+      );
+    },
+
+    setCollisionAngleThreshold: (state, action: PayloadAction<number>) => {
+      state.collisionAngleThreshold = action.payload;
+      try {
+        localStorage.setItem('collisionAngleThreshold', action.payload.toString());
+      } catch {
+        // Ignore localStorage errors
+      }
+    },
+
+    setCollisionRadiusMultiplier: (state, action: PayloadAction<number>) => {
+      state.collisionRadiusMultiplier = action.payload;
+      try {
+        localStorage.setItem('collisionRadiusMultiplier', action.payload.toString());
+      } catch {
+        // Ignore localStorage errors
+      }
+    },
   },
 });
 
 export const {
   initializeGame,
+  incrementDays,
+  resetGame,
   launchSatellite,
   launchDRV,
   spendBudget,
@@ -279,6 +450,9 @@ export const {
   decommissionExpiredDRVs,
   triggerSolarStorm,
   checkGameOver,
+  clearOldCollisions,
+  setCollisionAngleThreshold,
+  setCollisionRadiusMultiplier,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;
