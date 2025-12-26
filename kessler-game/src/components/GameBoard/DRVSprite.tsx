@@ -13,7 +13,8 @@ interface DRVSpriteProps {
 
 export function DRVSprite({ drv, x, y, isLaunching = false }: DRVSpriteProps) {
   const isCooperative = drv.removalType === 'cooperative';
-  const color = isCooperative ? '#34d399' : '#fb923c';
+  const hasCapturedDebris = drv.capturedDebrisId !== undefined;
+  const color = hasCapturedDebris ? '#ef4444' : (isCooperative ? '#34d399' : '#fb923c');
   const days = useAppSelector(state => state.game.days);
   const baseAngle = (drv.x / 100) * 360;
   const speedMultiplier = getEntitySpeedMultiplier(drv.id);
