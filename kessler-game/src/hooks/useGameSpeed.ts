@@ -58,7 +58,9 @@ export function useGameSpeed() {
     const intervalDuration = speed === 'fast' ? 2000 : 4000;
 
     const interval = setInterval(() => {
+      console.log('[useGameSpeed] Game loop tick');
       dispatch(advanceTurn());
+      console.log('[useGameSpeed] Calling processCollisions');
       dispatch(processCollisions());
 
       if (checkSolarStorm()) {
