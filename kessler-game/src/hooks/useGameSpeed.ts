@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
-import { advanceTurn, decommissionExpiredDRVs, triggerSolarStorm, incrementDays } from '../store/slices/gameSlice';
+import { advanceTurn, decommissionExpiredDRVs, triggerSolarStorm, incrementDays, processCollisions } from '../store/slices/gameSlice';
 import { setGameSpeed } from '../store/slices/uiSlice';
 import { updateMissionProgress, notifyMissionComplete, selectActiveMissions } from '../store/slices/missionsSlice';
 import { addEvent } from '../store/slices/eventSlice';
@@ -59,6 +59,7 @@ export function useGameSpeed() {
 
     const interval = setInterval(() => {
       dispatch(advanceTurn());
+      dispatch(processCollisions());
 
       if (checkSolarStorm()) {
         const leoDebrisCountBefore = gameState.debris.filter(d => d.layer === 'LEO').length;
