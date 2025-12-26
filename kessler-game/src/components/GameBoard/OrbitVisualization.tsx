@@ -24,12 +24,14 @@ export function OrbitVisualization() {
   const debrisRemovalVehicles = useAppSelector(state => state.game.debrisRemovalVehicles);
   const recentCollisions = useAppSelector(state => state.game.recentCollisions);
   const cascadeTriggered = useAppSelector(state => state.game.cascadeTriggered);
+  const lastCascadeTurn = useAppSelector(state => state.game.lastCascadeTurn);
   const events = useAppSelector(state => state.events.events);
   const days = useAppSelector(state => state.game.days);
 
   const prevSatelliteIds = useRef<Set<string>>(new Set());
   const prevDRVIds = useRef<Set<string>>(new Set());
   const prevEventCount = useRef<number>(0);
+  const cascadeShownForTurn = useRef<number | undefined>(undefined);
   const [launchingSatellites, setLaunchingSatellites] = useState<Set<string>>(new Set());
   const [launchingDRVs, setLaunchingDRVs] = useState<Set<string>>(new Set());
   const [activeTrails, setActiveTrails] = useState<LaunchingEntity[]>([]);
@@ -115,17 +117,20 @@ export function OrbitVisualization() {
   };
 
   useEffect(() => {
-    if (cascadeTriggered && !showCascadeWarning) {
-      requestAnimationFrame(() => {
-        setShowCascadeWarning(true);
-        playCascadeWarning();
-      });
+    if (cascadeTriggered && !showCascadeWarning && lastCascadeTurn !== undefined) {
+      if (cascadeShownForTurn.current !== lastCascadeTurn) {
+        cascadeShownForTurn.current = lastCascadeTurn;
+        requestAnimationFrame(() => {
+          setShowCascadeWarning(true);
+          playCascadeWarning();
+        });
+      }
     }
-  }, [cascadeTriggered, showCascadeWarning]);
+  }, [cascadeTriggered, showCascadeWarning, lastCascadeTurn]);
 
   const handleCascadeWarningComplete = () => {
-    setShowCascadeWarning(false);
     dispatch(clearCascadeFlag());
+    setShowCascadeWarning(false);
   };
 
   return (
