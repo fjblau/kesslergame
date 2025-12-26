@@ -1,7 +1,24 @@
-import type { DebrisRemovalVehicle, Debris } from '../types';
+import type { DebrisRemovalVehicle, Debris, OrbitLayer } from '../types';
+import { ORBITAL_SPEEDS } from '../constants';
 
-const CAPTURE_DISTANCE_THRESHOLD = 3;
-const NAVIGATION_SPEED = 2;
+const CAPTURE_DISTANCE_THRESHOLD = 5;
+const ORBITS_TO_HOLD = 2;
+
+function hashId(id: string): number {
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) {
+    hash = ((hash << 5) - hash) + id.charCodeAt(i);
+    hash = hash & hash;
+  }
+  return Math.abs(hash);
+}
+
+function getEntitySpeedVariation(id: string, layer: OrbitLayer): number {
+  const baseSpeed = ORBITAL_SPEEDS[layer];
+  const hash = hashId(id);
+  const multiplier = 0.7 + (hash % 600) / 1000;
+  return baseSpeed * multiplier * 0.01;
+}
 
 export function selectDebrisTarget(
   drv: DebrisRemovalVehicle,
@@ -29,30 +46,18 @@ function calculateDistance(x1: number, y1: number, x2: number, y2: number): numb
   return Math.sqrt(dx * dx + dy * dy);
 }
 
-export function navigateTowardsTarget(
+export function calculateInterceptionAdjustment(
   drv: DebrisRemovalVehicle,
   target: Debris
-): { x: number; y: number } {
-  const dx = target.x - drv.x;
-  const wrappedDx = dx > 50 ? dx - 100 : dx < -50 ? dx + 100 : dx;
+): number {
   const dy = target.y - drv.y;
+  const maxAdjustment = 0.3;
   
-  const distance = Math.sqrt(wrappedDx * wrappedDx + dy * dy);
-  
-  if (distance < 0.1) {
-    return { x: drv.x, y: drv.y };
+  if (Math.abs(dy) < 2) {
+    return 0;
   }
   
-  const moveX = (wrappedDx / distance) * NAVIGATION_SPEED;
-  const moveY = (dy / distance) * NAVIGATION_SPEED;
-  
-  let newX = drv.x + moveX;
-  if (newX < 0) newX += 100;
-  if (newX >= 100) newX -= 100;
-  
-  const newY = Math.max(0, Math.min(100, drv.y + moveY));
-  
-  return { x: newX, y: newY };
+  return Math.sign(dy) * Math.min(Math.abs(dy) * 0.1, maxAdjustment);
 }
 
 export function processDRVRemoval(
@@ -89,8 +94,51 @@ export function processCooperativeDRVOperations(
 ): {
   removedDebrisIds: string[];
   newTargetId: string | undefined;
+  capturedDebrisId: string | undefined;
+  captureOrbitsRemaining: number | undefined;
 } {
   const removedDebrisIds: string[] = [];
+  
+  if (drv.capturedDebrisId) {
+    const capturedDebris = debris.find(d => d.id === drv.capturedDebrisId);
+    
+    if (!capturedDebris) {
+      const newTarget = selectDebrisTarget(drv, debris);
+      return {
+        removedDebrisIds,
+        newTargetId: newTarget?.id,
+        capturedDebrisId: undefined,
+        captureOrbitsRemaining: undefined
+      };
+    }
+    
+    const orbitsRemaining = (drv.captureOrbitsRemaining ?? ORBITS_TO_HOLD) - 1;
+    
+    if (orbitsRemaining <= 0) {
+      const success = attemptDebrisRemoval(drv);
+      
+      if (success) {
+        removedDebrisIds.push(capturedDebris.id);
+      }
+      
+      const remainingDebris = debris.filter(d => d.id !== capturedDebris.id);
+      const nextTarget = selectDebrisTarget(drv, remainingDebris);
+      
+      return {
+        removedDebrisIds,
+        newTargetId: nextTarget?.id,
+        capturedDebrisId: undefined,
+        captureOrbitsRemaining: undefined
+      };
+    }
+    
+    return {
+      removedDebrisIds,
+      newTargetId: drv.targetDebrisId,
+      capturedDebrisId: drv.capturedDebrisId,
+      captureOrbitsRemaining: orbitsRemaining
+    };
+  }
   
   const currentTarget = debris.find(d => d.id === drv.targetDebrisId);
   
@@ -98,30 +146,43 @@ export function processCooperativeDRVOperations(
     const newTarget = selectDebrisTarget(drv, debris);
     return { 
       removedDebrisIds, 
-      newTargetId: newTarget?.id 
+      newTargetId: newTarget?.id,
+      capturedDebrisId: undefined,
+      captureOrbitsRemaining: undefined
     };
   }
   
   const distance = calculateDistance(drv.x, drv.y, currentTarget.x, currentTarget.y);
   
   if (distance < CAPTURE_DISTANCE_THRESHOLD) {
-    const success = attemptDebrisRemoval(drv);
-    
-    if (success) {
-      removedDebrisIds.push(currentTarget.id);
-    }
-    
-    const remainingDebris = debris.filter(d => d.id !== currentTarget.id);
-    const nextTarget = selectDebrisTarget(drv, remainingDebris);
-    
     return {
       removedDebrisIds,
-      newTargetId: nextTarget?.id
+      newTargetId: drv.targetDebrisId,
+      capturedDebrisId: currentTarget.id,
+      captureOrbitsRemaining: ORBITS_TO_HOLD
     };
   }
   
   return {
     removedDebrisIds,
-    newTargetId: drv.targetDebrisId
+    newTargetId: drv.targetDebrisId,
+    capturedDebrisId: undefined,
+    captureOrbitsRemaining: undefined
   };
+}
+
+export function moveCooperativeDRV(
+  drv: DebrisRemovalVehicle,
+  targetDebris: Debris | undefined
+): { x: number; y: number } {
+  const baseSpeed = getEntitySpeedVariation(drv.id, drv.layer);
+  const newX = (drv.x + baseSpeed) % 100;
+  let newY = drv.y;
+  
+  if (targetDebris && !drv.capturedDebrisId) {
+    const yAdjustment = calculateInterceptionAdjustment(drv, targetDebris);
+    newY = drv.y + yAdjustment;
+  }
+  
+  return { x: newX, y: newY };
 }

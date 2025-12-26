@@ -39,6 +39,8 @@ export interface DebrisRemovalVehicle {
   successRate: number;
   debrisRemoved: number;
   targetDebrisId?: string;
+  capturedDebrisId?: string;
+  captureOrbitsRemaining?: number;
 }
 
 export interface TurnHistory {
