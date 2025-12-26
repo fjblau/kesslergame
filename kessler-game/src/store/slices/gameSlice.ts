@@ -175,14 +175,15 @@ export const gameSlice = createSlice({
 
       activeDRVs.forEach(drv => {
         if (drv.removalType === 'cooperative') {
-          const result = processCooperativeDRVOperations(drv, state.debris);
+          const result = processCooperativeDRVOperations(drv, state.debris, state.satellites);
           
-          drv.debrisRemoved += result.removedDebrisIds.length;
+          drv.debrisRemoved += result.removedDebrisIds.length + result.removedSatelliteIds.length;
           drv.targetDebrisId = result.newTargetId;
-          drv.capturedDebrisId = result.capturedDebrisId;
+          drv.capturedDebrisId = result.capturedObjectId;
           drv.captureOrbitsRemaining = result.captureOrbitsRemaining;
           
           state.debris = state.debris.filter(d => !result.removedDebrisIds.includes(d.id));
+          state.satellites = state.satellites.filter(s => !result.removedSatelliteIds.includes(s.id));
         } else {
           const result = processDRVRemoval(drv, state.debris);
           
@@ -207,10 +208,18 @@ export const gameSlice = createSlice({
         state.nextIncomeAt += state.budgetIncomeInterval;
       }
 
+      const capturedObjectIds = new Set(
+        state.debrisRemovalVehicles
+          .filter(drv => drv.capturedDebrisId)
+          .map(drv => drv.capturedDebrisId)
+      );
+      
       state.satellites.forEach(sat => {
         sat.age++;
-        const speed = getEntitySpeedVariation(sat.id, sat.layer);
-        sat.x = (sat.x + speed) % 100;
+        if (!capturedObjectIds.has(sat.id)) {
+          const speed = getEntitySpeedVariation(sat.id, sat.layer);
+          sat.x = (sat.x + speed) % 100;
+        }
       });
       state.debrisRemovalVehicles.forEach(drv => {
         drv.age++;
@@ -218,28 +227,29 @@ export const gameSlice = createSlice({
           const speed = getEntitySpeedVariation(drv.id, drv.layer);
           drv.x = (drv.x + speed) % 100;
         } else {
-          const target = state.debris.find(d => d.id === drv.targetDebrisId);
+          const targetDebris = state.debris.find(d => d.id === drv.targetDebrisId);
+          const targetSatellite = state.satellites.find(s => s.id === drv.targetDebrisId);
+          const target = targetDebris || targetSatellite;
           const newPosition = moveCooperativeDRV(drv, target);
           drv.x = newPosition.x;
           drv.y = newPosition.y;
           
           if (drv.capturedDebrisId) {
             const capturedDebris = state.debris.find(d => d.id === drv.capturedDebrisId);
+            const capturedSatellite = state.satellites.find(s => s.id === drv.capturedDebrisId);
             if (capturedDebris) {
               capturedDebris.x = drv.x;
               capturedDebris.y = drv.y;
+            } else if (capturedSatellite) {
+              capturedSatellite.x = drv.x;
+              capturedSatellite.y = drv.y;
             }
           }
         }
       });
-      const capturedDebrisIds = new Set(
-        state.debrisRemovalVehicles
-          .filter(drv => drv.capturedDebrisId)
-          .map(drv => drv.capturedDebrisId)
-      );
       
       state.debris.forEach(deb => {
-        if (!capturedDebrisIds.has(deb.id)) {
+        if (!capturedObjectIds.has(deb.id)) {
           const speed = getEntitySpeedVariation(deb.id, deb.layer);
           deb.x = (deb.x + speed) % 100;
         }
