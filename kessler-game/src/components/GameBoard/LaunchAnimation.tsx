@@ -32,8 +32,9 @@ export function LaunchAnimation({ targetLayer, targetAngle, onComplete }: Launch
   const startY = centerY + 30;
 
   const targetRadius = ORBIT_RADII[targetLayer];
-  const targetX = centerX + Math.cos(targetAngle) * targetRadius;
-  const targetY = centerY + Math.sin(targetAngle) * targetRadius;
+  const angle = isNaN(targetAngle) ? 0 : targetAngle;
+  const targetX = centerX + Math.cos(angle) * targetRadius;
+  const targetY = centerY + Math.sin(angle) * targetRadius;
 
   return (
     <svg
