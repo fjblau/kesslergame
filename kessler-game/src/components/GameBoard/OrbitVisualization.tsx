@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { SatelliteSprite } from './SatelliteSprite';
 import { DebrisParticle } from './DebrisParticle';
@@ -128,10 +128,10 @@ export function OrbitVisualization() {
     }
   }, [cascadeTriggered, showCascadeWarning, lastCascadeTurn]);
 
-  const handleCascadeWarningComplete = () => {
+  const handleCascadeWarningComplete = useCallback(() => {
     dispatch(clearCascadeFlag());
     setShowCascadeWarning(false);
-  };
+  }, [dispatch]);
 
   return (
     <div className="relative w-[800px] h-[800px] flex items-center justify-center bg-slate-900 border-2 border-slate-600 rounded-xl">
