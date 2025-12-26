@@ -76,10 +76,10 @@ export function ControlPanel() {
   };
 
   return (
-    <div className="border-2 border-slate-600 rounded-xl p-6 space-y-6 w-full">
+    <div className="bg-slate-800 border-2 border-slate-600 rounded-xl p-6 space-y-6 w-full">
       <div>
-        <h2 className="text-xl font-bold text-blue-300 mb-4">Launch Controls</h2>
-        <div className="text-sm text-gray-400">Turn: {step}</div>
+        <h2 className="text-xl font-bold text-blue-300 mb-4 pb-3 border-b-2 border-slate-700 uppercase tracking-wide">Launch Controls</h2>
+        <div className="text-sm text-gray-400 mt-3">Turn: {step}</div>
       </div>
 
       <div className="space-y-2">
