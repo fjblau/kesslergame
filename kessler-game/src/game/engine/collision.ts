@@ -63,12 +63,17 @@ export function detectCollisions(
   const collisions: CollisionPair[] = [];
   const allObjects: GameObject[] = [...satellites, ...debris];
 
+  console.log(`[Collision Detection] Checking ${satellites.length} satellites, ${debris.length} debris`);
+  console.log(`[Collision Detection] Thresholds: angle=${angleThresholdDegrees}°, radiusMultiplier=${radiusMultiplier}`);
+
   const layers: OrbitLayer[] = ['LEO', 'MEO', 'GEO'];
 
   for (const layer of layers) {
     const objectsInLayer = allObjects.filter(obj => obj.layer === layer);
     const radiusThreshold = COLLISION_THRESHOLDS.radiusPixels[layer] * radiusMultiplier;
     const angleThreshold = angleThresholdDegrees;
+
+    console.log(`[${layer}] ${objectsInLayer.length} objects, radiusThreshold=${radiusThreshold.toFixed(1)}px, angleThreshold=${angleThreshold}°`);
 
     for (let i = 0; i < objectsInLayer.length; i++) {
       for (let j = i + 1; j < objectsInLayer.length; j++) {
@@ -81,13 +86,19 @@ export function detectCollisions(
         const angleDiff = normalizeAngleDiff(polar1.angle - polar2.angle);
         const radiusDiff = Math.abs(polar1.radius - polar2.radius);
 
+        if (i === 0 && j === 1) {
+          console.log(`[${layer}] Sample pair: angleDiff=${angleDiff.toFixed(1)}° (< ${angleThreshold}?), radiusDiff=${radiusDiff.toFixed(1)}px (< ${radiusThreshold.toFixed(1)}?)`);
+        }
+
         if (angleDiff < angleThreshold && radiusDiff < radiusThreshold) {
+          console.log(`[COLLISION] ${layer}: angleDiff=${angleDiff.toFixed(1)}°, radiusDiff=${radiusDiff.toFixed(1)}px`);
           collisions.push({ obj1, obj2, layer });
         }
       }
     }
   }
 
+  console.log(`[Collision Detection] Found ${collisions.length} collisions`);
   return collisions;
 }
 
