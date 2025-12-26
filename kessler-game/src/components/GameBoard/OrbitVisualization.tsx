@@ -165,7 +165,8 @@ export function OrbitVisualization() {
       {satellites.map(satellite => {
         const { x, y } = mapToPixels(satellite, days);
         const isLaunching = launchingSatellites.has(satellite.id);
-        return <SatelliteSprite key={satellite.id} satellite={satellite} x={x} y={y} isLaunching={isLaunching} />;
+        const isCaptured = debrisRemovalVehicles.some(drv => drv.capturedDebrisId === satellite.id);
+        return <SatelliteSprite key={satellite.id} satellite={satellite} x={x} y={y} isLaunching={isLaunching} isCaptured={isCaptured} />;
       })}
 
       {/* Debris */}

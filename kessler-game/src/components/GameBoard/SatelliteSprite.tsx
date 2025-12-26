@@ -9,9 +9,10 @@ interface SatelliteSpriteProps {
   x: number;
   y: number;
   isLaunching?: boolean;
+  isCaptured?: boolean;
 }
 
-export function SatelliteSprite({ satellite, x, y, isLaunching = false }: SatelliteSpriteProps) {
+export function SatelliteSprite({ satellite, x, y, isLaunching = false, isCaptured = false }: SatelliteSpriteProps) {
   const icon = SATELLITE_PURPOSE_CONFIG[satellite.purpose].icon;
   const days = useAppSelector(state => state.game.days);
   const baseAngle = (satellite.x / 100) * 360;
@@ -22,8 +23,9 @@ export function SatelliteSprite({ satellite, x, y, isLaunching = false }: Satell
     <motion.div
       style={{
         position: 'absolute',
-        color: '#60a5fa',
+        color: isCaptured ? '#ef4444' : '#60a5fa',
         fontSize: '20px',
+        filter: isCaptured ? 'drop-shadow(0 0 8px #ef4444)' : 'none',
       }}
       initial={isLaunching ? {
         left: 400,
@@ -52,9 +54,21 @@ export function SatelliteSprite({ satellite, x, y, isLaunching = false }: Satell
         scale: isLaunching ? { duration: 1.5, ease: [0.33, 1, 0.68, 1] } : { duration: 1, ease: 'linear' },
         opacity: isLaunching ? { duration: 1.5, ease: [0.33, 1, 0.68, 1] } : { duration: 1, ease: 'linear' },
       }}
-      title={`${satellite.purpose} Satellite (${satellite.layer})`}
+      title={isCaptured ? `${satellite.purpose} Satellite (${satellite.layer}) - CAPTURED` : `${satellite.purpose} Satellite (${satellite.layer})`}
     >
-      {icon}
+      <span style={{ position: 'relative' }}>
+        {icon}
+        {isCaptured && (
+          <span style={{ 
+            position: 'absolute', 
+            top: '-8px', 
+            right: '-8px', 
+            fontSize: '10px',
+          }}>
+            🎯
+          </span>
+        )}
+      </span>
     </motion.div>
   );
 }
