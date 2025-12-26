@@ -5,7 +5,11 @@ export function selectDebrisTarget(
   drv: DebrisRemovalVehicle,
   debris: Debris[]
 ): Debris | null {
-  const sameLayer = debris.filter(d => d.layer === drv.layer);
+  const sameLayer = debris.filter(d => 
+    d.layer === drv.layer && 
+    'type' in d && 
+    !('removalType' in d)
+  );
   if (sameLayer.length === 0) return null;
 
   const config = DRV_PRIORITY_CONFIG[drv.targetPriority];

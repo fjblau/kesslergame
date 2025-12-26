@@ -241,7 +241,8 @@ export const gameSlice = createSlice({
         state.satellites, 
         state.debris,
         state.collisionAngleThreshold,
-        state.collisionRadiusMultiplier
+        state.collisionRadiusMultiplier,
+        state.debrisRemovalVehicles
       );
 
       if (collisions.length === 0) {
@@ -249,6 +250,7 @@ export const gameSlice = createSlice({
       }
 
       const destroyedSatelliteIds = new Set<string>();
+      const destroyedDRVIds = new Set<string>();
       const newDebris = [];
       const collisionEvents = [];
 
@@ -257,12 +259,19 @@ export const gameSlice = createSlice({
 
         const isSat1 = 'purpose' in obj1;
         const isSat2 = 'purpose' in obj2;
+        const isDRV1 = 'removalType' in obj1;
+        const isDRV2 = 'removalType' in obj2;
 
         if (isSat1) {
           destroyedSatelliteIds.add(obj1.id);
+        } else if (isDRV1) {
+          destroyedDRVIds.add(obj1.id);
         }
+        
         if (isSat2) {
           destroyedSatelliteIds.add(obj2.id);
+        } else if (isDRV2) {
+          destroyedDRVIds.add(obj2.id);
         }
 
         const collisionX = (obj1.x + obj2.x) / 2;
@@ -288,6 +297,10 @@ export const gameSlice = createSlice({
 
       state.satellites = state.satellites.filter(sat => 
         !destroyedSatelliteIds.has(sat.id)
+      );
+
+      state.debrisRemovalVehicles = state.debrisRemovalVehicles.filter(drv =>
+        !destroyedDRVIds.has(drv.id)
       );
 
       state.debris.push(...newDebris);

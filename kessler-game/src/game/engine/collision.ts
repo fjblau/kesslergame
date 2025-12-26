@@ -1,4 +1,4 @@
-import type { Satellite, Debris, OrbitLayer, DebrisType } from '../types';
+import type { Satellite, Debris, DebrisRemovalVehicle, OrbitLayer, DebrisType } from '../types';
 import { 
   INSURANCE_CONFIG, 
   COLLISION_THRESHOLDS, 
@@ -17,7 +17,7 @@ export function calculateTotalPayout(destroyedSatellites: Satellite[]): number {
   }, 0);
 }
 
-type GameObject = Satellite | Debris;
+type GameObject = Satellite | Debris | DebrisRemovalVehicle;
 
 export interface CollisionPair {
   obj1: GameObject;
@@ -58,10 +58,11 @@ export function detectCollisions(
   satellites: Satellite[],
   debris: Debris[],
   angleThresholdDegrees: number = COLLISION_THRESHOLDS.angleDegrees,
-  radiusMultiplier: number = 1
+  radiusMultiplier: number = 1,
+  drvs: DebrisRemovalVehicle[] = []
 ): CollisionPair[] {
   const collisions: CollisionPair[] = [];
-  const allObjects: GameObject[] = [...satellites, ...debris];
+  const allObjects: GameObject[] = [...satellites, ...debris, ...drvs];
 
   const layers: OrbitLayer[] = ['LEO', 'MEO', 'GEO'];
 
