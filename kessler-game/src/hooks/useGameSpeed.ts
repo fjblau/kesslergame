@@ -66,16 +66,13 @@ export function useGameSpeed() {
 
     const interval = setInterval(() => {
       console.log('[useGameSpeed] ⭐⭐⭐ GAME LOOP TICK ⭐⭐⭐');
-      try {
-        console.log('[useGameSpeed] About to dispatch advanceTurn');
-        dispatch(advanceTurn());
-        console.log('[useGameSpeed] advanceTurn completed');
-        console.log('[useGameSpeed] About to dispatch processCollisions');
-        dispatch(processCollisions());
-        console.log('[useGameSpeed] processCollisions completed');
-      } catch (error) {
-        console.error('[useGameSpeed] Error in game loop:', error);
-      }
+      console.log('[useGameSpeed] TEST 1');
+      console.log('[useGameSpeed] TEST 2');
+      console.log('[useGameSpeed] TEST 3');
+      dispatch(advanceTurn());
+      console.log('[useGameSpeed] TEST 4');
+      dispatch(processCollisions());
+      console.log('[useGameSpeed] TEST 5');
 
       if (checkSolarStorm()) {
         const leoDebrisCountBefore = gameState.debris.filter(d => d.layer === 'LEO').length;
