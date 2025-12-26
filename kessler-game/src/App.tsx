@@ -32,14 +32,14 @@ function App() {
       label: 'Launch',
       content: (
         <div className="flex gap-6 justify-center items-start">
-          <div>
+          <div className="w-96">
             <ControlPanel />
           </div>
           <div className="flex flex-col gap-6">
             <OrbitVisualization />
             <GameSpeedControl />
           </div>
-          <div>
+          <div className="w-96">
             <StatsPanel />
           </div>
         </div>
