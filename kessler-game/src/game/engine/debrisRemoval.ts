@@ -150,15 +150,14 @@ export function processCooperativeDRVOperations(
     const orbitsRemaining = (drv.captureOrbitsRemaining ?? ORBITS_TO_HOLD) - 1;
     
     if (orbitsRemaining <= 0) {
-      const success = attemptDebrisRemoval(drv);
-      
-      console.log(`[DRV ${drv.id}] Removal attempt for ${capturedObject.id} (${capturedSatellite ? 'satellite' : 'debris'}): ${success ? 'SUCCESS' : 'FAILED'}`);
-      
-      if (success) {
-        if (capturedDebris) {
+      if (capturedSatellite) {
+        console.log(`[DRV ${drv.id}] Removing captured satellite ${capturedSatellite.id}`);
+        removedSatelliteIds.push(capturedSatellite.id);
+      } else if (capturedDebris) {
+        const success = attemptDebrisRemoval(drv);
+        console.log(`[DRV ${drv.id}] Removal attempt for debris ${capturedDebris.id}: ${success ? 'SUCCESS' : 'FAILED'}`);
+        if (success) {
           removedDebrisIds.push(capturedDebris.id);
-        } else if (capturedSatellite) {
-          removedSatelliteIds.push(capturedSatellite.id);
         }
       }
       
