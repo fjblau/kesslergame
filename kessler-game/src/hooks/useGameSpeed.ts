@@ -46,19 +46,26 @@ export function useGameSpeed() {
   }, [speed, dispatch]);
 
   useEffect(() => {
-    if (speed === 'paused') return;
+    console.log('[useGameSpeed] Speed changed to:', speed);
+    
+    if (speed === 'paused') {
+      console.log('[useGameSpeed] Game is paused, not running loop');
+      return;
+    }
 
     const shouldPause = autoPauseBudgetLow && budget < 20_000_000;
 
     if (shouldPause) {
+      console.log('[useGameSpeed] Auto-pausing due to low budget');
       dispatch(setGameSpeed('paused'));
       return;
     }
 
     const intervalDuration = speed === 'fast' ? 2000 : 4000;
+    console.log('[useGameSpeed] Starting game loop with interval:', intervalDuration);
 
     const interval = setInterval(() => {
-      console.log('[useGameSpeed] Game loop tick');
+      console.log('[useGameSpeed] ⭐⭐⭐ GAME LOOP TICK ⭐⭐⭐');
       dispatch(advanceTurn());
       console.log('[useGameSpeed] Calling processCollisions');
       dispatch(processCollisions());
