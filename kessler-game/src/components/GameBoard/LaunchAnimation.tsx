@@ -31,10 +31,14 @@ export function LaunchAnimation({ targetLayer, targetAngle, onComplete }: Launch
   const startX = centerX;
   const startY = centerY + 30;
 
-  const targetRadius = ORBIT_RADII[targetLayer];
-  const angle = isNaN(targetAngle) ? 0 : targetAngle;
+  const targetRadius = ORBIT_RADII[targetLayer] || 140;
+  const angle = (typeof targetAngle === 'number' && !isNaN(targetAngle)) ? targetAngle : 0;
   const targetX = centerX + Math.cos(angle) * targetRadius;
   const targetY = centerY + Math.sin(angle) * targetRadius;
+
+  if (isNaN(targetX) || isNaN(targetY)) {
+    return null;
+  }
 
   return (
     <svg
