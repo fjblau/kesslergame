@@ -21,24 +21,22 @@ const LAYER_COLORS = {
 };
 
 export function LaunchAnimation({ targetLayer, targetAngle, onComplete }: LaunchAnimationProps) {
+  const centerX = 400;
+  const centerY = 400;
+  
+  const targetRadius = ORBIT_RADII[targetLayer] || 140;
+  const safeAngle = (typeof targetAngle === 'number' && !isNaN(targetAngle)) ? targetAngle : 0;
+  const targetX = centerX + Math.cos(safeAngle) * targetRadius;
+  const targetY = centerY + Math.sin(safeAngle) * targetRadius;
+
   useEffect(() => {
     const timer = setTimeout(onComplete, 1500);
     return () => clearTimeout(timer);
   }, [onComplete]);
 
-  const centerX = 400;
-  const centerY = 400;
-  
-  const targetRadius = ORBIT_RADII[targetLayer];
   if (!targetRadius || typeof targetAngle !== 'number' || isNaN(targetAngle)) {
-    useEffect(() => {
-      onComplete();
-    }, [onComplete]);
     return null;
   }
-  
-  const targetX = centerX + Math.cos(targetAngle) * targetRadius;
-  const targetY = centerY + Math.sin(targetAngle) * targetRadius;
 
   return (
     <svg
