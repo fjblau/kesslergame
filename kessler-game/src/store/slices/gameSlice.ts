@@ -370,7 +370,7 @@ export const gameSlice = createSlice({
             x: drv.x,
             y: drv.y,
             layer: drv.layer,
-            type: 'cooperative',
+            type: drv.removalType === 'cooperative' ? 'cooperative' : 'uncooperative',
           });
         } else {
           remaining.push(drv);
