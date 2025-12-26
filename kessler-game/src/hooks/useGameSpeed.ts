@@ -92,6 +92,9 @@ export function useGameSpeed() {
       dispatch(decommissionExpiredDRVs());
     }, intervalDuration);
 
-    return () => clearInterval(interval);
-  }, [speed, budget, autoPauseBudgetLow, gameState, dispatch]);
+    return () => {
+      console.log('[useGameSpeed] Cleaning up interval');
+      clearInterval(interval);
+    };
+  }, [speed, budget, autoPauseBudgetLow, dispatch]);
 }
