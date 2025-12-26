@@ -1,9 +1,8 @@
-import type { Satellite, Debris, DebrisRemovalVehicle, OrbitLayer, DebrisType } from '../types';
+import type { Satellite, Debris, DebrisRemovalVehicle, OrbitLayer } from '../types';
 import { 
   INSURANCE_CONFIG, 
   COLLISION_THRESHOLDS, 
-  DEBRIS_PER_COLLISION, 
-  DEBRIS_TYPE_DISTRIBUTION,
+  DEBRIS_PER_COLLISION,
   LAYER_BOUNDS 
 } from '../constants';
 
@@ -97,12 +96,6 @@ function clampToLayer(value: number, layer: OrbitLayer): number {
   return Math.max(min, Math.min(max, value));
 }
 
-function generateDebrisType(): DebrisType {
-  return Math.random() < DEBRIS_TYPE_DISTRIBUTION.cooperative 
-    ? 'cooperative' 
-    : 'uncooperative';
-}
-
 export function generateDebrisFromCollision(
   x: number,
   y: number,
@@ -121,7 +114,7 @@ export function generateDebrisFromCollision(
       x: clampToLayer(x + xOffset, layer),
       y: clampToLayer(y + yOffset, layer),
       layer,
-      type: generateDebrisType(),
+      type: 'uncooperative',
     });
   }
 
