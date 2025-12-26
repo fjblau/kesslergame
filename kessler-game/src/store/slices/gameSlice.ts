@@ -62,6 +62,24 @@ export const gameSlice = createSlice({
       state.days += 1;
     },
 
+    resetGame: (state) => {
+      const config = BUDGET_DIFFICULTY_CONFIG[state.budgetDifficulty];
+      state.step = 0;
+      state.days = 0;
+      state.satellites = [];
+      state.debris = [];
+      state.debrisRemovalVehicles = [];
+      state.budget = config.startingBudget;
+      state.budgetIncomeAmount = config.incomeAmount;
+      state.budgetIncomeInterval = config.incomeInterval;
+      state.budgetDrainAmount = config.drainAmount;
+      state.nextIncomeAt = config.incomeInterval;
+      state.history = [];
+      state.riskLevel = 'LOW';
+      state.gameOver = false;
+      state.recentCollisions = [];
+    },
+
     launchSatellite: {
       reducer: (state, action: PayloadAction<{
         orbit: OrbitLayer;
@@ -300,6 +318,7 @@ export const gameSlice = createSlice({
 export const {
   initializeGame,
   incrementDays,
+  resetGame,
   launchSatellite,
   launchDRV,
   spendBudget,

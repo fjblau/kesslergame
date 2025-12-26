@@ -54,15 +54,16 @@ export function LaunchAnimation({ targetLayer, targetAngle, onComplete }: Launch
         animate={{
           x2: targetX,
           y2: targetY,
+          opacity: [0.5, 0.5, 0],
         }}
         transition={{
           duration: 1.5,
           ease: [0.33, 1, 0.68, 1],
+          opacity: { times: [0, 0.7, 1] },
         }}
         stroke={LAYER_COLORS[targetLayer]}
         strokeWidth="1"
         strokeDasharray="5,5"
-        opacity="0.5"
       />
     </svg>
   );
