@@ -66,7 +66,7 @@ export function detectCollisions(
     drvs.filter(drv => drv.capturedDebrisId).map(drv => drv.capturedDebrisId)
   );
   
-  const activeSatellites = satellites.filter(s => !capturedObjectIds.has(s.id));
+  const activeSatellites = satellites.filter(s => !capturedObjectIds.has(s.id) && s.age >= 3);
   const activeDebris = debris.filter(d => !capturedObjectIds.has(d.id));
   
   const allObjects: GameObject[] = [...activeSatellites, ...activeDebris, ...drvs];

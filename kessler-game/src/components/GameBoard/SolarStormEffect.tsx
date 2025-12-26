@@ -53,36 +53,30 @@ export function SolarStormEffect({ onComplete }: SolarStormEffectProps) {
       >
         {beams.map((i) => {
           const baseAngle = (i * Math.PI * 2) / beamCount;
-          const length = 200;
           const cosAngle = Math.cos(baseAngle);
           const sinAngle = Math.sin(baseAngle);
-          const x1 = centerX + cosAngle * 40;
-          const y1 = centerY + sinAngle * 40;
-          const x2 = centerX + cosAngle * (40 + length);
-          const y2 = centerY + sinAngle * (40 + length);
-          const x2Start = x1 + cosAngle * 100;
-          const y2Start = y1 + sinAngle * 100;
 
           return (
-            <motion.line
+            <motion.g
               key={i}
-              x1={x1}
-              y1={y1}
-              x2={x2Start}
-              y2={y2Start}
-              stroke="#fbbf24"
-              strokeWidth="3"
               initial={{ opacity: 0 }}
               animate={{
                 opacity: [0, 0.8, 0.8, 0],
-                x2: [x2Start, x2, x2, x2Start],
-                y2: [y2Start, y2, y2, y2Start],
               }}
               transition={{
                 duration: 2,
                 times: [0, 0.25, 0.75, 1],
               }}
-            />
+            >
+              <line
+                x1={centerX + cosAngle * 40}
+                y1={centerY + sinAngle * 40}
+                x2={centerX + cosAngle * 240}
+                y2={centerY + sinAngle * 240}
+                stroke="#fbbf24"
+                strokeWidth="3"
+              />
+            </motion.g>
           );
         })}
       </svg>
