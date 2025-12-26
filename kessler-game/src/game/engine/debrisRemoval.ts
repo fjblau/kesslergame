@@ -1,7 +1,7 @@
 import type { DebrisRemovalVehicle, Debris, Satellite, OrbitLayer } from '../types';
 import { ORBITAL_SPEEDS } from '../constants';
 
-const CAPTURE_DISTANCE_THRESHOLD = 8;
+const CAPTURE_DISTANCE_THRESHOLD = 12;
 const ORBITS_TO_HOLD = 2;
 
 type CapturableObject = Debris | Satellite;
@@ -69,15 +69,23 @@ function calculateDistance(x1: number, y1: number, x2: number, y2: number): numb
 export function calculateInterceptionAdjustment(
   drv: DebrisRemovalVehicle,
   target: CapturableObject
-): number {
+): { xAdjustment: number; yAdjustment: number } {
+  const dx = target.x - drv.x;
+  const dxWrapped = dx > 50 ? dx - 100 : (dx < -50 ? dx + 100 : dx);
   const dy = target.y - drv.y;
-  const maxAdjustment = 0.8;
   
-  if (Math.abs(dy) < 2) {
-    return 0;
-  }
+  const maxXAdjustment = 0.05;
+  const maxYAdjustment = 2.0;
   
-  return Math.sign(dy) * Math.min(Math.abs(dy) * 0.2, maxAdjustment);
+  const xAdjustment = Math.abs(dxWrapped) < 1 
+    ? 0 
+    : Math.sign(dxWrapped) * Math.min(Math.abs(dxWrapped) * 0.02, maxXAdjustment);
+  
+  const yAdjustment = Math.abs(dy) < 2 
+    ? 0 
+    : Math.sign(dy) * Math.min(Math.abs(dy) * 0.3, maxYAdjustment);
+  
+  return { xAdjustment, yAdjustment };
 }
 
 export function processDRVRemoval(
@@ -217,14 +225,19 @@ export function moveCooperativeDRV(
   target: CapturableObject | undefined
 ): { x: number; y: number } {
   const baseSpeed = getEntitySpeedVariation(drv.id, drv.layer);
-  const newX = (drv.x + baseSpeed) % 100;
+  let newX = (drv.x + baseSpeed) % 100;
   let newY = drv.y;
   
   if (target && !drv.capturedDebrisId) {
     const targetSpeed = getEntitySpeedVariation(target.id!, target.layer);
-    const yAdjustment = calculateInterceptionAdjustment(drv, target);
-    newY = drv.y + yAdjustment;
-    console.log(`[DRV ${drv.id}] Moving: DRV speed ${baseSpeed.toFixed(3)}, Target speed ${targetSpeed.toFixed(3)}, Speed diff ${(baseSpeed - targetSpeed).toFixed(3)}, Y adjustment ${yAdjustment.toFixed(3)}, New pos: (${newX.toFixed(2)}, ${newY.toFixed(2)})`);
+    const adjustments = calculateInterceptionAdjustment(drv, target);
+    
+    newX = (drv.x + baseSpeed + adjustments.xAdjustment) % 100;
+    if (newX < 0) newX += 100;
+    
+    newY = drv.y + adjustments.yAdjustment;
+    
+    console.log(`[DRV ${drv.id}] Moving: DRV speed ${baseSpeed.toFixed(3)}, Target speed ${targetSpeed.toFixed(3)}, X adj ${adjustments.xAdjustment.toFixed(3)}, Y adj ${adjustments.yAdjustment.toFixed(3)}, New pos: (${newX.toFixed(2)}, ${newY.toFixed(2)})`);
   }
   
   return { x: newX, y: newY };
