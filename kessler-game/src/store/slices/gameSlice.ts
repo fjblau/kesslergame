@@ -25,6 +25,21 @@ function getEntitySpeedVariation(id: string, layer: OrbitLayer): number {
 
 const generateId = () => Math.random().toString(36).substring(2, 11);
 
+function loadCollisionSettings() {
+  try {
+    const angle = localStorage.getItem('collisionAngleThreshold');
+    const radius = localStorage.getItem('collisionRadiusMultiplier');
+    return {
+      angle: angle ? parseFloat(angle) : 5,
+      radius: radius ? parseFloat(radius) : 0.5,
+    };
+  } catch {
+    return { angle: 5, radius: 0.5 };
+  }
+}
+
+const savedCollisionSettings = loadCollisionSettings();
+
 const randomPositionInLayer = (layer: OrbitLayer) => {
   const [yMin, yMax] = LAYER_BOUNDS[layer];
   return {
@@ -49,8 +64,8 @@ const initialState: GameState = {
   history: [],
   riskLevel: 'LOW',
   gameOver: false,
-  collisionAngleThreshold: 5,
-  collisionRadiusMultiplier: 0.5,
+  collisionAngleThreshold: savedCollisionSettings.angle,
+  collisionRadiusMultiplier: savedCollisionSettings.radius,
   recentCollisions: [],
 };
 
@@ -403,10 +418,20 @@ export const gameSlice = createSlice({
 
     setCollisionAngleThreshold: (state, action: PayloadAction<number>) => {
       state.collisionAngleThreshold = action.payload;
+      try {
+        localStorage.setItem('collisionAngleThreshold', action.payload.toString());
+      } catch {
+        // Ignore localStorage errors
+      }
     },
 
     setCollisionRadiusMultiplier: (state, action: PayloadAction<number>) => {
       state.collisionRadiusMultiplier = action.payload;
+      try {
+        localStorage.setItem('collisionRadiusMultiplier', action.payload.toString());
+      } catch {
+        // Ignore localStorage errors
+      }
     },
   },
 });
