@@ -7,7 +7,7 @@ interface CascadeWarningProps {
 
 export function CascadeWarning({ onComplete }: CascadeWarningProps) {
   useEffect(() => {
-    const timer = setTimeout(onComplete, 3000);
+    const timer = setTimeout(onComplete, 1000);
     return () => clearTimeout(timer);
   }, [onComplete]);
 
