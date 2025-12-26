@@ -49,8 +49,8 @@ const initialState: GameState = {
   history: [],
   riskLevel: 'LOW',
   gameOver: false,
-  collisionAngleThreshold: 15,
-  collisionRadiusMultiplier: 1,
+  collisionAngleThreshold: 5,
+  collisionRadiusMultiplier: 0.5,
   recentCollisions: [],
 };
 
