@@ -59,6 +59,7 @@ export interface CollisionEvent {
 export interface GameState {
   step: number;
   maxSteps: number;
+  days: number;
   satellites: Satellite[];
   debris: Debris[];
   debrisRemovalVehicles: DebrisRemovalVehicle[];

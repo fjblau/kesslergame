@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { GameState, OrbitLayer, SatelliteType, InsuranceTier, DRVType, DRVTargetPriority, BudgetDifficulty, DebrisRemovalVehicle } from '../../game/types';
-import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG, LEO_LIFETIME, MAX_DEBRIS_LIMIT, ORBITAL_SPEEDS } from '../../game/constants';
+import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG, LEO_LIFETIME, MAX_DEBRIS_LIMIT } from '../../game/constants';
 import { detectCollisions, generateDebrisFromCollision, calculateTotalPayout } from '../../game/engine/collision';
 import { processDRVRemoval } from '../../game/engine/debrisRemoval';
 import { calculateRiskLevel } from '../../game/engine/risk';
@@ -20,6 +20,7 @@ const randomPositionInLayer = (layer: OrbitLayer) => {
 const initialState: GameState = {
   step: 0,
   maxSteps: MAX_STEPS,
+  days: 0,
   satellites: [],
   debris: [],
   debrisRemovalVehicles: [],
@@ -43,6 +44,7 @@ export const gameSlice = createSlice({
       const config = BUDGET_DIFFICULTY_CONFIG[action.payload];
       return {
         ...initialState,
+        days: 0,
         budget: config.startingBudget,
         budgetDifficulty: action.payload,
         budgetIncomeAmount: config.incomeAmount,
@@ -54,6 +56,10 @@ export const gameSlice = createSlice({
         gameOver: false,
         recentCollisions: [],
       };
+    },
+
+    incrementDays: (state) => {
+      state.days += 1;
     },
 
     launchSatellite: {
@@ -156,14 +162,9 @@ export const gameSlice = createSlice({
 
       state.satellites.forEach(sat => {
         sat.age++;
-        sat.x = (sat.x + ORBITAL_SPEEDS[sat.layer]) % 100;
       });
       state.debrisRemovalVehicles.forEach(drv => {
         drv.age++;
-        drv.x = (drv.x + ORBITAL_SPEEDS[drv.layer]) % 100;
-      });
-      state.debris.forEach(deb => {
-        deb.x = (deb.x + ORBITAL_SPEEDS[deb.layer]) % 100;
       });
 
       state.satellites = state.satellites.filter(
@@ -298,6 +299,7 @@ export const gameSlice = createSlice({
 
 export const {
   initializeGame,
+  incrementDays,
   launchSatellite,
   launchDRV,
   spendBudget,

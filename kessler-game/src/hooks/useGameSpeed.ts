@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
-import { advanceTurn, decommissionExpiredDRVs, triggerSolarStorm } from '../store/slices/gameSlice';
+import { advanceTurn, decommissionExpiredDRVs, triggerSolarStorm, incrementDays } from '../store/slices/gameSlice';
 import { setGameSpeed } from '../store/slices/uiSlice';
 import { updateMissionProgress, notifyMissionComplete, selectActiveMissions } from '../store/slices/missionsSlice';
 import { addEvent } from '../store/slices/eventSlice';
@@ -34,6 +34,16 @@ export function useGameSpeed() {
       previousMissionCompletionStatus.current.set(mission.id, mission.completed);
     });
   }, [missions, dispatch]);
+
+  useEffect(() => {
+    if (speed === 'paused') return;
+
+    const daysInterval = setInterval(() => {
+      dispatch(incrementDays());
+    }, 1000);
+
+    return () => clearInterval(daysInterval);
+  }, [speed, dispatch]);
 
   useEffect(() => {
     if (speed === 'paused') return;

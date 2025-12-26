@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import type { Satellite } from '../../game/types';
-import { SATELLITE_PURPOSE_CONFIG } from '../../game/constants';
+import { SATELLITE_PURPOSE_CONFIG, ORBITAL_SPEEDS } from '../../game/constants';
+import { useAppSelector } from '../../store/hooks';
 
 interface SatelliteSpriteProps {
   satellite: Satellite;
@@ -11,7 +12,9 @@ interface SatelliteSpriteProps {
 
 export function SatelliteSprite({ satellite, x, y, isLaunching = false }: SatelliteSpriteProps) {
   const icon = SATELLITE_PURPOSE_CONFIG[satellite.purpose].icon;
-  const rotation = (satellite.x / 100) * 360;
+  const days = useAppSelector(state => state.game.days);
+  const baseAngle = (satellite.x / 100) * 360;
+  const rotation = baseAngle + (days * ORBITAL_SPEEDS[satellite.layer] * 3.6);
   
   return (
     <motion.div
@@ -39,13 +42,13 @@ export function SatelliteSprite({ satellite, x, y, isLaunching = false }: Satell
         rotate: rotation,
       }}
       transition={{
-        left: { duration: 0.5, ease: 'linear' },
-        top: { duration: 0.5, ease: 'linear' },
-        rotate: { duration: 0.5, ease: 'linear' },
+        left: { duration: 1, ease: 'linear' },
+        top: { duration: 1, ease: 'linear' },
+        rotate: { duration: 1, ease: 'linear' },
         x: isLaunching ? { duration: 1.5, ease: [0.33, 1, 0.68, 1] } : { duration: 0 },
         y: isLaunching ? { duration: 1.5, ease: [0.33, 1, 0.68, 1] } : { duration: 0 },
-        scale: isLaunching ? { duration: 1.5, ease: [0.33, 1, 0.68, 1] } : { duration: 0.5, ease: 'linear' },
-        opacity: isLaunching ? { duration: 1.5, ease: [0.33, 1, 0.68, 1] } : { duration: 0.5, ease: 'linear' },
+        scale: isLaunching ? { duration: 1.5, ease: [0.33, 1, 0.68, 1] } : { duration: 1, ease: 'linear' },
+        opacity: isLaunching ? { duration: 1.5, ease: [0.33, 1, 0.68, 1] } : { duration: 1, ease: 'linear' },
       }}
       title={`${satellite.purpose} Satellite (${satellite.layer})`}
     >

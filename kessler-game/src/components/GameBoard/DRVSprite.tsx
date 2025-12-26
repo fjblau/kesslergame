@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion';
 import type { DebrisRemovalVehicle } from '../../game/types';
+import { ORBITAL_SPEEDS } from '../../game/constants';
+import { useAppSelector } from '../../store/hooks';
 
 interface DRVSpriteProps {
   drv: DebrisRemovalVehicle;
@@ -11,7 +13,9 @@ interface DRVSpriteProps {
 export function DRVSprite({ drv, x, y, isLaunching = false }: DRVSpriteProps) {
   const isCooperative = drv.removalType === 'cooperative';
   const color = isCooperative ? '#34d399' : '#fb923c';
-  const rotation = (drv.x / 100) * 360;
+  const days = useAppSelector(state => state.game.days);
+  const baseAngle = (drv.x / 100) * 360;
+  const rotation = baseAngle + (days * ORBITAL_SPEEDS[drv.layer] * 3.6);
   
   return (
     <motion.div
@@ -39,13 +43,13 @@ export function DRVSprite({ drv, x, y, isLaunching = false }: DRVSpriteProps) {
         rotate: rotation,
       }}
       transition={{
-        left: { duration: 0.5, ease: 'linear' },
-        top: { duration: 0.5, ease: 'linear' },
-        rotate: { duration: 0.5, ease: 'linear' },
+        left: { duration: 1, ease: 'linear' },
+        top: { duration: 1, ease: 'linear' },
+        rotate: { duration: 1, ease: 'linear' },
         x: isLaunching ? { duration: 1.5, ease: [0.33, 1, 0.68, 1] } : { duration: 0 },
         y: isLaunching ? { duration: 1.5, ease: [0.33, 1, 0.68, 1] } : { duration: 0 },
-        scale: isLaunching ? { duration: 1.5, ease: [0.33, 1, 0.68, 1] } : { duration: 0.5, ease: 'linear' },
-        opacity: isLaunching ? { duration: 1.5, ease: [0.33, 1, 0.68, 1] } : { duration: 0.5, ease: 'linear' },
+        scale: isLaunching ? { duration: 1.5, ease: [0.33, 1, 0.68, 1] } : { duration: 1, ease: 'linear' },
+        opacity: isLaunching ? { duration: 1.5, ease: [0.33, 1, 0.68, 1] } : { duration: 1, ease: 'linear' },
       }}
       title={`${drv.removalType} DRV (${drv.layer})`}
     >

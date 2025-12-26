@@ -22,6 +22,7 @@ export function OrbitVisualization() {
   const debrisRemovalVehicles = useAppSelector(state => state.game.debrisRemovalVehicles);
   const recentCollisions = useAppSelector(state => state.game.recentCollisions);
   const events = useAppSelector(state => state.events.events);
+  const days = useAppSelector(state => state.game.days);
 
   const prevSatelliteIds = useRef<Set<string>>(new Set());
   const prevDRVIds = useRef<Set<string>>(new Set());
@@ -139,7 +140,7 @@ export function OrbitVisualization() {
 
       {/* Collision effects */}
       {activeCollisionEvents.map(collision => {
-        const { x, y } = mapToPixels(collision);
+        const { x, y } = mapToPixels(collision, days);
         return (
           <CollisionEffect
             key={collision.id}
@@ -162,20 +163,20 @@ export function OrbitVisualization() {
 
       {/* Satellites */}
       {satellites.map(satellite => {
-        const { x, y } = mapToPixels(satellite);
+        const { x, y } = mapToPixels(satellite, days);
         const isLaunching = launchingSatellites.has(satellite.id);
         return <SatelliteSprite key={satellite.id} satellite={satellite} x={x} y={y} isLaunching={isLaunching} />;
       })}
 
       {/* Debris */}
       {debris.map(debrisItem => {
-        const { x, y } = mapToPixels(debrisItem);
+        const { x, y } = mapToPixels(debrisItem, days);
         return <DebrisParticle key={debrisItem.id} debris={debrisItem} x={x} y={y} />;
       })}
 
       {/* DRVs */}
       {debrisRemovalVehicles.map(drv => {
-        const { x, y } = mapToPixels(drv);
+        const { x, y } = mapToPixels(drv, days);
         const isLaunching = launchingDRVs.has(drv.id);
         return <DRVSprite key={drv.id} drv={drv} x={x} y={y} isLaunching={isLaunching} />;
       })}
