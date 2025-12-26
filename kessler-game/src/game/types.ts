@@ -52,6 +52,7 @@ export interface CollisionEvent {
   id: string;
   x: number;
   y: number;
+  layer: OrbitLayer;
   timestamp: number;
 }
 

@@ -213,6 +213,7 @@ export const gameSlice = createSlice({
           id: generateId(),
           x: collisionX,
           y: collisionY,
+          layer,
           timestamp: Date.now(),
         });
 

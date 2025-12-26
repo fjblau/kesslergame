@@ -26,7 +26,7 @@ export function OrbitVisualization() {
   const [launchingSatellites, setLaunchingSatellites] = useState<Set<string>>(new Set());
   const [launchingDRVs, setLaunchingDRVs] = useState<Set<string>>(new Set());
   const [activeTrails, setActiveTrails] = useState<LaunchingEntity[]>([]);
-  const [activeCollisions, setActiveCollisions] = useState<Set<string>>(new Set());
+  const [completedCollisions, setCompletedCollisions] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const currentSatelliteIds = new Set(satellites.map(s => s.id));
@@ -73,6 +73,22 @@ export function OrbitVisualization() {
     setActiveTrails(prev => prev.filter(trail => trail.id !== id));
   };
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      dispatch(clearOldCollisions());
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, [dispatch]);
+
+  const handleCollisionComplete = (id: string) => {
+    setCompletedCollisions(prev => new Set([...prev, id]));
+  };
+
+  const activeCollisionEvents = recentCollisions.filter(
+    collision => !completedCollisions.has(collision.id)
+  );
+
   return (
     <div className="relative w-[800px] h-[800px] flex items-center justify-center bg-slate-900 border-2 border-slate-600 rounded-xl">
       {/* GEO orbit */}
@@ -100,6 +116,19 @@ export function OrbitVisualization() {
       <div style={{ position: 'absolute', width: '100px', height: '100px', borderRadius: '50%', background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '48px', boxShadow: '0 0 40px rgba(59, 130, 246, 0.5)' }}>
         🌍
       </div>
+
+      {/* Collision effects */}
+      {activeCollisionEvents.map(collision => {
+        const { x, y } = mapToPixels(collision);
+        return (
+          <CollisionEffect
+            key={collision.id}
+            x={x}
+            y={y}
+            onComplete={() => handleCollisionComplete(collision.id)}
+          />
+        );
+      })}
 
       {/* Launch trails */}
       {activeTrails.map(trail => (
