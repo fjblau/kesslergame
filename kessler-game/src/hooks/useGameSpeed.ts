@@ -46,33 +46,22 @@ export function useGameSpeed() {
   }, [speed, dispatch]);
 
   useEffect(() => {
-    console.log('[useGameSpeed] Speed changed to:', speed);
-    
     if (speed === 'paused') {
-      console.log('[useGameSpeed] Game is paused, not running loop');
       return;
     }
 
     const shouldPause = autoPauseBudgetLow && budget < 20_000_000;
 
     if (shouldPause) {
-      console.log('[useGameSpeed] Auto-pausing due to low budget');
       dispatch(setGameSpeed('paused'));
       return;
     }
 
     const intervalDuration = speed === 'fast' ? 2000 : 4000;
-    console.log('[useGameSpeed] Starting game loop with interval:', intervalDuration);
 
     const interval = setInterval(() => {
-      console.log('[useGameSpeed] ⭐⭐⭐ GAME LOOP TICK ⭐⭐⭐');
-      console.log('[useGameSpeed] TEST 1');
-      console.log('[useGameSpeed] TEST 2');
-      console.log('[useGameSpeed] TEST 3');
       dispatch(advanceTurn());
-      console.log('[useGameSpeed] TEST 4');
       dispatch(processCollisions());
-      console.log('[useGameSpeed] TEST 5');
 
       if (checkSolarStorm()) {
         const leoDebrisCountBefore = gameState.debris.filter(d => d.layer === 'LEO').length;
@@ -92,9 +81,7 @@ export function useGameSpeed() {
       dispatch(decommissionExpiredDRVs());
     }, intervalDuration);
 
-    return () => {
-      console.log('[useGameSpeed] Cleaning up interval');
-      clearInterval(interval);
-    };
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [speed, budget, autoPauseBudgetLow, dispatch]);
 }

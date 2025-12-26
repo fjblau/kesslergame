@@ -237,15 +237,12 @@ export const gameSlice = createSlice({
     },
 
     processCollisions: (state) => {
-      console.log('[processCollisions] Called with', state.satellites.length, 'satellites,', state.debris.length, 'debris');
       const collisions = detectCollisions(
         state.satellites, 
         state.debris,
         state.collisionAngleThreshold,
         state.collisionRadiusMultiplier
       );
-
-      console.log('[processCollisions] Detected', collisions.length, 'collisions');
 
       if (collisions.length === 0) {
         return;
