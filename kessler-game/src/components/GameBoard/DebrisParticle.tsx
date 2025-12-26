@@ -22,12 +22,23 @@ export function DebrisParticle({ debris, x, y }: DebrisParticleProps) {
         color,
         fontSize: '12px',
       }}
+      initial={{
+        x: '-50%',
+        y: '-50%',
+        scale: 0,
+        opacity: 0,
+        rotate: rotation,
+      }}
       animate={{
         x: '-50%',
         y: '-50%',
+        scale: 1,
+        opacity: 1,
         rotate: rotation,
       }}
       transition={{
+        scale: { duration: 0.3, ease: 'easeOut' },
+        opacity: { duration: 0.3, ease: 'easeOut' },
         rotate: { duration: 0.5, ease: 'linear' },
         x: { duration: 0 },
         y: { duration: 0 },

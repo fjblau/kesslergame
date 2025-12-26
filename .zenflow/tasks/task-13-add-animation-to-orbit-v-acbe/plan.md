@@ -109,7 +109,8 @@ Add collision effect rendering:
 
 ---
 
-### [ ] Step: Add Debris Spawn Animation
+### [x] Step: Add Debris Spawn Animation
+<!-- chat-id: ad69c1d0-237a-4df9-93bd-33dd9b318e43 -->
 
 Implement spawn animation for debris:
 1. Apply initial state (scale 0, opacity 0)
