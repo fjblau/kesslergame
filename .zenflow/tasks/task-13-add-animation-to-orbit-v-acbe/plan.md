@@ -120,7 +120,8 @@ Implement spawn animation for debris:
 
 ---
 
-### [ ] Step: Integrate Solar Storm Effect (Optional)
+### [x] Step: Integrate Solar Storm Effect (Optional)
+<!-- chat-id: 5545ba89-4c9d-403e-b00b-65de60ab928e -->
 
 If solar storm events are triggerable:
 1. Subscribe to solar-storm events

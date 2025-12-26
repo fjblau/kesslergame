@@ -5,6 +5,7 @@ import { DebrisParticle } from './DebrisParticle';
 import { DRVSprite } from './DRVSprite';
 import { LaunchAnimation } from './LaunchAnimation';
 import { CollisionEffect } from './CollisionEffect';
+import { SolarStormEffect } from './SolarStormEffect';
 import { mapToPixels } from './utils';
 import { clearOldCollisions } from '../../store/slices/gameSlice';
 
@@ -20,13 +21,16 @@ export function OrbitVisualization() {
   const debris = useAppSelector(state => state.game.debris);
   const debrisRemovalVehicles = useAppSelector(state => state.game.debrisRemovalVehicles);
   const recentCollisions = useAppSelector(state => state.game.recentCollisions);
+  const events = useAppSelector(state => state.events.events);
 
   const prevSatelliteIds = useRef<Set<string>>(new Set());
   const prevDRVIds = useRef<Set<string>>(new Set());
+  const prevEventCount = useRef<number>(0);
   const [launchingSatellites, setLaunchingSatellites] = useState<Set<string>>(new Set());
   const [launchingDRVs, setLaunchingDRVs] = useState<Set<string>>(new Set());
   const [activeTrails, setActiveTrails] = useState<LaunchingEntity[]>([]);
   const [completedCollisions, setCompletedCollisions] = useState<Set<string>>(new Set());
+  const [showSolarStorm, setShowSolarStorm] = useState<boolean>(false);
 
   useEffect(() => {
     const currentSatelliteIds = new Set(satellites.map(s => s.id));
@@ -88,6 +92,22 @@ export function OrbitVisualization() {
   const activeCollisionEvents = recentCollisions.filter(
     collision => !completedCollisions.has(collision.id)
   );
+
+  useEffect(() => {
+    if (events.length > prevEventCount.current) {
+      const latestEvent = events[0];
+      if (latestEvent?.type === 'solar-storm') {
+        requestAnimationFrame(() => {
+          setShowSolarStorm(true);
+        });
+      }
+    }
+    prevEventCount.current = events.length;
+  }, [events]);
+
+  const handleSolarStormComplete = () => {
+    setShowSolarStorm(false);
+  };
 
   return (
     <div className="relative w-[800px] h-[800px] flex items-center justify-center bg-slate-900 border-2 border-slate-600 rounded-xl">
@@ -159,6 +179,9 @@ export function OrbitVisualization() {
         const isLaunching = launchingDRVs.has(drv.id);
         return <DRVSprite key={drv.id} drv={drv} x={x} y={y} isLaunching={isLaunching} />;
       })}
+
+      {/* Solar Storm Effect */}
+      {showSolarStorm && <SolarStormEffect onComplete={handleSolarStormComplete} />}
     </div>
   );
 }
