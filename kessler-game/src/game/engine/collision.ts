@@ -61,7 +61,15 @@ export function detectCollisions(
   drvs: DebrisRemovalVehicle[] = []
 ): CollisionPair[] {
   const collisions: CollisionPair[] = [];
-  const allObjects: GameObject[] = [...satellites, ...debris, ...drvs];
+  
+  const capturedObjectIds = new Set(
+    drvs.filter(drv => drv.capturedDebrisId).map(drv => drv.capturedDebrisId)
+  );
+  
+  const activeSatellites = satellites.filter(s => !capturedObjectIds.has(s.id));
+  const activeDebris = debris.filter(d => !capturedObjectIds.has(d.id));
+  
+  const allObjects: GameObject[] = [...activeSatellites, ...activeDebris, ...drvs];
 
   const layers: OrbitLayer[] = ['LEO', 'MEO', 'GEO'];
 

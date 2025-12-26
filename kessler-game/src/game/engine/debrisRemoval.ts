@@ -147,6 +147,8 @@ export function processCooperativeDRVOperations(
     if (orbitsRemaining <= 0) {
       const success = attemptDebrisRemoval(drv);
       
+      console.log(`[DRV ${drv.id}] Removal attempt for ${capturedObject.id} (${capturedSatellite ? 'satellite' : 'debris'}): ${success ? 'SUCCESS' : 'FAILED'}`);
+      
       if (success) {
         if (capturedDebris) {
           removedDebrisIds.push(capturedDebris.id);

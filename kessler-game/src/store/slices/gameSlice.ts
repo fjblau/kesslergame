@@ -182,6 +182,10 @@ export const gameSlice = createSlice({
           drv.capturedDebrisId = result.capturedObjectId;
           drv.captureOrbitsRemaining = result.captureOrbitsRemaining;
           
+          if (result.removedSatelliteIds.length > 0) {
+            console.log(`🛰️ Removed ${result.removedSatelliteIds.length} satellite(s): ${result.removedSatelliteIds.join(', ')}`);
+          }
+          
           state.debris = state.debris.filter(d => !result.removedDebrisIds.includes(d.id));
           state.satellites = state.satellites.filter(s => !result.removedSatelliteIds.includes(s.id));
         } else {
@@ -336,6 +340,10 @@ export const gameSlice = createSlice({
       const destroyedSatellites = state.satellites.filter(sat => 
         destroyedSatelliteIds.has(sat.id)
       );
+      
+      if (destroyedSatellites.length > 0) {
+        console.log(`💥 Collision destroyed ${destroyedSatellites.length} satellite(s), creating ${newDebris.length} debris`);
+      }
 
       const insurancePayout = calculateTotalPayout(destroyedSatellites);
 
