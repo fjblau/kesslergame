@@ -78,6 +78,9 @@ export interface GameState {
   recentCollisions: CollisionEvent[];
   collisionAngleThreshold: number;
   collisionRadiusMultiplier: number;
+  cascadeTriggered: boolean;
+  lastCascadeTurn?: number;
+  totalCascades: number;
 }
 
 export interface UIState {

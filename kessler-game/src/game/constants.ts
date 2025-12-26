@@ -141,3 +141,5 @@ export const ORBITAL_SPEEDS: Record<OrbitLayer, number> = {
   MEO: 5,
   GEO: 3,
 };
+
+export const CASCADE_THRESHOLD = 3;

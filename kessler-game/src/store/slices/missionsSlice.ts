@@ -124,6 +124,20 @@ export const missionsSlice = createSlice({
             }
             break;
           }
+
+          case 'no-cascades': {
+            if (gameState.totalCascades > 0) {
+              mission.failed = true;
+              mission.currentProgress = 0;
+            } else if (gameState.gameOver) {
+              mission.currentProgress = 1;
+              mission.completed = true;
+              mission.completedAt = gameState.step;
+            } else {
+              mission.currentProgress = 0;
+            }
+            break;
+          }
         }
 
         if (!mission.completed && mission.currentProgress >= mission.target) {

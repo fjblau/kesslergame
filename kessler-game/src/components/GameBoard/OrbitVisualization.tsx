@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { SatelliteSprite } from './SatelliteSprite';
 import { DebrisParticle } from './DebrisParticle';
@@ -6,8 +6,10 @@ import { DRVSprite } from './DRVSprite';
 import { LaunchAnimation } from './LaunchAnimation';
 import { CollisionEffect } from './CollisionEffect';
 import { SolarStormEffect } from './SolarStormEffect';
+import { CascadeWarning } from './CascadeWarning';
 import { mapToPixels } from './utils';
-import { clearOldCollisions } from '../../store/slices/gameSlice';
+import { clearOldCollisions, clearCascadeFlag } from '../../store/slices/gameSlice';
+import { playCascadeWarning } from '../../utils/audio';
 
 interface LaunchingEntity {
   id: string;
@@ -21,17 +23,21 @@ export function OrbitVisualization() {
   const debris = useAppSelector(state => state.game.debris);
   const debrisRemovalVehicles = useAppSelector(state => state.game.debrisRemovalVehicles);
   const recentCollisions = useAppSelector(state => state.game.recentCollisions);
+  const cascadeTriggered = useAppSelector(state => state.game.cascadeTriggered);
+  const lastCascadeTurn = useAppSelector(state => state.game.lastCascadeTurn);
   const events = useAppSelector(state => state.events.events);
   const days = useAppSelector(state => state.game.days);
 
   const prevSatelliteIds = useRef<Set<string>>(new Set());
   const prevDRVIds = useRef<Set<string>>(new Set());
   const prevEventCount = useRef<number>(0);
+  const cascadeShownForTurn = useRef<number | undefined>(undefined);
   const [launchingSatellites, setLaunchingSatellites] = useState<Set<string>>(new Set());
   const [launchingDRVs, setLaunchingDRVs] = useState<Set<string>>(new Set());
   const [activeTrails, setActiveTrails] = useState<LaunchingEntity[]>([]);
   const [completedCollisions, setCompletedCollisions] = useState<Set<string>>(new Set());
   const [showSolarStorm, setShowSolarStorm] = useState<boolean>(false);
+  const [showCascadeWarning, setShowCascadeWarning] = useState<boolean>(false);
 
   useEffect(() => {
     const currentSatelliteIds = new Set(satellites.map(s => s.id));
@@ -110,6 +116,23 @@ export function OrbitVisualization() {
     setShowSolarStorm(false);
   };
 
+  useEffect(() => {
+    if (cascadeTriggered && !showCascadeWarning && lastCascadeTurn !== undefined) {
+      if (cascadeShownForTurn.current !== lastCascadeTurn) {
+        cascadeShownForTurn.current = lastCascadeTurn;
+        requestAnimationFrame(() => {
+          setShowCascadeWarning(true);
+          playCascadeWarning();
+        });
+      }
+    }
+  }, [cascadeTriggered, showCascadeWarning, lastCascadeTurn]);
+
+  const handleCascadeWarningComplete = useCallback(() => {
+    dispatch(clearCascadeFlag());
+    setShowCascadeWarning(false);
+  }, [dispatch]);
+
   return (
     <div className="relative w-[800px] h-[800px] flex items-center justify-center bg-slate-900 border-2 border-slate-600 rounded-xl">
       {/* GEO orbit */}
@@ -184,6 +207,9 @@ export function OrbitVisualization() {
 
       {/* Solar Storm Effect */}
       {showSolarStorm && <SolarStormEffect onComplete={handleSolarStormComplete} />}
+
+      {/* Cascade Warning */}
+      {showCascadeWarning && <CascadeWarning onComplete={handleCascadeWarningComplete} />}
     </div>
   );
 }
