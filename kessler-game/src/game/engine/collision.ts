@@ -108,12 +108,13 @@ export function generateDebrisFromCollision(
   x: number,
   y: number,
   layer: OrbitLayer,
-  generateId: () => string
+  generateId: () => string,
+  debrisPerCollision: number = DEBRIS_PER_COLLISION
 ): Debris[] {
   const debris: Debris[] = [];
   const offsetRange = 5;
 
-  for (let i = 0; i < DEBRIS_PER_COLLISION; i++) {
+  for (let i = 0; i < debrisPerCollision; i++) {
     const xOffset = (Math.random() - 0.5) * offsetRange * 2;
     const yOffset = (Math.random() - 0.5) * offsetRange * 2;
 

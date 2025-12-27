@@ -29,12 +29,14 @@ function loadCollisionSettings() {
   try {
     const angle = localStorage.getItem('collisionAngleThreshold');
     const radius = localStorage.getItem('collisionRadiusMultiplier');
+    const debrisPerCollision = localStorage.getItem('debrisPerCollision');
     return {
       angle: angle ? parseFloat(angle) : 5,
       radius: radius ? parseFloat(radius) : 0.5,
+      debrisPerCollision: debrisPerCollision ? parseFloat(debrisPerCollision) : 5,
     };
   } catch {
-    return { angle: 5, radius: 0.5 };
+    return { angle: 5, radius: 0.5, debrisPerCollision: 5 };
   }
 }
 
@@ -96,6 +98,7 @@ const initialState: GameState = {
   gameOver: false,
   collisionAngleThreshold: savedCollisionSettings.angle,
   collisionRadiusMultiplier: savedCollisionSettings.radius,
+  debrisPerCollision: savedCollisionSettings.debrisPerCollision,
   orbitalSpeedLEO: savedOrbitalSpeedSettings.leo,
   orbitalSpeedMEO: savedOrbitalSpeedSettings.meo,
   orbitalSpeedGEO: savedOrbitalSpeedSettings.geo,
@@ -447,7 +450,7 @@ export const gameSlice = createSlice({
           objectIds: [obj1.id, obj2.id],
         });
 
-        const debris = generateDebrisFromCollision(collisionX, collisionY, layer, generateId);
+        const debris = generateDebrisFromCollision(collisionX, collisionY, layer, generateId, state.debrisPerCollision);
         newDebris.push(...debris);
       }
 
@@ -545,6 +548,15 @@ export const gameSlice = createSlice({
       }
     },
 
+    setDebrisPerCollision: (state, action: PayloadAction<number>) => {
+      state.debrisPerCollision = action.payload;
+      try {
+        localStorage.setItem('debrisPerCollision', action.payload.toString());
+      } catch {
+        // Ignore localStorage errors
+      }
+    },
+
     setOrbitalSpeedLEO: (state, action: PayloadAction<number>) => {
       state.orbitalSpeedLEO = action.payload;
       try {
@@ -604,6 +616,7 @@ export const {
   clearOldCollisions,
   setCollisionAngleThreshold,
   setCollisionRadiusMultiplier,
+  setDebrisPerCollision,
   setOrbitalSpeedLEO,
   setOrbitalSpeedMEO,
   setOrbitalSpeedGEO,
