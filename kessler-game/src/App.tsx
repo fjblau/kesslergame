@@ -40,9 +40,11 @@ function App() {
             <OrbitVisualization />
             <GameSpeedControl />
           </div>
-          <div className="w-[600px] flex flex-col gap-6">
+          <div className="w-[600px] flex flex-col gap-6 flex-1">
             <StatsPanel />
-            <EventLog />
+            <div className="flex-1 flex">
+              <EventLog />
+            </div>
           </div>
         </div>
       ),
