@@ -27,7 +27,7 @@ export function EventItem({ event }: EventItemProps) {
   const colors = eventColorMap[event.type];
   
   return (
-    <div className={`${colors.bg} border-l-4 ${colors.border} rounded-lg p-3 transition-all hover:translate-x-1`}>
+    <div className={`${colors.bg} border-l-4 ${colors.border} rounded-lg pl-[10px] pr-[5px] py-[5px] transition-all hover:translate-x-1`}>
       <div className="flex items-start gap-3">
         <div className={`text-xs font-mono ${colors.text} font-semibold min-w-[110px]`}>
           Day {event.day} • {formatTimestamp(event.timestamp)}
