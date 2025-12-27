@@ -140,7 +140,8 @@ Add score display to the game UI.
 
 ---
 
-### [ ] Step 7: Enhance GameOver Modal
+### [x] Step 7: Enhance GameOver Modal
+<!-- chat-id: 23bb3eaa-69c7-4f0a-8398-7e1baac334f9 -->
 
 Add final score display to game over screen.
 

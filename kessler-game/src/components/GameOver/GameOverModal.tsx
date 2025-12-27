@@ -3,10 +3,13 @@ import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { initializeGame } from '../../store/slices/gameSlice';
 import { initializeMissions } from '../../store/slices/missionsSlice';
 import { MAX_DEBRIS_LIMIT } from '../../game/constants';
+import { SCORE_GRADES } from '../../game/scoring';
+import { selectScore } from '../../store/slices/scoreSlice';
 
 export function GameOverModal() {
   const dispatch = useAppDispatch();
   const { budget, step, maxSteps, debris, satellites, debrisRemovalVehicles, budgetDifficulty } = useAppSelector(state => state.game);
+  const scoreState = useAppSelector(selectScore);
   const [isVisible, setIsVisible] = useState(true);
 
   const getGameOverReason = () => {
@@ -21,6 +24,16 @@ export function GameOverModal() {
     }
     return 'Game Over';
   };
+
+  const getScoreGrade = (score: number): { grade: string; color: string } => {
+    if (score >= SCORE_GRADES.S) return { grade: 'S', color: 'from-yellow-400 to-orange-400' };
+    if (score >= SCORE_GRADES.A) return { grade: 'A', color: 'from-green-400 to-teal-400' };
+    if (score >= SCORE_GRADES.B) return { grade: 'B', color: 'from-blue-400 to-cyan-400' };
+    if (score >= SCORE_GRADES.C) return { grade: 'C', color: 'from-purple-400 to-pink-400' };
+    return { grade: 'D', color: 'from-gray-400 to-slate-400' };
+  };
+
+  const { grade, color } = getScoreGrade(scoreState.totalScore);
 
   const totalDebrisRemoved = debrisRemovalVehicles.reduce(
     (sum, drv) => sum + drv.debrisRemoved,
@@ -42,8 +55,8 @@ export function GameOverModal() {
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center p-8 z-50">
-      <div className="max-w-2xl w-full bg-slate-800 border border-slate-700 rounded-xl p-10 shadow-2xl">
+    <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center p-8 z-50 overflow-y-auto">
+      <div className="max-w-2xl w-full bg-slate-800 border border-slate-700 rounded-xl p-10 shadow-2xl my-8">
         <h1 className="text-5xl font-bold text-center mb-6 bg-gradient-to-r from-red-400 to-orange-400 bg-clip-text text-transparent">
           Game Over
         </h1>
@@ -51,6 +64,54 @@ export function GameOverModal() {
         <p className="text-center text-xl text-gray-300 mb-8">
           {getGameOverReason()}
         </p>
+
+        <div className="bg-gradient-to-br from-purple-900/50 to-pink-900/50 border-2 border-purple-500/50 rounded-xl p-6 mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-3xl font-bold text-white mb-2">Final Score</h2>
+              <p className="text-gray-300 text-sm">Grade: <span className={`text-2xl font-bold bg-gradient-to-r ${color} bg-clip-text text-transparent`}>{grade}</span></p>
+            </div>
+            <div className="text-right">
+              <p className={`text-5xl font-bold bg-gradient-to-r ${color} bg-clip-text text-transparent`}>
+                {scoreState.totalScore.toLocaleString()}
+              </p>
+              <p className="text-gray-400 text-sm mt-1">points</p>
+            </div>
+          </div>
+          
+          <div className="space-y-2 mt-6">
+            <div className="flex justify-between items-center py-2 px-3 bg-slate-800/50 rounded-lg">
+              <span className="text-gray-300 text-sm flex items-center gap-2">
+                <span>🛰️</span> Satellites
+              </span>
+              <span className="text-blue-400 font-semibold">+{scoreState.satelliteLaunchScore.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between items-center py-2 px-3 bg-slate-800/50 rounded-lg">
+              <span className="text-gray-300 text-sm flex items-center gap-2">
+                <span>🧹</span> Debris Removal
+              </span>
+              <span className="text-green-400 font-semibold">+{scoreState.debrisRemovalScore.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between items-center py-2 px-3 bg-slate-800/50 rounded-lg">
+              <span className="text-gray-300 text-sm flex items-center gap-2">
+                <span>♻️</span> Satellites Recovered
+              </span>
+              <span className="text-cyan-400 font-semibold">+{scoreState.satelliteRecoveryScore.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between items-center py-2 px-3 bg-slate-800/50 rounded-lg">
+              <span className="text-gray-300 text-sm flex items-center gap-2">
+                <span>💰</span> Budget Management
+              </span>
+              <span className="text-yellow-400 font-semibold">+{scoreState.budgetManagementScore.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between items-center py-2 px-3 bg-slate-800/50 rounded-lg">
+              <span className="text-gray-300 text-sm flex items-center gap-2">
+                <span>⏱️</span> Survival
+              </span>
+              <span className="text-purple-400 font-semibold">+{scoreState.survivalScore.toLocaleString()}</span>
+            </div>
+          </div>
+        </div>
 
         <div className="bg-slate-900 border border-slate-700 rounded-lg p-6 mb-8">
           <h2 className="text-2xl font-bold text-gray-200 mb-4">Final Statistics</h2>
