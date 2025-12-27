@@ -32,7 +32,7 @@ function App() {
       id: 'launch',
       label: 'Launch',
       content: (
-        <div className="flex gap-6 justify-center items-stretch">
+        <div className="flex gap-6 justify-center items-start">
           <div className="w-[600px] flex flex-col">
             <ControlPanel />
           </div>
@@ -40,11 +40,9 @@ function App() {
             <OrbitVisualization />
             <GameSpeedControl />
           </div>
-          <div className="w-[600px] flex flex-col gap-6 flex-1">
+          <div className="w-[600px] flex flex-col gap-6 h-full">
             <StatsPanel />
-            <div className="flex-1 flex">
-              <EventLog />
-            </div>
+            <EventLog />
           </div>
         </div>
       ),
