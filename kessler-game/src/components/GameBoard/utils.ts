@@ -1,5 +1,5 @@
 import type { OrbitLayer } from '../../game/types';
-import { LAYER_BOUNDS, ORBITAL_SPEEDS } from '../../game/constants';
+import { LAYER_BOUNDS } from '../../game/constants';
 
 const ORBIT_RADII = {
   LEO: { inner: 60, outer: 205 },
@@ -29,7 +29,7 @@ export function getEntitySpeedMultiplier(id?: string): number {
   return 0.7 + (hash % 600) / 1000;
 }
 
-export function mapToPixels(entity: EntityPosition, days: number = 0) {
+export function mapToPixels(entity: EntityPosition, days: number = 0, orbitalSpeeds?: { LEO: number; MEO: number; GEO: number }) {
   const centerX = 500;
   const centerY = 500;
   const { inner, outer } = ORBIT_RADII[entity.layer];
@@ -40,7 +40,8 @@ export function mapToPixels(entity: EntityPosition, days: number = 0) {
   
   const speedMultiplier = getEntitySpeedMultiplier(entity.id);
   const baseAngle = (entity.x / 100) * 2 * Math.PI;
-  const rotationFromDays = (days * ORBITAL_SPEEDS[entity.layer] * speedMultiplier * 3.6) * (Math.PI / 180);
+  const orbitalSpeed = orbitalSpeeds ? orbitalSpeeds[entity.layer] : 0;
+  const rotationFromDays = (days * orbitalSpeed * speedMultiplier * 3.6) * (Math.PI / 180);
   const angle = baseAngle + rotationFromDays;
   
   const eccentricity = 0.05 + (normalizedY * 0.1);

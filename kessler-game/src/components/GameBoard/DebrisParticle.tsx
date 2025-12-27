@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
 import type { Debris } from '../../game/types';
-import { ORBITAL_SPEEDS } from '../../game/constants';
 import { useAppSelector } from '../../store/hooks';
 import { getEntitySpeedMultiplier } from './utils';
 
@@ -15,9 +14,16 @@ export function DebrisParticle({ debris, x, y }: DebrisParticleProps) {
   const color = isCooperative ? '#9ca3af' : '#ef4444';
   const symbol = isCooperative ? '•' : '••';
   const days = useAppSelector(state => state.game.days);
+  const orbitalSpeed = useAppSelector(state => {
+    switch (debris.layer) {
+      case 'LEO': return state.game.orbitalSpeedLEO;
+      case 'MEO': return state.game.orbitalSpeedMEO;
+      case 'GEO': return state.game.orbitalSpeedGEO;
+    }
+  });
   const baseAngle = (debris.x / 100) * 360;
   const speedMultiplier = getEntitySpeedMultiplier(debris.id);
-  const rotation = baseAngle + (days * ORBITAL_SPEEDS[debris.layer] * speedMultiplier * 3.6);
+  const rotation = baseAngle + (days * orbitalSpeed * speedMultiplier * 3.6);
   
   return (
     <motion.div

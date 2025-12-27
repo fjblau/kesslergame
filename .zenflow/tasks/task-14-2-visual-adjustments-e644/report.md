@@ -23,21 +23,48 @@ Fixed the orbit centering issue where satellite and DRV orbits were not centered
    - Changed `left: 400` to `left: 500`
    - Changed `top: 400` to `top: 500`
 
-### 2. Reduced Orbital Speed by 20%
+### 2. Added Configurable Orbital Speeds
 
-Slowed down orbital speeds by 20% to give users more time to react to events and make strategic decisions.
+Added orbital speed configuration to the Configuration page, allowing users to adjust speeds to their preference. Default values are 20% slower than original speeds for better gameplay.
 
 **Changes Made:**
 
-1. **constants.ts:139-143** - Reduced ORBITAL_SPEEDS values by 20%:
+1. **types.ts:99-101** - Added orbital speed fields to GameState:
+   - `orbitalSpeedLEO: number`
+   - `orbitalSpeedMEO: number`
+   - `orbitalSpeedGEO: number`
+
+2. **gameSlice.ts** - Added state management for orbital speeds:
+   - Created `loadOrbitalSpeedSettings()` to load from localStorage with defaults (LEO: 6.4, MEO: 4, GEO: 2.4)
+   - Added orbital speeds to initial state
+   - Created actions: `setOrbitalSpeedLEO`, `setOrbitalSpeedMEO`, `setOrbitalSpeedGEO`
+   - Updated `getEntitySpeedVariation()` to accept orbital speeds parameter
+   - Updated `advanceTurn()` to use state orbital speeds instead of constants
+
+3. **OrbitalSpeedSettings.tsx** - Created new configuration component:
+   - Slider controls for LEO (1-15), MEO (1-10), and GEO (0.5-8)
+   - Real-time display of current speed values
+   - Auto-saves to localStorage
+
+4. **App.tsx** - Added OrbitalSpeedSettings to Configuration tab
+
+5. **Component Updates** - Updated all components to use state-based orbital speeds:
+   - **SatelliteSprite.tsx**: Uses `useAppSelector` to get orbital speed for rotation
+   - **DRVSprite.tsx**: Uses `useAppSelector` to get orbital speed for rotation
+   - **DebrisParticle.tsx**: Uses `useAppSelector` to get orbital speed for rotation
+   - **OrbitVisualization.tsx**: Gets orbital speeds from state and passes to `mapToPixels`
+   - **utils.ts**: Updated `mapToPixels()` to accept orbital speeds parameter
+
+6. **constants.ts:139-143** - Updated default ORBITAL_SPEEDS values (20% reduction):
    - LEO: 8 → 6.4
    - MEO: 5 → 4
    - GEO: 3 → 2.4
 
 **Impact:**
-- Satellites, debris, and DRVs now orbit 20% slower
-- Users have more time to observe events and make decisions
-- Improved game playability and strategic planning
+- Users can now customize orbital speeds via the Configuration page
+- Settings persist across sessions via localStorage
+- Default speeds are 20% slower for improved gameplay
+- All orbital entities (satellites, debris, DRVs) respect the configured speeds
 
 ### 3. Fixed Event Log for Collisions and Debris Creation
 

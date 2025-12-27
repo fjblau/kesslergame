@@ -10,6 +10,7 @@ import { DebrisRemovalChart } from './components/Charts/DebrisRemovalChart';
 import { MissionPanel } from './components/MissionPanel/MissionPanel';
 import { EventLog } from './components/EventLog/EventLog';
 import { CollisionSettings } from './components/Configuration/CollisionSettings';
+import { OrbitalSpeedSettings } from './components/Configuration/OrbitalSpeedSettings';
 import { Tabs } from './components/ui/Tabs';
 import { useGameSpeed } from './hooks/useGameSpeed';
 import { useAppSelector } from './store/hooks';
@@ -66,8 +67,9 @@ function App() {
       id: 'configuration',
       label: 'Configuration',
       content: (
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto space-y-6">
           <CollisionSettings />
+          <OrbitalSpeedSettings />
         </div>
       ),
     },

@@ -96,6 +96,9 @@ export interface GameState {
   recentDebrisRemovals: DebrisRemovalInfo[];
   collisionAngleThreshold: number;
   collisionRadiusMultiplier: number;
+  orbitalSpeedLEO: number;
+  orbitalSpeedMEO: number;
+  orbitalSpeedGEO: number;
   cascadeTriggered: boolean;
   lastCascadeTurn?: number;
   totalCascades: number;

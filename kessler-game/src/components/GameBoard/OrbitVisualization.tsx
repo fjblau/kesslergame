@@ -28,6 +28,11 @@ export function OrbitVisualization() {
   const lastCascadeTurn = useAppSelector(state => state.game.lastCascadeTurn);
   const events = useAppSelector(state => state.events.events);
   const days = useAppSelector(state => state.game.days);
+  const orbitalSpeeds = useAppSelector(state => ({
+    LEO: state.game.orbitalSpeedLEO,
+    MEO: state.game.orbitalSpeedMEO,
+    GEO: state.game.orbitalSpeedGEO,
+  }));
 
   const prevSatelliteIds = useRef<Set<string>>(new Set());
   const prevDRVIds = useRef<Set<string>>(new Set());
@@ -169,7 +174,7 @@ export function OrbitVisualization() {
 
       {/* Collision effects */}
       {activeCollisionEvents.map(collision => {
-        const { x, y } = mapToPixels(collision, days);
+        const { x, y } = mapToPixels(collision, days, orbitalSpeeds);
         return (
           <CollisionEffect
             key={collision.id}
@@ -192,7 +197,7 @@ export function OrbitVisualization() {
 
       {/* Satellites */}
       {satellites.map(satellite => {
-        const { x, y } = mapToPixels(satellite, days);
+        const { x, y } = mapToPixels(satellite, days, orbitalSpeeds);
         const isLaunching = launchingSatellites.has(satellite.id);
         const isCaptured = debrisRemovalVehicles.some(drv => drv.capturedDebrisId === satellite.id);
         return <SatelliteSprite key={satellite.id} satellite={satellite} x={x} y={y} isLaunching={isLaunching} isCaptured={isCaptured} />;
@@ -200,13 +205,13 @@ export function OrbitVisualization() {
 
       {/* Debris */}
       {debris.map(debrisItem => {
-        const { x, y } = mapToPixels(debrisItem, days);
+        const { x, y } = mapToPixels(debrisItem, days, orbitalSpeeds);
         return <DebrisParticle key={debrisItem.id} debris={debrisItem} x={x} y={y} />;
       })}
 
       {/* DRVs */}
       {debrisRemovalVehicles.map(drv => {
-        const { x, y } = mapToPixels(drv, days);
+        const { x, y } = mapToPixels(drv, days, orbitalSpeeds);
         const isLaunching = launchingDRVs.has(drv.id);
         return <DRVSprite key={drv.id} drv={drv} x={x} y={y} isLaunching={isLaunching} />;
       })}
