@@ -30,11 +30,11 @@ export function useGameSpeed() {
     missions.forEach(mission => {
       const wasCompleted = previousMissionCompletionStatus.current.get(mission.id);
       if (mission.completed && !wasCompleted && mission.completedAt !== undefined) {
-        dispatch(notifyMissionComplete({ title: mission.title, turn: mission.completedAt }));
+        dispatch(notifyMissionComplete({ title: mission.title, turn: mission.completedAt, day: gameState.days }));
       }
       previousMissionCompletionStatus.current.set(mission.id, mission.completed);
     });
-  }, [missions, dispatch]);
+  }, [missions, dispatch, gameState.days]);
 
   useEffect(() => {
     if (speed === 'paused') return;
@@ -98,6 +98,7 @@ export function useGameSpeed() {
         dispatch(addEvent({
           type: 'solar-storm',
           turn: gameState.step + 1,
+          day: gameState.days,
           message: `☀️ Solar storm cleared ${removedCount} debris from LEO!`,
           details: { debrisRemoved: removedCount }
         }));
