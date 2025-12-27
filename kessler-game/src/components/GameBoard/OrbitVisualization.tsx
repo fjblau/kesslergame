@@ -8,6 +8,8 @@ import { CollisionEffect } from './CollisionEffect';
 import { SolarStormEffect } from './SolarStormEffect';
 import { CascadeWarning } from './CascadeWarning';
 import { DaysCounter } from '../TimeControl/DaysCounter';
+import { SatellitesCounter } from '../TimeControl/SatellitesCounter';
+import { DRVsCounter } from '../TimeControl/DRVsCounter';
 import { mapToPixels } from './utils';
 import { clearOldCollisions, clearCascadeFlag } from '../../store/slices/gameSlice';
 import { playCascadeWarning } from '../../utils/audio';
@@ -144,6 +146,16 @@ export function OrbitVisualization() {
       {/* Days Counter */}
       <div className="absolute top-4 right-4 z-10">
         <DaysCounter />
+      </div>
+
+      {/* Satellites Counter */}
+      <div className="absolute bottom-4 left-4 z-10">
+        <SatellitesCounter />
+      </div>
+
+      {/* DRVs Counter */}
+      <div className="absolute bottom-4 right-4 z-10">
+        <DRVsCounter />
       </div>
 
       {/* GEO orbit */}

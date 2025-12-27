@@ -20,7 +20,6 @@ function calculateRiskLevel(totalDebris: number): RiskInfo {
 }
 
 export function StatsPanel() {
-  const satellites = useAppSelector(state => state.game.satellites);
   const debris = useAppSelector(state => state.game.debris);
   const drvs = useAppSelector(state => state.game.debrisRemovalVehicles);
   const step = useAppSelector(state => state.game.step);
@@ -30,7 +29,6 @@ export function StatsPanel() {
   const cooperativeDebris = debris.filter(d => d.type === 'cooperative').length;
   const uncooperativeDebris = debris.filter(d => d.type === 'uncooperative').length;
   const totalDebrisRemoved = drvs.reduce((sum, drv) => sum + drv.debrisRemoved, 0);
-  const activeDRVs = drvs.filter(drv => drv.age < drv.maxAge).length;
 
   const risk = calculateRiskLevel(totalDebris);
 
@@ -41,16 +39,6 @@ export function StatsPanel() {
       </h2>
       
       <div className="space-y-2 text-sm">
-        <div className="flex justify-between py-2 border-b border-slate-700/50">
-          <span className="text-gray-400">Active Satellites:</span>
-          <span className="text-blue-400 font-semibold">{satellites.length}</span>
-        </div>
-
-        <div className="flex justify-between py-2 border-b border-slate-700/50">
-          <span className="text-gray-400">Active DRVs:</span>
-          <span className="text-blue-400 font-semibold">{activeDRVs}</span>
-        </div>
-
         <DebrisBreakdown 
           cooperative={cooperativeDebris}
           uncooperative={uncooperativeDebris}
