@@ -53,6 +53,42 @@ function normalizeAngleDiff(diff: number): number {
   return Math.abs(diff);
 }
 
+function getBucketIndex(angle: number, bucketSize: number): number {
+  return Math.floor(angle / bucketSize);
+}
+
+function getAdjacentBucketIndices(
+  bucketIndex: number,
+  bucketCount: number
+): number[] {
+  const prev = (bucketIndex - 1 + bucketCount) % bucketCount;
+  const next = (bucketIndex + 1) % bucketCount;
+  return [prev, bucketIndex, next];
+}
+
+interface SpatialBucket {
+  objects: GameObject[];
+}
+
+function createSpatialHashGrid(
+  objects: GameObject[],
+  bucketSize: number
+): Map<number, SpatialBucket> {
+  const grid = new Map<number, SpatialBucket>();
+  
+  for (const obj of objects) {
+    const polar = toPolarCoordinates(obj);
+    const bucketIndex = getBucketIndex(polar.angle, bucketSize);
+    
+    if (!grid.has(bucketIndex)) {
+      grid.set(bucketIndex, { objects: [] });
+    }
+    grid.get(bucketIndex)!.objects.push(obj);
+  }
+  
+  return grid;
+}
+
 export function detectCollisions(
   satellites: Satellite[],
   debris: Debris[],
@@ -78,19 +114,44 @@ export function detectCollisions(
     const radiusThreshold = COLLISION_THRESHOLDS.radiusPixels[layer] * radiusMultiplier;
     const angleThreshold = angleThresholdDegrees;
 
-    for (let i = 0; i < objectsInLayer.length; i++) {
-      for (let j = i + 1; j < objectsInLayer.length; j++) {
-        const obj1 = objectsInLayer[i];
-        const obj2 = objectsInLayer[j];
+    const bucketSize = Math.max(angleThreshold * 2, 10);
+    const bucketCount = Math.ceil(360 / bucketSize);
+    const spatialGrid = createSpatialHashGrid(objectsInLayer, bucketSize);
+    
+    const checkedPairs = new Set<string>();
+    
+    for (let bucketIndex = 0; bucketIndex < bucketCount; bucketIndex++) {
+      const bucket = spatialGrid.get(bucketIndex);
+      if (!bucket || bucket.objects.length === 0) continue;
+      
+      const adjacentBuckets = getAdjacentBucketIndices(bucketIndex, bucketCount);
+      const nearbyObjects: GameObject[] = [];
+      
+      for (const adjIndex of adjacentBuckets) {
+        const adjBucket = spatialGrid.get(adjIndex);
+        if (adjBucket) {
+          nearbyObjects.push(...adjBucket.objects);
+        }
+      }
+      
+      for (let i = 0; i < nearbyObjects.length; i++) {
+        for (let j = i + 1; j < nearbyObjects.length; j++) {
+          const obj1 = nearbyObjects[i];
+          const obj2 = nearbyObjects[j];
+          
+          const pairKey = obj1.id < obj2.id ? `${obj1.id}-${obj2.id}` : `${obj2.id}-${obj1.id}`;
+          if (checkedPairs.has(pairKey)) continue;
+          checkedPairs.add(pairKey);
 
-        const polar1 = toPolarCoordinates(obj1);
-        const polar2 = toPolarCoordinates(obj2);
+          const polar1 = toPolarCoordinates(obj1);
+          const polar2 = toPolarCoordinates(obj2);
 
-        const angleDiff = normalizeAngleDiff(polar1.angle - polar2.angle);
-        const radiusDiff = Math.abs(polar1.radius - polar2.radius);
+          const angleDiff = normalizeAngleDiff(polar1.angle - polar2.angle);
+          const radiusDiff = Math.abs(polar1.radius - polar2.radius);
 
-        if (angleDiff < angleThreshold && radiusDiff < radiusThreshold) {
-          collisions.push({ obj1, obj2, layer });
+          if (angleDiff < angleThreshold && radiusDiff < radiusThreshold) {
+            collisions.push({ obj1, obj2, layer });
+          }
         }
       }
     }
