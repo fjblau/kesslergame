@@ -10,6 +10,7 @@ import { SatelliteChart } from './components/Charts/SatelliteChart';
 import { DebrisRemovalChart } from './components/Charts/DebrisRemovalChart';
 import { MissionPanel } from './components/MissionPanel/MissionPanel';
 import { EventLog } from './components/EventLog/EventLog';
+import { CollisionSettings } from './components/Configuration/CollisionSettings';
 import { Tabs } from './components/ui/Tabs';
 import { useGameSpeed } from './hooks/useGameSpeed';
 import { useAppSelector } from './store/hooks';
@@ -63,11 +64,11 @@ function App() {
       content: <MissionPanel />,
     },
     {
-      id: 'events',
-      label: 'Events',
+      id: 'configuration',
+      label: 'Configuration',
       content: (
         <div className="max-w-4xl mx-auto">
-          <EventLog />
+          <CollisionSettings />
         </div>
       ),
     },
