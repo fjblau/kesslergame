@@ -51,7 +51,8 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Step 1: Core Scoring Logic
+### [x] Step 1: Core Scoring Logic
+<!-- chat-id: 6996e84e-5d27-475d-8a01-c566eba28d34 -->
 
 Create the scoring calculation functions and type definitions.
 
