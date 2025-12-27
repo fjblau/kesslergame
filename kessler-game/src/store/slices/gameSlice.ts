@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { GameState, OrbitLayer, SatelliteType, InsuranceTier, DRVType, DRVTargetPriority, BudgetDifficulty, DebrisRemovalVehicle } from '../../game/types';
+import type { GameState, OrbitLayer, SatelliteType, InsuranceTier, DRVType, DRVTargetPriority, BudgetDifficulty, DebrisRemovalVehicle, ExpiredDRVInfo, DebrisRemovalInfo } from '../../game/types';
 import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG, MAX_DEBRIS_LIMIT, ORBITAL_SPEEDS, CASCADE_THRESHOLD } from '../../game/constants';
 import { detectCollisions, generateDebrisFromCollision, calculateTotalPayout } from '../../game/engine/collision';
 import { processDRVRemoval, processCooperativeDRVOperations, moveCooperativeDRV } from '../../game/engine/debrisRemoval';
@@ -67,6 +67,8 @@ const initialState: GameState = {
   collisionAngleThreshold: savedCollisionSettings.angle,
   collisionRadiusMultiplier: savedCollisionSettings.radius,
   recentCollisions: [],
+  recentlyExpiredDRVs: [],
+  recentDebrisRemovals: [],
   cascadeTriggered: false,
   lastCascadeTurn: undefined,
   totalCascades: 0,
@@ -91,6 +93,8 @@ export const gameSlice = createSlice({
         riskLevel: 'LOW',
         gameOver: false,
         recentCollisions: [],
+        recentlyExpiredDRVs: [],
+        recentDebrisRemovals: [],
         cascadeTriggered: false,
         lastCascadeTurn: undefined,
         totalCascades: 0,
@@ -117,6 +121,8 @@ export const gameSlice = createSlice({
       state.riskLevel = 'LOW';
       state.gameOver = false;
       state.recentCollisions = [];
+      state.recentlyExpiredDRVs = [];
+      state.recentDebrisRemovals = [];
       state.cascadeTriggered = false;
       state.lastCascadeTurn = undefined;
       state.totalCascades = 0;
@@ -128,6 +134,7 @@ export const gameSlice = createSlice({
         insuranceTier: InsuranceTier;
         purpose: SatelliteType;
         turn: number;
+        day: number;
       }>) => {
         const { orbit, insuranceTier, purpose } = action.payload;
         const satellite = {
@@ -145,8 +152,13 @@ export const gameSlice = createSlice({
         insuranceTier: InsuranceTier;
         purpose: SatelliteType;
         turn?: number;
+        day?: number;
       }) => ({
-        payload: { ...payload, turn: payload.turn ?? 0 }
+        payload: { 
+          ...payload, 
+          turn: payload.turn ?? 0,
+          day: payload.day ?? 0
+        }
       })
     },
 
@@ -156,6 +168,7 @@ export const gameSlice = createSlice({
         drvType: DRVType;
         targetPriority: DRVTargetPriority;
         turn: number;
+        day: number;
       }>) => {
         const { orbit, drvType, targetPriority } = action.payload;
         const [minCapacity, maxCapacity] = DRV_CONFIG.capacity[drvType];
@@ -178,8 +191,13 @@ export const gameSlice = createSlice({
         drvType: DRVType;
         targetPriority: DRVTargetPriority;
         turn?: number;
+        day?: number;
       }) => ({
-        payload: { ...payload, turn: payload.turn ?? 0 }
+        payload: { 
+          ...payload, 
+          turn: payload.turn ?? 0,
+          day: payload.day ?? 0
+        }
       })
     },
 
@@ -196,15 +214,30 @@ export const gameSlice = createSlice({
 
     processDRVOperations: (state) => {
       const activeDRVs = state.debrisRemovalVehicles.filter(drv => drv.age < drv.maxAge);
+      const removalEvents: DebrisRemovalInfo[] = [];
 
       activeDRVs.forEach(drv => {
         if (drv.removalType === 'cooperative') {
           const result = processCooperativeDRVOperations(drv, state.debris, state.satellites);
           
-          drv.debrisRemoved += result.removedDebrisIds.length + result.removedSatelliteIds.length;
+          const totalRemoved = result.removedDebrisIds.length + result.removedSatelliteIds.length;
+          drv.debrisRemoved += totalRemoved;
           drv.targetDebrisId = result.newTargetId;
           drv.capturedDebrisId = result.capturedObjectId;
           drv.captureOrbitsRemaining = result.captureOrbitsRemaining;
+          
+          if (totalRemoved > 0) {
+            const removedDebris = state.debris.filter(d => result.removedDebrisIds.includes(d.id));
+            removedDebris.forEach(debris => {
+              removalEvents.push({
+                drvId: drv.id,
+                drvType: drv.removalType,
+                layer: drv.layer,
+                debrisType: debris.type,
+                count: 1,
+              });
+            });
+          }
           
           state.debris = state.debris.filter(d => !result.removedDebrisIds.includes(d.id));
           state.satellites = state.satellites.filter(s => !result.removedSatelliteIds.includes(s.id));
@@ -213,10 +246,24 @@ export const gameSlice = createSlice({
           
           drv.debrisRemoved += result.removedDebrisIds.length;
           
+          if (result.removedDebrisIds.length > 0) {
+            const removedDebris = state.debris.filter(d => result.removedDebrisIds.includes(d.id));
+            removedDebris.forEach(debris => {
+              removalEvents.push({
+                drvId: drv.id,
+                drvType: drv.removalType,
+                layer: drv.layer,
+                debrisType: debris.type,
+                count: 1,
+              });
+            });
+          }
+          
           state.debris = state.debris.filter(d => !result.removedDebrisIds.includes(d.id));
         }
       });
 
+      state.recentDebrisRemovals = removalEvents;
       state.riskLevel = calculateRiskLevel(state.debris.length);
     },
 
@@ -357,6 +404,7 @@ export const gameSlice = createSlice({
           y: collisionY,
           layer,
           timestamp: Date.now(),
+          objectIds: [obj1.id, obj2.id],
         });
 
         const debris = generateDebrisFromCollision(collisionX, collisionY, layer, generateId);
@@ -392,6 +440,7 @@ export const gameSlice = createSlice({
 
     decommissionExpiredDRVs: (state) => {
       const remaining: DebrisRemovalVehicle[] = [];
+      const expired: ExpiredDRVInfo[] = [];
       
       state.debrisRemovalVehicles.forEach(drv => {
         if (drv.age >= drv.maxAge) {
@@ -402,12 +451,19 @@ export const gameSlice = createSlice({
             layer: drv.layer,
             type: drv.removalType === 'cooperative' ? 'cooperative' : 'uncooperative',
           });
+          expired.push({
+            id: drv.id,
+            type: drv.removalType,
+            layer: drv.layer,
+            debrisRemoved: drv.debrisRemoved,
+          });
         } else {
           remaining.push(drv);
         }
       });
       
       state.debrisRemovalVehicles = remaining;
+      state.recentlyExpiredDRVs = expired;
 
       state.riskLevel = calculateRiskLevel(state.debris.length);
     },

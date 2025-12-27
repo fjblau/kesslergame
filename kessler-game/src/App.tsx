@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { GameSetupScreen } from './components/Setup/GameSetupScreen';
 import { ControlPanel } from './components/ControlPanel/ControlPanel';
 import { GameSpeedControl } from './components/TimeControl/GameSpeedControl';
-import { DaysCounter } from './components/TimeControl/DaysCounter';
 import { StatsPanel } from './components/StatsPanel/StatsPanel';
 import { OrbitVisualization } from './components/GameBoard/OrbitVisualization';
 import { DebrisChart } from './components/Charts/DebrisChart';
@@ -10,6 +9,7 @@ import { SatelliteChart } from './components/Charts/SatelliteChart';
 import { DebrisRemovalChart } from './components/Charts/DebrisRemovalChart';
 import { MissionPanel } from './components/MissionPanel/MissionPanel';
 import { EventLog } from './components/EventLog/EventLog';
+import { CollisionSettings } from './components/Configuration/CollisionSettings';
 import { Tabs } from './components/ui/Tabs';
 import { useGameSpeed } from './hooks/useGameSpeed';
 import { useAppSelector } from './store/hooks';
@@ -32,15 +32,16 @@ function App() {
       label: 'Launch',
       content: (
         <div className="flex gap-6 justify-center items-start">
-          <div className="w-[420px]">
+          <div className="w-[600px] flex flex-col">
             <ControlPanel />
           </div>
           <div className="flex flex-col gap-6">
             <OrbitVisualization />
             <GameSpeedControl />
           </div>
-          <div className="w-[420px]">
+          <div className="w-[600px] flex flex-col gap-6 h-full">
             <StatsPanel />
+            <EventLog />
           </div>
         </div>
       ),
@@ -62,9 +63,13 @@ function App() {
       content: <MissionPanel />,
     },
     {
-      id: 'events',
-      label: 'Events',
-      content: <EventLog />,
+      id: 'configuration',
+      label: 'Configuration',
+      content: (
+        <div className="max-w-4xl mx-auto">
+          <CollisionSettings />
+        </div>
+      ),
     },
     {
       id: 'documentation',
@@ -79,14 +84,14 @@ function App() {
 
   return (
     <div className="min-h-screen p-8">
-      <div className="max-w-[1800px] mx-auto space-y-6">
+      <div className="max-w-[2350px] mx-auto space-y-6">
         <header className="text-center mb-8">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
             Space Debris Removal
           </h1>
         </header>
 
-        <Tabs tabs={tabs} defaultTab="launch" rightContent={<DaysCounter />} />
+        <Tabs tabs={tabs} defaultTab="launch" />
       </div>
 
       {gameOver && <GameOverModal />}

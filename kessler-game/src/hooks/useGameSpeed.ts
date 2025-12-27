@@ -17,6 +17,7 @@ export function useGameSpeed() {
   const dispatch = useAppDispatch();
   const previousRiskLevel = useRef(riskLevel);
   const previousMissionCompletionStatus = useRef(new Map<string, boolean>());
+  const loggedCollisionIds = useRef(new Set<string>());
 
   useEffect(() => {
     if (autoPauseOnRiskChange && riskLevel !== previousRiskLevel.current) {
@@ -29,11 +30,11 @@ export function useGameSpeed() {
     missions.forEach(mission => {
       const wasCompleted = previousMissionCompletionStatus.current.get(mission.id);
       if (mission.completed && !wasCompleted && mission.completedAt !== undefined) {
-        dispatch(notifyMissionComplete({ title: mission.title, turn: mission.completedAt }));
+        dispatch(notifyMissionComplete({ title: mission.title, turn: mission.completedAt, day: gameState.days }));
       }
       previousMissionCompletionStatus.current.set(mission.id, mission.completed);
     });
-  }, [missions, dispatch]);
+  }, [missions, dispatch, gameState.days]);
 
   useEffect(() => {
     if (speed === 'paused') return;
@@ -62,7 +63,31 @@ export function useGameSpeed() {
     const interval = setInterval(() => {
       dispatch(advanceTurn());
       dispatch(processDRVOperations());
+
+      gameState.recentDebrisRemovals.forEach(removal => {
+        dispatch(addEvent({
+          type: 'debris-removal',
+          turn: gameState.step + 1,
+          day: gameState.days,
+          message: `${removal.drvType === 'cooperative' ? 'Cooperative' : 'Uncooperative'} DRV removed ${removal.debrisType} debris in ${removal.layer} orbit`,
+          details: { drvType: removal.drvType, debrisType: removal.debrisType, layer: removal.layer }
+        }));
+      });
+
       dispatch(processCollisions());
+
+      gameState.recentCollisions.forEach(collision => {
+        if (!loggedCollisionIds.current.has(collision.id)) {
+          loggedCollisionIds.current.add(collision.id);
+          dispatch(addEvent({
+            type: 'collision',
+            turn: gameState.step + 1,
+            day: gameState.days,
+            message: `Collision detected in ${collision.layer} orbit`,
+            details: { layer: collision.layer, objectIds: collision.objectIds }
+          }));
+        }
+      });
 
       if (checkSolarStorm()) {
         const leoDebrisCountBefore = gameState.debris.filter(d => d.layer === 'LEO').length;
@@ -73,6 +98,7 @@ export function useGameSpeed() {
         dispatch(addEvent({
           type: 'solar-storm',
           turn: gameState.step + 1,
+          day: gameState.days,
           message: `☀️ Solar storm cleared ${removedCount} debris from LEO!`,
           details: { debrisRemoved: removedCount }
         }));
@@ -80,6 +106,16 @@ export function useGameSpeed() {
 
       dispatch(updateMissionProgress(gameState));
       dispatch(decommissionExpiredDRVs());
+
+      gameState.recentlyExpiredDRVs.forEach(expiredDRV => {
+        dispatch(addEvent({
+          type: 'drv-expired',
+          turn: gameState.step + 1,
+          day: gameState.days,
+          message: `${expiredDRV.type === 'cooperative' ? 'Cooperative' : 'Uncooperative'} DRV expired in ${expiredDRV.layer} orbit (removed ${expiredDRV.debrisRemoved} debris)`,
+          details: { type: expiredDRV.type, layer: expiredDRV.layer, debrisRemoved: expiredDRV.debrisRemoved }
+        }));
+      });
     }, intervalDuration);
 
     return () => clearInterval(interval);

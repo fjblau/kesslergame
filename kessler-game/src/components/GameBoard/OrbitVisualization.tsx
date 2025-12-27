@@ -7,6 +7,7 @@ import { LaunchAnimation } from './LaunchAnimation';
 import { CollisionEffect } from './CollisionEffect';
 import { SolarStormEffect } from './SolarStormEffect';
 import { CascadeWarning } from './CascadeWarning';
+import { DaysCounter } from '../TimeControl/DaysCounter';
 import { mapToPixels } from './utils';
 import { clearOldCollisions, clearCascadeFlag } from '../../store/slices/gameSlice';
 import { playCascadeWarning } from '../../utils/audio';
@@ -134,30 +135,35 @@ export function OrbitVisualization() {
   }, [dispatch]);
 
   return (
-    <div className="relative w-[800px] h-[800px] flex items-center justify-center bg-slate-900 border-2 border-slate-600 rounded-xl">
+    <div className="relative w-[1000px] h-[1000px] flex items-center justify-center bg-slate-900 border-2 border-slate-600 rounded-xl">
+      {/* Days Counter */}
+      <div className="absolute top-4 right-4 z-10">
+        <DaysCounter />
+      </div>
+
       {/* GEO orbit */}
-      <div style={{ position: 'absolute', width: '700px', height: '700px', border: '2px solid rgba(96, 165, 250, 0.5)', borderRadius: '50%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+      <div style={{ position: 'absolute', width: '875px', height: '875px', border: '2px solid rgba(96, 165, 250, 0.5)', borderRadius: '50%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
         <div style={{ position: 'absolute', top: '8px', left: '50%', transform: 'translate(-50%, 0)', fontSize: '12px', fontWeight: 600, color: '#60a5fa', backgroundColor: 'rgba(15, 23, 42, 0.8)', padding: '4px 8px', borderRadius: '4px' }}>
           GEO
         </div>
       </div>
       
       {/* MEO orbit */}
-      <div style={{ position: 'absolute', width: '584px', height: '584px', border: '2px solid rgba(96, 165, 250, 0.5)', borderRadius: '50%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+      <div style={{ position: 'absolute', width: '730px', height: '730px', border: '2px solid rgba(96, 165, 250, 0.5)', borderRadius: '50%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
         <div style={{ position: 'absolute', top: '8px', left: '50%', transform: 'translate(-50%, 0)', fontSize: '12px', fontWeight: 600, color: '#60a5fa', backgroundColor: 'rgba(15, 23, 42, 0.8)', padding: '4px 8px', borderRadius: '4px' }}>
           MEO
         </div>
       </div>
       
       {/* LEO orbit */}
-      <div style={{ position: 'absolute', width: '410px', height: '410px', border: '2px solid rgba(96, 165, 250, 0.5)', borderRadius: '50%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+      <div style={{ position: 'absolute', width: '512px', height: '512px', border: '2px solid rgba(96, 165, 250, 0.5)', borderRadius: '50%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
         <div style={{ position: 'absolute', top: '8px', left: '50%', transform: 'translate(-50%, 0)', fontSize: '12px', fontWeight: 600, color: '#60a5fa', backgroundColor: 'rgba(15, 23, 42, 0.8)', padding: '4px 8px', borderRadius: '4px' }}>
           LEO
         </div>
       </div>
       
       {/* Earth */}
-      <div style={{ position: 'absolute', width: '100px', height: '100px', borderRadius: '50%', background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '48px', boxShadow: '0 0 40px rgba(59, 130, 246, 0.5)' }}>
+      <div style={{ position: 'absolute', width: '125px', height: '125px', borderRadius: '50%', background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '60px', boxShadow: '0 0 40px rgba(59, 130, 246, 0.5)' }}>
         🌍
       </div>
 

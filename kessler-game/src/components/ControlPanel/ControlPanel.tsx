@@ -49,9 +49,9 @@ export function ControlPanel() {
         ? (['Weather', 'Comms', 'GPS'] as SatelliteType[])[Math.floor(Math.random() * 3)]
         : satellitePurpose;
 
-      dispatch(launchSatellite({ orbit: selectedOrbit, insuranceTier, purpose }));
+      dispatch(launchSatellite({ orbit: selectedOrbit, insuranceTier, purpose, day: gameState.days }));
     } else {
-      dispatch(launchDRV({ orbit: selectedOrbit, drvType, targetPriority: drvPriority }));
+      dispatch(launchDRV({ orbit: selectedOrbit, drvType, targetPriority: drvPriority, day: gameState.days }));
       dispatch(trackDRVLaunch());
     }
 
@@ -66,6 +66,7 @@ export function ControlPanel() {
       dispatch(addEvent({
         type: 'solar-storm',
         turn: gameState.step + 1,
+        day: gameState.days,
         message: `☀️ Solar storm cleared ${removedCount} debris from LEO!`,
         details: { debrisRemoved: removedCount }
       }));

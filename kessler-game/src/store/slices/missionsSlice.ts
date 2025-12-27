@@ -157,7 +157,12 @@ export const missionsSlice = createSlice({
 
     notifyMissionComplete: {
       reducer: () => {},
-      prepare: (payload: { title: string; turn: number }) => ({ payload })
+      prepare: (payload: { title: string; turn: number; day?: number }) => ({ 
+        payload: {
+          ...payload,
+          day: payload.day ?? 0
+        }
+      })
     },
   },
 });
