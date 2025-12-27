@@ -43,6 +43,7 @@ export function OrbitVisualization() {
   const [activeTrails, setActiveTrails] = useState<LaunchingEntity[]>([]);
   const [completedCollisions, setCompletedCollisions] = useState<Set<string>>(new Set());
   const [showSolarStorm, setShowSolarStorm] = useState<boolean>(false);
+  const [solarStormKey, setSolarStormKey] = useState<number>(0);
   const [showCascadeWarning, setShowCascadeWarning] = useState<boolean>(false);
 
   useEffect(() => {
@@ -112,6 +113,7 @@ export function OrbitVisualization() {
       if (latestEvent?.type === 'solar-storm') {
         requestAnimationFrame(() => {
           setShowSolarStorm(true);
+          setSolarStormKey(prev => prev + 1);
         });
       }
     }
@@ -217,7 +219,7 @@ export function OrbitVisualization() {
       })}
 
       {/* Solar Storm Effect */}
-      {showSolarStorm && <SolarStormEffect onComplete={handleSolarStormComplete} />}
+      {showSolarStorm && <SolarStormEffect key={solarStormKey} onComplete={handleSolarStormComplete} />}
 
       {/* Cascade Warning */}
       {showCascadeWarning && <CascadeWarning onComplete={handleCascadeWarningComplete} />}
