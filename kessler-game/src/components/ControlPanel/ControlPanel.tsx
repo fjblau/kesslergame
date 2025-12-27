@@ -152,7 +152,7 @@ export function ControlPanel() {
         )}
       </div>
 
-      <div className="pt-4 border-t border-slate-700 space-y-3 mt-6">
+      <div className="pt-4 border-t border-slate-700 space-y-3">
         <div className="flex justify-between text-sm">
           <span className="text-gray-400">Total Cost:</span>
           <span className="font-bold text-yellow-400">${(totalCost / 1e6).toFixed(1)}M</span>
