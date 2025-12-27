@@ -107,6 +107,7 @@ export interface GameState {
   cascadeTriggered: boolean;
   lastCascadeTurn?: number;
   totalCascades: number;
+  satellitesRecovered: number;
 }
 
 export interface UIState {

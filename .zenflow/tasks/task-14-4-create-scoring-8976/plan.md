@@ -83,7 +83,8 @@ Create and integrate the score state management.
 
 ---
 
-### [ ] Step 3: Track Satellite Recoveries
+### [x] Step 3: Track Satellite Recoveries
+<!-- chat-id: d09917b6-0e08-47de-a119-ac352bd55055 -->
 
 Modify DRV operations to track satellite recoveries separately.
 
