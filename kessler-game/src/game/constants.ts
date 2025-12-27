@@ -137,9 +137,9 @@ export const SOLAR_STORM_LEO_REMOVAL_RATE = 0.30;
 export const MAX_DEBRIS_LIMIT = 500;
 
 export const ORBITAL_SPEEDS: Record<OrbitLayer, number> = {
-  LEO: 8,
-  MEO: 5,
-  GEO: 3,
+  LEO: 6.4,
+  MEO: 4,
+  GEO: 2.4,
 };
 
 export const CASCADE_THRESHOLD = 3;

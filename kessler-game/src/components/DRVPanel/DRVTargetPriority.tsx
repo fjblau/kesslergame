@@ -12,7 +12,7 @@ export function DRVTargetPriority({ selected, onChange }: DRVTargetPriorityProps
 
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium text-gray-300">Target Priority</label>
+      <label className="text-base font-medium text-gray-300">Target Priority</label>
       <div className="space-y-2">
         {priorities.map((priority) => {
           const config = DRV_PRIORITY_CONFIG[priority];

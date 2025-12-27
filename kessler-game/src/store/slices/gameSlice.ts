@@ -16,8 +16,8 @@ function hashId(id: string): number {
   return Math.abs(hash);
 }
 
-function getEntitySpeedVariation(id: string, layer: OrbitLayer): number {
-  const baseSpeed = ORBITAL_SPEEDS[layer];
+function getEntitySpeedVariation(id: string, layer: OrbitLayer, orbitalSpeeds: { LEO: number; MEO: number; GEO: number }): number {
+  const baseSpeed = orbitalSpeeds[layer];
   const hash = hashId(id);
   const multiplier = 0.7 + (hash % 600) / 1000;
   return baseSpeed * multiplier;
@@ -29,16 +29,48 @@ function loadCollisionSettings() {
   try {
     const angle = localStorage.getItem('collisionAngleThreshold');
     const radius = localStorage.getItem('collisionRadiusMultiplier');
+    const debrisPerCollision = localStorage.getItem('debrisPerCollision');
     return {
       angle: angle ? parseFloat(angle) : 5,
       radius: radius ? parseFloat(radius) : 0.5,
+      debrisPerCollision: debrisPerCollision ? parseFloat(debrisPerCollision) : 5,
     };
   } catch {
-    return { angle: 5, radius: 0.5 };
+    return { angle: 5, radius: 0.5, debrisPerCollision: 5 };
+  }
+}
+
+function loadOrbitalSpeedSettings() {
+  try {
+    const leo = localStorage.getItem('orbitalSpeedLEO');
+    const meo = localStorage.getItem('orbitalSpeedMEO');
+    const geo = localStorage.getItem('orbitalSpeedGEO');
+    return {
+      leo: leo ? parseFloat(leo) : ORBITAL_SPEEDS.LEO,
+      meo: meo ? parseFloat(meo) : ORBITAL_SPEEDS.MEO,
+      geo: geo ? parseFloat(geo) : ORBITAL_SPEEDS.GEO,
+    };
+  } catch {
+    return { 
+      leo: ORBITAL_SPEEDS.LEO,
+      meo: ORBITAL_SPEEDS.MEO,
+      geo: ORBITAL_SPEEDS.GEO,
+    };
+  }
+}
+
+function loadSolarStormSettings() {
+  try {
+    const probability = localStorage.getItem('solarStormProbability');
+    return probability ? parseFloat(probability) : 0.10;
+  } catch {
+    return 0.10;
   }
 }
 
 const savedCollisionSettings = loadCollisionSettings();
+const savedOrbitalSpeedSettings = loadOrbitalSpeedSettings();
+const savedSolarStormSettings = loadSolarStormSettings();
 
 const randomPositionInLayer = (layer: OrbitLayer) => {
   const [yMin, yMax] = LAYER_BOUNDS[layer];
@@ -66,6 +98,11 @@ const initialState: GameState = {
   gameOver: false,
   collisionAngleThreshold: savedCollisionSettings.angle,
   collisionRadiusMultiplier: savedCollisionSettings.radius,
+  debrisPerCollision: savedCollisionSettings.debrisPerCollision,
+  orbitalSpeedLEO: savedOrbitalSpeedSettings.leo,
+  orbitalSpeedMEO: savedOrbitalSpeedSettings.meo,
+  orbitalSpeedGEO: savedOrbitalSpeedSettings.geo,
+  solarStormProbability: savedSolarStormSettings,
   recentCollisions: [],
   recentlyExpiredDRVs: [],
   recentDebrisRemovals: [],
@@ -289,17 +326,23 @@ export const gameSlice = createSlice({
           .map(drv => drv.capturedDebrisId)
       );
       
+      const orbitalSpeeds = {
+        LEO: state.orbitalSpeedLEO,
+        MEO: state.orbitalSpeedMEO,
+        GEO: state.orbitalSpeedGEO,
+      };
+      
       state.satellites.forEach(sat => {
         sat.age++;
         if (!capturedObjectIds.has(sat.id)) {
-          const speed = getEntitySpeedVariation(sat.id, sat.layer);
+          const speed = getEntitySpeedVariation(sat.id, sat.layer, orbitalSpeeds);
           sat.x = (sat.x + speed) % 100;
         }
       });
       state.debrisRemovalVehicles.forEach(drv => {
         drv.age++;
         if (drv.removalType === 'uncooperative') {
-          const speed = getEntitySpeedVariation(drv.id, drv.layer);
+          const speed = getEntitySpeedVariation(drv.id, drv.layer, orbitalSpeeds);
           drv.x = (drv.x + speed) % 100;
         } else {
           const targetDebris = state.debris.find(d => d.id === drv.targetDebrisId);
@@ -325,7 +368,7 @@ export const gameSlice = createSlice({
       
       state.debris.forEach(deb => {
         if (!capturedObjectIds.has(deb.id)) {
-          const speed = getEntitySpeedVariation(deb.id, deb.layer);
+          const speed = getEntitySpeedVariation(deb.id, deb.layer, orbitalSpeeds);
           deb.x = (deb.x + speed) % 100;
         }
       });
@@ -407,7 +450,7 @@ export const gameSlice = createSlice({
           objectIds: [obj1.id, obj2.id],
         });
 
-        const debris = generateDebrisFromCollision(collisionX, collisionY, layer, generateId);
+        const debris = generateDebrisFromCollision(collisionX, collisionY, layer, generateId, state.debrisPerCollision);
         newDebris.push(...debris);
       }
 
@@ -505,6 +548,51 @@ export const gameSlice = createSlice({
       }
     },
 
+    setDebrisPerCollision: (state, action: PayloadAction<number>) => {
+      state.debrisPerCollision = action.payload;
+      try {
+        localStorage.setItem('debrisPerCollision', action.payload.toString());
+      } catch {
+        // Ignore localStorage errors
+      }
+    },
+
+    setOrbitalSpeedLEO: (state, action: PayloadAction<number>) => {
+      state.orbitalSpeedLEO = action.payload;
+      try {
+        localStorage.setItem('orbitalSpeedLEO', action.payload.toString());
+      } catch {
+        // Ignore localStorage errors
+      }
+    },
+
+    setOrbitalSpeedMEO: (state, action: PayloadAction<number>) => {
+      state.orbitalSpeedMEO = action.payload;
+      try {
+        localStorage.setItem('orbitalSpeedMEO', action.payload.toString());
+      } catch {
+        // Ignore localStorage errors
+      }
+    },
+
+    setOrbitalSpeedGEO: (state, action: PayloadAction<number>) => {
+      state.orbitalSpeedGEO = action.payload;
+      try {
+        localStorage.setItem('orbitalSpeedGEO', action.payload.toString());
+      } catch {
+        // Ignore localStorage errors
+      }
+    },
+
+    setSolarStormProbability: (state, action: PayloadAction<number>) => {
+      state.solarStormProbability = action.payload;
+      try {
+        localStorage.setItem('solarStormProbability', action.payload.toString());
+      } catch {
+        // Ignore localStorage errors
+      }
+    },
+
     clearCascadeFlag: (state) => {
       state.cascadeTriggered = false;
     },
@@ -528,6 +616,11 @@ export const {
   clearOldCollisions,
   setCollisionAngleThreshold,
   setCollisionRadiusMultiplier,
+  setDebrisPerCollision,
+  setOrbitalSpeedLEO,
+  setOrbitalSpeedMEO,
+  setOrbitalSpeedGEO,
+  setSolarStormProbability,
   clearCascadeFlag,
 } = gameSlice.actions;
 

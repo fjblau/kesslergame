@@ -12,7 +12,7 @@ export function InsuranceTierSelector({ selected, onChange }: InsuranceTierSelec
 
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium text-gray-300">Insurance Coverage</label>
+      <label className="text-base font-medium text-gray-300">Insurance Coverage</label>
       <div className="space-y-2">
         {tiers.map((tier) => {
           const config = INSURANCE_CONFIG[tier];

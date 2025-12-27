@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { initializeGame } from '../../store/slices/gameSlice';
 import { initializeMissions } from '../../store/slices/missionsSlice';
@@ -6,6 +7,7 @@ import { MAX_DEBRIS_LIMIT } from '../../game/constants';
 export function GameOverModal() {
   const dispatch = useAppDispatch();
   const { budget, step, maxSteps, debris, satellites, debrisRemovalVehicles, budgetDifficulty } = useAppSelector(state => state.game);
+  const [isVisible, setIsVisible] = useState(true);
 
   const getGameOverReason = () => {
     if (budget < 0) {
@@ -28,7 +30,16 @@ export function GameOverModal() {
   const handlePlayAgain = () => {
     dispatch(initializeGame(budgetDifficulty));
     dispatch(initializeMissions(3));
+    setIsVisible(true);
   };
+
+  const handleClose = () => {
+    setIsVisible(false);
+  };
+
+  if (!isVisible) {
+    return null;
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center p-8 z-50">
@@ -71,12 +82,20 @@ export function GameOverModal() {
           </div>
         </div>
 
-        <button
-          onClick={handlePlayAgain}
-          className="w-full py-4 px-8 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white rounded-xl font-bold text-xl uppercase tracking-wide transition-all shadow-lg hover:shadow-xl"
-        >
-          Play Again
-        </button>
+        <div className="flex gap-4">
+          <button
+            onClick={handleClose}
+            className="flex-1 py-4 px-8 bg-slate-700 hover:bg-slate-600 text-white rounded-xl font-bold text-xl uppercase tracking-wide transition-all shadow-lg hover:shadow-xl"
+          >
+            View Analytics
+          </button>
+          <button
+            onClick={handlePlayAgain}
+            className="flex-1 py-4 px-8 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white rounded-xl font-bold text-xl uppercase tracking-wide transition-all shadow-lg hover:shadow-xl"
+          >
+            Play Again
+          </button>
+        </div>
       </div>
     </div>
   );

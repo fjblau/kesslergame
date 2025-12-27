@@ -1,14 +1,15 @@
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { setCollisionAngleThreshold, setCollisionRadiusMultiplier } from '../../store/slices/gameSlice';
+import { setCollisionAngleThreshold, setCollisionRadiusMultiplier, setDebrisPerCollision } from '../../store/slices/gameSlice';
 
 export function CollisionSettings() {
   const angleThreshold = useAppSelector(state => state.game.collisionAngleThreshold);
   const radiusMultiplier = useAppSelector(state => state.game.collisionRadiusMultiplier);
+  const debrisPerCollision = useAppSelector(state => state.game.debrisPerCollision);
   const dispatch = useAppDispatch();
 
   return (
     <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 space-y-4">
-      <h2 className="text-xl font-bold text-white mb-4">Collision Detection Settings</h2>
+      <h2 className="text-xl font-bold text-white mb-4">Collision Settings</h2>
       <div className="space-y-4">
         <div className="flex items-center gap-4">
           <label className="text-sm text-gray-300 w-40">Angle Threshold: {angleThreshold}°</label>
@@ -31,6 +32,18 @@ export function CollisionSettings() {
             step="0.1"
             value={radiusMultiplier}
             onChange={(e) => dispatch(setCollisionRadiusMultiplier(Number(e.target.value)))}
+            className="flex-1"
+          />
+        </div>
+        <div className="flex items-center gap-4">
+          <label className="text-sm text-gray-300 w-40">Debris Per Collision: {debrisPerCollision}</label>
+          <input
+            type="range"
+            min="1"
+            max="15"
+            step="1"
+            value={debrisPerCollision}
+            onChange={(e) => dispatch(setDebrisPerCollision(Number(e.target.value)))}
             className="flex-1"
           />
         </div>

@@ -9,9 +9,9 @@ interface LaunchAnimationProps {
 }
 
 const ORBIT_RADII = {
-  LEO: 132.5,
-  MEO: 248.5,
-  GEO: 321,
+  LEO: 256,
+  MEO: 365,
+  GEO: 437.5,
 };
 
 const LAYER_COLORS = {
@@ -21,8 +21,8 @@ const LAYER_COLORS = {
 };
 
 export function LaunchAnimation({ targetLayer, targetAngle, onComplete }: LaunchAnimationProps) {
-  const centerX = 400;
-  const centerY = 400;
+  const centerX = 500;
+  const centerY = 500;
   
   const targetRadius = ORBIT_RADII[targetLayer] || 140;
   const safeAngle = (typeof targetAngle === 'number' && !isNaN(targetAngle)) ? targetAngle : 0;
@@ -44,17 +44,17 @@ export function LaunchAnimation({ targetLayer, targetAngle, onComplete }: Launch
         position: 'absolute',
         left: 0,
         top: 0,
-        width: '800px',
-        height: '800px',
+        width: '1000px',
+        height: '1000px',
         pointerEvents: 'none',
       }}
     >
       <motion.line
         x1={centerX}
-        y1={centerY + 30}
+        y1={centerY + 62.5}
         initial={{
           x2: centerX,
-          y2: centerY + 30,
+          y2: centerY + 62.5,
         }}
         animate={{
           x2: targetX,

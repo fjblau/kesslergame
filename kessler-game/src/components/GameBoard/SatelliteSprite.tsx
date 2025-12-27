@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import type { Satellite } from '../../game/types';
-import { SATELLITE_PURPOSE_CONFIG, ORBITAL_SPEEDS } from '../../game/constants';
+import { SATELLITE_PURPOSE_CONFIG } from '../../game/constants';
 import { useAppSelector } from '../../store/hooks';
 import { getEntitySpeedMultiplier } from './utils';
 
@@ -15,9 +15,16 @@ interface SatelliteSpriteProps {
 export function SatelliteSprite({ satellite, x, y, isLaunching = false, isCaptured = false }: SatelliteSpriteProps) {
   const icon = SATELLITE_PURPOSE_CONFIG[satellite.purpose].icon;
   const days = useAppSelector(state => state.game.days);
+  const orbitalSpeed = useAppSelector(state => {
+    switch (satellite.layer) {
+      case 'LEO': return state.game.orbitalSpeedLEO;
+      case 'MEO': return state.game.orbitalSpeedMEO;
+      case 'GEO': return state.game.orbitalSpeedGEO;
+    }
+  });
   const baseAngle = (satellite.x / 100) * 360;
   const speedMultiplier = getEntitySpeedMultiplier(satellite.id);
-  const rotation = baseAngle + (days * ORBITAL_SPEEDS[satellite.layer] * speedMultiplier * 3.6);
+  const rotation = baseAngle + (days * orbitalSpeed * speedMultiplier * 3.6);
   
   return (
     <motion.div
@@ -28,8 +35,8 @@ export function SatelliteSprite({ satellite, x, y, isLaunching = false, isCaptur
         filter: isCaptured ? 'drop-shadow(0 0 8px #ef4444)' : 'none',
       }}
       initial={isLaunching ? {
-        left: 400,
-        top: 400,
+        left: 500,
+        top: 500,
         x: '-50%',
         y: '-50%',
         scale: 0.5,

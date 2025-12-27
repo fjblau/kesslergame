@@ -8,6 +8,9 @@ import { CollisionEffect } from './CollisionEffect';
 import { SolarStormEffect } from './SolarStormEffect';
 import { CascadeWarning } from './CascadeWarning';
 import { DaysCounter } from '../TimeControl/DaysCounter';
+import { SatellitesCounter } from '../TimeControl/SatellitesCounter';
+import { DRVsCounter } from '../TimeControl/DRVsCounter';
+import { DebrisRemovedCounter } from '../TimeControl/DebrisRemovedCounter';
 import { mapToPixels } from './utils';
 import { clearOldCollisions, clearCascadeFlag } from '../../store/slices/gameSlice';
 import { playCascadeWarning } from '../../utils/audio';
@@ -28,16 +31,22 @@ export function OrbitVisualization() {
   const lastCascadeTurn = useAppSelector(state => state.game.lastCascadeTurn);
   const events = useAppSelector(state => state.events.events);
   const days = useAppSelector(state => state.game.days);
+  const orbitalSpeeds = useAppSelector(state => ({
+    LEO: state.game.orbitalSpeedLEO,
+    MEO: state.game.orbitalSpeedMEO,
+    GEO: state.game.orbitalSpeedGEO,
+  }));
 
   const prevSatelliteIds = useRef<Set<string>>(new Set());
   const prevDRVIds = useRef<Set<string>>(new Set());
-  const prevEventCount = useRef<number>(0);
   const cascadeShownForTurn = useRef<number | undefined>(undefined);
+  const solarStormShownForEvent = useRef<string | undefined>(undefined);
   const [launchingSatellites, setLaunchingSatellites] = useState<Set<string>>(new Set());
   const [launchingDRVs, setLaunchingDRVs] = useState<Set<string>>(new Set());
   const [activeTrails, setActiveTrails] = useState<LaunchingEntity[]>([]);
   const [completedCollisions, setCompletedCollisions] = useState<Set<string>>(new Set());
   const [showSolarStorm, setShowSolarStorm] = useState<boolean>(false);
+  const [solarStormKey, setSolarStormKey] = useState<number>(0);
   const [showCascadeWarning, setShowCascadeWarning] = useState<boolean>(false);
 
   useEffect(() => {
@@ -102,15 +111,14 @@ export function OrbitVisualization() {
   );
 
   useEffect(() => {
-    if (events.length > prevEventCount.current) {
-      const latestEvent = events[0];
-      if (latestEvent?.type === 'solar-storm') {
-        requestAnimationFrame(() => {
-          setShowSolarStorm(true);
-        });
-      }
+    const latestEvent = events.find(event => event.type === 'solar-storm');
+    if (latestEvent && solarStormShownForEvent.current !== latestEvent.id) {
+      solarStormShownForEvent.current = latestEvent.id;
+      requestAnimationFrame(() => {
+        setShowSolarStorm(true);
+        setSolarStormKey(prev => prev + 1);
+      });
     }
-    prevEventCount.current = events.length;
   }, [events]);
 
   const handleSolarStormComplete = () => {
@@ -136,9 +144,24 @@ export function OrbitVisualization() {
 
   return (
     <div className="relative w-[1000px] h-[1000px] flex items-center justify-center bg-slate-900 border-2 border-slate-600 rounded-xl">
+      {/* Debris Removed Counter */}
+      <div className="absolute top-4 left-4 z-10">
+        <DebrisRemovedCounter />
+      </div>
+
       {/* Days Counter */}
       <div className="absolute top-4 right-4 z-10">
         <DaysCounter />
+      </div>
+
+      {/* Satellites Counter */}
+      <div className="absolute bottom-4 left-4 z-10">
+        <SatellitesCounter />
+      </div>
+
+      {/* DRVs Counter */}
+      <div className="absolute bottom-4 right-4 z-10">
+        <DRVsCounter />
       </div>
 
       {/* GEO orbit */}
@@ -163,13 +186,13 @@ export function OrbitVisualization() {
       </div>
       
       {/* Earth */}
-      <div style={{ position: 'absolute', width: '125px', height: '125px', borderRadius: '50%', background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '60px', boxShadow: '0 0 40px rgba(59, 130, 246, 0.5)' }}>
+      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '125px', height: '125px', borderRadius: '50%', background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '60px', boxShadow: '0 0 40px rgba(59, 130, 246, 0.5)' }}>
         🌍
       </div>
 
       {/* Collision effects */}
       {activeCollisionEvents.map(collision => {
-        const { x, y } = mapToPixels(collision, days);
+        const { x, y } = mapToPixels(collision, days, orbitalSpeeds);
         return (
           <CollisionEffect
             key={collision.id}
@@ -192,7 +215,7 @@ export function OrbitVisualization() {
 
       {/* Satellites */}
       {satellites.map(satellite => {
-        const { x, y } = mapToPixels(satellite, days);
+        const { x, y } = mapToPixels(satellite, days, orbitalSpeeds);
         const isLaunching = launchingSatellites.has(satellite.id);
         const isCaptured = debrisRemovalVehicles.some(drv => drv.capturedDebrisId === satellite.id);
         return <SatelliteSprite key={satellite.id} satellite={satellite} x={x} y={y} isLaunching={isLaunching} isCaptured={isCaptured} />;
@@ -200,19 +223,19 @@ export function OrbitVisualization() {
 
       {/* Debris */}
       {debris.map(debrisItem => {
-        const { x, y } = mapToPixels(debrisItem, days);
+        const { x, y } = mapToPixels(debrisItem, days, orbitalSpeeds);
         return <DebrisParticle key={debrisItem.id} debris={debrisItem} x={x} y={y} />;
       })}
 
       {/* DRVs */}
       {debrisRemovalVehicles.map(drv => {
-        const { x, y } = mapToPixels(drv, days);
+        const { x, y } = mapToPixels(drv, days, orbitalSpeeds);
         const isLaunching = launchingDRVs.has(drv.id);
         return <DRVSprite key={drv.id} drv={drv} x={x} y={y} isLaunching={isLaunching} />;
       })}
 
       {/* Solar Storm Effect */}
-      {showSolarStorm && <SolarStormEffect onComplete={handleSolarStormComplete} />}
+      {showSolarStorm && <SolarStormEffect key={solarStormKey} onComplete={handleSolarStormComplete} />}
 
       {/* Cascade Warning */}
       {showCascadeWarning && <CascadeWarning onComplete={handleCascadeWarningComplete} />}

@@ -11,7 +11,7 @@ export function SatellitePurposeSelector({ selected, onChange }: SatellitePurpos
 
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium text-gray-300">Satellite Type</label>
+      <label className="text-base font-medium text-gray-300">Satellite Type</label>
       <div className="grid grid-cols-2 gap-3">
         {options.map((option) => {
           const config = SATELLITE_PURPOSE_CONFIG[option];
@@ -33,7 +33,7 @@ export function SatellitePurposeSelector({ selected, onChange }: SatellitePurpos
                 <span className="font-medium">{option}</span>
               </div>
               {config.discount > 0 && (
-                <div className="text-xs text-green-400 mt-1">
+                <div className="text-sm text-green-400 mt-1">
                   -{(config.discount * 100).toFixed(0)}% cost
                 </div>
               )}
