@@ -26,7 +26,7 @@ export function GameSpeedControl() {
     <div className="flex gap-3 bg-slate-800 border border-slate-700 rounded-xl p-3">
       <button
         onClick={handleReset}
-        className="px-6 py-2 rounded-xl font-medium transition-colors bg-red-600 text-white hover:bg-red-500"
+        className="flex-1 py-2 rounded-xl font-medium transition-colors bg-red-600 text-white hover:bg-red-500"
       >
         <span className="mr-2">🔄</span>
         Reset
@@ -35,7 +35,7 @@ export function GameSpeedControl() {
         <button
           key={value}
           onClick={() => dispatch(setGameSpeed(value))}
-          className={`px-6 py-2 rounded-xl font-medium transition-colors ${
+          className={`flex-1 py-2 rounded-xl font-medium transition-colors ${
             speed === value
               ? 'bg-blue-600 text-white shadow-lg'
               : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
