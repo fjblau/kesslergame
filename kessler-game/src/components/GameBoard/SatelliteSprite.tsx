@@ -28,8 +28,8 @@ export function SatelliteSprite({ satellite, x, y, isLaunching = false, isCaptur
         filter: isCaptured ? 'drop-shadow(0 0 8px #ef4444)' : 'none',
       }}
       initial={isLaunching ? {
-        left: 400,
-        top: 400,
+        left: 500,
+        top: 500,
         x: '-50%',
         y: '-50%',
         scale: 0.5,

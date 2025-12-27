@@ -30,8 +30,8 @@ export function getEntitySpeedMultiplier(id?: string): number {
 }
 
 export function mapToPixels(entity: EntityPosition, days: number = 0) {
-  const centerX = 400;
-  const centerY = 400;
+  const centerX = 500;
+  const centerY = 500;
   const { inner, outer } = ORBIT_RADII[entity.layer];
   
   const [yMin, yMax] = LAYER_BOUNDS[entity.layer];
