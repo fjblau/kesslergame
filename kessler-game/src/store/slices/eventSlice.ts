@@ -11,8 +11,6 @@ import { notifyMissionComplete } from './missionsSlice';
 
 const generateId = () => Math.random().toString(36).substring(2, 11);
 
-const MAX_EVENTS = 200;
-
 const initialState: EventsState = {
   events: [],
 };
@@ -35,10 +33,6 @@ const addEventToState = (
     details,
   };
   state.events.unshift(event);
-  
-  if (state.events.length > MAX_EVENTS) {
-    state.events = state.events.slice(0, MAX_EVENTS);
-  }
 };
 
 export const eventSlice = createSlice({
