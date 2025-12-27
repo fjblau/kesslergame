@@ -92,7 +92,12 @@ function App() {
           </h1>
         </header>
 
-        <Tabs tabs={tabs} defaultTab="launch" rightContent={<DaysCounter />} />
+        <div className="flex gap-3 items-start">
+          <div className="flex-1">
+            <Tabs tabs={tabs} defaultTab="launch" />
+          </div>
+          <DaysCounter />
+        </div>
       </div>
 
       {gameOver && <GameOverModal />}
