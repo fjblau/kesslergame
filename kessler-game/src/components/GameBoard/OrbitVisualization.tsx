@@ -164,17 +164,6 @@ export function OrbitVisualization() {
         <DRVsCounter />
       </div>
 
-      {/* Orbit Layer Breakdown */}
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10">
-        <div className="bg-slate-800 border border-slate-700 rounded-xl px-3 py-1">
-          <div className="flex gap-6 justify-center text-sm">
-            <span className="text-gray-400">LEO: <span className="text-blue-400 font-semibold">{satellites.filter(s => s.layer === 'LEO').length}</span></span>
-            <span className="text-gray-400">MEO: <span className="text-blue-400 font-semibold">{satellites.filter(s => s.layer === 'MEO').length}</span></span>
-            <span className="text-gray-400">GEO: <span className="text-blue-400 font-semibold">{satellites.filter(s => s.layer === 'GEO').length}</span></span>
-          </div>
-        </div>
-      </div>
-
       {/* GEO orbit */}
       <div style={{ position: 'absolute', width: '875px', height: '875px', border: '2px solid rgba(96, 165, 250, 0.5)', borderRadius: '50%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
         <div style={{ position: 'absolute', top: '8px', left: '50%', transform: 'translate(-50%, 0)', fontSize: '12px', fontWeight: 600, color: '#60a5fa', backgroundColor: 'rgba(15, 23, 42, 0.8)', padding: '4px 8px', borderRadius: '4px' }}>

@@ -21,6 +21,8 @@ function calculateRiskLevel(totalDebris: number): RiskInfo {
 
 export function StatsPanel() {
   const debris = useAppSelector(state => state.game.debris);
+  const satellites = useAppSelector(state => state.game.satellites);
+  const drvs = useAppSelector(state => state.game.debrisRemovalVehicles);
   const step = useAppSelector(state => state.game.step);
   const maxSteps = useAppSelector(state => state.game.maxSteps);
 
@@ -29,6 +31,13 @@ export function StatsPanel() {
   const uncooperativeDebris = debris.filter(d => d.type === 'uncooperative').length;
 
   const risk = calculateRiskLevel(totalDebris);
+
+  const getLayerStats = (layer: 'LEO' | 'MEO' | 'GEO') => {
+    const satelliteCount = satellites.filter(s => s.layer === layer).length;
+    const cooperativeDRVs = drvs.filter(d => d.layer === layer && d.removalType === 'cooperative' && d.age < d.maxAge).length;
+    const uncooperativeDRVs = drvs.filter(d => d.layer === layer && d.removalType === 'uncooperative' && d.age < d.maxAge).length;
+    return { satelliteCount, cooperativeDRVs, uncooperativeDRVs };
+  };
 
   return (
     <div className="bg-slate-800 border-2 border-slate-600 rounded-xl p-5 space-y-4 w-full">
@@ -42,6 +51,37 @@ export function StatsPanel() {
           uncooperative={uncooperativeDebris}
           total={totalDebris}
         />
+
+        <div className="border border-slate-700 rounded-lg overflow-hidden">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="bg-slate-900">
+                <th className="py-2 px-3 text-left text-gray-400 font-semibold border-b border-slate-700">Orbit Layer</th>
+                <th className="py-2 px-3 text-center text-gray-400 font-semibold border-b border-slate-700">Satellites</th>
+                <th colSpan={2} className="py-1 px-3 text-center text-gray-400 font-semibold border-b border-slate-700">DRV</th>
+              </tr>
+              <tr className="bg-slate-900">
+                <th className="border-b border-slate-700"></th>
+                <th className="border-b border-slate-700"></th>
+                <th className="py-1 px-2 text-center text-gray-500 text-[10px] font-medium border-b border-slate-700 border-l border-slate-700">Cooperative</th>
+                <th className="py-1 px-2 text-center text-gray-500 text-[10px] font-medium border-b border-slate-700">Uncooperative</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(['LEO', 'MEO', 'GEO'] as const).map((layer) => {
+                const stats = getLayerStats(layer);
+                return (
+                  <tr key={layer} className="hover:bg-slate-700/30">
+                    <td className="py-2 px-3 text-blue-400 font-semibold">{layer}</td>
+                    <td className="py-2 px-3 text-center text-gray-300">{stats.satelliteCount}</td>
+                    <td className="py-2 px-2 text-center text-gray-300 border-l border-slate-700">{stats.cooperativeDRVs}</td>
+                    <td className="py-2 px-2 text-center text-gray-300">{stats.uncooperativeDRVs}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
 
         <div className="flex justify-between py-2 border-b border-slate-700/50">
           <span className="text-gray-400">Risk Level:</span>
