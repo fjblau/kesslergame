@@ -36,8 +36,8 @@ export function OrbitVisualization() {
 
   const prevSatelliteIds = useRef<Set<string>>(new Set());
   const prevDRVIds = useRef<Set<string>>(new Set());
-  const prevEventCount = useRef<number>(0);
   const cascadeShownForTurn = useRef<number | undefined>(undefined);
+  const solarStormShownForEvent = useRef<string | undefined>(undefined);
   const [launchingSatellites, setLaunchingSatellites] = useState<Set<string>>(new Set());
   const [launchingDRVs, setLaunchingDRVs] = useState<Set<string>>(new Set());
   const [activeTrails, setActiveTrails] = useState<LaunchingEntity[]>([]);
@@ -108,16 +108,14 @@ export function OrbitVisualization() {
   );
 
   useEffect(() => {
-    if (events.length > prevEventCount.current) {
-      const latestEvent = events[0];
-      if (latestEvent?.type === 'solar-storm') {
-        requestAnimationFrame(() => {
-          setShowSolarStorm(true);
-          setSolarStormKey(prev => prev + 1);
-        });
-      }
+    const latestEvent = events.find(event => event.type === 'solar-storm');
+    if (latestEvent && solarStormShownForEvent.current !== latestEvent.id) {
+      solarStormShownForEvent.current = latestEvent.id;
+      requestAnimationFrame(() => {
+        setShowSolarStorm(true);
+        setSolarStormKey(prev => prev + 1);
+      });
     }
-    prevEventCount.current = events.length;
   }, [events]);
 
   const handleSolarStormComplete = () => {
