@@ -35,12 +35,12 @@ export function StatsPanel() {
   const risk = calculateRiskLevel(totalDebris);
 
   return (
-    <div className="bg-slate-800 border-2 border-slate-600 rounded-xl p-6 space-y-6 w-full">
-      <h2 className="text-xl font-bold text-blue-300 mb-4 pb-3 border-b-2 border-slate-700 uppercase tracking-wide">
+    <div className="bg-slate-800 border-2 border-slate-600 rounded-xl p-5 space-y-4 w-full">
+      <h2 className="text-xl font-bold text-blue-300 mb-3 pb-2 border-b-2 border-slate-700 uppercase tracking-wide">
         Orbital Status
       </h2>
       
-      <div className="space-y-3 text-sm">
+      <div className="space-y-2 text-sm">
         <div className="flex justify-between py-2 border-b border-slate-700/50">
           <span className="text-gray-400">Active Satellites:</span>
           <span className="text-blue-400 font-semibold">{satellites.length}</span>
