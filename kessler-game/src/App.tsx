@@ -11,6 +11,7 @@ import { MissionPanel } from './components/MissionPanel/MissionPanel';
 import { EventLog } from './components/EventLog/EventLog';
 import { CollisionSettings } from './components/Configuration/CollisionSettings';
 import { OrbitalSpeedSettings } from './components/Configuration/OrbitalSpeedSettings';
+import { SolarStormSettings } from './components/Configuration/SolarStormSettings';
 import { Tabs } from './components/ui/Tabs';
 import { useGameSpeed } from './hooks/useGameSpeed';
 import { useAppSelector } from './store/hooks';
@@ -70,6 +71,7 @@ function App() {
         <div className="max-w-4xl mx-auto space-y-6">
           <CollisionSettings />
           <OrbitalSpeedSettings />
+          <SolarStormSettings />
         </div>
       ),
     },

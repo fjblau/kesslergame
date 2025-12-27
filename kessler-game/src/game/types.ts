@@ -99,6 +99,7 @@ export interface GameState {
   orbitalSpeedLEO: number;
   orbitalSpeedMEO: number;
   orbitalSpeedGEO: number;
+  solarStormProbability: number;
   cascadeTriggered: boolean;
   lastCascadeTurn?: number;
   totalCascades: number;

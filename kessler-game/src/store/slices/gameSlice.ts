@@ -57,8 +57,18 @@ function loadOrbitalSpeedSettings() {
   }
 }
 
+function loadSolarStormSettings() {
+  try {
+    const probability = localStorage.getItem('solarStormProbability');
+    return probability ? parseFloat(probability) : 0.10;
+  } catch {
+    return 0.10;
+  }
+}
+
 const savedCollisionSettings = loadCollisionSettings();
 const savedOrbitalSpeedSettings = loadOrbitalSpeedSettings();
+const savedSolarStormSettings = loadSolarStormSettings();
 
 const randomPositionInLayer = (layer: OrbitLayer) => {
   const [yMin, yMax] = LAYER_BOUNDS[layer];
@@ -89,6 +99,7 @@ const initialState: GameState = {
   orbitalSpeedLEO: savedOrbitalSpeedSettings.leo,
   orbitalSpeedMEO: savedOrbitalSpeedSettings.meo,
   orbitalSpeedGEO: savedOrbitalSpeedSettings.geo,
+  solarStormProbability: savedSolarStormSettings,
   recentCollisions: [],
   recentlyExpiredDRVs: [],
   recentDebrisRemovals: [],
@@ -561,6 +572,15 @@ export const gameSlice = createSlice({
       }
     },
 
+    setSolarStormProbability: (state, action: PayloadAction<number>) => {
+      state.solarStormProbability = action.payload;
+      try {
+        localStorage.setItem('solarStormProbability', action.payload.toString());
+      } catch {
+        // Ignore localStorage errors
+      }
+    },
+
     clearCascadeFlag: (state) => {
       state.cascadeTriggered = false;
     },
@@ -587,6 +607,7 @@ export const {
   setOrbitalSpeedLEO,
   setOrbitalSpeedMEO,
   setOrbitalSpeedGEO,
+  setSolarStormProbability,
   clearCascadeFlag,
 } = gameSlice.actions;
 

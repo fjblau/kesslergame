@@ -100,7 +100,7 @@ export function useGameSpeed() {
         });
       }, 10);
 
-      if (checkSolarStorm()) {
+      if (checkSolarStorm(currentState.solarStormProbability)) {
         const leoDebrisCountBefore = currentState.debris.filter(d => d.layer === 'LEO').length;
         dispatch(triggerSolarStorm());
         setTimeout(() => {

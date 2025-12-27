@@ -57,7 +57,7 @@ export function ControlPanel() {
 
     dispatch(advanceTurn());
 
-    if (checkSolarStorm()) {
+    if (checkSolarStorm(gameState.solarStormProbability)) {
       const leoDebrisCountBefore = gameState.debris.filter(d => d.layer === 'LEO').length;
       dispatch(triggerSolarStorm());
       const leoDebrisCountAfter = gameState.debris.filter(d => d.layer === 'LEO').length;

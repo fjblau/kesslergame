@@ -1,8 +1,8 @@
-import { SOLAR_STORM_PROBABILITY, SOLAR_STORM_LEO_REMOVAL_RATE } from '../constants';
+import { SOLAR_STORM_LEO_REMOVAL_RATE } from '../constants';
 import type { Debris } from '../types';
 
-export function checkSolarStorm(): boolean {
-  return Math.random() < SOLAR_STORM_PROBABILITY;
+export function checkSolarStorm(probability: number): boolean {
+  return Math.random() < probability;
 }
 
 export function processSolarStorm(debris: Debris[]): {
