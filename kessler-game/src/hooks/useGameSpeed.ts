@@ -18,6 +18,12 @@ export function useGameSpeed() {
   const previousRiskLevel = useRef(riskLevel);
   const previousMissionCompletionStatus = useRef(new Map<string, boolean>());
   const loggedCollisionIds = useRef(new Set<string>());
+  const loggedExpiredDRVIds = useRef(new Set<string>());
+  const gameStateRef = useRef(gameState);
+  
+  useEffect(() => {
+    gameStateRef.current = gameState;
+  });
 
   useEffect(() => {
     if (autoPauseOnRiskChange && riskLevel !== previousRiskLevel.current) {
@@ -64,11 +70,13 @@ export function useGameSpeed() {
       dispatch(advanceTurn());
       dispatch(processDRVOperations());
 
-      gameState.recentDebrisRemovals.forEach(removal => {
+      const currentState = gameStateRef.current;
+
+      currentState.recentDebrisRemovals.forEach(removal => {
         dispatch(addEvent({
           type: 'debris-removal',
-          turn: gameState.step + 1,
-          day: gameState.days,
+          turn: currentState.step,
+          day: currentState.days,
           message: `${removal.drvType === 'cooperative' ? 'Cooperative' : 'Uncooperative'} DRV removed ${removal.debrisType} debris in ${removal.layer} orbit`,
           details: { drvType: removal.drvType, debrisType: removal.debrisType, layer: removal.layer }
         }));
@@ -76,49 +84,59 @@ export function useGameSpeed() {
 
       dispatch(processCollisions());
 
-      gameState.recentCollisions.forEach(collision => {
-        if (!loggedCollisionIds.current.has(collision.id)) {
-          loggedCollisionIds.current.add(collision.id);
-          dispatch(addEvent({
-            type: 'collision',
-            turn: gameState.step + 1,
-            day: gameState.days,
-            message: `Collision detected in ${collision.layer} orbit`,
-            details: { layer: collision.layer, objectIds: collision.objectIds }
-          }));
-        }
-      });
+      setTimeout(() => {
+        const updatedState = gameStateRef.current;
+        updatedState.recentCollisions.forEach(collision => {
+          if (!loggedCollisionIds.current.has(collision.id)) {
+            loggedCollisionIds.current.add(collision.id);
+            dispatch(addEvent({
+              type: 'collision',
+              turn: updatedState.step,
+              day: updatedState.days,
+              message: `Collision detected in ${collision.layer} orbit - debris created`,
+              details: { layer: collision.layer, objectIds: collision.objectIds }
+            }));
+          }
+        });
+      }, 10);
 
       if (checkSolarStorm()) {
-        const leoDebrisCountBefore = gameState.debris.filter(d => d.layer === 'LEO').length;
+        const leoDebrisCountBefore = currentState.debris.filter(d => d.layer === 'LEO').length;
         dispatch(triggerSolarStorm());
-        const leoDebrisCountAfter = gameState.debris.filter(d => d.layer === 'LEO').length;
-        const removedCount = leoDebrisCountBefore - leoDebrisCountAfter;
-        
-        dispatch(addEvent({
-          type: 'solar-storm',
-          turn: gameState.step + 1,
-          day: gameState.days,
-          message: `☀️ Solar storm cleared ${removedCount} debris from LEO!`,
-          details: { debrisRemoved: removedCount }
-        }));
+        setTimeout(() => {
+          const leoDebrisCountAfter = gameStateRef.current.debris.filter(d => d.layer === 'LEO').length;
+          const removedCount = leoDebrisCountBefore - leoDebrisCountAfter;
+          
+          dispatch(addEvent({
+            type: 'solar-storm',
+            turn: gameStateRef.current.step,
+            day: gameStateRef.current.days,
+            message: `☀️ Solar storm cleared ${removedCount} debris from LEO!`,
+            details: { debrisRemoved: removedCount }
+          }));
+        }, 10);
       }
 
-      dispatch(updateMissionProgress(gameState));
+      dispatch(updateMissionProgress(currentState));
       dispatch(decommissionExpiredDRVs());
 
-      gameState.recentlyExpiredDRVs.forEach(expiredDRV => {
-        dispatch(addEvent({
-          type: 'drv-expired',
-          turn: gameState.step + 1,
-          day: gameState.days,
-          message: `${expiredDRV.type === 'cooperative' ? 'Cooperative' : 'Uncooperative'} DRV expired in ${expiredDRV.layer} orbit (removed ${expiredDRV.debrisRemoved} debris)`,
-          details: { type: expiredDRV.type, layer: expiredDRV.layer, debrisRemoved: expiredDRV.debrisRemoved }
-        }));
-      });
+      setTimeout(() => {
+        const updatedState = gameStateRef.current;
+        updatedState.recentlyExpiredDRVs.forEach(expiredDRV => {
+          if (!loggedExpiredDRVIds.current.has(expiredDRV.id)) {
+            loggedExpiredDRVIds.current.add(expiredDRV.id);
+            dispatch(addEvent({
+              type: 'drv-expired',
+              turn: updatedState.step,
+              day: updatedState.days,
+              message: `${expiredDRV.type === 'cooperative' ? 'Cooperative' : 'Uncooperative'} DRV expired in ${expiredDRV.layer} orbit (removed ${expiredDRV.debrisRemoved} debris, created 1 debris)`,
+              details: { type: expiredDRV.type, layer: expiredDRV.layer, debrisRemoved: expiredDRV.debrisRemoved }
+            }));
+          }
+        });
+      }, 10);
     }, intervalDuration);
 
     return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [speed, budget, autoPauseBudgetLow, dispatch]);
 }
