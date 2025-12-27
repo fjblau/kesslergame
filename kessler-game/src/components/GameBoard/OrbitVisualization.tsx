@@ -160,7 +160,7 @@ export function OrbitVisualization() {
 
       {/* Orbit Layer Breakdown */}
       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10">
-        <div className="bg-slate-800 border border-slate-700 rounded-xl px-6 py-2">
+        <div className="bg-slate-800 border border-slate-700 rounded-xl px-4 py-1.5">
           <div className="flex gap-6 justify-center text-sm">
             <span className="text-gray-400">LEO: <span className="text-blue-400 font-semibold">{satellites.filter(s => s.layer === 'LEO').length}</span></span>
             <span className="text-gray-400">MEO: <span className="text-blue-400 font-semibold">{satellites.filter(s => s.layer === 'MEO').length}</span></span>
