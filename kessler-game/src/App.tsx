@@ -17,6 +17,7 @@ import { Tabs } from './components/ui/Tabs';
 import { useGameSpeed } from './hooks/useGameSpeed';
 import { useAppSelector } from './store/hooks';
 import { GameOverModal } from './components/GameOver/GameOverModal';
+import { ScoreDisplay } from './components/Score/ScoreDisplay';
 
 function App() {
   const [gameStarted, setGameStarted] = useState(false);
@@ -91,10 +92,13 @@ function App() {
   return (
     <div className="min-h-screen p-8">
       <div className="max-w-[2350px] mx-auto space-y-6">
-        <header className="text-center mb-8">
+        <header className="relative text-center mb-8">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
             Space Debris Removal
           </h1>
+          <div className="absolute right-0 top-0">
+            <ScoreDisplay />
+          </div>
         </header>
 
         <Tabs tabs={tabs} defaultTab="launch" />
