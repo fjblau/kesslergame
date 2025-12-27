@@ -83,7 +83,7 @@ function App() {
       label: 'Documentation',
       content: (
         <div className="text-center text-gray-400 py-12">
-          Documentation coming soon...
+          Placeholder for Documentation
         </div>
       ),
     },
