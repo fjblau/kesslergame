@@ -68,9 +68,29 @@ function loadSolarStormSettings() {
   }
 }
 
+function loadDRVSettings() {
+  try {
+    const capacityMin = localStorage.getItem('drvUncooperativeCapacityMin');
+    const capacityMax = localStorage.getItem('drvUncooperativeCapacityMax');
+    const successRate = localStorage.getItem('drvUncooperativeSuccessRate');
+    return {
+      capacityMin: capacityMin ? parseFloat(capacityMin) : DRV_CONFIG.capacity.uncooperative[0],
+      capacityMax: capacityMax ? parseFloat(capacityMax) : DRV_CONFIG.capacity.uncooperative[1],
+      successRate: successRate ? parseFloat(successRate) : DRV_CONFIG.successRate.uncooperative,
+    };
+  } catch {
+    return {
+      capacityMin: DRV_CONFIG.capacity.uncooperative[0],
+      capacityMax: DRV_CONFIG.capacity.uncooperative[1],
+      successRate: DRV_CONFIG.successRate.uncooperative,
+    };
+  }
+}
+
 const savedCollisionSettings = loadCollisionSettings();
 const savedOrbitalSpeedSettings = loadOrbitalSpeedSettings();
 const savedSolarStormSettings = loadSolarStormSettings();
+const savedDRVSettings = loadDRVSettings();
 
 const randomPositionInLayer = (layer: OrbitLayer) => {
   const [yMin, yMax] = LAYER_BOUNDS[layer];
@@ -103,6 +123,9 @@ const initialState: GameState = {
   orbitalSpeedMEO: savedOrbitalSpeedSettings.meo,
   orbitalSpeedGEO: savedOrbitalSpeedSettings.geo,
   solarStormProbability: savedSolarStormSettings,
+  drvUncooperativeCapacityMin: savedDRVSettings.capacityMin,
+  drvUncooperativeCapacityMax: savedDRVSettings.capacityMax,
+  drvUncooperativeSuccessRate: savedDRVSettings.successRate,
   recentCollisions: [],
   recentlyExpiredDRVs: [],
   recentDebrisRemovals: [],
@@ -208,7 +231,12 @@ export const gameSlice = createSlice({
         day: number;
       }>) => {
         const { orbit, drvType, targetPriority } = action.payload;
-        const [minCapacity, maxCapacity] = DRV_CONFIG.capacity[drvType];
+        const [minCapacity, maxCapacity] = drvType === 'uncooperative' 
+          ? [state.drvUncooperativeCapacityMin, state.drvUncooperativeCapacityMax]
+          : DRV_CONFIG.capacity[drvType];
+        const successRate = drvType === 'uncooperative'
+          ? state.drvUncooperativeSuccessRate
+          : DRV_CONFIG.successRate[drvType];
         const drv = {
           id: generateId(),
           ...randomPositionInLayer(orbit),
@@ -218,7 +246,7 @@ export const gameSlice = createSlice({
           age: 0,
           maxAge: DRV_CONFIG.duration[drvType],
           capacity: Math.floor(Math.random() * (maxCapacity - minCapacity + 1)) + minCapacity,
-          successRate: DRV_CONFIG.successRate[drvType],
+          successRate,
           debrisRemoved: 0,
         };
         state.debrisRemovalVehicles.push(drv);
@@ -593,6 +621,33 @@ export const gameSlice = createSlice({
       }
     },
 
+    setDRVUncooperativeCapacityMin: (state, action: PayloadAction<number>) => {
+      state.drvUncooperativeCapacityMin = action.payload;
+      try {
+        localStorage.setItem('drvUncooperativeCapacityMin', action.payload.toString());
+      } catch {
+        // Ignore localStorage errors
+      }
+    },
+
+    setDRVUncooperativeCapacityMax: (state, action: PayloadAction<number>) => {
+      state.drvUncooperativeCapacityMax = action.payload;
+      try {
+        localStorage.setItem('drvUncooperativeCapacityMax', action.payload.toString());
+      } catch {
+        // Ignore localStorage errors
+      }
+    },
+
+    setDRVUncooperativeSuccessRate: (state, action: PayloadAction<number>) => {
+      state.drvUncooperativeSuccessRate = action.payload;
+      try {
+        localStorage.setItem('drvUncooperativeSuccessRate', action.payload.toString());
+      } catch {
+        // Ignore localStorage errors
+      }
+    },
+
     clearCascadeFlag: (state) => {
       state.cascadeTriggered = false;
     },
@@ -621,6 +676,9 @@ export const {
   setOrbitalSpeedMEO,
   setOrbitalSpeedGEO,
   setSolarStormProbability,
+  setDRVUncooperativeCapacityMin,
+  setDRVUncooperativeCapacityMax,
+  setDRVUncooperativeSuccessRate,
   clearCascadeFlag,
 } = gameSlice.actions;
 
