@@ -72,10 +72,10 @@ export function StatsPanel() {
                 const stats = getLayerStats(layer);
                 return (
                   <tr key={layer} className="hover:bg-slate-700/30">
-                    <td className="py-2 px-3 text-blue-400 font-semibold">{layer}</td>
-                    <td className="py-2 px-3 text-center text-gray-300">{stats.satelliteCount}</td>
-                    <td className="py-2 px-2 text-center text-gray-300 border-l border-slate-700">{stats.cooperativeDRVs}</td>
-                    <td className="py-2 px-2 text-center text-gray-300">{stats.uncooperativeDRVs}</td>
+                    <td className="py-1 px-3 text-blue-400 font-semibold">{layer}</td>
+                    <td className="py-1 px-3 text-center text-gray-300">{stats.satelliteCount}</td>
+                    <td className="py-1 px-2 text-center text-gray-300 border-l border-slate-700">{stats.cooperativeDRVs}</td>
+                    <td className="py-1 px-2 text-center text-gray-300">{stats.uncooperativeDRVs}</td>
                   </tr>
                 );
               })}
