@@ -11,7 +11,7 @@ export function SolarStormEffect({ onComplete }: SolarStormEffectProps) {
     return () => clearTimeout(timer);
   }, [onComplete]);
 
-  const sunX = 850;
+  const sunX = 150;
   const sunY = 150;
   const beamCount = 12;
   const beams = Array.from({ length: beamCount }, (_, i) => i);
@@ -68,7 +68,7 @@ export function SolarStormEffect({ onComplete }: SolarStormEffectProps) {
         </defs>
         
         {beams.map((i) => {
-          const baseAngle = (i * Math.PI * 2) / beamCount - Math.PI / 4;
+          const baseAngle = (i * Math.PI * 2) / beamCount + Math.PI / 4;
           const cosAngle = Math.cos(baseAngle);
           const sinAngle = Math.sin(baseAngle);
           const length = 800;
@@ -111,7 +111,7 @@ export function SolarStormEffect({ onComplete }: SolarStormEffectProps) {
           position: 'absolute',
           width: '100%',
           height: '100%',
-          background: 'linear-gradient(135deg, rgba(251, 191, 36, 0.3) 0%, rgba(251, 191, 36, 0) 50%)',
+          background: 'linear-gradient(225deg, rgba(251, 191, 36, 0.3) 0%, rgba(251, 191, 36, 0) 50%)',
         }}
       />
     </div>
