@@ -2,18 +2,25 @@
 
 ## What Was Implemented
 
-Successfully moved the Total Score frame from the Orbital Status panel to the title frame header, positioned flush right next to "Space Debris Removal" title.
+Successfully moved the Total Score frame from the Orbital Status panel to the title frame header, positioned flush right while keeping the "Space Debris Removal" title centered. Refined the layout to display score information horizontally with consistent styling.
 
 ### Files Modified
 
 1. **kessler-game/src/App.tsx**
    - Added import for `ScoreDisplay` component (line 20)
-   - Modified header layout from `text-center` to `flex justify-between items-center` (line 95)
-   - Added `<ScoreDisplay />` component on the right side of the header (line 99)
+   - Modified header layout to use `relative text-center` to keep title centered (line 95)
+   - Added `<ScoreDisplay />` component in an absolutely positioned container on the right (lines 99-101)
 
 2. **kessler-game/src/components/StatsPanel/StatsPanel.tsx**
    - Removed `ScoreDisplay` import (previously line 3)
    - Removed `<ScoreDisplay />` component from the panel (previously line 94)
+
+3. **kessler-game/src/components/Score/ScoreDisplay.tsx**
+   - Changed layout from vertical stack to horizontal flex layout (line 17)
+   - Made "Total Score:" label and value use consistent font sizes (removed `text-sm` and `text-2xl`)
+   - Added extra spacing after "Total Score:" label
+   - Moved "View Breakdown" button inline to the right of the score value (line 22-28)
+   - Removed top margin and centered button layout
 
 ## How the Solution Was Tested
 
@@ -28,10 +35,12 @@ Successfully moved the Total Score frame from the Orbital Status panel to the ti
 
 ### Recommended Manual Testing
 Users should verify:
-- Total Score appears in the header next to "Space Debris Removal" title
-- Total Score is flush right aligned
-- Score is vertically centered with the title
-- Score breakdown modal still opens on click
+- "Space Debris Removal" title remains centered in the header
+- Total Score appears flush right in the header
+- "Total Score:" label, value, and "View Breakdown" link are displayed horizontally
+- Label and value use consistent font sizes
+- Proper spacing between label and value
+- Score breakdown modal opens on click (both container and button)
 - StatsPanel no longer displays the Total Score
 - Score updates correctly during gameplay
 
