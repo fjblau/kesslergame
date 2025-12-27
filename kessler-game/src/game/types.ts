@@ -107,6 +107,7 @@ export interface GameState {
   cascadeTriggered: boolean;
   lastCascadeTurn?: number;
   totalCascades: number;
+  satellitesRecovered: number;
 }
 
 export interface UIState {
@@ -161,4 +162,20 @@ export interface GameEvent {
 
 export interface EventsState {
   events: GameEvent[];
+}
+
+export interface ScoreState {
+  totalScore: number;
+  satelliteLaunchScore: number;
+  debrisRemovalScore: number;
+  satelliteRecoveryScore: number;
+  budgetManagementScore: number;
+  survivalScore: number;
+  satellitesRecovered: number;
+  scoreHistory: ScoreHistoryEntry[];
+}
+
+export interface ScoreHistoryEntry {
+  turn: number;
+  totalScore: number;
 }

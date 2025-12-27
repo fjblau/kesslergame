@@ -132,6 +132,7 @@ const initialState: GameState = {
   cascadeTriggered: false,
   lastCascadeTurn: undefined,
   totalCascades: 0,
+  satellitesRecovered: 0,
 };
 
 export const gameSlice = createSlice({
@@ -158,6 +159,7 @@ export const gameSlice = createSlice({
         cascadeTriggered: false,
         lastCascadeTurn: undefined,
         totalCascades: 0,
+        satellitesRecovered: 0,
       };
     },
 
@@ -186,6 +188,7 @@ export const gameSlice = createSlice({
       state.cascadeTriggered = false;
       state.lastCascadeTurn = undefined;
       state.totalCascades = 0;
+      state.satellitesRecovered = 0;
     },
 
     launchSatellite: {
@@ -290,6 +293,10 @@ export const gameSlice = createSlice({
           drv.targetDebrisId = result.newTargetId;
           drv.capturedDebrisId = result.capturedObjectId;
           drv.captureOrbitsRemaining = result.captureOrbitsRemaining;
+          
+          if (result.removedSatelliteIds.length > 0) {
+            state.satellitesRecovered += result.removedSatelliteIds.length;
+          }
           
           if (totalRemoved > 0) {
             const removedDebris = state.debris.filter(d => result.removedDebrisIds.includes(d.id));

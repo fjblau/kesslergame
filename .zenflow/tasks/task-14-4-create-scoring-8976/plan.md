@@ -1,0 +1,186 @@
+# Spec and build
+
+## Configuration
+- **Artifacts Path**: {@artifacts_path} → `.zenflow/tasks/{task_id}`
+
+---
+
+## Agent Instructions
+
+Ask the user questions when anything is unclear or needs their input. This includes:
+- Ambiguous or incomplete requirements
+- Technical decisions that affect architecture or user experience
+- Trade-offs that require business context
+
+Do not make assumptions on important decisions — get clarification first.
+
+---
+
+## Workflow Steps
+
+### [x] Step: Technical Specification
+<!-- chat-id: 1c917a65-1780-4295-8248-c052376917bc -->
+
+Assess the task's difficulty, as underestimating it leads to poor outcomes.
+- easy: Straightforward implementation, trivial bug fix or feature
+- medium: Moderate complexity, some edge cases or caveats to consider
+- hard: Complex logic, many caveats, architectural considerations, or high-risk changes
+
+Create a technical specification for the task that is appropriate for the complexity level:
+- Review the existing codebase architecture and identify reusable components.
+- Define the implementation approach based on established patterns in the project.
+- Identify all source code files that will be created or modified.
+- Define any necessary data model, API, or interface changes.
+- Describe verification steps using the project's test and lint commands.
+
+Save the output to `{@artifacts_path}/spec.md` with:
+- Technical context (language, dependencies)
+- Implementation approach
+- Source code structure changes
+- Data model / API / interface changes
+- Verification approach
+
+If the task is complex enough, create a detailed implementation plan based on `{@artifacts_path}/spec.md`:
+- Break down the work into concrete tasks (incrementable, testable milestones)
+- Each task should reference relevant contracts and include verification steps
+- Replace the Implementation step below with the planned tasks
+
+Rule of thumb for step size: each step should represent a coherent unit of work (e.g., implement a component, add an API endpoint, write tests for a module). Avoid steps that are too granular (single function).
+
+Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warrant this breakdown, keep the Implementation step below as is.
+
+---
+
+### [x] Step 1: Core Scoring Logic
+<!-- chat-id: 6996e84e-5d27-475d-8a01-c566eba28d34 -->
+
+Create the scoring calculation functions and type definitions.
+
+- Add ScoreState interface to `src/game/types.ts`
+- Create `src/game/scoring.ts` with all scoring calculation functions:
+  - `calculateSatelliteLaunchScore()`
+  - `calculateDebrisRemovalScore()`
+  - `calculateSatelliteRecoveryScore()`
+  - `calculateBudgetManagementScore()`
+  - `calculateSurvivalScore()`
+  - `calculateTotalScore()`
+- Add SCORE_CONFIG constants
+
+**Verification**: TypeScript compilation succeeds, lint passes
+
+---
+
+### [x] Step 2: Redux Score Slice
+<!-- chat-id: 086ae5cc-1670-4dee-acc7-18774b528203 -->
+
+Create and integrate the score state management.
+
+- Create `src/store/slices/scoreSlice.ts` with reducers and selectors
+- Add score reducer to `src/store/index.ts`
+- Implement actions: `calculateScore`, `incrementSatellitesRecovered`, `resetScore`
+
+**Verification**: Store compiles without errors, Redux DevTools shows score state
+
+---
+
+### [x] Step 3: Track Satellite Recoveries
+<!-- chat-id: d09917b6-0e08-47de-a119-ac352bd55055 -->
+
+Modify DRV operations to track satellite recoveries separately.
+
+- Update `src/game/engine/debrisRemoval.ts` to expose satellite removal counts
+- Modify `processDRVOperations` in `src/store/slices/gameSlice.ts` to increment satellitesRecovered
+- Add satellitesRecovered field to ScoreState
+
+**Verification**: Satellite recoveries increment separately from debris removal
+
+---
+
+### [x] Step 4: Hook Score Updates into Game Loop
+<!-- chat-id: 6f6dc9c2-8975-4dc9-9014-9f4c6861c06e -->
+
+Integrate score calculation into game actions.
+
+- Add `calculateScore()` dispatches in gameSlice reducers:
+  - `advanceTurn`
+  - `launchSatellite`
+  - `launchDRV`
+  - `processDRVOperations`
+  - `processCollisions`
+  - `spendBudget` / `addBudget`
+- Add `resetScore()` call in `initializeGame`
+
+**Verification**: Score updates in Redux DevTools when actions are dispatched
+
+---
+
+### [x] Step 5: Score Display Component
+<!-- chat-id: 6b5d01ea-a40c-49aa-9075-18a21e07a5c6 -->
+
+Create UI component for compact score display.
+
+- Create `src/components/Score/ScoreDisplay.tsx` - compact score widget
+- Create `src/components/Score/ScoreBreakdown.tsx` - detailed breakdown modal
+- Style components with Tailwind CSS matching existing design
+
+**Verification**: Components render without errors in isolation
+
+---
+
+### [x] Step 6: Integrate Score into StatsPanel
+<!-- chat-id: 7fa85d3a-f2a4-4f44-9cc9-34152b5c7e64 -->
+
+Add score display to the game UI.
+
+- Modify `src/components/StatsPanel/StatsPanel.tsx` to include ScoreDisplay
+- Position score below risk level display
+- Ensure responsive layout
+
+**Verification**: Score displays correctly in game, updates in real-time
+
+---
+
+### [x] Step 7: Enhance GameOver Modal
+<!-- chat-id: 23bb3eaa-69c7-4f0a-8398-7e1baac334f9 -->
+
+Add final score display to game over screen.
+
+- Modify `src/components/GameOver/GameOverModal.tsx`
+- Add total score display with prominent styling
+- Add score breakdown by category
+- Optional: Add grade/rank based on score
+
+**Verification**: Final score shows correctly when game ends
+
+---
+
+### [x] Step 8: Testing and Polish
+<!-- chat-id: bea11746-7ec6-4684-aa6c-d3afb47526ff -->
+
+Test the complete scoring system and fix any issues.
+
+- Run `npm run lint` and fix any errors
+- Run `npm run build` and ensure TypeScript compilation succeeds
+- Manual testing checklist:
+  - Launch satellites → score increases
+  - Remove debris → debris removal score increases
+  - Recover satellites → satellite recovery score increases
+  - Budget changes → budget score updates
+  - Advance turns → survival score increases
+  - Game over → final score displays
+- Adjust scoring weights if needed for balance
+
+**Verification**: All linting/build checks pass, manual testing confirms all scoring features work
+
+---
+
+### [x] Step 9: Final Report
+<!-- chat-id: b93d8f82-0666-496f-9f2b-985999f3b7ef -->
+
+Write completion report documenting the implementation.
+
+- Create `{@artifacts_path}/report.md` describing:
+  - What was implemented
+  - How the solution was tested
+  - Any challenges encountered
+  - Scoring weights and formula used
