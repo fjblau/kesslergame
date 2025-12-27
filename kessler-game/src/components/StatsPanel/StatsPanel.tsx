@@ -21,14 +21,12 @@ function calculateRiskLevel(totalDebris: number): RiskInfo {
 
 export function StatsPanel() {
   const debris = useAppSelector(state => state.game.debris);
-  const drvs = useAppSelector(state => state.game.debrisRemovalVehicles);
   const step = useAppSelector(state => state.game.step);
   const maxSteps = useAppSelector(state => state.game.maxSteps);
 
   const totalDebris = debris.length;
   const cooperativeDebris = debris.filter(d => d.type === 'cooperative').length;
   const uncooperativeDebris = debris.filter(d => d.type === 'uncooperative').length;
-  const totalDebrisRemoved = drvs.reduce((sum, drv) => sum + drv.debrisRemoved, 0);
 
   const risk = calculateRiskLevel(totalDebris);
 
@@ -44,11 +42,6 @@ export function StatsPanel() {
           uncooperative={uncooperativeDebris}
           total={totalDebris}
         />
-
-        <div className="flex justify-between py-2 border-b border-slate-700/50">
-          <span className="text-gray-400">Debris Removed:</span>
-          <span className="text-green-500 font-bold">{totalDebrisRemoved}</span>
-        </div>
 
         <div className="flex justify-between py-2 border-b border-slate-700/50">
           <span className="text-gray-400">Risk Level:</span>

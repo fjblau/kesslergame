@@ -10,6 +10,7 @@ import { CascadeWarning } from './CascadeWarning';
 import { DaysCounter } from '../TimeControl/DaysCounter';
 import { SatellitesCounter } from '../TimeControl/SatellitesCounter';
 import { DRVsCounter } from '../TimeControl/DRVsCounter';
+import { DebrisRemovedCounter } from '../TimeControl/DebrisRemovedCounter';
 import { mapToPixels } from './utils';
 import { clearOldCollisions, clearCascadeFlag } from '../../store/slices/gameSlice';
 import { playCascadeWarning } from '../../utils/audio';
@@ -143,6 +144,11 @@ export function OrbitVisualization() {
 
   return (
     <div className="relative w-[1000px] h-[1000px] flex items-center justify-center bg-slate-900 border-2 border-slate-600 rounded-xl">
+      {/* Debris Removed Counter */}
+      <div className="absolute top-4 left-4 z-10">
+        <DebrisRemovedCounter />
+      </div>
+
       {/* Days Counter */}
       <div className="absolute top-4 right-4 z-10">
         <DaysCounter />
