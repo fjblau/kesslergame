@@ -18,7 +18,8 @@ Do not make assumptions on important decisions — get clarification first.
 
 ## Workflow Steps
 
-### [ ] Step: Technical Specification
+### [x] Step: Technical Specification
+<!-- chat-id: 1c917a65-1780-4295-8248-c052376917bc -->
 
 Assess the task's difficulty, as underestimating it leads to poor outcomes.
 - easy: Straightforward implementation, trivial bug fix or feature
@@ -50,15 +51,127 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Step: Implementation
+### [ ] Step 1: Core Scoring Logic
 
-Implement the task according to the technical specification and general engineering best practices.
+Create the scoring calculation functions and type definitions.
 
-1. Break the task into steps where possible.
-2. Implement the required changes in the codebase.
-3. Add and run relevant tests and linters.
-4. Perform basic manual verification if applicable.
-5. After completion, write a report to `{@artifacts_path}/report.md` describing:
-   - What was implemented
-   - How the solution was tested
-   - The biggest issues or challenges encountered
+- Add ScoreState interface to `src/game/types.ts`
+- Create `src/game/scoring.ts` with all scoring calculation functions:
+  - `calculateSatelliteLaunchScore()`
+  - `calculateDebrisRemovalScore()`
+  - `calculateSatelliteRecoveryScore()`
+  - `calculateBudgetManagementScore()`
+  - `calculateSurvivalScore()`
+  - `calculateTotalScore()`
+- Add SCORE_CONFIG constants
+
+**Verification**: TypeScript compilation succeeds, lint passes
+
+---
+
+### [ ] Step 2: Redux Score Slice
+
+Create and integrate the score state management.
+
+- Create `src/store/slices/scoreSlice.ts` with reducers and selectors
+- Add score reducer to `src/store/index.ts`
+- Implement actions: `calculateScore`, `incrementSatellitesRecovered`, `resetScore`
+
+**Verification**: Store compiles without errors, Redux DevTools shows score state
+
+---
+
+### [ ] Step 3: Track Satellite Recoveries
+
+Modify DRV operations to track satellite recoveries separately.
+
+- Update `src/game/engine/debrisRemoval.ts` to expose satellite removal counts
+- Modify `processDRVOperations` in `src/store/slices/gameSlice.ts` to increment satellitesRecovered
+- Add satellitesRecovered field to ScoreState
+
+**Verification**: Satellite recoveries increment separately from debris removal
+
+---
+
+### [ ] Step 4: Hook Score Updates into Game Loop
+
+Integrate score calculation into game actions.
+
+- Add `calculateScore()` dispatches in gameSlice reducers:
+  - `advanceTurn`
+  - `launchSatellite`
+  - `launchDRV`
+  - `processDRVOperations`
+  - `processCollisions`
+  - `spendBudget` / `addBudget`
+- Add `resetScore()` call in `initializeGame`
+
+**Verification**: Score updates in Redux DevTools when actions are dispatched
+
+---
+
+### [ ] Step 5: Score Display Component
+
+Create UI component for compact score display.
+
+- Create `src/components/Score/ScoreDisplay.tsx` - compact score widget
+- Create `src/components/Score/ScoreBreakdown.tsx` - detailed breakdown modal
+- Style components with Tailwind CSS matching existing design
+
+**Verification**: Components render without errors in isolation
+
+---
+
+### [ ] Step 6: Integrate Score into StatsPanel
+
+Add score display to the game UI.
+
+- Modify `src/components/StatsPanel/StatsPanel.tsx` to include ScoreDisplay
+- Position score below risk level display
+- Ensure responsive layout
+
+**Verification**: Score displays correctly in game, updates in real-time
+
+---
+
+### [ ] Step 7: Enhance GameOver Modal
+
+Add final score display to game over screen.
+
+- Modify `src/components/GameOver/GameOverModal.tsx`
+- Add total score display with prominent styling
+- Add score breakdown by category
+- Optional: Add grade/rank based on score
+
+**Verification**: Final score shows correctly when game ends
+
+---
+
+### [ ] Step 8: Testing and Polish
+
+Test the complete scoring system and fix any issues.
+
+- Run `npm run lint` and fix any errors
+- Run `npm run build` and ensure TypeScript compilation succeeds
+- Manual testing checklist:
+  - Launch satellites → score increases
+  - Remove debris → debris removal score increases
+  - Recover satellites → satellite recovery score increases
+  - Budget changes → budget score updates
+  - Advance turns → survival score increases
+  - Game over → final score displays
+- Adjust scoring weights if needed for balance
+
+**Verification**: All linting/build checks pass, manual testing confirms all scoring features work
+
+---
+
+### [ ] Step 9: Final Report
+
+Write completion report documenting the implementation.
+
+- Create `{@artifacts_path}/report.md` describing:
+  - What was implemented
+  - How the solution was tested
+  - Any challenges encountered
+  - Scoring weights and formula used
