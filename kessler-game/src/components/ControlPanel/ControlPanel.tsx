@@ -164,7 +164,7 @@ export function ControlPanel() {
         <button
           onClick={handleLaunch}
           disabled={!canAfford}
-          className={`w-full py-3 px-6 rounded-xl font-bold uppercase tracking-wide transition-all ${
+          className={`w-full py-3 px-6 rounded-xl font-bold uppercase tracking-wide transition-all mt-[30px] ${
             canAfford
               ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white shadow-lg hover:shadow-xl'
               : 'bg-slate-700 text-slate-500 cursor-not-allowed'
