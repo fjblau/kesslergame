@@ -25,9 +25,9 @@ export interface CollisionPair {
 }
 
 const ORBIT_RADII = {
-  LEO: { inner: 60, outer: 205 },
-  MEO: { inner: 205, outer: 292 },
-  GEO: { inner: 292, outer: 350 },
+  LEO: { inner: 62.5, outer: 256 },
+  MEO: { inner: 256, outer: 365 },
+  GEO: { inner: 365, outer: 437.5 },
 };
 
 interface PolarCoordinates {
