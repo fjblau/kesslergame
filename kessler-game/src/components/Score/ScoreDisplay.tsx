@@ -15,19 +15,10 @@ export function ScoreDisplay() {
         onClick={() => setShowBreakdown(true)}
       >
         <div className="flex items-center gap-4">
-          <span className="text-gray-400">Total Score:  </span>
-          <span className="font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+          <span className="text-4xl text-gray-400">Total Score:  </span>
+          <span className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
             {totalScore.toLocaleString()}
           </span>
-          <button
-            className="text-xs text-blue-400 hover:text-blue-300 underline"
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowBreakdown(true);
-            }}
-          >
-            View Breakdown
-          </button>
         </div>
       </div>
 
