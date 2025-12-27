@@ -10,10 +10,10 @@ export function DebrisBreakdown({ cooperative, uncooperative, total }: DebrisBre
 
   return (
     <div className="mt-4 p-4 bg-slate-900/50 rounded-lg border border-slate-600">
-      <div className="text-base font-semibold text-yellow-400 mb-3">
+      <div className="text-lg font-semibold text-yellow-400 mb-3">
         Total Debris: {total}
       </div>
-      <div className="ml-4 space-y-2 text-sm">
+      <div className="ml-4 space-y-2 text-base">
         <div className="flex justify-between items-center">
           <span className="text-gray-300">
             <span className="text-gray-600">├─ </span>Cooperative:

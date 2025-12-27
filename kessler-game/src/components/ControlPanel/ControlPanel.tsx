@@ -80,11 +80,11 @@ export function ControlPanel() {
     <div className="bg-slate-800 border-2 border-slate-600 rounded-xl p-6 w-full h-[1100px] flex flex-col">
       <div className="mb-6">
         <h2 className="text-xl font-bold text-blue-300 mb-4 pb-3 border-b-2 border-slate-700 uppercase tracking-wide">Launch Controls</h2>
-        <div className="text-sm text-gray-400 mt-3">Turn: {step}</div>
+        <div className="text-base text-gray-400 mt-3">Turn: {step}</div>
       </div>
 
       <div className="space-y-2 mb-6">
-        <label className="text-sm font-medium text-gray-300">Launch Type</label>
+        <label className="text-base font-medium text-gray-300">Launch Type</label>
         <div className="flex gap-3">
           {(['satellite', 'drv'] as const).map(type => (
             <button
@@ -103,7 +103,7 @@ export function ControlPanel() {
       </div>
 
       <div className="space-y-2 mb-6">
-        <label className="text-sm font-medium text-gray-300">Orbit Layer</label>
+        <label className="text-base font-medium text-gray-300">Orbit Layer</label>
         <div className="flex gap-3">
           {(['LEO', 'MEO', 'GEO'] as OrbitLayer[]).map(orbit => (
             <button
@@ -130,7 +130,7 @@ export function ControlPanel() {
         ) : (
           <>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-300">DRV Type</label>
+              <label className="text-base font-medium text-gray-300">DRV Type</label>
               <div className="flex gap-3">
                 {(['cooperative', 'uncooperative'] as DRVType[]).map(type => (
                   <button
@@ -153,11 +153,11 @@ export function ControlPanel() {
       </div>
 
       <div className="pt-4 border-t border-slate-700 space-y-3">
-        <div className="flex justify-between text-sm">
+        <div className="flex justify-between text-base">
           <span className="text-gray-400">Total Cost:</span>
           <span className="font-bold text-yellow-400">${(totalCost / 1e6).toFixed(1)}M</span>
         </div>
-        <div className="flex justify-between text-sm">
+        <div className="flex justify-between text-base">
           <span className="text-gray-400">Budget:</span>
           <span className={`font-bold ${budget >= totalCost ? 'text-green-400' : 'text-red-400'}`}>
             ${(budget / 1e6).toFixed(1)}M

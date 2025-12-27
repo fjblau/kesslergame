@@ -45,7 +45,7 @@ export function StatsPanel() {
         Orbital Status
       </h2>
       
-      <div className="space-y-2 text-sm">
+      <div className="space-y-2 text-base">
         <DebrisBreakdown 
           cooperative={cooperativeDebris}
           uncooperative={uncooperativeDebris}
@@ -53,7 +53,7 @@ export function StatsPanel() {
         />
 
         <div className="border border-slate-700 rounded-lg overflow-hidden">
-          <table className="w-full text-sm">
+          <table className="w-full text-base">
             <thead>
               <tr className="bg-slate-900">
                 <th className="py-2 px-3 text-left text-white font-semibold border-b border-slate-700">Orbit Layer</th>
@@ -63,8 +63,8 @@ export function StatsPanel() {
               <tr className="bg-slate-900">
                 <th className="border-b border-slate-700"></th>
                 <th className="border-b border-slate-700"></th>
-                <th className="py-1 px-2 text-center text-white text-xs font-medium border-b border-slate-700 border-l border-slate-700">Cooperative</th>
-                <th className="py-1 px-2 text-center text-white text-xs font-medium border-b border-slate-700">Uncooperative</th>
+                <th className="py-1 px-2 text-center text-white text-sm font-medium border-b border-slate-700 border-l border-slate-700">Cooperative</th>
+                <th className="py-1 px-2 text-center text-white text-sm font-medium border-b border-slate-700">Uncooperative</th>
               </tr>
             </thead>
             <tbody>
