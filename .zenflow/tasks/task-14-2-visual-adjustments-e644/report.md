@@ -66,7 +66,29 @@ Added orbital speed configuration to the Configuration page, allowing users to a
 - Default speeds are 20% slower for improved gameplay
 - All orbital entities (satellites, debris, DRVs) respect the configured speeds
 
-### 3. Fixed Event Log for Collisions and Debris Creation
+### 3. Updated Solar Storm Visual Effect
+
+Updated the solar storm visual to originate from the upper right corner of the OrbitVisualization frame, matching the sun's position in the Earth icon.
+
+**Changes Made:**
+
+1. **SolarStormEffect.tsx** - Redesigned visual effect:
+   - Changed origin from center (400, 400) to upper right (850, 150)
+   - Updated container size from 800×800 to 1000×1000 to match OrbitVisualization
+   - Increased beam count from 5 to 12 for more dramatic effect
+   - Added expanding radial gradient flash centered at sun position
+   - Added directional linear gradient overlay from upper right
+   - Beams now radiate from upper right corner with staggered animation
+   - Added radial gradient to beam strokes for fade effect
+   - Adjusted angles to orient beams from upper right (-45° offset)
+
+**Visual Improvements:**
+- Flash now originates from sun direction (upper right corner)
+- More immersive and directionally accurate effect
+- Expanding wave effect emphasizes the source direction
+- Staggered beam animation creates dynamic flare appearance
+
+### 4. Fixed Event Log for Collisions and Debris Creation
 
 Fixed the issue where collisions and debris creation events were not being logged to the Event Log. The problem was caused by a stale closure in the game loop that was reading outdated game state.
 
