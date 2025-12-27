@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { GameSetupScreen } from './components/Setup/GameSetupScreen';
 import { ControlPanel } from './components/ControlPanel/ControlPanel';
 import { GameSpeedControl } from './components/TimeControl/GameSpeedControl';
-import { DaysCounter } from './components/TimeControl/DaysCounter';
 import { StatsPanel } from './components/StatsPanel/StatsPanel';
 import { OrbitVisualization } from './components/GameBoard/OrbitVisualization';
 import { DebrisChart } from './components/Charts/DebrisChart';
@@ -85,19 +84,14 @@ function App() {
 
   return (
     <div className="min-h-screen p-8">
-      <div className="max-w-[2230px] mx-auto space-y-6">
+      <div className="max-w-[2350px] mx-auto space-y-6">
         <header className="text-center mb-8">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
             Space Debris Removal
           </h1>
         </header>
 
-        <div className="flex gap-3 items-start">
-          <div className="flex-1">
-            <Tabs tabs={tabs} defaultTab="launch" />
-          </div>
-          <DaysCounter />
-        </div>
+        <Tabs tabs={tabs} defaultTab="launch" />
       </div>
 
       {gameOver && <GameOverModal />}

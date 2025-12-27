@@ -7,6 +7,7 @@ import { LaunchAnimation } from './LaunchAnimation';
 import { CollisionEffect } from './CollisionEffect';
 import { SolarStormEffect } from './SolarStormEffect';
 import { CascadeWarning } from './CascadeWarning';
+import { DaysCounter } from '../TimeControl/DaysCounter';
 import { mapToPixels } from './utils';
 import { clearOldCollisions, clearCascadeFlag } from '../../store/slices/gameSlice';
 import { playCascadeWarning } from '../../utils/audio';
@@ -135,6 +136,11 @@ export function OrbitVisualization() {
 
   return (
     <div className="relative w-[1000px] h-[1000px] flex items-center justify-center bg-slate-900 border-2 border-slate-600 rounded-xl">
+      {/* Days Counter */}
+      <div className="absolute top-4 right-4 z-10">
+        <DaysCounter />
+      </div>
+
       {/* GEO orbit */}
       <div style={{ position: 'absolute', width: '875px', height: '875px', border: '2px solid rgba(96, 165, 250, 0.5)', borderRadius: '50%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
         <div style={{ position: 'absolute', top: '8px', left: '50%', transform: 'translate(-50%, 0)', fontSize: '12px', fontWeight: 600, color: '#60a5fa', backgroundColor: 'rgba(15, 23, 42, 0.8)', padding: '4px 8px', borderRadius: '4px' }}>
