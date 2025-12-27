@@ -12,6 +12,7 @@ import { EventLog } from './components/EventLog/EventLog';
 import { CollisionSettings } from './components/Configuration/CollisionSettings';
 import { OrbitalSpeedSettings } from './components/Configuration/OrbitalSpeedSettings';
 import { SolarStormSettings } from './components/Configuration/SolarStormSettings';
+import { DRVSettings } from './components/Configuration/DRVSettings';
 import { Tabs } from './components/ui/Tabs';
 import { useGameSpeed } from './hooks/useGameSpeed';
 import { useAppSelector } from './store/hooks';
@@ -72,6 +73,7 @@ function App() {
           <CollisionSettings />
           <OrbitalSpeedSettings />
           <SolarStormSettings />
+          <DRVSettings />
         </div>
       ),
     },

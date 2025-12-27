@@ -101,6 +101,9 @@ export interface GameState {
   orbitalSpeedMEO: number;
   orbitalSpeedGEO: number;
   solarStormProbability: number;
+  drvUncooperativeCapacityMin: number;
+  drvUncooperativeCapacityMax: number;
+  drvUncooperativeSuccessRate: number;
   cascadeTriggered: boolean;
   lastCascadeTurn?: number;
   totalCascades: number;
