@@ -9,9 +9,9 @@ interface LaunchAnimationProps {
 }
 
 const ORBIT_RADII = {
-  LEO: 132.5,
-  MEO: 248.5,
-  GEO: 321,
+  LEO: 256,
+  MEO: 365,
+  GEO: 437.5,
 };
 
 const LAYER_COLORS = {
