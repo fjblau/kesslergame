@@ -1,6 +1,5 @@
 import { useAppSelector } from '../../store/hooks';
 import { DebrisBreakdown } from './DebrisBreakdown';
-import { ScoreDisplay } from '../Score/ScoreDisplay';
 
 type RiskLevel = 'LOW' | 'MEDIUM' | 'CRITICAL';
 
@@ -90,8 +89,6 @@ export function StatsPanel() {
             <span>{risk.emoji}</span> {risk.level}
           </span>
         </div>
-
-        <ScoreDisplay />
 
         <div className="flex justify-between py-2">
           <span className="text-gray-400">Step:</span>
