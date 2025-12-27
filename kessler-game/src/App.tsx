@@ -32,8 +32,8 @@ function App() {
       id: 'launch',
       label: 'Launch',
       content: (
-        <div className="flex gap-6 justify-center items-start">
-          <div className="w-[600px]">
+        <div className="flex gap-6 justify-center items-stretch">
+          <div className="w-[600px] flex flex-col">
             <ControlPanel />
           </div>
           <div className="flex flex-col gap-6">
