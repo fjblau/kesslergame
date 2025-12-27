@@ -127,7 +127,8 @@ Create UI component for compact score display.
 
 ---
 
-### [ ] Step 6: Integrate Score into StatsPanel
+### [x] Step 6: Integrate Score into StatsPanel
+<!-- chat-id: 7fa85d3a-f2a4-4f44-9cc9-34152b5c7e64 -->
 
 Add score display to the game UI.
 
