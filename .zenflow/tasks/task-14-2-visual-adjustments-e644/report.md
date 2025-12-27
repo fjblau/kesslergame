@@ -23,7 +23,23 @@ Fixed the orbit centering issue where satellite and DRV orbits were not centered
    - Changed `left: 400` to `left: 500`
    - Changed `top: 400` to `top: 500`
 
-### 2. Fixed Event Log for Collisions and Debris Creation
+### 2. Reduced Orbital Speed by 20%
+
+Slowed down orbital speeds by 20% to give users more time to react to events and make strategic decisions.
+
+**Changes Made:**
+
+1. **constants.ts:139-143** - Reduced ORBITAL_SPEEDS values by 20%:
+   - LEO: 8 → 6.4
+   - MEO: 5 → 4
+   - GEO: 3 → 2.4
+
+**Impact:**
+- Satellites, debris, and DRVs now orbit 20% slower
+- Users have more time to observe events and make decisions
+- Improved game playability and strategic planning
+
+### 3. Fixed Event Log for Collisions and Debris Creation
 
 Fixed the issue where collisions and debris creation events were not being logged to the Event Log. The problem was caused by a stale closure in the game loop that was reading outdated game state.
 
