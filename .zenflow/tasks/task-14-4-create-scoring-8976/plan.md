@@ -96,7 +96,8 @@ Modify DRV operations to track satellite recoveries separately.
 
 ---
 
-### [ ] Step 4: Hook Score Updates into Game Loop
+### [x] Step 4: Hook Score Updates into Game Loop
+<!-- chat-id: 6f6dc9c2-8975-4dc9-9014-9f4c6861c06e -->
 
 Integrate score calculation into game actions.
 

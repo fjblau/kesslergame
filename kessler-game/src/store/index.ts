@@ -4,6 +4,7 @@ import uiReducer from './slices/uiSlice';
 import missionsReducer from './slices/missionsSlice';
 import eventsReducer from './slices/eventSlice';
 import scoreReducer from './slices/scoreSlice';
+import { scoreMiddleware } from './middleware/scoreMiddleware';
 
 export const store = configureStore({
   reducer: {
@@ -13,6 +14,7 @@ export const store = configureStore({
     events: eventsReducer,
     score: scoreReducer,
   },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(scoreMiddleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
