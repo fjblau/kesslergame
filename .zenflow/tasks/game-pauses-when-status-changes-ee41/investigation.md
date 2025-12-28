@@ -42,26 +42,38 @@ state.riskLevel = calculateRiskLevel(state.debris.length);
 
 ## Proposed Solution
 
-**Option 1: Only pause on CRITICAL (Recommended)**
-Modify the condition to only pause when the risk level becomes CRITICAL:
+**Disable auto-pause on risk change by default**
+
+Change the default value of `autoPauseOnRiskChange` from `true` to `false` in `uiSlice.ts:8`:
+
 ```typescript
-useEffect(() => {
-  if (autoPauseOnRiskChange && riskLevel === 'CRITICAL' && previousRiskLevel.current !== 'CRITICAL') {
-    dispatch(setGameSpeed('paused'));
-  }
-  previousRiskLevel.current = riskLevel;
-}, [riskLevel, autoPauseOnRiskChange, dispatch]);
+const initialState: UIState = {
+  gameSpeed: 'normal',
+  autoPauseOnCollision: true,
+  autoPauseOnRiskChange: false,  // Changed from true
+  autoPauseOnBudgetLow: true,
+  autoPauseOnMission: true,
+};
 ```
 
-**Rationale**: Pausing when reaching CRITICAL status makes sense as an important alert, but pausing on every status change (LOW→MEDIUM) is disruptive to gameplay.
-
-**Option 2: Remove auto-pause on risk change entirely**
-Change the default to `false` in `uiSlice.ts` or remove the feature completely.
-
-**Recommendation**: Implement Option 1 - it provides a useful warning when things get critical while not interrupting normal gameplay transitions.
+**Rationale**: The game should not pause when status changes at all. Users can still enable this feature manually via the UI toggle if they want it.
 
 ## Edge Cases & Considerations
-- When debris count fluctuates around threshold values (149-151 for LOW/MEDIUM), should avoid rapid pause/unpause cycles
-- Solution addresses this by only checking the transition TO CRITICAL, not from it
-- Users can still disable the feature via the UI toggle if desired
+- Users can still enable auto-pause on risk change via the UI toggle if desired
 - Maintains backward compatibility with the existing `autoPauseOnRiskChange` setting
+- The logic in `useGameSpeed.ts` remains intact, only the default value changed
+
+## Implementation Notes
+
+### Changes Made
+1. Modified `kessler-game/src/store/slices/uiSlice.ts:8`
+   - Changed `autoPauseOnRiskChange: true` to `autoPauseOnRiskChange: false`
+
+### Testing
+- Dependencies not installed in current environment
+- Change is a simple boolean configuration value (true → false)
+- No type or logic changes required
+- Low risk change: only affects default UI state
+
+### Result
+The game will no longer pause automatically when the risk status changes between LOW, MEDIUM, and CRITICAL.
