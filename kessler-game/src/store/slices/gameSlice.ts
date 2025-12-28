@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { GameState, OrbitLayer, SatelliteType, InsuranceTier, DRVType, DRVTargetPriority, BudgetDifficulty, DebrisRemovalVehicle, ExpiredDRVInfo, DebrisRemovalInfo } from '../../game/types';
-import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG, MAX_DEBRIS_LIMIT, ORBITAL_SPEEDS, CASCADE_THRESHOLD } from '../../game/constants';
+import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG, MAX_DEBRIS_LIMIT, ORBITAL_SPEEDS, CASCADE_THRESHOLD, RISK_SPEED_MULTIPLIERS } from '../../game/constants';
 import { detectCollisions, generateDebrisFromCollision, calculateTotalPayout } from '../../game/engine/collision';
 import { processDRVRemoval, processCooperativeDRVOperations, moveCooperativeDRV } from '../../game/engine/debrisRemoval';
 import { calculateRiskLevel } from '../../game/engine/risk';
@@ -87,10 +87,30 @@ function loadDRVSettings() {
   }
 }
 
+function loadRiskSpeedSettings() {
+  try {
+    const low = localStorage.getItem('riskSpeedMultiplierLOW');
+    const medium = localStorage.getItem('riskSpeedMultiplierMEDIUM');
+    const critical = localStorage.getItem('riskSpeedMultiplierCRITICAL');
+    return {
+      LOW: low ? parseFloat(low) : RISK_SPEED_MULTIPLIERS.LOW,
+      MEDIUM: medium ? parseFloat(medium) : RISK_SPEED_MULTIPLIERS.MEDIUM,
+      CRITICAL: critical ? parseFloat(critical) : RISK_SPEED_MULTIPLIERS.CRITICAL,
+    };
+  } catch {
+    return {
+      LOW: RISK_SPEED_MULTIPLIERS.LOW,
+      MEDIUM: RISK_SPEED_MULTIPLIERS.MEDIUM,
+      CRITICAL: RISK_SPEED_MULTIPLIERS.CRITICAL,
+    };
+  }
+}
+
 const savedCollisionSettings = loadCollisionSettings();
 const savedOrbitalSpeedSettings = loadOrbitalSpeedSettings();
 const savedSolarStormSettings = loadSolarStormSettings();
 const savedDRVSettings = loadDRVSettings();
+const savedRiskSpeedSettings = loadRiskSpeedSettings();
 
 const randomPositionInLayer = (layer: OrbitLayer) => {
   const [yMin, yMax] = LAYER_BOUNDS[layer];
@@ -133,6 +153,11 @@ const initialState: GameState = {
   lastCascadeTurn: undefined,
   totalCascades: 0,
   satellitesRecovered: 0,
+  riskSpeedMultipliers: {
+    LOW: savedRiskSpeedSettings.LOW,
+    MEDIUM: savedRiskSpeedSettings.MEDIUM,
+    CRITICAL: savedRiskSpeedSettings.CRITICAL,
+  },
 };
 
 export const gameSlice = createSlice({
@@ -658,6 +683,33 @@ export const gameSlice = createSlice({
     clearCascadeFlag: (state) => {
       state.cascadeTriggered = false;
     },
+
+    setRiskSpeedMultiplierLOW: (state, action: PayloadAction<number>) => {
+      state.riskSpeedMultipliers.LOW = action.payload;
+      try {
+        localStorage.setItem('riskSpeedMultiplierLOW', action.payload.toString());
+      } catch {
+        // Ignore localStorage errors
+      }
+    },
+
+    setRiskSpeedMultiplierMEDIUM: (state, action: PayloadAction<number>) => {
+      state.riskSpeedMultipliers.MEDIUM = action.payload;
+      try {
+        localStorage.setItem('riskSpeedMultiplierMEDIUM', action.payload.toString());
+      } catch {
+        // Ignore localStorage errors
+      }
+    },
+
+    setRiskSpeedMultiplierCRITICAL: (state, action: PayloadAction<number>) => {
+      state.riskSpeedMultipliers.CRITICAL = action.payload;
+      try {
+        localStorage.setItem('riskSpeedMultiplierCRITICAL', action.payload.toString());
+      } catch {
+        // Ignore localStorage errors
+      }
+    },
   },
 });
 
@@ -687,6 +739,9 @@ export const {
   setDRVUncooperativeCapacityMax,
   setDRVUncooperativeSuccessRate,
   clearCascadeFlag,
+  setRiskSpeedMultiplierLOW,
+  setRiskSpeedMultiplierMEDIUM,
+  setRiskSpeedMultiplierCRITICAL,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

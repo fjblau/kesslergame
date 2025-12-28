@@ -64,7 +64,9 @@ export function useGameSpeed() {
       return;
     }
 
-    const intervalDuration = speed === 'fast' ? 2000 : 4000;
+    const baseInterval = speed === 'fast' ? 2000 : 4000;
+    const multiplier = gameState.riskSpeedMultipliers[riskLevel];
+    const intervalDuration = Math.round(baseInterval * multiplier);
 
     const interval = setInterval(() => {
       dispatch(advanceTurn());
@@ -138,5 +140,5 @@ export function useGameSpeed() {
     }, intervalDuration);
 
     return () => clearInterval(interval);
-  }, [speed, budget, autoPauseBudgetLow, dispatch]);
+  }, [speed, budget, autoPauseBudgetLow, gameState.riskSpeedMultipliers, riskLevel, dispatch]);
 }

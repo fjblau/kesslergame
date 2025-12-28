@@ -30,6 +30,14 @@ const getBorderColorClass = (riskLevel: RiskLevel): string => {
   }
 };
 
+const getBackgroundTintColor = (riskLevel: RiskLevel): string => {
+  switch (riskLevel) {
+    case 'LOW': return 'rgba(34, 197, 94, 0.08)';
+    case 'MEDIUM': return 'rgba(249, 115, 22, 0.08)';
+    case 'CRITICAL': return 'rgba(239, 68, 68, 0.08)';
+  }
+};
+
 export function OrbitVisualization() {
   const dispatch = useAppDispatch();
   const satellites = useAppSelector(state => state.game.satellites);
@@ -153,7 +161,15 @@ export function OrbitVisualization() {
   }, [dispatch]);
 
   return (
-    <div className={`relative w-[1000px] h-[1000px] flex items-center justify-center bg-slate-900 border-[3px] ${getBorderColorClass(riskLevel)} rounded-xl`}>
+    <div className={`relative w-[1000px] h-[1000px] flex items-center justify-center bg-slate-900 border-[3px] ${getBorderColorClass(riskLevel)} rounded-xl overflow-hidden`}>
+      {/* Background tint ring */}
+      <div 
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `radial-gradient(circle closest-side at center, transparent 0%, transparent 87.5%, ${getBackgroundTintColor(riskLevel)} 87.5%, ${getBackgroundTintColor(riskLevel)} 100%)`
+        }}
+      />
+      
       {/* Debris Removed Counter */}
       <div className="absolute top-4 left-4 z-10">
         <DebrisRemovedCounter />

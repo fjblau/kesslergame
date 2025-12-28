@@ -13,6 +13,7 @@ import { CollisionSettings } from './components/Configuration/CollisionSettings'
 import { OrbitalSpeedSettings } from './components/Configuration/OrbitalSpeedSettings';
 import { SolarStormSettings } from './components/Configuration/SolarStormSettings';
 import { DRVSettings } from './components/Configuration/DRVSettings';
+import { RiskBasedSpeedSettings } from './components/Configuration/RiskBasedSpeedSettings';
 import { Tabs } from './components/ui/Tabs';
 import { useGameSpeed } from './hooks/useGameSpeed';
 import { useAppSelector } from './store/hooks';
@@ -74,6 +75,7 @@ function App() {
           <CollisionSettings />
           <OrbitalSpeedSettings />
           <SolarStormSettings />
+          <RiskBasedSpeedSettings />
           <DRVSettings />
         </div>
       ),
@@ -83,7 +85,7 @@ function App() {
       label: 'Coming Soon',
       content: (
         <div className="text-center text-gray-400 py-12">
-          Documentation coming soon...
+          Placeholder for Documentation
         </div>
       ),
     },

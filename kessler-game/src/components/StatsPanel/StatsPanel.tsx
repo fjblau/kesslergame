@@ -9,24 +9,14 @@ interface RiskInfo {
   emoji: string;
 }
 
-function calculateRiskLevel(totalDebris: number, satelliteCount: number): RiskInfo {
-  if (satelliteCount === 0) {
-    const level: RiskLevel = totalDebris === 0 ? 'LOW' : 'CRITICAL';
-    if (level === 'LOW') {
+function getRiskInfo(level: RiskLevel): RiskInfo {
+  switch (level) {
+    case 'LOW':
       return { level: 'LOW', color: 'text-green-400', emoji: '🟢' };
-    } else {
+    case 'MEDIUM':
+      return { level: 'MEDIUM', color: 'text-yellow-400', emoji: '🟡' };
+    case 'CRITICAL':
       return { level: 'CRITICAL', color: 'text-red-400', emoji: '🔴' };
-    }
-  }
-  
-  const ratio = totalDebris / satelliteCount;
-  
-  if (ratio < 2) {
-    return { level: 'LOW', color: 'text-green-400', emoji: '🟢' };
-  } else if (ratio < 5) {
-    return { level: 'MEDIUM', color: 'text-yellow-400', emoji: '🟡' };
-  } else {
-    return { level: 'CRITICAL', color: 'text-red-400', emoji: '🔴' };
   }
 }
 
@@ -36,12 +26,13 @@ export function StatsPanel() {
   const drvs = useAppSelector(state => state.game.debrisRemovalVehicles);
   const step = useAppSelector(state => state.game.step);
   const maxSteps = useAppSelector(state => state.game.maxSteps);
+  const riskLevel = useAppSelector(state => state.game.riskLevel);
 
   const totalDebris = debris.length;
   const cooperativeDebris = debris.filter(d => d.type === 'cooperative').length;
   const uncooperativeDebris = debris.filter(d => d.type === 'uncooperative').length;
 
-  const risk = calculateRiskLevel(totalDebris, satellites.length);
+  const risk = getRiskInfo(riskLevel);
 
   const getLayerStats = (layer: 'LEO' | 'MEO' | 'GEO') => {
     const satelliteCount = satellites.filter(s => s.layer === layer).length;
