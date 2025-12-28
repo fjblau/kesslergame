@@ -5,7 +5,7 @@ import type { UIState, GameSpeed } from '../../game/types';
 const initialState: UIState = {
   gameSpeed: 'normal',
   autoPauseOnCollision: true,
-  autoPauseOnRiskChange: true,
+  autoPauseOnRiskChange: false,
   autoPauseOnBudgetLow: true,
   autoPauseOnMission: true,
 };
