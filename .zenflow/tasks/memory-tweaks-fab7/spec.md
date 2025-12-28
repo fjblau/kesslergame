@@ -269,6 +269,55 @@ npm run build
 
 ---
 
+## Performance Optimization Opportunities (Optional)
+
+**Important**: This is a **client-side React app** - server hardware doesn't matter. Performance bottlenecks are in the browser.
+
+### Quick Wins (Could Double DRV Limit)
+
+1. **Remove DRVs from collision detection** (collision.ts:108)
+   ```typescript
+   // Current: DRVs participate in collision checks (unnecessary)
+   const allObjects: GameObject[] = [...activeSatellites, ...activeDebris, ...drvs];
+   
+   // Optimized: DRVs only check collisions with debris/satellites, not each other
+   const allObjects: GameObject[] = [...activeSatellites, ...activeDebris];
+   // Then separately check DRV collisions if needed
+   ```
+   **Impact**: Reduces collision pairs significantly, could allow 15-20 DRVs safely
+
+2. **Memoize sprite components**
+   ```typescript
+   export const SatelliteSprite = React.memo(({ satellite, x, y, ... }) => {
+     // Component code
+   });
+   ```
+   **Impact**: Prevents re-renders when props haven't changed
+
+3. **Cache DRV target selection**
+   - Store target ID on DRV, only recalculate when target destroyed
+   - Avoids filtering debris/satellites every turn
+   **Impact**: Reduces O(DRVs × Debris) to O(destroyed_targets)
+
+4. **Use Canvas instead of DOM elements**
+   - Replace individual React components with Canvas rendering
+   - Framer Motion animations cause heavy DOM updates
+   **Impact**: 10x+ rendering performance, could handle 500+ objects
+
+### Medium Effort Optimizations
+
+5. **Batch Redux selectors** - Single selector for all orbital speeds instead of per-sprite
+6. **requestAnimationFrame throttling** - Limit render updates to 30fps during high load
+7. **Virtual scrolling/culling** - Don't render objects outside viewport (if zoomed in)
+
+### Current Performance Bottlenecks
+
+1. ❌ **No React.memo** - All sprites re-render on every state change
+2. ❌ **Framer Motion overhead** - Complex animations on 200+ objects
+3. ❌ **DRVs in collision detection** - Adds ~15% more collision pairs
+4. ❌ **Per-sprite Redux selectors** - 200+ individual Redux subscriptions
+5. ❌ **Inline pixel calculations** - mapToPixels called 200+ times per render
+
 ## Implementation Notes
 
 - Keep changes minimal and non-breaking
@@ -276,6 +325,7 @@ npm run build
 - Clear UI feedback prevents player confusion
 - Consider adding to tutorial/help text
 - Limits can be adjusted later based on player feedback
+- **With optimizations above, could safely increase to 15-20 DRVs**
 
 ## Root Cause Analysis: DRV Performance Issue
 
