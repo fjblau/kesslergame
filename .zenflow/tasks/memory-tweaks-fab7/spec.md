@@ -54,10 +54,16 @@ Based on game mechanics and performance testing:
 **Debris Removal Vehicles (DRVs)**:
 - More expensive than satellites (LEO cooperative: $4M, uncooperative: $7M)
 - Expire after 100 turns, naturally limiting accumulation
-- **CRITICAL**: Game froze with 14 DRVs in LEO orbit (real user report)
-- Performance bottleneck: Each cooperative DRV filters all debris/satellites every turn (O(DRVs × Debris))
-- **Proposed hard limit**: 15 DRVs total (maximum across all layers)
-- **Proposed per-layer limit**: 5 DRVs (conservative, prevents concentration)
+- **CRITICAL PERFORMANCE ISSUES**:
+  - Game froze with 14 DRVs in LEO orbit
+  - Game froze with 8 DRVs total (6 uncooperative + 2 cooperative)
+- **Root causes**:
+  1. DRVs included in collision detection (line 108: `allObjects = [...satellites, ...debris, ...drvs]`)
+  2. Each cooperative DRV filters all debris/satellites per turn
+  3. Spatial hashing still O(n²) in worst case with high object density
+- **VERY CONSERVATIVE LIMITS REQUIRED**:
+  - **Proposed hard limit**: 10 DRVs total (maximum across all layers)
+  - **Proposed per-layer limit**: 4 DRVs (prevents freeze at 8 total)
 
 **Debris**:
 - Already has MAX_DEBRIS_LIMIT = 500 (game over)
@@ -74,8 +80,8 @@ Based on game mechanics and performance testing:
 **Phase 1: Add Constants** (constants.ts)
 ```typescript
 export const MAX_SATELLITES = 75;
-export const MAX_DRVS = 15;  // Game freezes at 14 DRVs in one orbit
-export const MAX_DRVS_PER_LAYER = 5;  // Conservative limit, prevents concentration
+export const MAX_DRVS = 10;  // Game freezes at 8 DRVs (6 uncoop + 2 coop)
+export const MAX_DRVS_PER_LAYER = 4;  // Very conservative, game froze at 8 total
 export const DEBRIS_PER_COLLISION_MIN = 1;
 export const DEBRIS_PER_COLLISION_MAX = 15;
 export const DEBRIS_WARNING_THRESHOLD = 400;
@@ -141,8 +147,8 @@ None required - all changes are modifications to existing files.
 ### Constants (game/constants.ts)
 ```typescript
 export const MAX_SATELLITES = 75;
-export const MAX_DRVS = 15;  // Based on real-world freeze at 14
-export const MAX_DRVS_PER_LAYER = 5;  // Conservative per-orbit limit
+export const MAX_DRVS = 10;  // Game froze at 8 DRVs (6 uncoop + 2 coop)
+export const MAX_DRVS_PER_LAYER = 4;  // Very conservative per-orbit limit
 export const DEBRIS_PER_COLLISION_MIN = 1;
 export const DEBRIS_PER_COLLISION_MAX = 15;
 export const DEBRIS_WARNING_THRESHOLD = 400;
@@ -179,12 +185,13 @@ export const selectIsDebrisWarning = (state: RootState) =>
 
 2. **DRV Limit Test**
    - Start game with easy difficulty
-   - Launch DRVs into LEO until reaching 5 in that layer
+   - Launch DRVs into LEO until reaching 4 in that layer
    - Verify launch button becomes disabled for LEO only
    - Verify can still launch to MEO and GEO
-   - Launch 5 to MEO and 5 to GEO (15 total)
-   - Verify all launch buttons disabled at 15 total
+   - Launch 3 to MEO and 3 to GEO (10 total)
+   - Verify all launch buttons disabled at 10 total
    - Verify UI feedback shows limit reached
+   - Verify game remains responsive with 10 DRVs
 
 3. **Debris Per Collision Limit**
    - Open Configuration panel
@@ -254,8 +261,8 @@ npm run build
 | Object Type | Current Limit | Proposed Limit | Rationale |
 |------------|---------------|----------------|-----------|
 | Satellites | None | 75 | Typical game: ~50 launches, buffer for edge cases |
-| DRVs (Total) | None | 15 | **Game froze at 14**, set limit below freeze point |
-| DRVs (Per Layer) | None | 5 | Conservative limit, prevents O(DRVs × Debris) bottleneck |
+| DRVs (Total) | None | 10 | **Game froze at 8 DRVs**, set limit 25% above freeze |
+| DRVs (Per Layer) | None | 4 | Very conservative, prevents concentration + collision issues |
 | Debris | 500 | 500 (keep) | Already causes game over, appropriate limit |
 | Debris/Collision | Unlimited | 1-15 | Prevents exponential growth, maintains gameplay |
 | Warning Threshold | None | 400 debris | Gives player warning before game over at 500 |
@@ -274,22 +281,36 @@ npm run build
 
 **Problem**: Game freezes with 14 cooperative DRVs in LEO orbit
 
-**Root Cause**: 
-1. `processDRVOperations()` runs every turn for all active DRVs
-2. Each cooperative DRV calls `processCooperativeDRVOperations(drv, state.debris, state.satellites)`
-3. Inside that function, `selectTarget()` filters all debris and satellites in the layer
-4. With 14 DRVs and 100+ debris pieces, this becomes 1,400+ filter operations per turn
-5. This compounds with rendering and collision detection
+**Root Causes**: 
+1. **DRVs included in collision detection** (collision.ts:108)
+   - `allObjects = [...activeSatellites, ...activeDebris, ...drvs]`
+   - DRVs participate in spatial hashing and collision checks
+   - Each DRV adds to O(n²) collision complexity
+2. **DRV operations processing** (every turn)
+   - Each cooperative DRV filters all debris/satellites in layer
+   - Uncooperative DRVs also filter debris for targeting
+3. **Rendering overhead**
+   - Each DRV renders as React component
+   - Movement calculations for all DRVs every frame
+4. **Compounding effects**
+   - More DRVs → more collision checks → slower frame rate
+   - More DRVs → more filter operations → slower turn processing
 
 **Complexity Analysis**:
 ```
-Per turn cost = O(DRVs × (Debris + Satellites))
-With 14 DRVs, 200 debris, 30 satellites:
-14 × 230 = 3,220 filter/find operations per turn
+Collision Detection: O((Satellites + Debris + DRVs)²) per layer (with spatial hashing optimization)
+DRV Operations: O(DRVs × (Debris + Satellites))
 
-With proposed limits (5 per layer × 3 layers = 15 max):
-5 × 230 = 1,150 filter/find operations per layer
-Manageable performance impact
+With 8 DRVs, 200 debris, 30 satellites in one layer:
+- Total objects: 238
+- Collision pairs to check: ~28,322 (worst case)
+- DRV filter operations: 8 × 230 = 1,840 per turn
+- Result: FREEZE
+
+With proposed limits (4 per layer, 10 total):
+- Max per layer: 4 DRVs + 75 satellites + 200 debris = 279 objects
+- Still high, but manageable with spatial hashing
+- DRV operations: 4 × 275 = 1,100 per layer per turn
 ```
 
-**Solution**: Hard cap at 15 DRVs total, 5 per layer to prevent performance degradation
+**Solution**: Hard cap at 10 DRVs total, 4 per layer - much more conservative based on real freeze at 8 DRVs
