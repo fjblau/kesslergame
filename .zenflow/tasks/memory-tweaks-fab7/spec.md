@@ -56,8 +56,8 @@ Based on game mechanics and performance testing:
 - Expire after 100 turns, naturally limiting accumulation
 - **CRITICAL**: Game froze with 14 DRVs in LEO orbit (real user report)
 - Performance bottleneck: Each cooperative DRV filters all debris/satellites every turn (O(DRVs × Debris))
-- **Proposed hard limit**: 15 DRVs total (prevents freeze at 14)
-- **Consider**: 8 DRVs per layer limit (prevents concentration)
+- **Proposed hard limit**: 15 DRVs total (maximum across all layers)
+- **Proposed per-layer limit**: 5 DRVs (conservative, prevents concentration)
 
 **Debris**:
 - Already has MAX_DEBRIS_LIMIT = 500 (game over)
@@ -75,7 +75,7 @@ Based on game mechanics and performance testing:
 ```typescript
 export const MAX_SATELLITES = 75;
 export const MAX_DRVS = 15;  // Game freezes at 14 DRVs in one orbit
-export const MAX_DRVS_PER_LAYER = 8;  // Prevent concentration in single orbit
+export const MAX_DRVS_PER_LAYER = 5;  // Conservative limit, prevents concentration
 export const DEBRIS_PER_COLLISION_MIN = 1;
 export const DEBRIS_PER_COLLISION_MAX = 15;
 export const DEBRIS_WARNING_THRESHOLD = 400;
@@ -142,7 +142,7 @@ None required - all changes are modifications to existing files.
 ```typescript
 export const MAX_SATELLITES = 75;
 export const MAX_DRVS = 15;  // Based on real-world freeze at 14
-export const MAX_DRVS_PER_LAYER = 8;  // Prevent orbit concentration
+export const MAX_DRVS_PER_LAYER = 5;  // Conservative per-orbit limit
 export const DEBRIS_PER_COLLISION_MIN = 1;
 export const DEBRIS_PER_COLLISION_MAX = 15;
 export const DEBRIS_WARNING_THRESHOLD = 400;
@@ -179,11 +179,11 @@ export const selectIsDebrisWarning = (state: RootState) =>
 
 2. **DRV Limit Test**
    - Start game with easy difficulty
-   - Launch DRVs into LEO until reaching 8 in that layer
-   - Verify launch button becomes disabled for LEO
-   - Verify can still launch to other layers
-   - Continue launching to all layers until reaching 15 total
-   - Verify all launch buttons disabled
+   - Launch DRVs into LEO until reaching 5 in that layer
+   - Verify launch button becomes disabled for LEO only
+   - Verify can still launch to MEO and GEO
+   - Launch 5 to MEO and 5 to GEO (15 total)
+   - Verify all launch buttons disabled at 15 total
    - Verify UI feedback shows limit reached
 
 3. **Debris Per Collision Limit**
@@ -255,7 +255,7 @@ npm run build
 |------------|---------------|----------------|-----------|
 | Satellites | None | 75 | Typical game: ~50 launches, buffer for edge cases |
 | DRVs (Total) | None | 15 | **Game froze at 14**, set limit below freeze point |
-| DRVs (Per Layer) | None | 8 | Prevents concentration, O(DRVs × Debris) bottleneck |
+| DRVs (Per Layer) | None | 5 | Conservative limit, prevents O(DRVs × Debris) bottleneck |
 | Debris | 500 | 500 (keep) | Already causes game over, appropriate limit |
 | Debris/Collision | Unlimited | 1-15 | Prevents exponential growth, maintains gameplay |
 | Warning Threshold | None | 400 debris | Gives player warning before game over at 500 |
@@ -286,6 +286,10 @@ npm run build
 Per turn cost = O(DRVs × (Debris + Satellites))
 With 14 DRVs, 200 debris, 30 satellites:
 14 × 230 = 3,220 filter/find operations per turn
+
+With proposed limits (5 per layer × 3 layers = 15 max):
+5 × 230 = 1,150 filter/find operations per layer
+Manageable performance impact
 ```
 
-**Solution**: Hard cap at 15 DRVs total, 8 per layer to prevent performance degradation
+**Solution**: Hard cap at 15 DRVs total, 5 per layer to prevent performance degradation
