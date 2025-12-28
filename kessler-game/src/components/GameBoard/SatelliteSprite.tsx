@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { motion } from 'framer-motion';
 import type { Satellite } from '../../game/types';
 import { SATELLITE_PURPOSE_CONFIG } from '../../game/constants';
@@ -12,7 +13,7 @@ interface SatelliteSpriteProps {
   isCaptured?: boolean;
 }
 
-export function SatelliteSprite({ satellite, x, y, isLaunching = false, isCaptured = false }: SatelliteSpriteProps) {
+export const SatelliteSprite = memo(function SatelliteSprite({ satellite, x, y, isLaunching = false, isCaptured = false }: SatelliteSpriteProps) {
   const icon = SATELLITE_PURPOSE_CONFIG[satellite.purpose].icon;
   const days = useAppSelector(state => state.game.days);
   const orbitalSpeed = useAppSelector(state => {
@@ -84,4 +85,4 @@ export function SatelliteSprite({ satellite, x, y, isLaunching = false, isCaptur
       </span>
     </motion.div>
   );
-}
+});

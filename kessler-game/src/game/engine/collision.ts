@@ -105,12 +105,13 @@ export function detectCollisions(
   const activeSatellites = satellites.filter(s => !capturedObjectIds.has(s.id) && s.age >= 3);
   const activeDebris = debris.filter(d => !capturedObjectIds.has(d.id));
   
-  const allObjects: GameObject[] = [...activeSatellites, ...activeDebris, ...drvs];
+  const allObjects: GameObject[] = [...activeSatellites, ...activeDebris];
 
   const layers: OrbitLayer[] = ['LEO', 'MEO', 'GEO'];
 
   for (const layer of layers) {
     const objectsInLayer = allObjects.filter(obj => obj.layer === layer);
+    const drvsInLayer = drvs.filter(drv => drv.layer === layer);
     const radiusThreshold = COLLISION_THRESHOLDS.radiusPixels[layer] * radiusMultiplier;
     const angleThreshold = angleThresholdDegrees;
 
@@ -143,10 +144,6 @@ export function detectCollisions(
           if (checkedPairs.has(pairKey)) continue;
           checkedPairs.add(pairKey);
 
-          const isDRV1 = 'removalType' in obj1;
-          const isDRV2 = 'removalType' in obj2;
-          if (isDRV1 && isDRV2) continue;
-
           const polar1 = toPolarCoordinates(obj1);
           const polar2 = toPolarCoordinates(obj2);
 
@@ -155,6 +152,27 @@ export function detectCollisions(
 
           if (angleDiff < angleThreshold && radiusDiff < radiusThreshold) {
             collisions.push({ obj1, obj2, layer });
+          }
+        }
+      }
+    }
+    
+    for (const drv of drvsInLayer) {
+      const drvPolar = toPolarCoordinates(drv);
+      const bucketIndex = getBucketIndex(drvPolar.angle, bucketSize);
+      const adjacentBuckets = getAdjacentBucketIndices(bucketIndex, bucketCount);
+      
+      for (const adjIndex of adjacentBuckets) {
+        const bucket = spatialGrid.get(adjIndex);
+        if (!bucket) continue;
+        
+        for (const obj of bucket.objects) {
+          const objPolar = toPolarCoordinates(obj);
+          const angleDiff = normalizeAngleDiff(drvPolar.angle - objPolar.angle);
+          const radiusDiff = Math.abs(drvPolar.radius - objPolar.radius);
+          
+          if (angleDiff < angleThreshold && radiusDiff < radiusThreshold) {
+            collisions.push({ obj1: drv, obj2: obj, layer });
           }
         }
       }

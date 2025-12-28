@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { motion } from 'framer-motion';
 import type { Debris } from '../../game/types';
 import { useAppSelector } from '../../store/hooks';
@@ -9,7 +10,7 @@ interface DebrisParticleProps {
   y: number;
 }
 
-export function DebrisParticle({ debris, x, y }: DebrisParticleProps) {
+export const DebrisParticle = memo(function DebrisParticle({ debris, x, y }: DebrisParticleProps) {
   const isCooperative = debris.type === 'cooperative';
   const color = isCooperative ? '#9ca3af' : '#ef4444';
   const symbol = isCooperative ? '•' : '••';
@@ -64,4 +65,4 @@ export function DebrisParticle({ debris, x, y }: DebrisParticleProps) {
       {symbol}
     </motion.div>
   );
-}
+});

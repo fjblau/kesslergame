@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { launchSatellite, launchDRV, spendBudget, advanceTurn, decommissionExpiredDRVs, triggerSolarStorm } from '../../store/slices/gameSlice';
 import { updateMissionProgress, trackDRVLaunch } from '../../store/slices/missionsSlice';
@@ -9,12 +9,14 @@ import { checkSolarStorm } from '../../game/engine/events';
 import { InsuranceTierSelector } from './InsuranceTierSelector';
 import { SatellitePurposeSelector } from '../SatelliteConfig/SatellitePurposeSelector';
 import { DRVTargetPriority as DRVTargetPrioritySelector } from '../DRVPanel/DRVTargetPriority';
+import { useStore } from 'react-redux';
+import type { RootState } from '../../store';
 
 export function ControlPanel() {
   const dispatch = useAppDispatch();
+  const store = useStore();
   const budget = useAppSelector(state => state.game.budget);
   const step = useAppSelector(state => state.game.step);
-  const gameState = useAppSelector(state => state.game);
 
   const [launchType, setLaunchType] = useState<'satellite' | 'drv'>('satellite');
   const [selectedOrbit, setSelectedOrbit] = useState<OrbitLayer>('LEO');
@@ -39,8 +41,10 @@ export function ControlPanel() {
   const totalCost = calculateCost();
   const canAfford = budget >= totalCost;
 
-  const handleLaunch = () => {
+  const handleLaunch = useCallback(() => {
     if (!canAfford) return;
+
+    const gameState = (store.getState() as RootState).game;
 
     dispatch(spendBudget(totalCost));
 
@@ -60,7 +64,9 @@ export function ControlPanel() {
     if (checkSolarStorm(gameState.solarStormProbability)) {
       const leoDebrisCountBefore = gameState.debris.filter(d => d.layer === 'LEO').length;
       dispatch(triggerSolarStorm());
-      const leoDebrisCountAfter = gameState.debris.filter(d => d.layer === 'LEO').length;
+      
+      const updatedGameState = (store.getState() as RootState).game;
+      const leoDebrisCountAfter = updatedGameState.debris.filter(d => d.layer === 'LEO').length;
       const removedCount = leoDebrisCountBefore - leoDebrisCountAfter;
       
       dispatch(addEvent({
@@ -74,7 +80,7 @@ export function ControlPanel() {
 
     dispatch(updateMissionProgress(gameState));
     dispatch(decommissionExpiredDRVs());
-  };
+  }, [canAfford, store, dispatch, totalCost, launchType, satellitePurpose, selectedOrbit, insuranceTier, drvType, drvPriority]);
 
   return (
     <div className="bg-slate-800 border-2 border-slate-600 rounded-xl p-6 w-full h-[1100px] flex flex-col">

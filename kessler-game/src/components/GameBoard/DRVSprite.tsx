@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { motion } from 'framer-motion';
 import type { DebrisRemovalVehicle } from '../../game/types';
 import { useAppSelector } from '../../store/hooks';
@@ -10,7 +11,7 @@ interface DRVSpriteProps {
   isLaunching?: boolean;
 }
 
-export function DRVSprite({ drv, x, y, isLaunching = false }: DRVSpriteProps) {
+export const DRVSprite = memo(function DRVSprite({ drv, x, y, isLaunching = false }: DRVSpriteProps) {
   const isCooperative = drv.removalType === 'cooperative';
   const hasCapturedObject = drv.capturedDebrisId !== undefined;
   const color = hasCapturedObject ? '#ef4444' : (isCooperative ? '#34d399' : '#fb923c');
@@ -66,4 +67,4 @@ export function DRVSprite({ drv, x, y, isLaunching = false }: DRVSpriteProps) {
       ⬟
     </motion.div>
   );
-}
+});
