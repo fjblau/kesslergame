@@ -81,6 +81,16 @@ const initialState: UIState = {
    - Now uses `getRiskInfo()` to map risk level to display colors/emojis
    - Ensures UI displays same risk level as game engine calculates
 
+4. Modified `kessler-game/src/components/GameBoard/OrbitVisualization.tsx:33-39,165-171`
+   - Added `getBackgroundTintColor()` function to map risk levels to colors
+   - Added radial gradient background tint in outer ring (GEO orbit to frame boundary)
+   - Tint color changes based on risk level: green (LOW), orange (MEDIUM), red (CRITICAL)
+   - 8% opacity to remain subtle
+
+5. Modified `kessler-game/src/components/TimeControl/GameSpeedControl.tsx:6,22`
+   - Added missing `resetScore()` import and dispatch in `handleReset()`
+   - Fixed bug where score wasn't being reset during mid-game reset
+
 ### Testing
 - Dependencies not installed in current environment
 - Change is a simple boolean configuration value (true → false)
@@ -88,4 +98,8 @@ const initialState: UIState = {
 - Low risk change: only affects default UI state
 
 ### Result
-The game will no longer pause automatically when the risk status changes between LOW, MEDIUM, and CRITICAL.
+- The game will no longer pause automatically when risk status changes (configurable via UI toggle)
+- Risk status now correctly reflects debris count with new thresholds (0=LOW, 1-20=MEDIUM, 20+=CRITICAL)
+- Risk status display in StatsPanel now matches the border color
+- Visual feedback added with colored tint in outer ring based on risk level
+- Score properly resets when using mid-game reset button
