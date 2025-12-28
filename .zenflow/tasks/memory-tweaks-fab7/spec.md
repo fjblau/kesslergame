@@ -54,8 +54,10 @@ Based on game mechanics and performance testing:
 **Debris Removal Vehicles (DRVs)**:
 - More expensive than satellites (LEO cooperative: $4M, uncooperative: $7M)
 - Expire after 100 turns, naturally limiting accumulation
-- Maximum realistic DRVs: ~30 active DRVs
-- **Proposed hard limit**: 50 DRVs (provides buffer)
+- **CRITICAL**: Game froze with 14 DRVs in LEO orbit (real user report)
+- Performance bottleneck: Each cooperative DRV filters all debris/satellites every turn (O(DRVs × Debris))
+- **Proposed hard limit**: 15 DRVs total (prevents freeze at 14)
+- **Consider**: 8 DRVs per layer limit (prevents concentration)
 
 **Debris**:
 - Already has MAX_DEBRIS_LIMIT = 500 (game over)
@@ -72,7 +74,8 @@ Based on game mechanics and performance testing:
 **Phase 1: Add Constants** (constants.ts)
 ```typescript
 export const MAX_SATELLITES = 75;
-export const MAX_DRVS = 50;
+export const MAX_DRVS = 15;  // Game freezes at 14 DRVs in one orbit
+export const MAX_DRVS_PER_LAYER = 8;  // Prevent concentration in single orbit
 export const DEBRIS_PER_COLLISION_MIN = 1;
 export const DEBRIS_PER_COLLISION_MAX = 15;
 export const DEBRIS_WARNING_THRESHOLD = 400;
@@ -80,7 +83,8 @@ export const DEBRIS_WARNING_THRESHOLD = 400;
 
 **Phase 2: Add Validation** (gameSlice.ts)
 - Prevent launching satellites when limit reached
-- Prevent launching DRVs when limit reached
+- Prevent launching DRVs when total limit reached
+- Prevent launching DRVs when per-layer limit reached
 - Clamp debris per collision to valid range
 - Add derived selectors for UI
 
@@ -137,7 +141,8 @@ None required - all changes are modifications to existing files.
 ### Constants (game/constants.ts)
 ```typescript
 export const MAX_SATELLITES = 75;
-export const MAX_DRVS = 50;
+export const MAX_DRVS = 15;  // Based on real-world freeze at 14
+export const MAX_DRVS_PER_LAYER = 8;  // Prevent orbit concentration
 export const DEBRIS_PER_COLLISION_MIN = 1;
 export const DEBRIS_PER_COLLISION_MAX = 15;
 export const DEBRIS_WARNING_THRESHOLD = 400;
@@ -151,8 +156,11 @@ The GameState interface already supports the required data - no schema changes n
 export const selectCanLaunchSatellite = (state: RootState) => 
   state.game.satellites.length < MAX_SATELLITES;
 
-export const selectCanLaunchDRV = (state: RootState) => 
-  state.game.debrisRemovalVehicles.length < MAX_DRVS;
+export const selectCanLaunchDRV = (state: RootState, layer: OrbitLayer) => {
+  const totalDRVs = state.game.debrisRemovalVehicles.length;
+  const layerDRVs = state.game.debrisRemovalVehicles.filter(d => d.layer === layer).length;
+  return totalDRVs < MAX_DRVS && layerDRVs < MAX_DRVS_PER_LAYER;
+};
 
 export const selectIsDebrisWarning = (state: RootState) => 
   state.game.debris.length >= DEBRIS_WARNING_THRESHOLD;
@@ -171,8 +179,11 @@ export const selectIsDebrisWarning = (state: RootState) =>
 
 2. **DRV Limit Test**
    - Start game with easy difficulty
-   - Launch DRVs until reaching 50
-   - Verify launch button becomes disabled
+   - Launch DRVs into LEO until reaching 8 in that layer
+   - Verify launch button becomes disabled for LEO
+   - Verify can still launch to other layers
+   - Continue launching to all layers until reaching 15 total
+   - Verify all launch buttons disabled
    - Verify UI feedback shows limit reached
 
 3. **Debris Per Collision Limit**
@@ -243,7 +254,8 @@ npm run build
 | Object Type | Current Limit | Proposed Limit | Rationale |
 |------------|---------------|----------------|-----------|
 | Satellites | None | 75 | Typical game: ~50 launches, buffer for edge cases |
-| DRVs | None | 50 | Typical game: ~30 DRVs, buffer for edge cases |
+| DRVs (Total) | None | 15 | **Game froze at 14**, set limit below freeze point |
+| DRVs (Per Layer) | None | 8 | Prevents concentration, O(DRVs × Debris) bottleneck |
 | Debris | 500 | 500 (keep) | Already causes game over, appropriate limit |
 | Debris/Collision | Unlimited | 1-15 | Prevents exponential growth, maintains gameplay |
 | Warning Threshold | None | 400 debris | Gives player warning before game over at 500 |
@@ -257,3 +269,23 @@ npm run build
 - Clear UI feedback prevents player confusion
 - Consider adding to tutorial/help text
 - Limits can be adjusted later based on player feedback
+
+## Root Cause Analysis: DRV Performance Issue
+
+**Problem**: Game freezes with 14 cooperative DRVs in LEO orbit
+
+**Root Cause**: 
+1. `processDRVOperations()` runs every turn for all active DRVs
+2. Each cooperative DRV calls `processCooperativeDRVOperations(drv, state.debris, state.satellites)`
+3. Inside that function, `selectTarget()` filters all debris and satellites in the layer
+4. With 14 DRVs and 100+ debris pieces, this becomes 1,400+ filter operations per turn
+5. This compounds with rendering and collision detection
+
+**Complexity Analysis**:
+```
+Per turn cost = O(DRVs × (Debris + Satellites))
+With 14 DRVs, 200 debris, 30 satellites:
+14 × 230 = 3,220 filter/find operations per turn
+```
+
+**Solution**: Hard cap at 15 DRVs total, 8 per layer to prevent performance degradation
