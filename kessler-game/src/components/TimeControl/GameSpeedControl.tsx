@@ -3,7 +3,6 @@ import { setGameSpeed } from '../../store/slices/uiSlice';
 import { resetGame } from '../../store/slices/gameSlice';
 import { initializeMissions } from '../../store/slices/missionsSlice';
 import { clearEvents } from '../../store/slices/eventSlice';
-import { resetScore } from '../../store/slices/scoreSlice';
 import type { GameSpeed } from '../../game/types';
 
 export function GameSpeedControl() {
@@ -19,7 +18,6 @@ export function GameSpeedControl() {
   const handleReset = () => {
     dispatch(setGameSpeed('paused'));
     dispatch(resetGame());
-    dispatch(resetScore());
     dispatch(initializeMissions(3));
     dispatch(clearEvents());
   };

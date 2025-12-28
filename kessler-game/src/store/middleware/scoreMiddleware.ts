@@ -8,13 +8,14 @@ import {
   spendBudget,
   addBudget,
   initializeGame,
+  resetGame,
 } from '../slices/gameSlice';
 import { calculateScore, resetScore } from '../slices/scoreSlice';
 
 export const scoreMiddleware: Middleware = (store) => (next) => (action) => {
   const result = next(action);
 
-  if (initializeGame.match(action)) {
+  if (initializeGame.match(action) || resetGame.match(action)) {
     store.dispatch(resetScore());
   } else if (
     advanceTurn.match(action) ||

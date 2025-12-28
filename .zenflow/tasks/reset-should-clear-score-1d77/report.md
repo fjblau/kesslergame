@@ -2,18 +2,16 @@
 
 ## Changes Made
 
-Modified `kessler-game/src/components/TimeControl/GameSpeedControl.tsx`:
-- Added import for `resetScore` from `scoreSlice`
-- Added `dispatch(resetScore())` call in the `handleReset` function
+Modified `kessler-game/src/store/middleware/scoreMiddleware.ts`:
+- Added `resetGame` import from gameSlice
+- Updated middleware to reset score when `resetGame` action is dispatched (line 18)
 
 ## Summary
 
-The Reset button now properly clears the score when clicked. The `handleReset` function now:
-1. Pauses the game
-2. Resets game state (satellites, debris, budget, counts)
-3. **Resets score state** (all score values including total score)
-4. Reinitializes missions
-5. Clears events
+The Reset button now properly clears the score when clicked. The score is reset automatically by the middleware when the `resetGame` action is dispatched. This ensures:
+1. Score state is reset to all zeros (totalScore, satelliteLaunchScore, debrisRemovalScore, etc.)
+2. Score history is cleared
+3. The middleware handles score reset consistently for both `initializeGame` and `resetGame` actions
 
 ## Verification
 
