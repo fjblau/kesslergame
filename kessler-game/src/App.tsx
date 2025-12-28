@@ -94,23 +94,125 @@ function App() {
           </section>
 
           <section>
+            <h2 className="text-2xl font-bold text-blue-400 mb-3">Satellites</h2>
+            <div className="space-y-4 text-gray-300">
+              <p className="mb-4">Satellites are your primary assets in orbit. Each serves a specific purpose and contributes to your score.</p>
+              
+              <div className="ml-4 space-y-3">
+                <div>
+                  <h4 className="text-lg font-semibold text-purple-300">☁️ Weather Satellites</h4>
+                  <p>Monitor atmospheric conditions, track storms, and provide climate data. Essential for meteorological services.</p>
+                </div>
+                <div>
+                  <h4 className="text-lg font-semibold text-purple-300">📡 Communication Satellites</h4>
+                  <p>Enable global telecommunications, broadcast services, and internet connectivity. Critical infrastructure for modern society.</p>
+                </div>
+                <div>
+                  <h4 className="text-lg font-semibold text-purple-300">🛰️ GPS Satellites</h4>
+                  <p>Provide positioning, navigation, and timing services. Used for mapping, transportation, and military applications.</p>
+                </div>
+                <div>
+                  <h4 className="text-lg font-semibold text-purple-300">🎲 Random Purpose (10% Discount)</h4>
+                  <p>Let the system assign a random purpose. Receive a 10% launch cost discount for the flexibility.</p>
+                </div>
+              </div>
+
+              <div className="mt-4 p-4 bg-gray-800 rounded-lg">
+                <h4 className="font-semibold text-purple-300 mb-2">Orbital Zones & Launch Costs</h4>
+                <ul className="space-y-1">
+                  <li><strong>LEO (Low Earth Orbit):</strong> $2M - Closest to Earth, higher collision risk</li>
+                  <li><strong>MEO (Medium Earth Orbit):</strong> $3M - Moderate altitude, balanced risk</li>
+                  <li><strong>GEO (Geostationary Orbit):</strong> $5M - Highest orbit, lower collision risk</li>
+                </ul>
+              </div>
+
+              <div className="mt-4 p-4 bg-gray-800 rounded-lg">
+                <h4 className="font-semibold text-purple-300 mb-2">Insurance Options</h4>
+                <ul className="space-y-1">
+                  <li><strong>None:</strong> No cost, no payout if destroyed</li>
+                  <li><strong>Basic:</strong> $500K cost, $1M payout if destroyed</li>
+                  <li><strong>Premium:</strong> $1M cost, $2.5M payout if destroyed</li>
+                </ul>
+                <p className="text-sm text-gray-400 mt-2">Insurance helps mitigate financial losses from collisions and solar storms.</p>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-blue-400 mb-3">Debris Removal Vehicles (DRVs)</h2>
+            <div className="space-y-4 text-gray-300">
+              <p className="mb-4">DRVs are specialized spacecraft designed to capture and remove space debris. Choose the right type based on the debris you need to clear.</p>
+              
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="p-4 bg-gray-800 rounded-lg">
+                  <h4 className="text-lg font-semibold text-green-400 mb-2">Cooperative DRVs</h4>
+                  <p className="mb-3">Designed for defunct satellites and larger, trackable debris that can be approached safely.</p>
+                  <ul className="space-y-1 text-sm">
+                    <li><strong>Capacity:</strong> 2-3 debris pieces</li>
+                    <li><strong>Success Rate:</strong> 85%</li>
+                    <li><strong>Duration:</strong> 100 turns</li>
+                    <li><strong>Costs:</strong></li>
+                    <ul className="ml-4">
+                      <li>LEO: $4M</li>
+                      <li>MEO: $6M</li>
+                      <li>GEO: $10M</li>
+                    </ul>
+                  </ul>
+                  <p className="text-xs text-gray-400 mt-2">Best for: Predictable, larger debris with known trajectories</p>
+                </div>
+
+                <div className="p-4 bg-gray-800 rounded-lg">
+                  <h4 className="text-lg font-semibold text-orange-400 mb-2">Uncooperative DRVs</h4>
+                  <p className="mb-3">Advanced systems for tumbling, uncontrolled debris and small fragments that are harder to capture.</p>
+                  <ul className="space-y-1 text-sm">
+                    <li><strong>Capacity:</strong> 6-9 debris pieces</li>
+                    <li><strong>Success Rate:</strong> 90%</li>
+                    <li><strong>Duration:</strong> 100 turns</li>
+                    <li><strong>Costs:</strong></li>
+                    <ul className="ml-4">
+                      <li>LEO: $7M</li>
+                      <li>MEO: $10.5M</li>
+                      <li>GEO: $17.5M</li>
+                    </ul>
+                  </ul>
+                  <p className="text-xs text-gray-400 mt-2">Best for: Dangerous, unpredictable debris from collisions</p>
+                </div>
+              </div>
+
+              <div className="mt-4 p-4 bg-gray-800 rounded-lg">
+                <h4 className="font-semibold text-purple-300 mb-2">Target Priority Strategies</h4>
+                <ul className="space-y-2">
+                  <li>
+                    <strong>Auto (Balanced):</strong> 70% cooperative / 30% uncooperative targeting
+                    <span className="text-sm text-gray-400 block">Standard cost multiplier (1.0x)</span>
+                  </li>
+                  <li>
+                    <strong>Cooperative-Focus:</strong> 90% cooperative / 10% uncooperative targeting
+                    <span className="text-sm text-gray-400 block">10% cost discount (0.9x multiplier)</span>
+                  </li>
+                  <li>
+                    <strong>Uncooperative-Focus:</strong> 10% cooperative / 90% uncooperative targeting
+                    <span className="text-sm text-gray-400 block">20% cost premium (1.2x multiplier)</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <section>
             <h2 className="text-2xl font-bold text-blue-400 mb-3">How to Play</h2>
             <div className="space-y-4 text-gray-300">
               <div>
-                <h3 className="text-xl font-semibold text-purple-400 mb-2">Launching Satellites</h3>
-                <p>Configure and launch satellites into different orbital zones (LEO, MEO, GEO). Each satellite serves a purpose and contributes to your score.</p>
-              </div>
-              <div>
-                <h3 className="text-xl font-semibold text-purple-400 mb-2">Deploying DRVs</h3>
-                <p>Deploy Debris Removal Vehicles to clean up space debris before collisions occur. Monitor debris levels and act strategically.</p>
-              </div>
-              <div>
                 <h3 className="text-xl font-semibold text-purple-400 mb-2">Managing Risk</h3>
-                <p>Watch the collision risk indicator. High debris density increases the chance of collisions, which create more debris in a dangerous cascade.</p>
+                <p>Watch the collision risk indicator. High debris density increases the chance of collisions, which create more debris in a dangerous cascade. Deploy DRVs proactively when debris levels rise.</p>
               </div>
               <div>
                 <h3 className="text-xl font-semibold text-purple-400 mb-2">Completing Missions</h3>
                 <p>Complete missions to earn bonus points and unlock achievements. Missions vary from launching specific satellites to maintaining low debris levels.</p>
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold text-purple-400 mb-2">Budget Management</h3>
+                <p>Balance spending between satellite launches, DRV deployments, and insurance. Monitor your income intervals and avoid running out of funds.</p>
               </div>
             </div>
           </section>
