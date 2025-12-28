@@ -6,6 +6,7 @@ Successfully implemented documentation and about tabs for the Space Debris Remov
 
 ### Documentation Tab
 - **Renamed**: "Coming Soon" → "Documentation"
+- **Uses Full Page Width**: Removed max-width constraint
 - **Added Sections**:
   - Game Overview
   - **Satellites** (Detailed breakdown)
@@ -20,6 +21,16 @@ Successfully implemented documentation and about tabs for the Space Debris Remov
     - Uncooperative DRVs: capacity 6-9, 90% success rate, costs $7M-$17.5M
     - Target Priority Strategies (Auto, Cooperative-Focus, Uncooperative-Focus)
   - How to Play (Risk Management, Missions, Budget Management)
+  - **Game Timing & Progression** (New)
+    - Days vs. Turns explanation (days advance every second, max 100 turns)
+    - Simulation Speed (Paused, Normal: 4s/turn, Fast: 2s/turn)
+    - Risk-Based Speed Adjustment (1.0x LOW, 1.5x MEDIUM, 2.0x CRITICAL)
+    - Auto-Pause Options
+  - **Analytics Tab** (New)
+    - Debris Count Chart (tracks debris over time)
+    - Satellite Count Chart (shows active satellites)
+    - Debris Removal Chart (cumulative removal + active DRVs)
+    - Analytics usage tips
   - Game Mechanics
   - Tips for Success
 

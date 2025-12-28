@@ -218,10 +218,85 @@ function App() {
           </section>
 
           <section>
+            <h2 className="text-2xl font-bold text-blue-400 mb-3">Game Timing & Progression</h2>
+            <div className="space-y-4 text-gray-300">
+              <div className="p-4 bg-gray-800 rounded-lg">
+                <h4 className="font-semibold text-purple-300 mb-2">Days vs. Turns</h4>
+                <ul className="space-y-2">
+                  <li><strong>Days:</strong> Simulated time that advances every second when the game is not paused. Used for tracking mission progress and time-based objectives.</li>
+                  <li><strong>Turns:</strong> Game simulation steps where actions occur (collisions, debris removal, DRV operations). The game consists of up to 100 turns.</li>
+                </ul>
+              </div>
+
+              <div className="p-4 bg-gray-800 rounded-lg">
+                <h4 className="font-semibold text-purple-300 mb-2">Simulation Speed</h4>
+                <ul className="space-y-2">
+                  <li><strong>Paused:</strong> No turns advance, but you can still configure launches</li>
+                  <li><strong>Normal:</strong> Turns advance every 4 seconds (base speed)</li>
+                  <li><strong>Fast:</strong> Turns advance every 2 seconds (base speed)</li>
+                </ul>
+                <p className="text-sm text-gray-400 mt-3">
+                  <strong>Risk-Based Speed Adjustment:</strong> Turn speed is modified by collision risk level:
+                </p>
+                <ul className="text-sm space-y-1 mt-2">
+                  <li>• <span className="text-green-400">LOW Risk:</span> 1.0x multiplier (normal speed)</li>
+                  <li>• <span className="text-yellow-400">MEDIUM Risk:</span> 1.5x multiplier (50% slower turns)</li>
+                  <li>• <span className="text-red-400">CRITICAL Risk:</span> 2.0x multiplier (turns take twice as long)</li>
+                </ul>
+                <p className="text-sm text-gray-400 mt-2">This gives you more time to react during high-risk situations.</p>
+              </div>
+
+              <div className="p-4 bg-gray-800 rounded-lg">
+                <h4 className="font-semibold text-purple-300 mb-2">Auto-Pause Options</h4>
+                <p className="mb-2">Configure automatic pausing when important events occur:</p>
+                <ul className="space-y-1 text-sm">
+                  <li>• Pause on collision detected</li>
+                  <li>• Pause when risk level changes</li>
+                  <li>• Pause when budget drops below $20M</li>
+                  <li>• Pause on mission completion</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-blue-400 mb-3">Analytics Tab</h2>
+            <div className="space-y-4 text-gray-300">
+              <p className="mb-4">The Analytics tab provides three time-series charts to help you track the simulation's progress and identify trends.</p>
+              
+              <div className="grid md:grid-cols-3 gap-4">
+                <div className="p-4 bg-gray-800 rounded-lg">
+                  <h4 className="text-lg font-semibold text-red-400 mb-2">Debris Count Chart</h4>
+                  <p className="text-sm">Tracks the total number of debris pieces in orbit over time. Watch for exponential growth that signals the onset of Kessler Syndrome.</p>
+                </div>
+
+                <div className="p-4 bg-gray-800 rounded-lg">
+                  <h4 className="text-lg font-semibold text-blue-400 mb-2">Satellite Count Chart</h4>
+                  <p className="text-sm">Shows your active satellite population. Declining numbers indicate collisions or solar storm impacts affecting your assets.</p>
+                </div>
+
+                <div className="p-4 bg-gray-800 rounded-lg">
+                  <h4 className="text-lg font-semibold text-green-400 mb-2">Debris Removal Chart</h4>
+                  <p className="text-sm">Displays cumulative debris removed and active DRV count. Use this to assess the effectiveness of your cleanup efforts.</p>
+                </div>
+              </div>
+
+              <div className="mt-4 p-4 bg-gray-800 rounded-lg">
+                <h4 className="font-semibold text-purple-300 mb-2">Using Analytics Effectively</h4>
+                <ul className="space-y-1 text-sm">
+                  <li>• Compare debris growth rate vs. removal rate to gauge if you're winning or losing</li>
+                  <li>• Identify patterns before and after major events (collisions, solar storms)</li>
+                  <li>• Track satellite losses to optimize insurance strategies</li>
+                  <li>• Monitor DRV performance to adjust deployment timing and quantities</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <section>
             <h2 className="text-2xl font-bold text-blue-400 mb-3">Game Mechanics</h2>
             <ul className="list-disc list-inside space-y-2 text-gray-300">
               <li><strong>Resources:</strong> Budget and launch capacity limit your actions</li>
-              <li><strong>Time Control:</strong> Adjust simulation speed to plan strategically</li>
               <li><strong>Events:</strong> Random events like solar storms can affect your satellites</li>
               <li><strong>Scoring:</strong> Earn points through successful launches, debris removal, and mission completion</li>
             </ul>
