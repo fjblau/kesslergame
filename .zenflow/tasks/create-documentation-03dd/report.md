@@ -42,7 +42,13 @@ Successfully implemented documentation and about tabs for the Space Debris Remov
   - Current State of Space Debris (statistics and facts)
   - Space Debris Removal (methods: robotic arms, harpoons, lasers, tethers)
   - The Future of Orbital Space
-  - **Credits** (New) - Authors: Frank Blau, Tim Quick, and Gallya Todorova for EIIS Space Entrepreneurship Master's Program
+  - **Learn More** (New) - External resource links
+    - Space Agencies (NASA, ESA, UN Office for Outer Space Affairs)
+    - Real-Time Tracking (Space-Track.org, LeoLabs)
+    - Research Resources (Original Kessler paper, ESA debris maps)
+    - Active Debris Removal Missions (ClearSpace-1, Astroscale ELSA-d, RemoveDEBRIS)
+  - **Credits** - Authors: Frank Blau, Tim Quick, and Gallya Todorova for EIIS Space Entrepreneurship Master's Program
+  - **License** - MIT License reference
 
 ## Verification
 - TypeScript compilation: ✅ Success

@@ -388,6 +388,129 @@ function App() {
             </p>
           </section>
 
+          <section>
+            <h2 className="text-2xl font-bold text-blue-400 mb-3">Learn More</h2>
+            <p className="text-gray-300 mb-4">
+              Explore these authoritative sources to learn more about space debris and Kessler Syndrome:
+            </p>
+            
+            <div className="space-y-4">
+              <div className="p-4 bg-gray-800 rounded-lg">
+                <h4 className="font-semibold text-purple-300 mb-2">Space Agencies & Organizations</h4>
+                <ul className="space-y-2 text-gray-300">
+                  <li>
+                    <a href="https://www.nasa.gov/mission_pages/station/news/orbital_debris.html" 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       className="text-blue-400 hover:text-blue-300 underline">
+                      NASA Orbital Debris Program Office
+                    </a>
+                    {' '}- Official NASA resource on space debris tracking and mitigation
+                  </li>
+                  <li>
+                    <a href="https://www.esa.int/Safety_Security/Space_Debris" 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       className="text-blue-400 hover:text-blue-300 underline">
+                      ESA Space Debris Office
+                    </a>
+                    {' '}- European Space Agency's space debris research and initiatives
+                  </li>
+                  <li>
+                    <a href="https://www.unoosa.org/oosa/en/ourwork/topics/space-debris/index.html" 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       className="text-blue-400 hover:text-blue-300 underline">
+                      UN Office for Outer Space Affairs
+                    </a>
+                    {' '}- International guidelines and space debris mitigation policies
+                  </li>
+                </ul>
+              </div>
+
+              <div className="p-4 bg-gray-800 rounded-lg">
+                <h4 className="font-semibold text-purple-300 mb-2">Real-Time Tracking & Data</h4>
+                <ul className="space-y-2 text-gray-300">
+                  <li>
+                    <a href="https://www.space-track.org/" 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       className="text-blue-400 hover:text-blue-300 underline">
+                      Space-Track.org
+                    </a>
+                    {' '}- Track satellites and debris in real-time (free registration required)
+                  </li>
+                  <li>
+                    <a href="https://platform.leolabs.space/visualization" 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       className="text-blue-400 hover:text-blue-300 underline">
+                      LeoLabs Visualization Platform
+                    </a>
+                    {' '}- Interactive visualization of objects in low Earth orbit
+                  </li>
+                </ul>
+              </div>
+
+              <div className="p-4 bg-gray-800 rounded-lg">
+                <h4 className="font-semibold text-purple-300 mb-2">Research & Academic Resources</h4>
+                <ul className="space-y-2 text-gray-300">
+                  <li>
+                    <a href="https://doi.org/10.1016/0021-9169(78)90057-1" 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       className="text-blue-400 hover:text-blue-300 underline">
+                      Original Kessler Syndrome Paper (1978)
+                    </a>
+                    {' '}- Donald J. Kessler's foundational research on collision cascading
+                  </li>
+                  <li>
+                    <a href="https://www.esa.int/ESA_Multimedia/Images/2023/11/Distribution_of_space_debris_in_orbit" 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       className="text-blue-400 hover:text-blue-300 underline">
+                      ESA Space Debris Distribution Maps
+                    </a>
+                    {' '}- Visual data on current debris populations by altitude
+                  </li>
+                </ul>
+              </div>
+
+              <div className="p-4 bg-gray-800 rounded-lg">
+                <h4 className="font-semibold text-purple-300 mb-2">Active Debris Removal Missions</h4>
+                <ul className="space-y-2 text-gray-300">
+                  <li>
+                    <a href="https://clearspace.today/" 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       className="text-blue-400 hover:text-blue-300 underline">
+                      ClearSpace-1
+                    </a>
+                    {' '}- ESA's first debris removal mission (planned for 2026)
+                  </li>
+                  <li>
+                    <a href="https://astroscale.com/missions/" 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       className="text-blue-400 hover:text-blue-300 underline">
+                      Astroscale ELSA-d
+                    </a>
+                    {' '}- Demonstration of magnetic capture technology for debris removal
+                  </li>
+                  <li>
+                    <a href="https://www.removerisdebris.space/" 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       className="text-blue-400 hover:text-blue-300 underline">
+                      RemoveDEBRIS Mission
+                    </a>
+                    {' '}- UK-led project testing net capture, harpoon, and vision-based navigation
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
           <section className="border-t border-gray-700 pt-6">
             <h2 className="text-2xl font-bold text-blue-400 mb-3">Credits</h2>
             <p className="text-gray-300 mb-3">
