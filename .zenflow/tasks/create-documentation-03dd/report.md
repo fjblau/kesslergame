@@ -36,11 +36,13 @@ Successfully implemented documentation and about tabs for the Space Debris Remov
 
 ### About Tab
 - **Created**: New "About" tab
+- **Uses Full Page Width**: Removed max-width constraint
 - **Added Sections**:
   - About Kessler Syndrome (explanation of the phenomenon)
   - Current State of Space Debris (statistics and facts)
   - Space Debris Removal (methods: robotic arms, harpoons, lasers, tethers)
   - The Future of Orbital Space
+  - **Credits** (New) - Authors: Frank Blau, Tim Quick, and Gallya Todorova for EIIS Space Entrepreneurship Master's Program
 
 ## Verification
 - TypeScript compilation: ✅ Success
