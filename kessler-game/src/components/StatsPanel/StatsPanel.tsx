@@ -9,10 +9,21 @@ interface RiskInfo {
   emoji: string;
 }
 
-function calculateRiskLevel(totalDebris: number): RiskInfo {
-  if (totalDebris < 50) {
+function calculateRiskLevel(totalDebris: number, satelliteCount: number): RiskInfo {
+  if (satelliteCount === 0) {
+    const level: RiskLevel = totalDebris === 0 ? 'LOW' : 'CRITICAL';
+    if (level === 'LOW') {
+      return { level: 'LOW', color: 'text-green-400', emoji: '🟢' };
+    } else {
+      return { level: 'CRITICAL', color: 'text-red-400', emoji: '🔴' };
+    }
+  }
+  
+  const ratio = totalDebris / satelliteCount;
+  
+  if (ratio < 2) {
     return { level: 'LOW', color: 'text-green-400', emoji: '🟢' };
-  } else if (totalDebris < 100) {
+  } else if (ratio < 5) {
     return { level: 'MEDIUM', color: 'text-yellow-400', emoji: '🟡' };
   } else {
     return { level: 'CRITICAL', color: 'text-red-400', emoji: '🔴' };
@@ -30,7 +41,7 @@ export function StatsPanel() {
   const cooperativeDebris = debris.filter(d => d.type === 'cooperative').length;
   const uncooperativeDebris = debris.filter(d => d.type === 'uncooperative').length;
 
-  const risk = calculateRiskLevel(totalDebris);
+  const risk = calculateRiskLevel(totalDebris, satellites.length);
 
   const getLayerStats = (layer: 'LEO' | 'MEO' | 'GEO') => {
     const satelliteCount = satellites.filter(s => s.layer === layer).length;

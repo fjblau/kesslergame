@@ -336,7 +336,7 @@ export const gameSlice = createSlice({
       });
 
       state.recentDebrisRemovals = removalEvents;
-      state.riskLevel = calculateRiskLevel(state.debris.length);
+      state.riskLevel = calculateRiskLevel(state.debris.length, state.satellites.length);
     },
 
     advanceTurn: (state) => {
@@ -509,7 +509,7 @@ export const gameSlice = createSlice({
 
       state.recentCollisions.push(...collisionEvents);
 
-      state.riskLevel = calculateRiskLevel(state.debris.length);
+      state.riskLevel = calculateRiskLevel(state.debris.length, state.satellites.length);
 
       if (state.budget < 0 || state.step >= state.maxSteps || state.debris.length > MAX_DEBRIS_LIMIT) {
         state.gameOver = true;
@@ -543,13 +543,13 @@ export const gameSlice = createSlice({
       state.debrisRemovalVehicles = remaining;
       state.recentlyExpiredDRVs = expired;
 
-      state.riskLevel = calculateRiskLevel(state.debris.length);
+      state.riskLevel = calculateRiskLevel(state.debris.length, state.satellites.length);
     },
 
     triggerSolarStorm: (state) => {
       const result = processSolarStorm(state.debris);
       state.debris = result.remainingDebris;
-      state.riskLevel = calculateRiskLevel(state.debris.length);
+      state.riskLevel = calculateRiskLevel(state.debris.length, state.satellites.length);
     },
 
     checkGameOver: (state) => {
