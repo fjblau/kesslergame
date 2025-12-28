@@ -390,9 +390,12 @@ function App() {
 
           <section className="border-t border-gray-700 pt-6">
             <h2 className="text-2xl font-bold text-blue-400 mb-3">Credits</h2>
-            <p className="text-gray-300">
+            <p className="text-gray-300 mb-3">
               This application was written by <strong>Frank Blau</strong>, <strong>Tim Quick</strong>, and{' '}
               <strong>Gallya Todorova</strong> for the EIIS Space Entrepreneurship Master's Program.
+            </p>
+            <p className="text-gray-400 text-sm">
+              Licensed under the MIT License. See LICENSE file for details.
             </p>
           </section>
         </div>
