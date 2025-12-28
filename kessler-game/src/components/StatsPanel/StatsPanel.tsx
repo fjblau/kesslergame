@@ -10,20 +10,17 @@ interface RiskInfo {
 }
 
 function calculateRiskLevel(totalDebris: number, satelliteCount: number): RiskInfo {
+  if (totalDebris === 0) {
+    return { level: 'LOW', color: 'text-green-400', emoji: '🟢' };
+  }
+  
   if (satelliteCount === 0) {
-    const level: RiskLevel = totalDebris === 0 ? 'LOW' : 'CRITICAL';
-    if (level === 'LOW') {
-      return { level: 'LOW', color: 'text-green-400', emoji: '🟢' };
-    } else {
-      return { level: 'CRITICAL', color: 'text-red-400', emoji: '🔴' };
-    }
+    return { level: 'CRITICAL', color: 'text-red-400', emoji: '🔴' };
   }
   
   const ratio = totalDebris / satelliteCount;
   
-  if (ratio < 2) {
-    return { level: 'LOW', color: 'text-green-400', emoji: '🟢' };
-  } else if (ratio < 5) {
+  if (ratio < 5) {
     return { level: 'MEDIUM', color: 'text-yellow-400', emoji: '🟡' };
   } else {
     return { level: 'CRITICAL', color: 'text-red-400', emoji: '🔴' };

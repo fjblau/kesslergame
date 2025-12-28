@@ -23,10 +23,10 @@ Modified `kessler-game/src/game/engine/risk.ts`:
 - Updated `calculateRiskLevel` function signature to accept both `debrisCount` and `satelliteCount`
 - Changed risk level calculation to use ratio of debris to satellites instead of absolute debris count
 - New thresholds:
-  - **LOW**: ratio < 2 (less than 2 debris per satellite)
-  - **MEDIUM**: ratio < 5 (2-5 debris per satellite)
+  - **LOW**: debrisCount === 0 (no debris at all)
+  - **MEDIUM**: 0 < ratio < 5 (any debris with ratio less than 5)
   - **CRITICAL**: ratio >= 5 (5 or more debris per satellite)
-- Special case: when no satellites exist, risk is CRITICAL if debris exists, LOW if no debris
+- Special case: when no satellites exist but debris exists, risk is CRITICAL
 
 Modified `kessler-game/src/store/slices/gameSlice.ts`:
 - Updated 4 call sites to pass both `state.debris.length` and `state.satellites.length`:
@@ -37,7 +37,7 @@ Modified `kessler-game/src/store/slices/gameSlice.ts`:
 
 Modified `kessler-game/src/components/StatsPanel/StatsPanel.tsx`:
 - Updated local `calculateRiskLevel` function to use debris-to-satellite ratio
-- Same thresholds as the engine function (ratio < 2 for LOW, < 5 for MEDIUM, >= 5 for CRITICAL)
+- Same thresholds as the engine function (debrisCount === 0 for LOW, ratio < 5 for MEDIUM, >= 5 for CRITICAL)
 - Updated call site to pass `satellites.length`
 - Colors remain the same (green for LOW, yellow for MEDIUM, red for CRITICAL)
 
