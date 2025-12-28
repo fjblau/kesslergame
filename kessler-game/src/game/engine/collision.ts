@@ -143,6 +143,10 @@ export function detectCollisions(
           if (checkedPairs.has(pairKey)) continue;
           checkedPairs.add(pairKey);
 
+          const isDRV1 = 'removalType' in obj1;
+          const isDRV2 = 'removalType' in obj2;
+          if (isDRV1 && isDRV2) continue;
+
           const polar1 = toPolarCoordinates(obj1);
           const polar2 = toPolarCoordinates(obj2);
 
