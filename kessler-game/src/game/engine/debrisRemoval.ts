@@ -24,9 +24,10 @@ function getEntitySpeedVariation(id: string, layer: OrbitLayer): number {
 
 function selectDebrisTarget(
   drv: DebrisRemovalVehicle,
-  debris: Debris[]
+  debris: Debris[],
+  preFilteredMatchingDebris?: Debris[]
 ): Debris | null {
-  const matchingDebris = debris.filter(d => 
+  const matchingDebris = preFilteredMatchingDebris ?? debris.filter(d => 
     d.layer === drv.layer && 
     'type' in d && 
     !('removalType' in d) &&
@@ -96,10 +97,16 @@ export function processDRVRemoval(
 } {
   const removedDebrisIds: string[] = [];
   let attemptsCount = 0;
-  let availableDebris = [...debris];
+  
+  let matchingDebris = debris.filter(d => 
+    d.layer === drv.layer && 
+    'type' in d && 
+    !('removalType' in d) &&
+    d.type === drv.removalType
+  );
 
   for (let i = 0; i < drv.capacity; i++) {
-    const target = selectDebrisTarget(drv, availableDebris);
+    const target = selectDebrisTarget(drv, debris, matchingDebris);
     if (!target) break;
 
     attemptsCount++;
@@ -109,7 +116,7 @@ export function processDRVRemoval(
       removedDebrisIds.push(target.id);
     }
 
-    availableDebris = availableDebris.filter(d => d.id !== target.id);
+    matchingDebris = matchingDebris.filter(d => d.id !== target.id);
   }
 
   return { removedDebrisIds, attemptsCount };
