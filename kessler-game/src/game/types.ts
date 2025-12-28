@@ -108,6 +108,11 @@ export interface GameState {
   lastCascadeTurn?: number;
   totalCascades: number;
   satellitesRecovered: number;
+  riskSpeedMultipliers: {
+    LOW: number;
+    MEDIUM: number;
+    CRITICAL: number;
+  };
 }
 
 export interface UIState {

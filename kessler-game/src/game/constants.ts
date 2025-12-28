@@ -143,3 +143,9 @@ export const ORBITAL_SPEEDS: Record<OrbitLayer, number> = {
 };
 
 export const CASCADE_THRESHOLD = 3;
+
+export const RISK_SPEED_MULTIPLIERS = {
+  LOW: 1.0,
+  MEDIUM: 1.5,
+  CRITICAL: 2.0,
+};
