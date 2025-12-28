@@ -26,9 +26,9 @@ The effect triggers on **ANY** risk level change (`riskLevel !== previousRiskLev
 
 ### Risk Level Calculation
 Risk levels are determined by debris count (in `game/engine/risk.ts`):
-- **LOW**: < 150 debris
-- **MEDIUM**: 150-300 debris  
-- **CRITICAL**: > 300 debris
+- **LOW**: 0 debris
+- **MEDIUM**: 1-20 debris  
+- **CRITICAL**: 20+ debris
 
 The risk level is recalculated after every DRV operation in `gameSlice.ts:339`:
 ```typescript
@@ -68,6 +68,12 @@ const initialState: UIState = {
 ### Changes Made
 1. Modified `kessler-game/src/store/slices/uiSlice.ts:8`
    - Changed `autoPauseOnRiskChange: true` to `autoPauseOnRiskChange: false`
+
+2. Modified `kessler-game/src/game/engine/risk.ts:3-10`
+   - Updated risk level thresholds:
+     - LOW: 0 debris (was < 150)
+     - MEDIUM: 1-20 debris (was 150-300)
+     - CRITICAL: 20+ debris (was > 300)
 
 ### Testing
 - Dependencies not installed in current environment
