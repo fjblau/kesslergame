@@ -75,6 +75,12 @@ const initialState: UIState = {
      - MEDIUM: 1-20 debris (was 150-300)
      - CRITICAL: 20+ debris (was > 300)
 
+3. Modified `kessler-game/src/components/StatsPanel/StatsPanel.tsx:12-35`
+   - Fixed duplicate risk calculation with different thresholds
+   - Changed from local `calculateRiskLevel()` to using `riskLevel` from game state
+   - Now uses `getRiskInfo()` to map risk level to display colors/emojis
+   - Ensures UI displays same risk level as game engine calculates
+
 ### Testing
 - Dependencies not installed in current environment
 - Change is a simple boolean configuration value (true → false)
