@@ -14,12 +14,21 @@ import { DebrisRemovedCounter } from '../TimeControl/DebrisRemovedCounter';
 import { mapToPixels } from './utils';
 import { clearOldCollisions, clearCascadeFlag } from '../../store/slices/gameSlice';
 import { playCascadeWarning } from '../../utils/audio';
+import type { RiskLevel } from '../../game/types';
 
 interface LaunchingEntity {
   id: string;
   layer: 'LEO' | 'MEO' | 'GEO';
   angle: number;
 }
+
+const getBorderColorClass = (riskLevel: RiskLevel): string => {
+  switch (riskLevel) {
+    case 'LOW': return 'border-green-500';
+    case 'MEDIUM': return 'border-orange-500';
+    case 'CRITICAL': return 'border-red-500';
+  }
+};
 
 export function OrbitVisualization() {
   const dispatch = useAppDispatch();
@@ -31,6 +40,7 @@ export function OrbitVisualization() {
   const lastCascadeTurn = useAppSelector(state => state.game.lastCascadeTurn);
   const events = useAppSelector(state => state.events.events);
   const days = useAppSelector(state => state.game.days);
+  const riskLevel = useAppSelector(state => state.game.riskLevel);
   const orbitalSpeeds = useAppSelector(state => ({
     LEO: state.game.orbitalSpeedLEO,
     MEO: state.game.orbitalSpeedMEO,
@@ -143,7 +153,7 @@ export function OrbitVisualization() {
   }, [dispatch]);
 
   return (
-    <div className="relative w-[1000px] h-[1000px] flex items-center justify-center bg-slate-900 border-2 border-slate-600 rounded-xl">
+    <div className={`relative w-[1000px] h-[1000px] flex items-center justify-center bg-slate-900 border-[3px] ${getBorderColorClass(riskLevel)} rounded-xl`}>
       {/* Debris Removed Counter */}
       <div className="absolute top-4 left-4 z-10">
         <DebrisRemovedCounter />

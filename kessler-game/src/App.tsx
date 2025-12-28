@@ -80,7 +80,7 @@ function App() {
     },
     {
       id: 'documentation',
-      label: 'Documentation',
+      label: 'Coming Soon',
       content: (
         <div className="text-center text-gray-400 py-12">
           Placeholder for Documentation
