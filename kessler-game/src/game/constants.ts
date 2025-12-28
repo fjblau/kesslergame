@@ -79,7 +79,7 @@ export const BUDGET_DIFFICULTY_CONFIG: Record<BudgetDifficulty, {
   description: string;
 }> = {
   easy: {
-    startingBudget: 150_000_000,
+    startingBudget: 300_000_000,
     incomeAmount: 10_000_000,
     incomeInterval: 10,
     drainAmount: 0,
@@ -87,7 +87,7 @@ export const BUDGET_DIFFICULTY_CONFIG: Record<BudgetDifficulty, {
     description: 'Generous budget with regular income',
   },
   normal: {
-    startingBudget: 100_000_000,
+    startingBudget: 200_000_000,
     incomeAmount: 5_000_000,
     incomeInterval: 20,
     drainAmount: 0,
@@ -95,7 +95,7 @@ export const BUDGET_DIFFICULTY_CONFIG: Record<BudgetDifficulty, {
     description: 'Balanced challenge (recommended)',
   },
   hard: {
-    startingBudget: 75_000_000,
+    startingBudget: 150_000_000,
     incomeAmount: 0,
     incomeInterval: 0,
     drainAmount: 0,
@@ -103,7 +103,7 @@ export const BUDGET_DIFFICULTY_CONFIG: Record<BudgetDifficulty, {
     description: 'Limited budget, no income',
   },
   challenge: {
-    startingBudget: 50_000_000,
+    startingBudget: 100_000_000,
     incomeAmount: 0,
     incomeInterval: 0,
     drainAmount: 2_000_000,
