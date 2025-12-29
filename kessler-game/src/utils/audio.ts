@@ -1,3 +1,29 @@
+export type SoundEffect = 'launch' | 'cascade';
+
+const SOUND_FILES: Record<SoundEffect, string> = {
+  launch: '/audio/smallExplosion.mp3',
+  cascade: 'synthesized',
+};
+
+export function playSound(effect: SoundEffect) {
+  const soundPath = SOUND_FILES[effect];
+  
+  if (soundPath === 'synthesized') {
+    playCascadeWarning();
+    return;
+  }
+  
+  try {
+    const audio = new Audio(soundPath);
+    audio.volume = 0.5;
+    audio.play().catch(() => {
+      // Silently fail if audio playback is blocked
+    });
+  } catch {
+    // Ignore errors (browser compatibility, file not found, etc.)
+  }
+}
+
 export function playCascadeWarning() {
   try {
     const audioContext = new AudioContext();
