@@ -319,7 +319,7 @@ function App() {
       id: 'about',
       label: 'About',
       content: (
-        <div className="p-8 space-y-8 max-w-[2000px] mx-auto">
+        <div className="p-8 space-y-8 max-w-[1500px] mx-auto">
           <section>
             <h2 className="text-3xl font-bold text-blue-400 mb-4">About Kessler Syndrome</h2>
             <p className="text-gray-300 mb-4">
