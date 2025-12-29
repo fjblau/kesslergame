@@ -44,20 +44,27 @@ This is the **core game simulation** perfect for React adaptation. Here's what i
   - Safest long-term orbit
 
 #### 3. **Resource Management & Satellite Revenue**
-The game implements a difficulty-based budget system with varying revenue streams:
+The game implements a dual-revenue system combining per-satellite income with difficulty-based bonus income:
 
-**Budget Difficulty Levels:**
-- **Easy Mode**: $300M starting budget, $10M revenue every 10 turns
-- **Normal Mode**: $200M starting budget, $5M revenue every 20 turns
-- **Hard Mode**: $150M starting budget, no revenue
-- **Challenge Mode**: $100M starting budget, no revenue, -$2M drain per turn
+**Per-Turn Satellite Revenue (Primary):**
+Each active satellite generates revenue based on its type:
+- **Weather**: $100K per turn
+- **Communications**: $150K per turn
+- **GPS**: $200K per turn
+- Example: 10 satellites (mixed types) can generate $1M-$2M per turn
+
+**Difficulty-Based Bonus Income (Secondary):**
+- **Easy Mode**: $300M starting budget, $10M bonus every 10 turns
+- **Normal Mode**: $200M starting budget, $5M bonus every 20 turns
+- **Hard Mode**: $150M starting budget, no bonus income (satellite revenue only)
+- **Challenge Mode**: $100M starting budget, no bonus income, -$2M drain per turn
 
 **Costs:**
 - Launch costs vary by orbit (LEO: $2M, MEO: $3M, GEO: $5M)
 - Optional insurance: Basic ($500K cost, $1M payout) or Premium ($1M cost, $2.5M payout)
 - Debris Removal Vehicles: $4M-$17.5M depending on orbit and type
 
-**Economic Strategy:** Revenue timing is critical in Easy/Normal modes - plan expensive launches after income payments. In Hard/Challenge modes, every expense must be carefully justified as resources are finite.
+**Economic Strategy:** Your satellite fleet is your primary revenue engine. Launch high-value GPS satellites early to build steady income. Protect revenue-generating satellites with insurance. In Easy/Normal modes, time expensive launches after bonus income. In Hard/Challenge modes, build satellite revenue quickly to sustain operations.
 
 #### 4. **Satellite Types**
 - **Weather** satellites

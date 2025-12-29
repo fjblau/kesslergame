@@ -212,23 +212,40 @@ function App() {
               </div>
               <div>
                 <h3 className="text-xl font-semibold text-purple-400 mb-2">Budget Management & Revenue</h3>
-                <p>Your budget is the lifeblood of your operations. Each satellite launch, DRV deployment, and insurance purchase costs money. Revenue generation depends on your chosen difficulty level:</p>
-                <div className="mt-3 ml-4 space-y-2 text-sm">
-                  <div className="p-3 bg-gray-800 rounded">
-                    <strong className="text-green-400">Easy Mode:</strong> $10M revenue every 10 turns - generous income allows aggressive expansion
-                  </div>
-                  <div className="p-3 bg-gray-800 rounded">
-                    <strong className="text-blue-400">Normal Mode:</strong> $5M revenue every 20 turns - balanced income requires strategic planning
-                  </div>
-                  <div className="p-3 bg-gray-800 rounded">
-                    <strong className="text-orange-400">Hard Mode:</strong> No revenue - manage your starting budget carefully as there's no income
-                  </div>
-                  <div className="p-3 bg-gray-800 rounded">
-                    <strong className="text-red-400">Challenge Mode:</strong> No revenue + $2M drain per turn - race against budget depletion
+                <p>Your budget is the lifeblood of your operations. Each satellite launch, DRV deployment, and insurance purchase costs money.</p>
+                
+                <div className="mt-4 p-4 bg-gray-800 rounded-lg">
+                  <h4 className="font-semibold text-purple-300 mb-2">Satellite Revenue (Per Turn)</h4>
+                  <p className="mb-2 text-sm">Each active satellite generates revenue every turn based on its type:</p>
+                  <ul className="space-y-1 ml-4 text-sm">
+                    <li>☁️ <strong className="text-blue-300">Weather:</strong> $100,000 per turn</li>
+                    <li>📡 <strong className="text-green-300">Communications:</strong> $150,000 per turn</li>
+                    <li>🛰️ <strong className="text-yellow-300">GPS:</strong> $200,000 per turn</li>
+                  </ul>
+                  <p className="mt-2 text-xs text-gray-400">Example: 5 Weather + 3 Comms + 2 GPS satellites = $1.35M revenue per turn</p>
+                </div>
+
+                <div className="mt-4 p-4 bg-gray-800 rounded-lg">
+                  <h4 className="font-semibold text-purple-300 mb-2">Bonus Income (Difficulty-Based)</h4>
+                  <p className="mb-2 text-sm">In addition to satellite revenue, you receive periodic bonus income based on difficulty:</p>
+                  <div className="space-y-2 ml-4">
+                    <div className="text-sm">
+                      <strong className="text-green-400">Easy Mode:</strong> $10M bonus every 10 turns
+                    </div>
+                    <div className="text-sm">
+                      <strong className="text-blue-400">Normal Mode:</strong> $5M bonus every 20 turns
+                    </div>
+                    <div className="text-sm">
+                      <strong className="text-orange-400">Hard Mode:</strong> No bonus income
+                    </div>
+                    <div className="text-sm">
+                      <strong className="text-red-400">Challenge Mode:</strong> No bonus income + $2M drain per turn
+                    </div>
                   </div>
                 </div>
+
                 <p className="mt-3 text-sm text-gray-400">
-                  <strong>Strategy tip:</strong> In Easy and Normal modes, time your expensive launches (GEO satellites, DRVs) right after receiving income. In Hard and Challenge modes, every expense must be carefully justified.
+                  <strong>Strategy tips:</strong> Launch high-value GPS satellites early to build steady income. In Easy/Normal modes, time expensive launches after bonus income arrives. Your satellite fleet is your primary revenue source—protect it with insurance and debris removal!
                 </p>
               </div>
             </div>
