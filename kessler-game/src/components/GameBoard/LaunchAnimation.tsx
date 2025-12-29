@@ -51,11 +51,11 @@ export function LaunchAnimation({ targetLayer, targetAngle, onComplete }: Launch
     }
     
     const controls = animate(progress, 1, {
-      duration: 4,
-      ease: [0.33, 1, 0.68, 1],
+      duration: 8,
+      ease: [0.2, 0.8, 0.4, 1],
     });
     
-    const timer = setTimeout(onComplete, 4000);
+    const timer = setTimeout(onComplete, 8000);
     
     return () => {
       controls.stop();
@@ -84,10 +84,10 @@ export function LaunchAnimation({ targetLayer, targetAngle, onComplete }: Launch
         r={3}
         fill={LAYER_COLORS[targetLayer]}
         initial={{ opacity: 0.8 }}
-        animate={{ opacity: [0.8, 0.8, 0] }}
+        animate={{ opacity: [0.8, 0.8, 0.8, 0] }}
         transition={{
-          duration: 4,
-          opacity: { times: [0, 0.85, 1] },
+          duration: 8,
+          opacity: { times: [0, 0.9, 0.95, 1] },
         }}
       />
       <motion.path
@@ -97,10 +97,10 @@ export function LaunchAnimation({ targetLayer, targetAngle, onComplete }: Launch
         strokeDasharray="5,5"
         fill="none"
         initial={{ opacity: 0.5 }}
-        animate={{ opacity: [0.5, 0.5, 0] }}
+        animate={{ opacity: [0.5, 0.5, 0.5, 0] }}
         transition={{
-          duration: 4,
-          opacity: { times: [0, 0.85, 1] },
+          duration: 8,
+          opacity: { times: [0, 0.9, 0.95, 1] },
         }}
       />
     </svg>

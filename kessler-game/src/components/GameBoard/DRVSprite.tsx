@@ -59,10 +59,10 @@ export const DRVSprite = memo(function DRVSprite({ drv, x, y, isLaunching = fals
         left: { duration: 1, ease: 'linear' },
         top: { duration: 1, ease: 'linear' },
         rotate: { duration: 1, ease: 'linear' },
-        x: isLaunching ? { duration: 1.5, ease: [0.33, 1, 0.68, 1] } : { duration: 0 },
-        y: isLaunching ? { duration: 1.5, ease: [0.33, 1, 0.68, 1] } : { duration: 0 },
-        scale: isLaunching ? { duration: 1.5, ease: [0.33, 1, 0.68, 1] } : { duration: 1, ease: 'linear' },
-        opacity: isLaunching ? { duration: 1.5, ease: [0.33, 1, 0.68, 1] } : { duration: 1, ease: 'linear' },
+        x: isLaunching ? { duration: 8, ease: [0.2, 0.8, 0.4, 1] } : { duration: 0 },
+        y: isLaunching ? { duration: 8, ease: [0.2, 0.8, 0.4, 1] } : { duration: 0 },
+        scale: isLaunching ? { duration: 8, ease: [0.2, 0.8, 0.4, 1] } : { duration: 1, ease: 'linear' },
+        opacity: isLaunching ? { duration: 1, ease: 'easeIn', delay: 7 } : { duration: 1, ease: 'linear' },
       }}
       title={`${drv.removalType} DRV (${drv.layer})`}
     >

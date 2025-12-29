@@ -107,7 +107,7 @@ export function OrbitVisualization() {
         setTimeout(() => {
           setLaunchingSatellites(new Set());
           setLaunchingDRVs(new Set());
-        }, 1500);
+        }, 8000);
       });
     }
   }, [satellites, debrisRemovalVehicles]);
