@@ -17,7 +17,6 @@ export function ControlPanel() {
   const dispatch = useAppDispatch();
   const store = useStore();
   const budget = useAppSelector(state => state.game.budget);
-  const step = useAppSelector(state => state.game.step);
   const budgetDifficulty = useAppSelector(state => state.game.budgetDifficulty);
 
   const [launchType, setLaunchType] = useState<'satellite' | 'drv'>('satellite');
@@ -88,7 +87,6 @@ export function ControlPanel() {
     <div className="bg-slate-800 border-2 border-slate-600 rounded-xl p-6 w-full h-[1100px] flex flex-col">
       <div className="mb-6">
         <h2 className="text-xl font-bold text-blue-300 mb-4 pb-3 border-b-2 border-slate-700 uppercase tracking-wide">Launch Controls</h2>
-        <div className="text-base text-gray-400 mt-3">Turn: {step}</div>
       </div>
 
       <div className="space-y-2 mb-6">
