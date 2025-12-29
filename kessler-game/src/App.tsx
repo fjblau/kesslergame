@@ -93,14 +93,16 @@ function App() {
       id: 'configuration',
       label: 'Configuration',
       content: (
-        <div className="max-w-4xl mx-auto space-y-6">
-          <SoundSettings />
-          <GeneralSettings />
-          <CollisionSettings />
-          <OrbitalSpeedSettings />
-          <SolarStormSettings />
-          <RiskBasedSpeedSettings />
-          <DRVSettings />
+        <div className="w-[80%] mx-auto">
+          <div className="grid grid-cols-3 gap-6">
+            <SoundSettings />
+            <GeneralSettings />
+            <CollisionSettings />
+            <OrbitalSpeedSettings />
+            <SolarStormSettings />
+            <RiskBasedSpeedSettings />
+            <DRVSettings />
+          </div>
         </div>
       ),
     },
