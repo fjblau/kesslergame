@@ -22,7 +22,7 @@ export function BudgetGauge({ budget, maxBudget = 200_000_000 }: BudgetGaugeProp
         {[16.67, 33.33, 50, 66.67, 83.33].map((pos, i) => (
           <div
             key={i}
-            className="absolute top-0 h-full w-px bg-slate-900 z-[5]"
+            className="absolute top-0 h-full w-px bg-blue-300 z-[5]"
             style={{ left: `${pos}%` }}
           />
         ))}
