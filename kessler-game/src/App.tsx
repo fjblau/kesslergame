@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { GameSetupScreen } from './components/Setup/GameSetupScreen';
 import { ControlPanel } from './components/ControlPanel/ControlPanel';
 import { GameSpeedControl } from './components/TimeControl/GameSpeedControl';
@@ -19,6 +19,7 @@ import { useGameSpeed } from './hooks/useGameSpeed';
 import { useAppSelector } from './store/hooks';
 import { GameOverModal } from './components/GameOver/GameOverModal';
 import { ScoreDisplay } from './components/Score/ScoreDisplay';
+import { playBackgroundMusic, stopAllSounds } from './utils/audio';
 
 function App() {
   const [gameStarted, setGameStarted] = useState(false);
@@ -26,6 +27,20 @@ function App() {
   const gameOver = useAppSelector(state => state.game.gameOver);
 
   useGameSpeed();
+
+  useEffect(() => {
+    if (gameStarted && !gameOver) {
+      playBackgroundMusic();
+    } else if (gameOver) {
+      stopAllSounds();
+    }
+  }, [gameStarted, gameOver]);
+
+  useEffect(() => {
+    return () => {
+      stopAllSounds();
+    };
+  }, []);
 
   if (!gameStarted) {
     return <GameSetupScreen onStart={() => setGameStarted(true)} />;
@@ -150,7 +165,7 @@ function App() {
                   <ul className="space-y-1 text-sm">
                     <li><strong>Capacity:</strong> 2-3 debris pieces</li>
                     <li><strong>Success Rate:</strong> 85%</li>
-                    <li><strong>Duration:</strong> 100 turns</li>
+                    <li><strong>Duration:</strong> 5 turns</li>
                     <li><strong>Costs:</strong></li>
                     <ul className="ml-4">
                       <li>LEO: $4M</li>
@@ -167,7 +182,7 @@ function App() {
                   <ul className="space-y-1 text-sm">
                     <li><strong>Capacity:</strong> 6-9 debris pieces</li>
                     <li><strong>Success Rate:</strong> 90%</li>
-                    <li><strong>Duration:</strong> 100 turns</li>
+                    <li><strong>Duration:</strong> 5 turns</li>
                     <li><strong>Costs:</strong></li>
                     <ul className="ml-4">
                       <li>LEO: $7M</li>
@@ -195,6 +210,12 @@ function App() {
                     <span className="text-sm text-gray-400 block">20% cost premium (1.2x multiplier)</span>
                   </li>
                 </ul>
+              </div>
+
+              <div className="mt-4 p-4 bg-gray-800 rounded-lg">
+                <h4 className="font-semibold text-purple-300 mb-2">DRV Lifecycle</h4>
+                <p className="text-sm">After 5 turns of operation, DRVs are automatically decommissioned and completely removed from orbit. They do not become debris—they safely deorbit and burn up in the atmosphere.</p>
+                <p className="text-sm text-gray-400 mt-2">Plan your DRV deployments strategically to ensure continuous debris removal coverage.</p>
               </div>
             </div>
           </section>

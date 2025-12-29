@@ -12,7 +12,7 @@ import { DRVTargetPriority as DRVTargetPrioritySelector } from '../DRVPanel/DRVT
 import { BudgetGauge } from './BudgetGauge';
 import { useStore } from 'react-redux';
 import type { RootState } from '../../store';
-import { playSound } from '../../utils/audio';
+
 
 export function ControlPanel() {
   const dispatch = useAppDispatch();
@@ -61,7 +61,6 @@ export function ControlPanel() {
       dispatch(trackDRVLaunch());
     }
 
-    playSound('launch');
     dispatch(advanceTurn());
 
     if (checkSolarStorm(gameState.solarStormProbability)) {

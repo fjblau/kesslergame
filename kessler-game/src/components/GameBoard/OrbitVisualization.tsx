@@ -13,7 +13,7 @@ import { DRVsCounter } from '../TimeControl/DRVsCounter';
 import { DebrisRemovedCounter } from '../TimeControl/DebrisRemovedCounter';
 import { mapToPixels } from './utils';
 import { clearOldCollisions, clearCascadeFlag } from '../../store/slices/gameSlice';
-import { playCascadeWarning } from '../../utils/audio';
+import { playCascadeWarning, playSatelliteCapture, playDebrisRemoval } from '../../utils/audio';
 import type { RiskLevel } from '../../game/types';
 
 interface LaunchingEntity {
@@ -44,11 +44,13 @@ export function OrbitVisualization() {
   const debris = useAppSelector(state => state.game.debris);
   const debrisRemovalVehicles = useAppSelector(state => state.game.debrisRemovalVehicles);
   const recentCollisions = useAppSelector(state => state.game.recentCollisions);
+  const recentDebrisRemovals = useAppSelector(state => state.game.recentDebrisRemovals);
   const cascadeTriggered = useAppSelector(state => state.game.cascadeTriggered);
   const lastCascadeTurn = useAppSelector(state => state.game.lastCascadeTurn);
   const events = useAppSelector(state => state.events.events);
   const days = useAppSelector(state => state.game.days);
   const riskLevel = useAppSelector(state => state.game.riskLevel);
+  const gameOver = useAppSelector(state => state.game.gameOver);
   const orbitalSpeeds = useAppSelector(state => ({
     LEO: state.game.orbitalSpeedLEO,
     MEO: state.game.orbitalSpeedMEO,
@@ -59,6 +61,9 @@ export function OrbitVisualization() {
   const prevDRVIds = useRef<Set<string>>(new Set());
   const cascadeShownForTurn = useRef<number | undefined>(undefined);
   const solarStormShownForEvent = useRef<string | undefined>(undefined);
+  const prevCapturedSatelliteIds = useRef<Set<string>>(new Set());
+  const prevDebrisRemovalCount = useRef<number>(0);
+  const hasPlayedDebrisSound = useRef<boolean>(false);
   const [launchingSatellites, setLaunchingSatellites] = useState<Set<string>>(new Set());
   const [launchingDRVs, setLaunchingDRVs] = useState<Set<string>>(new Set());
   const [activeTrails, setActiveTrails] = useState<LaunchingEntity[]>([]);
@@ -103,7 +108,7 @@ export function OrbitVisualization() {
         setTimeout(() => {
           setLaunchingSatellites(new Set());
           setLaunchingDRVs(new Set());
-        }, 1500);
+        }, 4000);
       });
     }
   }, [satellites, debrisRemovalVehicles]);
@@ -144,7 +149,7 @@ export function OrbitVisualization() {
   };
 
   useEffect(() => {
-    if (cascadeTriggered && !showCascadeWarning && lastCascadeTurn !== undefined) {
+    if (cascadeTriggered && !showCascadeWarning && lastCascadeTurn !== undefined && !gameOver) {
       if (cascadeShownForTurn.current !== lastCascadeTurn) {
         cascadeShownForTurn.current = lastCascadeTurn;
         requestAnimationFrame(() => {
@@ -153,12 +158,46 @@ export function OrbitVisualization() {
         });
       }
     }
-  }, [cascadeTriggered, showCascadeWarning, lastCascadeTurn]);
+  }, [cascadeTriggered, showCascadeWarning, lastCascadeTurn, gameOver]);
 
   const handleCascadeWarningComplete = useCallback(() => {
     dispatch(clearCascadeFlag());
     setShowCascadeWarning(false);
   }, [dispatch]);
+
+  useEffect(() => {
+    const currentCapturedSatelliteIds = new Set<string>();
+    debrisRemovalVehicles.forEach(drv => {
+      if (drv.capturedDebrisId && satellites.some(s => s.id === drv.capturedDebrisId)) {
+        currentCapturedSatelliteIds.add(drv.capturedDebrisId);
+      }
+    });
+
+    currentCapturedSatelliteIds.forEach(satId => {
+      if (!prevCapturedSatelliteIds.current.has(satId) && !gameOver) {
+        playSatelliteCapture();
+      }
+    });
+
+    prevCapturedSatelliteIds.current = currentCapturedSatelliteIds;
+  }, [debrisRemovalVehicles, satellites, gameOver]);
+
+  useEffect(() => {
+    const uncooperativeRemovals = recentDebrisRemovals.filter(removal => removal.drvType !== 'cooperative');
+    const currentRemovalCount = uncooperativeRemovals.length;
+    
+    if (currentRemovalCount > 0 && currentRemovalCount > prevDebrisRemovalCount.current && !gameOver) {
+      if (!hasPlayedDebrisSound.current) {
+        hasPlayedDebrisSound.current = true;
+        playDebrisRemoval();
+        setTimeout(() => {
+          hasPlayedDebrisSound.current = false;
+        }, 100);
+      }
+    }
+    
+    prevDebrisRemovalCount.current = currentRemovalCount;
+  }, [recentDebrisRemovals, gameOver]);
 
   return (
     <div className={`relative w-[1000px] h-[1000px] flex items-center justify-center bg-slate-900 border-[3px] ${getBorderColorClass(riskLevel)} rounded-xl overflow-hidden`}>
