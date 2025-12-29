@@ -1,3 +1,27 @@
+export function playRocketLaunch() {
+  try {
+    const audio = new Audio('/Users/frankblau/Downloads/ocket-launch-306441.mp3');
+    audio.volume = 0.5;
+    audio.play().catch(() => {
+      // Ignore audio play errors (e.g., autoplay policy)
+    });
+  } catch {
+    // Ignore audio errors
+  }
+}
+
+export function playCollision() {
+  try {
+    const audio = new Audio('/Users/frankblau/Downloads/smallExplosion.mp3');
+    audio.volume = 0.5;
+    audio.play().catch(() => {
+      // Ignore audio play errors (e.g., autoplay policy)
+    });
+  } catch {
+    // Ignore audio errors
+  }
+}
+
 export function playCascadeWarning() {
   try {
     const audioContext = new AudioContext();

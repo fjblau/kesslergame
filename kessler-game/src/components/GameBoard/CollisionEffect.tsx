@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useEffect } from 'react';
+import { playCollision } from '../../utils/audio';
 
 interface CollisionEffectProps {
   x: number;
@@ -9,6 +10,7 @@ interface CollisionEffectProps {
 
 export function CollisionEffect({ x, y, onComplete }: CollisionEffectProps) {
   useEffect(() => {
+    playCollision();
     const timer = setTimeout(onComplete, 500);
     return () => clearTimeout(timer);
   }, [onComplete]);

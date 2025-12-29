@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useEffect } from 'react';
 import type { OrbitLayer } from '../../game/types';
+import { playRocketLaunch } from '../../utils/audio';
 
 interface LaunchAnimationProps {
   targetLayer: OrbitLayer;
@@ -30,6 +31,7 @@ export function LaunchAnimation({ targetLayer, targetAngle, onComplete }: Launch
   const targetY = centerY + Math.sin(safeAngle) * targetRadius;
 
   useEffect(() => {
+    playRocketLaunch();
     const timer = setTimeout(onComplete, 1500);
     return () => clearTimeout(timer);
   }, [onComplete]);
