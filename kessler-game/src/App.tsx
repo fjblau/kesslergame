@@ -84,7 +84,7 @@ function App() {
       id: 'documentation',
       label: 'Documentation',
       content: (
-        <div className="p-8 space-y-8">
+        <div className="p-8 space-y-8 max-w-[1500px] mx-auto">
           <section>
             <h2 className="text-3xl font-bold text-blue-400 mb-4">Game Overview</h2>
             <p className="text-gray-300 mb-4">
