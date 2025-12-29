@@ -90,6 +90,8 @@ export function ControlPanel() {
         <h2 className="text-xl font-bold text-blue-300 mb-4 pb-3 border-b-2 border-slate-700 uppercase tracking-wide">Launch Controls</h2>
       </div>
 
+      <div className="text-sm text-gray-500 mb-4">Version: v{__APP_VERSION__}</div>
+
       <div className="space-y-2 mb-6">
         <label className="text-base font-medium text-gray-300">Launch Type</label>
         <div className="flex gap-3">
