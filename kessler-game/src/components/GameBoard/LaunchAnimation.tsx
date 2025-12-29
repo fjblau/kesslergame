@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import type { OrbitLayer } from '../../game/types';
 import { playRocketLaunch } from '../../utils/audio';
 
@@ -24,6 +24,7 @@ const LAYER_COLORS = {
 export function LaunchAnimation({ targetLayer, targetAngle, onComplete }: LaunchAnimationProps) {
   const centerX = 500;
   const centerY = 500;
+  const hasPlayedSound = useRef(false);
   
   const targetRadius = ORBIT_RADII[targetLayer] || 140;
   const safeAngle = (typeof targetAngle === 'number' && !isNaN(targetAngle)) ? targetAngle : 0;
@@ -31,7 +32,10 @@ export function LaunchAnimation({ targetLayer, targetAngle, onComplete }: Launch
   const targetY = centerY + Math.sin(safeAngle) * targetRadius;
 
   useEffect(() => {
-    playRocketLaunch();
+    if (!hasPlayedSound.current) {
+      hasPlayedSound.current = true;
+      playRocketLaunch();
+    }
     const timer = setTimeout(onComplete, 1500);
     return () => clearTimeout(timer);
   }, [onComplete]);

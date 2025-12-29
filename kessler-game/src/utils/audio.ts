@@ -2,6 +2,7 @@ export function playRocketLaunch() {
   try {
     const audio = new Audio('/rocket-launch.mp3');
     audio.volume = 0.5;
+    audio.loop = false;
     
     const playPromise = audio.play();
     
@@ -12,7 +13,7 @@ export function playRocketLaunch() {
         const fadeSteps = 20;
         const fadeInterval = fadeDuration / fadeSteps;
         
-        setTimeout(() => {
+        const fadeTimeout = setTimeout(() => {
           let step = 0;
           const fadeTimer = setInterval(() => {
             step++;
@@ -25,6 +26,12 @@ export function playRocketLaunch() {
             }
           }, fadeInterval);
         }, fadeStartTime);
+        
+        setTimeout(() => {
+          clearTimeout(fadeTimeout);
+          audio.pause();
+          audio.currentTime = 0;
+        }, 3000);
       }).catch(() => {
         // Ignore audio play errors (e.g., autoplay policy)
       });
