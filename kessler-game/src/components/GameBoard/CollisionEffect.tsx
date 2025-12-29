@@ -11,14 +11,15 @@ interface CollisionEffectProps {
 
 export function CollisionEffect({ x, y, onComplete }: CollisionEffectProps) {
   const gameOver = useAppSelector(state => state.game.gameOver);
+  const cascadeTriggered = useAppSelector(state => state.game.cascadeTriggered);
   
   useEffect(() => {
-    if (!gameOver) {
+    if (!gameOver && !cascadeTriggered) {
       playCollision();
     }
     const timer = setTimeout(onComplete, 500);
     return () => clearTimeout(timer);
-  }, [onComplete, gameOver]);
+  }, [onComplete, gameOver, cascadeTriggered]);
 
   return (
     <div style={{ position: 'absolute', left: x, top: y, pointerEvents: 'none' }}>

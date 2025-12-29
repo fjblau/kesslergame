@@ -256,7 +256,7 @@ export function OrbitVisualization() {
       </div>
 
       {/* Collision effects */}
-      {activeCollisionEvents.map(collision => {
+      {!gameOver && activeCollisionEvents.map(collision => {
         const { x, y } = mapToPixels(collision, days, orbitalSpeeds);
         return (
           <CollisionEffect
