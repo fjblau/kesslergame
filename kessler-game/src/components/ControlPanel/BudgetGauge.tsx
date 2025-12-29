@@ -26,7 +26,7 @@ export function BudgetGauge({ budget, maxBudget = 200_000_000 }: BudgetGaugeProp
             style={{ left: `${pos}%` }}
           />
         ))}
-        <span className="relative z-10 text-sm font-medium text-black bg-white border border-blue-500 px-2 py-1">BUDGET REMAINING</span>
+        <span className="relative z-10 text-sm font-medium text-black bg-white border border-blue-500 px-2 py-0">BUDGET REMAINING</span>
       </div>
     </div>
   );
