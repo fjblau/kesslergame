@@ -19,7 +19,7 @@ export function BudgetGauge({ budget, maxBudget = 200_000_000 }: BudgetGaugeProp
           className={`h-full transition-all duration-300 ${getColorClass()} absolute left-0 top-0`}
           style={{ width: `${percentage}%` }}
         />
-        <span className="relative z-10 text-sm font-medium text-black">Budget Remaining</span>
+        <span className="relative z-10 text-sm font-medium text-black">BUDGET REMAINING</span>
       </div>
     </div>
   );
