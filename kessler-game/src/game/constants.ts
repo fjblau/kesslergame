@@ -70,6 +70,12 @@ export const SATELLITE_PURPOSE_CONFIG: Record<SatelliteType | 'Random', {
   Random: { icon: '🎲', discount: 0.10 },
 };
 
+export const SATELLITE_REVENUE: Record<SatelliteType, number> = {
+  Weather: 100_000,
+  Comms: 150_000,
+  GPS: 200_000,
+};
+
 export const BUDGET_DIFFICULTY_CONFIG: Record<BudgetDifficulty, {
   startingBudget: number;
   incomeAmount: number;
