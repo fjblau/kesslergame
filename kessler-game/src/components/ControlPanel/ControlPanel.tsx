@@ -127,7 +127,7 @@ export function ControlPanel() {
         </div>
       </div>
 
-      <div className="space-y-6 flex-1">
+      <div className="space-y-6" style={{ height: '430px' }}>
         {launchType === 'satellite' ? (
           <>
             <SatellitePurposeSelector selected={satellitePurpose} onChange={setSatellitePurpose} />
