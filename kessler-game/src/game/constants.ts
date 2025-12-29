@@ -33,8 +33,8 @@ export const DRV_CONFIG = {
     uncooperative: 0.90,
   },
   duration: {
-    cooperative: 100,
-    uncooperative: 100,
+    cooperative: 5,
+    uncooperative: 5,
   },
 };
 

@@ -132,7 +132,7 @@ export function useGameSpeed() {
               type: 'drv-expired',
               turn: updatedState.step,
               day: updatedState.days,
-              message: `${expiredDRV.type === 'cooperative' ? 'Cooperative' : 'Uncooperative'} DRV expired in ${expiredDRV.layer} orbit (removed ${expiredDRV.debrisRemoved} debris, created 1 debris)`,
+              message: `${expiredDRV.type === 'cooperative' ? 'Cooperative' : 'Uncooperative'} DRV decommissioned in ${expiredDRV.layer} orbit (removed ${expiredDRV.debrisRemoved} debris, created 1 debris)`,
               details: { type: expiredDRV.type, layer: expiredDRV.layer, debrisRemoved: expiredDRV.debrisRemoved }
             }));
           }
