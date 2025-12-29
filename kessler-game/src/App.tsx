@@ -520,6 +520,9 @@ function App() {
             <p className="text-gray-400 text-sm">
               Licensed under the MIT License. See LICENSE file for details.
             </p>
+            <p className="text-gray-400 text-sm mt-3">
+              Thanks to Elias Ladineck for helping with the testing.
+            </p>
           </section>
         </div>
       ),
