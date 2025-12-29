@@ -14,7 +14,7 @@ export function BudgetGauge({ budget, maxBudget = 200_000_000 }: BudgetGaugeProp
 
   return (
     <div className="space-y-1">
-      <div className="w-full h-[34px] bg-slate-700 border border-blue-500 relative flex items-center justify-center">
+      <div className="w-full h-[42px] bg-slate-700 border border-blue-500 relative flex items-center justify-center">
         <div 
           className={`h-full transition-all duration-300 ${getColorClass()} absolute left-0 top-0`}
           style={{ width: `${percentage}%` }}
@@ -26,7 +26,7 @@ export function BudgetGauge({ budget, maxBudget = 200_000_000 }: BudgetGaugeProp
             style={{ left: `${pos}%` }}
           />
         ))}
-        <span className="relative z-10 text-sm font-medium text-black">BUDGET REMAINING</span>
+        <span className="relative z-10 text-sm font-medium text-black bg-white border border-blue-500 px-2 py-1">BUDGET REMAINING</span>
       </div>
     </div>
   );
