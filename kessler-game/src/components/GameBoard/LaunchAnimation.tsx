@@ -51,11 +51,11 @@ export function LaunchAnimation({ targetLayer, targetAngle, onComplete }: Launch
     }
     
     const controls = animate(progress, 1, {
-      duration: 1.5,
+      duration: 4,
       ease: [0.33, 1, 0.68, 1],
     });
     
-    const timer = setTimeout(onComplete, 1500);
+    const timer = setTimeout(onComplete, 4000);
     
     return () => {
       controls.stop();
@@ -86,8 +86,8 @@ export function LaunchAnimation({ targetLayer, targetAngle, onComplete }: Launch
         initial={{ opacity: 0.8 }}
         animate={{ opacity: [0.8, 0.8, 0] }}
         transition={{
-          duration: 1.5,
-          opacity: { times: [0, 0.7, 1] },
+          duration: 4,
+          opacity: { times: [0, 0.85, 1] },
         }}
       />
       <motion.path
@@ -99,8 +99,8 @@ export function LaunchAnimation({ targetLayer, targetAngle, onComplete }: Launch
         initial={{ opacity: 0.5 }}
         animate={{ opacity: [0.5, 0.5, 0] }}
         transition={{
-          duration: 1.5,
-          opacity: { times: [0, 0.7, 1] },
+          duration: 4,
+          opacity: { times: [0, 0.85, 1] },
         }}
       />
     </svg>
