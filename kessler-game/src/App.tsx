@@ -86,7 +86,7 @@ function App() {
       id: 'configuration',
       label: 'Configuration',
       content: (
-        <div className="max-w-4xl mx-auto space-y-6">
+        <div className="w-[80%] mx-auto grid grid-cols-3 gap-6">
           <CollisionSettings />
           <OrbitalSpeedSettings />
           <SolarStormSettings />
