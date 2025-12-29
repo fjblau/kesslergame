@@ -21,6 +21,11 @@
   - Prevents collision animations and sounds from playing when game is over
   - Ensures immediate transition to Game Over modal without additional audio/visual effects
 
+- `kessler-game/src/components/GameBoard/CollisionEffect.tsx` (lines 14, 17, 22)
+  - Added `cascadeTriggered` check before playing collision sounds
+  - Prevents individual collision sounds from playing during cascades
+  - Only the cascade warning sound plays during cascade events
+
 ## Verification
 
 - Build: ✅ Passed (TypeScript compilation successful)
@@ -28,10 +33,21 @@
 
 ## Technical Details
 
-The game-ending cascade lag was caused by collision effects being rendered even when `gameOver` was true. While the `CollisionEffect` component already checked for `gameOver` before playing sounds, there was still a race condition during component mounting. By preventing the rendering of collision effects entirely when the game is over, we ensure:
+The game-ending cascade lag was caused by two issues:
 
-1. No collision sounds play during game over
-2. Immediate display of the Game Over modal
-3. Clean transition without visual/audio artifacts
+1. **Collision effects rendering during game over**: Collision effects were being rendered even when `gameOver` was true, causing a race condition during component mounting.
+
+2. **Multiple collision sounds during cascades**: When a cascade occurred (3+ simultaneous collisions), each collision would play its own sound, creating an overwhelming audio experience that overlapped with the cascade warning sound.
+
+**Solutions implemented:**
+
+1. Prevent rendering collision effects when `gameOver` is true (OrbitVisualization.tsx)
+2. Skip individual collision sounds when `cascadeTriggered` is true (CollisionEffect.tsx)
+
+This ensures:
+- No collision sounds play during game over
+- During cascade events, only the cascade warning sound plays (not all individual collision sounds)
+- Immediate display of the Game Over modal
+- Clean audio and visual transition without artifacts
 
 The fix works in conjunction with the existing `stopAllSounds()` call in `App.tsx` (line 35) that triggers when `gameOver` becomes true.
