@@ -1,6 +1,6 @@
 export function playRocketLaunch() {
   try {
-    const audio = new Audio('/Users/frankblau/Downloads/ocket-launch-306441.mp3');
+    const audio = new Audio('/rocket-launch.mp3');
     audio.volume = 0.5;
     audio.play().catch(() => {
       // Ignore audio play errors (e.g., autoplay policy)
@@ -12,7 +12,7 @@ export function playRocketLaunch() {
 
 export function playCollision() {
   try {
-    const audio = new Audio('/Users/frankblau/Downloads/smallExplosion.mp3');
+    const audio = new Audio('/small-explosion.mp3');
     audio.volume = 0.5;
     audio.play().catch(() => {
       // Ignore audio play errors (e.g., autoplay policy)
