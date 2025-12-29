@@ -158,12 +158,12 @@ export function ControlPanel() {
         )}
       </div>
 
-      <div className="pt-4 border-t border-slate-700 space-y-3">
-        <div className="flex justify-between text-base">
+      <div className="pt-4 border-t border-slate-700">
+        <div className="flex justify-between text-base mb-[2px]">
           <span className="text-gray-400">Total Cost:</span>
           <span className="font-bold text-yellow-400">${(totalCost / 1e6).toFixed(1)}M</span>
         </div>
-        <div className="flex justify-between text-base">
+        <div className="flex justify-between text-base mb-3">
           <span className="text-gray-400">Budget:</span>
           <span className={`font-bold ${budget >= totalCost ? 'text-green-400' : 'text-red-400'}`}>
             ${(budget / 1e6).toFixed(1)}M

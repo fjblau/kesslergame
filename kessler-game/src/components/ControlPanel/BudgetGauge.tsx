@@ -7,18 +7,19 @@ export function BudgetGauge({ budget, maxBudget = 200_000_000 }: BudgetGaugeProp
   const percentage = Math.min((budget / maxBudget) * 100, 100);
   
   const getColorClass = () => {
-    if (budget >= 50_000_000) return 'bg-green-500';
-    if (budget >= 20_000_000) return 'bg-yellow-500';
-    return 'bg-red-500';
+    if (budget >= 50_000_000) return 'bg-green-400';
+    if (budget >= 20_000_000) return 'bg-yellow-400';
+    return 'bg-red-400';
   };
 
   return (
     <div className="space-y-1">
-      <div className="w-full h-6 bg-slate-700 border-2 border-slate-600 overflow-hidden">
+      <div className="w-full h-[29px] bg-slate-700 border-2 border-slate-600 relative flex items-center justify-center">
         <div 
-          className={`h-full transition-all duration-300 ${getColorClass()}`}
+          className={`h-full transition-all duration-300 ${getColorClass()} absolute left-0 top-0`}
           style={{ width: `${percentage}%` }}
         />
+        <span className="relative z-10 text-sm font-medium text-white">Budget Remaining</span>
       </div>
     </div>
   );
