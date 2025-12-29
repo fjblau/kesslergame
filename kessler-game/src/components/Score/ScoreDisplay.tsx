@@ -16,7 +16,9 @@ export function ScoreDisplay() {
         onClick={() => setShowBreakdown(true)}
       >
         <div className="flex items-center gap-4">
-          <span className="text-4xl text-gray-400">Turn: {step}    Total Score:  </span>
+          <span className="text-4xl text-gray-400">Turn: </span>
+          <span className="text-4xl font-bold text-blue-400">{step}</span>
+          <span className="text-4xl text-gray-400 ml-8">Total Score:  </span>
           <span className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
             {totalScore.toLocaleString()}
           </span>
