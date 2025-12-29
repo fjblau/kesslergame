@@ -85,12 +85,13 @@ export function ControlPanel() {
   }, [canAfford, store, dispatch, totalCost, launchType, satellitePurpose, selectedOrbit, insuranceTier, drvType, drvPriority]);
 
   return (
-    <div className="bg-slate-800 border-2 border-slate-600 rounded-xl px-6 pt-1 pb-6 w-full h-[1100px] flex flex-col">
-      <div className="mt-[17px]" style={{ marginBottom: 'calc(1.5rem - 17px)' }}>
-        <h2 className="text-xl font-bold text-blue-300 mb-4 pb-3 border-b-2 border-slate-700 uppercase tracking-wide">Launch Controls</h2>
-      </div>
+    <>
+      <div className="bg-slate-800 border-2 border-slate-600 rounded-xl px-6 pt-1 pb-6 w-full h-[1100px] flex flex-col">
+        <div className="mt-[17px]" style={{ marginBottom: 'calc(1.5rem - 17px)' }}>
+          <h2 className="text-xl font-bold text-blue-300 mb-4 pb-3 border-b-2 border-slate-700 uppercase tracking-wide">Launch Controls</h2>
+        </div>
 
-      <div className="space-y-2 mb-6">
+        <div className="space-y-2 mb-6">
         <label className="text-base font-medium text-gray-300">Launch Type</label>
         <div className="flex gap-3">
           {(['satellite', 'drv'] as const).map(type => (
@@ -184,5 +185,7 @@ export function ControlPanel() {
         </button>
       </div>
     </div>
+    <div className="text-sm text-gray-500 mt-2">Version: v{__APP_VERSION__}</div>
+    </>
   );
 }
