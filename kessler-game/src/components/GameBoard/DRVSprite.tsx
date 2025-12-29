@@ -27,6 +27,8 @@ export const DRVSprite = memo(function DRVSprite({ drv, x, y, isLaunching = fals
   const speedMultiplier = getEntitySpeedMultiplier(drv.id);
   const rotation = baseAngle + (days * orbitalSpeed * speedMultiplier * 3.6);
   
+  const offset = hasCapturedObject ? 2 : 0;
+  
   return (
     <motion.div
       style={{
@@ -45,8 +47,8 @@ export const DRVSprite = memo(function DRVSprite({ drv, x, y, isLaunching = fals
         rotate: 0,
       } : false}
       animate={{
-        left: x,
-        top: y,
+        left: x + offset,
+        top: y + offset,
         x: '-50%',
         y: '-50%',
         scale: 1,
