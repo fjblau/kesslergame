@@ -165,7 +165,7 @@ function App() {
                   <ul className="space-y-1 text-sm">
                     <li><strong>Capacity:</strong> 2-3 debris pieces</li>
                     <li><strong>Success Rate:</strong> 85%</li>
-                    <li><strong>Duration:</strong> 5 turns</li>
+                    <li><strong>Duration:</strong> 10 turns</li>
                     <li><strong>Costs:</strong></li>
                     <ul className="ml-4">
                       <li>LEO: $4M</li>
@@ -182,7 +182,7 @@ function App() {
                   <ul className="space-y-1 text-sm">
                     <li><strong>Capacity:</strong> 6-9 debris pieces</li>
                     <li><strong>Success Rate:</strong> 90%</li>
-                    <li><strong>Duration:</strong> 5 turns</li>
+                    <li><strong>Duration:</strong> 10 turns</li>
                     <li><strong>Costs:</strong></li>
                     <ul className="ml-4">
                       <li>LEO: $7M</li>
@@ -214,7 +214,7 @@ function App() {
 
               <div className="mt-4 p-4 bg-gray-800 rounded-lg">
                 <h4 className="font-semibold text-purple-300 mb-2">DRV Lifecycle</h4>
-                <p className="text-sm">After 5 turns of operation, DRVs are automatically decommissioned and completely removed from orbit. They do not become debris—they safely deorbit and burn up in the atmosphere.</p>
+                <p className="text-sm">After 10 turns of operation, DRVs are automatically decommissioned and completely removed from orbit. They do not become debris—they safely deorbit and burn up in the atmosphere.</p>
                 <p className="text-sm text-gray-400 mt-2">Plan your DRV deployments strategically to ensure continuous debris removal coverage.</p>
               </div>
             </div>
