@@ -179,7 +179,7 @@ export function ControlPanel() {
               : 'bg-slate-700 text-slate-500 cursor-not-allowed'
           }`}
         >
-          {canAfford ? 'Launch' : 'Insufficient Budget'}
+          {canAfford ? (launchType === 'satellite' ? 'Launch Satellite' : 'Launch DRV') : 'Insufficient Budget'}
         </button>
       </div>
     </div>
