@@ -210,3 +210,49 @@ export function playCascadeWarning() {
     // Ignore audio errors (e.g., if browser doesn't support Web Audio API)
   }
 }
+
+export function playDebrisRemoval() {
+  try {
+    const audio = new Audio('/space-slash.mp3');
+    audio.volume = 0.5;
+    audio.loop = false;
+    activeAudioElements.add(audio);
+    
+    const playPromise = audio.play();
+    
+    if (playPromise !== undefined) {
+      playPromise.then(() => {
+        const fadeStartTime = 2500;
+        const fadeDuration = 500;
+        const fadeSteps = 20;
+        const fadeInterval = fadeDuration / fadeSteps;
+        
+        const fadeTimeout = setTimeout(() => {
+          let step = 0;
+          const fadeTimer = setInterval(() => {
+            step++;
+            audio.volume = Math.max(0, 0.5 * (1 - step / fadeSteps));
+            
+            if (step >= fadeSteps) {
+              clearInterval(fadeTimer);
+              audio.pause();
+              audio.currentTime = 0;
+              activeAudioElements.delete(audio);
+            }
+          }, fadeInterval);
+        }, fadeStartTime);
+        
+        setTimeout(() => {
+          clearTimeout(fadeTimeout);
+          audio.pause();
+          audio.currentTime = 0;
+          activeAudioElements.delete(audio);
+        }, 3000);
+      }).catch(() => {
+        activeAudioElements.delete(audio);
+      });
+    }
+  } catch {
+    // Ignore audio errors
+  }
+}
