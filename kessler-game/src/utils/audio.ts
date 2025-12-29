@@ -1,31 +1,34 @@
 export function playRocketLaunch() {
   try {
     const audio = new Audio('/rocket-launch.mp3');
-    const initialVolume = 0.5;
-    audio.volume = initialVolume;
+    audio.volume = 0.5;
     
-    audio.play().catch(() => {
-      // Ignore audio play errors (e.g., autoplay policy)
-    });
-
-    const fadeStartTime = 2500;
-    const fadeDuration = 500;
-    const fadeSteps = 20;
-    const fadeInterval = fadeDuration / fadeSteps;
+    const playPromise = audio.play();
     
-    setTimeout(() => {
-      let step = 0;
-      const fadeTimer = setInterval(() => {
-        step++;
-        audio.volume = initialVolume * (1 - step / fadeSteps);
+    if (playPromise !== undefined) {
+      playPromise.then(() => {
+        const fadeStartTime = 2500;
+        const fadeDuration = 500;
+        const fadeSteps = 20;
+        const fadeInterval = fadeDuration / fadeSteps;
         
-        if (step >= fadeSteps) {
-          clearInterval(fadeTimer);
-          audio.pause();
-          audio.currentTime = 0;
-        }
-      }, fadeInterval);
-    }, fadeStartTime);
+        setTimeout(() => {
+          let step = 0;
+          const fadeTimer = setInterval(() => {
+            step++;
+            audio.volume = Math.max(0, 0.5 * (1 - step / fadeSteps));
+            
+            if (step >= fadeSteps) {
+              clearInterval(fadeTimer);
+              audio.pause();
+              audio.currentTime = 0;
+            }
+          }, fadeInterval);
+        }, fadeStartTime);
+      }).catch(() => {
+        // Ignore audio play errors (e.g., autoplay policy)
+      });
+    }
   } catch {
     // Ignore audio errors
   }
