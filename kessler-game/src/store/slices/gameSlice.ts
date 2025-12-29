@@ -375,14 +375,6 @@ export const gameSlice = createSlice({
         state.budget -= state.budgetDrainAmount;
       }
 
-      const satelliteRevenue = state.satellites.reduce((total, sat) => {
-        return total + SATELLITE_REVENUE[sat.purpose];
-      }, 0);
-
-      if (satelliteRevenue > 0) {
-        state.budget += satelliteRevenue;
-      }
-
       if (state.budgetIncomeInterval > 0 && state.step >= state.nextIncomeAt) {
         state.budget += state.budgetIncomeAmount;
         state.nextIncomeAt += state.budgetIncomeInterval;
@@ -459,6 +451,16 @@ export const gameSlice = createSlice({
 
       if (state.budget < 0 || state.step >= state.maxSteps || state.debris.length > MAX_DEBRIS_LIMIT) {
         state.gameOver = true;
+      }
+    },
+
+    addSatelliteRevenue: (state) => {
+      const satelliteRevenue = state.satellites.reduce((total, sat) => {
+        return total + SATELLITE_REVENUE[sat.purpose];
+      }, 0);
+
+      if (satelliteRevenue > 0) {
+        state.budget += satelliteRevenue;
       }
     },
 
@@ -731,6 +733,7 @@ export const {
   addBudget,
   processDRVOperations,
   advanceTurn,
+  addSatelliteRevenue,
   processCollisions,
   decommissionExpiredDRVs,
   triggerSolarStorm,
