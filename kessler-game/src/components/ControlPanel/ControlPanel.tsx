@@ -4,11 +4,12 @@ import { launchSatellite, launchDRV, spendBudget, advanceTurn, decommissionExpir
 import { updateMissionProgress, trackDRVLaunch } from '../../store/slices/missionsSlice';
 import { addEvent } from '../../store/slices/eventSlice';
 import type { OrbitLayer, SatelliteType, InsuranceTier, DRVType, DRVTargetPriority } from '../../game/types';
-import { LAUNCH_COSTS, INSURANCE_CONFIG, DRV_CONFIG, DRV_PRIORITY_CONFIG, SATELLITE_PURPOSE_CONFIG } from '../../game/constants';
+import { LAUNCH_COSTS, INSURANCE_CONFIG, DRV_CONFIG, DRV_PRIORITY_CONFIG, SATELLITE_PURPOSE_CONFIG, BUDGET_DIFFICULTY_CONFIG } from '../../game/constants';
 import { checkSolarStorm } from '../../game/engine/events';
 import { InsuranceTierSelector } from './InsuranceTierSelector';
 import { SatellitePurposeSelector } from '../SatelliteConfig/SatellitePurposeSelector';
 import { DRVTargetPriority as DRVTargetPrioritySelector } from '../DRVPanel/DRVTargetPriority';
+import { BudgetGauge } from './BudgetGauge';
 import { useStore } from 'react-redux';
 import type { RootState } from '../../store';
 
@@ -17,6 +18,7 @@ export function ControlPanel() {
   const store = useStore();
   const budget = useAppSelector(state => state.game.budget);
   const step = useAppSelector(state => state.game.step);
+  const budgetDifficulty = useAppSelector(state => state.game.budgetDifficulty);
 
   const [launchType, setLaunchType] = useState<'satellite' | 'drv'>('satellite');
   const [selectedOrbit, setSelectedOrbit] = useState<OrbitLayer>('LEO');
@@ -169,6 +171,7 @@ export function ControlPanel() {
             ${(budget / 1e6).toFixed(1)}M
           </span>
         </div>
+        <BudgetGauge budget={budget} maxBudget={BUDGET_DIFFICULTY_CONFIG[budgetDifficulty].startingBudget} />
         <button
           onClick={handleLaunch}
           disabled={!canAfford}

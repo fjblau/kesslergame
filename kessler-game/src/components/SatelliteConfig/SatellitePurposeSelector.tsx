@@ -22,7 +22,7 @@ export function SatellitePurposeSelector({ selected, onChange }: SatellitePurpos
               key={option}
               onClick={() => onChange(option)}
               className={`
-                p-4 rounded-xl border-2 transition-all
+                p-4 rounded-xl border-2 transition-all min-h-[88px] flex flex-col items-center justify-center
                 ${isSelected 
                   ? 'border-blue-500 bg-blue-600 text-white shadow-lg' 
                   : 'border-slate-600 bg-slate-700 text-gray-300 hover:bg-slate-600 hover:border-slate-500'}
