@@ -14,19 +14,26 @@ import { OrbitalSpeedSettings } from './components/Configuration/OrbitalSpeedSet
 import { SolarStormSettings } from './components/Configuration/SolarStormSettings';
 import { DRVSettings } from './components/Configuration/DRVSettings';
 import { RiskBasedSpeedSettings } from './components/Configuration/RiskBasedSpeedSettings';
+import { SoundSettings } from './components/Configuration/SoundSettings';
+import { GeneralSettings } from './components/Configuration/GeneralSettings';
 import { Tabs } from './components/ui/Tabs';
 import { useGameSpeed } from './hooks/useGameSpeed';
 import { useAppSelector } from './store/hooks';
 import { GameOverModal } from './components/GameOver/GameOverModal';
 import { ScoreDisplay } from './components/Score/ScoreDisplay';
-import { playBackgroundMusic, stopAllSounds } from './utils/audio';
+import { playBackgroundMusic, stopAllSounds, setSoundEnabled } from './utils/audio';
 
 function App() {
   const [gameStarted, setGameStarted] = useState(false);
   const history = useAppSelector(state => state.game.history);
   const gameOver = useAppSelector(state => state.game.gameOver);
+  const soundEnabledState = useAppSelector(state => state.game.soundEnabled);
 
   useGameSpeed();
+
+  useEffect(() => {
+    setSoundEnabled(soundEnabledState);
+  }, [soundEnabledState]);
 
   useEffect(() => {
     if (gameStarted && !gameOver) {
@@ -87,6 +94,8 @@ function App() {
       label: 'Configuration',
       content: (
         <div className="max-w-4xl mx-auto space-y-6">
+          <SoundSettings />
+          <GeneralSettings />
           <CollisionSettings />
           <OrbitalSpeedSettings />
           <SolarStormSettings />
@@ -214,8 +223,8 @@ function App() {
 
               <div className="mt-4 p-4 bg-gray-800 rounded-lg">
                 <h4 className="font-semibold text-purple-300 mb-2">DRV Lifecycle</h4>
-                <p className="text-sm">After 10 turns of operation, DRVs are automatically decommissioned and completely removed from orbit. They do not become debris—they safely deorbit and burn up in the atmosphere.</p>
-                <p className="text-sm text-gray-400 mt-2">Plan your DRV deployments strategically to ensure continuous debris removal coverage.</p>
+                <p className="text-sm">DRVs are automatically decommissioned after a set number of turns (default: 10 turns, configurable in Configuration tab). They are completely removed from orbit and do not become debris—they safely deorbit and burn up in the atmosphere.</p>
+                <p className="text-sm text-gray-400 mt-2">Plan your DRV deployments strategically to ensure continuous debris removal coverage. Adjust decommission time in Configuration to fine-tune your strategy.</p>
               </div>
             </div>
           </section>
@@ -344,6 +353,75 @@ function App() {
                   <li>• Track satellite losses to optimize insurance strategies</li>
                   <li>• Monitor DRV performance to adjust deployment timing and quantities</li>
                 </ul>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-blue-400 mb-3">Configuration Parameters</h2>
+            <div className="space-y-4 text-gray-300">
+              <p className="mb-4">The Configuration tab allows you to customize various game mechanics to adjust difficulty and simulation behavior. All settings are automatically saved and persist between sessions.</p>
+              
+              <div className="space-y-6">
+                <div className="p-4 bg-gray-800 rounded-lg">
+                  <h4 className="text-lg font-semibold text-purple-300 mb-3">Sound Settings</h4>
+                  <ul className="space-y-2 text-sm">
+                    <li><strong>Sound Effects:</strong> Toggle all game sound effects ON/OFF including background music, collision sounds, launch sounds, and event notifications.</li>
+                  </ul>
+                </div>
+
+                <div className="p-4 bg-gray-800 rounded-lg">
+                  <h4 className="text-lg font-semibold text-purple-300 mb-3">General Settings</h4>
+                  <ul className="space-y-2 text-sm">
+                    <li><strong>DRV Decommission Time (5-20 turns):</strong> How many turns a DRV remains active before being decommissioned. Default is 10 turns. Increase for longer debris removal operations, decrease for faster DRV turnover.</li>
+                  </ul>
+                </div>
+
+                <div className="p-4 bg-gray-800 rounded-lg">
+                  <h4 className="text-lg font-semibold text-purple-300 mb-3">Collision Settings</h4>
+                  <ul className="space-y-2 text-sm">
+                    <li><strong>Angle Threshold (1-60°):</strong> Maximum angle difference between object trajectories for a collision to occur. Lower values make collisions less likely, higher values increase collision probability.</li>
+                    <li><strong>Radius Multiplier (0.1-5.0x):</strong> Adjusts the collision detection radius around objects. Higher values increase the effective "size" of objects for collision purposes.</li>
+                    <li><strong>Debris Per Collision (1-15):</strong> Number of new debris pieces created when a collision occurs. Higher values accelerate cascade scenarios.</li>
+                  </ul>
+                </div>
+
+                <div className="p-4 bg-gray-800 rounded-lg">
+                  <h4 className="text-lg font-semibold text-purple-300 mb-3">Orbital Speed Settings</h4>
+                  <ul className="space-y-2 text-sm">
+                    <li><strong>LEO Speed (2-12):</strong> Orbital speed for Low Earth Orbit objects. Higher speeds increase collision frequency in LEO.</li>
+                    <li><strong>MEO Speed (1-8):</strong> Orbital speed for Medium Earth Orbit objects.</li>
+                    <li><strong>GEO Speed (0.5-6):</strong> Orbital speed for Geostationary Orbit objects. Lower speeds reflect the more stable nature of GEO.</li>
+                  </ul>
+                  <p className="text-xs text-gray-400 mt-2">Tip: Realistic ratios are LEO:MEO:GEO ≈ 2.67:1.67:1. Faster speeds make the game more challenging.</p>
+                </div>
+
+                <div className="p-4 bg-gray-800 rounded-lg">
+                  <h4 className="text-lg font-semibold text-purple-300 mb-3">Solar Storm Settings</h4>
+                  <ul className="space-y-2 text-sm">
+                    <li><strong>Storm Probability (0-100%):</strong> Chance of a solar storm occurring each turn. Solar storms can damage or destroy satellites, especially in LEO. Default is 10%.</li>
+                  </ul>
+                </div>
+
+                <div className="p-4 bg-gray-800 rounded-lg">
+                  <h4 className="text-lg font-semibold text-purple-300 mb-3">Risk-Based Speed Settings</h4>
+                  <ul className="space-y-2 text-sm">
+                    <li><strong>LOW Risk Multiplier (0.5-2.0x):</strong> Turn duration multiplier when debris risk is LOW. Default is 1.0x (normal speed).</li>
+                    <li><strong>MEDIUM Risk Multiplier (0.5-3.0x):</strong> Turn duration multiplier when debris risk is MEDIUM. Default is 1.5x (50% slower).</li>
+                    <li><strong>CRITICAL Risk Multiplier (0.5-4.0x):</strong> Turn duration multiplier when debris risk is CRITICAL. Default is 2.0x (turns take twice as long).</li>
+                  </ul>
+                  <p className="text-xs text-gray-400 mt-2">Higher multipliers give you more time to react during dangerous situations.</p>
+                </div>
+
+                <div className="p-4 bg-gray-800 rounded-lg">
+                  <h4 className="text-lg font-semibold text-purple-300 mb-3">Uncooperative DRV Settings</h4>
+                  <ul className="space-y-2 text-sm">
+                    <li><strong>Capacity Min (1-15):</strong> Minimum debris pieces an uncooperative DRV can remove. Default is 6.</li>
+                    <li><strong>Capacity Max (1-15):</strong> Maximum debris pieces an uncooperative DRV can remove. Default is 9.</li>
+                    <li><strong>Success Rate (50-100%):</strong> Probability that an uncooperative DRV successfully captures targeted debris. Default is 90%.</li>
+                  </ul>
+                  <p className="text-xs text-gray-400 mt-2">Note: Cooperative DRV settings use fixed values from the game constants.</p>
+                </div>
               </div>
             </div>
           </section>

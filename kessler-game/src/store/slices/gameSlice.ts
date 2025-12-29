@@ -106,11 +106,31 @@ function loadRiskSpeedSettings() {
   }
 }
 
+function loadSoundSettings() {
+  try {
+    const enabled = localStorage.getItem('soundEnabled');
+    return enabled !== null ? enabled === 'true' : true;
+  } catch {
+    return true;
+  }
+}
+
+function loadDRVDecommissionTime() {
+  try {
+    const time = localStorage.getItem('drvDecommissionTime');
+    return time ? parseInt(time) : DRV_CONFIG.duration.cooperative;
+  } catch {
+    return DRV_CONFIG.duration.cooperative;
+  }
+}
+
 const savedCollisionSettings = loadCollisionSettings();
 const savedOrbitalSpeedSettings = loadOrbitalSpeedSettings();
 const savedSolarStormSettings = loadSolarStormSettings();
 const savedDRVSettings = loadDRVSettings();
 const savedRiskSpeedSettings = loadRiskSpeedSettings();
+const savedSoundEnabled = loadSoundSettings();
+const savedDRVDecommissionTime = loadDRVDecommissionTime();
 
 const randomPositionInLayer = (layer: OrbitLayer) => {
   const [yMin, yMax] = LAYER_BOUNDS[layer];
@@ -158,6 +178,8 @@ const initialState: GameState = {
     MEDIUM: savedRiskSpeedSettings.MEDIUM,
     CRITICAL: savedRiskSpeedSettings.CRITICAL,
   },
+  soundEnabled: savedSoundEnabled,
+  drvDecommissionTime: savedDRVDecommissionTime,
 };
 
 export const gameSlice = createSlice({
@@ -272,7 +294,7 @@ export const gameSlice = createSlice({
           removalType: drvType,
           targetPriority,
           age: 0,
-          maxAge: DRV_CONFIG.duration[drvType],
+          maxAge: state.drvDecommissionTime,
           capacity: Math.floor(Math.random() * (maxCapacity - minCapacity + 1)) + minCapacity,
           successRate,
           debrisRemoved: 0,
@@ -713,6 +735,24 @@ export const gameSlice = createSlice({
         // Ignore localStorage errors
       }
     },
+
+    setSoundEnabled: (state, action: PayloadAction<boolean>) => {
+      state.soundEnabled = action.payload;
+      try {
+        localStorage.setItem('soundEnabled', action.payload.toString());
+      } catch {
+        // Ignore localStorage errors
+      }
+    },
+
+    setDRVDecommissionTime: (state, action: PayloadAction<number>) => {
+      state.drvDecommissionTime = action.payload;
+      try {
+        localStorage.setItem('drvDecommissionTime', action.payload.toString());
+      } catch {
+        // Ignore localStorage errors
+      }
+    },
   },
 });
 
@@ -746,6 +786,8 @@ export const {
   setRiskSpeedMultiplierLOW,
   setRiskSpeedMultiplierMEDIUM,
   setRiskSpeedMultiplierCRITICAL,
+  setSoundEnabled,
+  setDRVDecommissionTime,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

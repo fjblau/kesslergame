@@ -113,6 +113,8 @@ export interface GameState {
     MEDIUM: number;
     CRITICAL: number;
   };
+  soundEnabled: boolean;
+  drvDecommissionTime: number;
 }
 
 export interface UIState {

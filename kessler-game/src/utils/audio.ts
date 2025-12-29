@@ -2,7 +2,18 @@ let backgroundMusic: HTMLAudioElement | null = null;
 const activeAudioElements: Set<HTMLAudioElement> = new Set();
 const activeAudioContexts: Set<AudioContext> = new Set();
 
+let soundEnabled = true;
+
+export function setSoundEnabled(enabled: boolean) {
+  soundEnabled = enabled;
+}
+
+export function getSoundEnabled(): boolean {
+  return soundEnabled;
+}
+
 export function playBackgroundMusic() {
+  if (!soundEnabled) return;
   try {
     if (backgroundMusic) {
       backgroundMusic.pause();
@@ -53,6 +64,7 @@ export function stopAllSounds() {
 }
 
 export function playRocketLaunch() {
+  if (!soundEnabled) return;
   try {
     const audio = new Audio('/rocket-launch.mp3');
     audio.volume = 0.5;
@@ -99,6 +111,7 @@ export function playRocketLaunch() {
 }
 
 export function playCollision() {
+  if (!soundEnabled) return;
   try {
     const audio = new Audio('/small-explosion.mp3');
     audio.volume = 0.3;
@@ -117,6 +130,7 @@ export function playCollision() {
 }
 
 export function playSatelliteCapture() {
+  if (!soundEnabled) return;
   try {
     const audio = new Audio('/space-gun.mp3');
     audio.volume = 0.4;
@@ -135,6 +149,7 @@ export function playSatelliteCapture() {
 }
 
 export function playSolarFlare() {
+  if (!soundEnabled) return;
   try {
     const audio = new Audio('/solar-flare.mp3');
     audio.volume = 0.5;
@@ -181,6 +196,7 @@ export function playSolarFlare() {
 }
 
 export function playCascadeWarning() {
+  if (!soundEnabled) return;
   try {
     const audioContext = new AudioContext();
     activeAudioContexts.add(audioContext);
@@ -212,6 +228,7 @@ export function playCascadeWarning() {
 }
 
 export function playDebrisRemoval() {
+  if (!soundEnabled) return;
   try {
     const audio = new Audio('/space-slash.mp3');
     audio.volume = 0.5;
