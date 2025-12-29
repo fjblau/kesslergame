@@ -85,7 +85,7 @@ export function ControlPanel() {
 
   return (
     <div className="bg-slate-800 border-2 border-slate-600 rounded-xl px-6 pt-1 pb-6 w-full h-[1100px] flex flex-col">
-      <div className="mt-5" style={{ marginBottom: 'calc(1.5rem - 20px)' }}>
+      <div className="mt-[17px]" style={{ marginBottom: 'calc(1.5rem - 17px)' }}>
         <h2 className="text-xl font-bold text-blue-300 mb-4 pb-3 border-b-2 border-slate-700 uppercase tracking-wide">Launch Controls</h2>
       </div>
 
