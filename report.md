@@ -43,16 +43,34 @@ This is the **core game simulation** perfect for React adaptation. Here's what i
   - Highest collision threshold
   - Safest long-term orbit
 
-#### 3. **Resource Management**
-- Starting budget: $100M
-- Launch costs vary by orbit
-- Optional insurance: $500K (pays $1M on collision)
-- Running budget constraint
+#### 3. **Resource Management & Satellite Revenue**
+The game implements a dual-revenue system combining per-satellite income with difficulty-based bonus income:
+
+**Per-Turn Satellite Revenue (Primary):**
+Each active satellite generates revenue based on its type:
+- **Weather**: $100K per turn
+- **Communications**: $150K per turn
+- **GPS**: $200K per turn
+- Example: 10 satellites (mixed types) can generate $1M-$2M per turn
+
+**Difficulty-Based Bonus Income (Secondary):**
+- **Easy Mode**: $300M starting budget, $10M bonus every 10 turns
+- **Normal Mode**: $200M starting budget, $5M bonus every 20 turns
+- **Hard Mode**: $150M starting budget, no bonus income (satellite revenue only)
+- **Challenge Mode**: $100M starting budget, no bonus income, -$2M drain per turn
+
+**Costs:**
+- Launch costs vary by orbit (LEO: $2M, MEO: $3M, GEO: $5M)
+- Optional insurance: Basic ($500K cost, $1M payout) or Premium ($1M cost, $2.5M payout)
+- Debris Removal Vehicles: $4M-$17.5M depending on orbit and type
+
+**Economic Strategy:** Your satellite fleet is your primary revenue engine. Launch high-value GPS satellites early to build steady income. Protect revenue-generating satellites with insurance. In Easy/Normal modes, time expensive launches after bonus income. In Hard/Challenge modes, build satellite revenue quickly to sustain operations.
 
 #### 4. **Satellite Types**
 - **Weather** satellites
 - **Communications** satellites
 - **GPS** satellites
+- **Random** (10% discount on launch cost)
 - Each type tracked separately for mission objectives
 
 #### 5. **Risk System**
