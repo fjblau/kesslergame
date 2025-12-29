@@ -4,11 +4,12 @@ import { launchSatellite, launchDRV, spendBudget, advanceTurn, decommissionExpir
 import { updateMissionProgress, trackDRVLaunch } from '../../store/slices/missionsSlice';
 import { addEvent } from '../../store/slices/eventSlice';
 import type { OrbitLayer, SatelliteType, InsuranceTier, DRVType, DRVTargetPriority } from '../../game/types';
-import { LAUNCH_COSTS, INSURANCE_CONFIG, DRV_CONFIG, DRV_PRIORITY_CONFIG, SATELLITE_PURPOSE_CONFIG } from '../../game/constants';
+import { LAUNCH_COSTS, INSURANCE_CONFIG, DRV_CONFIG, DRV_PRIORITY_CONFIG, SATELLITE_PURPOSE_CONFIG, BUDGET_DIFFICULTY_CONFIG } from '../../game/constants';
 import { checkSolarStorm } from '../../game/engine/events';
 import { InsuranceTierSelector } from './InsuranceTierSelector';
 import { SatellitePurposeSelector } from '../SatelliteConfig/SatellitePurposeSelector';
 import { DRVTargetPriority as DRVTargetPrioritySelector } from '../DRVPanel/DRVTargetPriority';
+import { BudgetGauge } from './BudgetGauge';
 import { useStore } from 'react-redux';
 import type { RootState } from '../../store';
 
@@ -16,7 +17,7 @@ export function ControlPanel() {
   const dispatch = useAppDispatch();
   const store = useStore();
   const budget = useAppSelector(state => state.game.budget);
-  const step = useAppSelector(state => state.game.step);
+  const budgetDifficulty = useAppSelector(state => state.game.budgetDifficulty);
 
   const [launchType, setLaunchType] = useState<'satellite' | 'drv'>('satellite');
   const [selectedOrbit, setSelectedOrbit] = useState<OrbitLayer>('LEO');
@@ -83,10 +84,9 @@ export function ControlPanel() {
   }, [canAfford, store, dispatch, totalCost, launchType, satellitePurpose, selectedOrbit, insuranceTier, drvType, drvPriority]);
 
   return (
-    <div className="bg-slate-800 border-2 border-slate-600 rounded-xl p-6 w-full h-[1100px] flex flex-col">
-      <div className="mb-6">
+    <div className="bg-slate-800 border-2 border-slate-600 rounded-xl px-6 pt-1 pb-6 w-full h-[1100px] flex flex-col">
+      <div className="mt-[17px]" style={{ marginBottom: 'calc(1.5rem - 17px)' }}>
         <h2 className="text-xl font-bold text-blue-300 mb-4 pb-3 border-b-2 border-slate-700 uppercase tracking-wide">Launch Controls</h2>
-        <div className="text-base text-gray-400 mt-3">Turn: {step}</div>
       </div>
 
       <div className="space-y-2 mb-6">
@@ -127,7 +127,7 @@ export function ControlPanel() {
         </div>
       </div>
 
-      <div className="flex-1 space-y-6">
+      <div className="space-y-6 flex-1">
         {launchType === 'satellite' ? (
           <>
             <SatellitePurposeSelector selected={satellitePurpose} onChange={setSatellitePurpose} />
@@ -158,17 +158,18 @@ export function ControlPanel() {
         )}
       </div>
 
-      <div className="pt-4 border-t border-slate-700 space-y-3">
-        <div className="flex justify-between text-base">
+      <div className="pt-4 border-t border-slate-700" style={{ marginTop: launchType === 'drv' ? '5px' : '0' }}>
+        <div className="flex justify-between text-base mb-[2px]">
           <span className="text-gray-400">Total Cost:</span>
           <span className="font-bold text-yellow-400">${(totalCost / 1e6).toFixed(1)}M</span>
         </div>
-        <div className="flex justify-between text-base">
+        <div className="flex justify-between text-base mb-3">
           <span className="text-gray-400">Budget:</span>
           <span className={`font-bold ${budget >= totalCost ? 'text-green-400' : 'text-red-400'}`}>
             ${(budget / 1e6).toFixed(1)}M
           </span>
         </div>
+        <BudgetGauge budget={budget} maxBudget={BUDGET_DIFFICULTY_CONFIG[budgetDifficulty].startingBudget} />
         <button
           onClick={handleLaunch}
           disabled={!canAfford}
@@ -178,7 +179,7 @@ export function ControlPanel() {
               : 'bg-slate-700 text-slate-500 cursor-not-allowed'
           }`}
         >
-          {canAfford ? 'Launch' : 'Insufficient Budget'}
+          {canAfford ? (launchType === 'satellite' ? 'Launch Satellite' : 'Launch DRV') : 'Insufficient Budget'}
         </button>
       </div>
     </div>

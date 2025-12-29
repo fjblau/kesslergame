@@ -84,7 +84,7 @@ function App() {
       id: 'documentation',
       label: 'Documentation',
       content: (
-        <div className="p-8 space-y-8">
+        <div className="p-8 space-y-8 max-w-[1500px] mx-auto">
           <section>
             <h2 className="text-3xl font-bold text-blue-400 mb-4">Game Overview</h2>
             <p className="text-gray-300 mb-4">
@@ -319,7 +319,7 @@ function App() {
       id: 'about',
       label: 'About',
       content: (
-        <div className="p-8 space-y-8">
+        <div className="p-8 space-y-8 max-w-[1500px] mx-auto">
           <section>
             <h2 className="text-3xl font-bold text-blue-400 mb-4">About Kessler Syndrome</h2>
             <p className="text-gray-300 mb-4">
@@ -515,7 +515,8 @@ function App() {
             <h2 className="text-2xl font-bold text-blue-400 mb-3">Credits</h2>
             <p className="text-gray-300 mb-3">
               This application was written by <strong>Frank Blau</strong>, <strong>Tim Quick</strong>, and{' '}
-              <strong>Gallya Todorova</strong> for the EIIS Space Entrepreneurship Master's Program.
+              <strong>Gallya Todorova</strong> for the EIIS Space Entrepreneurship Master's Program. Thanks to{' '}
+              <strong>Elias Ladinek</strong> for helping with the testing.
             </p>
             <p className="text-gray-400 text-sm">
               Licensed under the MIT License. See LICENSE file for details.
