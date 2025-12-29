@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
 import { useEffect, useRef } from 'react';
 import type { OrbitLayer } from '../../game/types';
 import { playRocketLaunch } from '../../utils/audio';
@@ -21,6 +21,8 @@ const LAYER_COLORS = {
   GEO: '#f59e0b',
 };
 
+const EARTH_RADIUS = 62.5;
+
 export function LaunchAnimation({ targetLayer, targetAngle, onComplete }: LaunchAnimationProps) {
   const centerX = 500;
   const centerY = 500;
@@ -28,17 +30,38 @@ export function LaunchAnimation({ targetLayer, targetAngle, onComplete }: Launch
   
   const targetRadius = ORBIT_RADII[targetLayer] || 140;
   const safeAngle = (typeof targetAngle === 'number' && !isNaN(targetAngle)) ? targetAngle : 0;
-  const targetX = centerX + Math.cos(safeAngle) * targetRadius;
-  const targetY = centerY + Math.sin(safeAngle) * targetRadius;
+  
+  const startAngle = safeAngle - Math.PI * 2;
+  
+  const progress = useMotionValue(0);
+  const radius = useTransform(progress, [0, 1], [EARTH_RADIUS, targetRadius]);
+  const angle = useTransform(progress, [0, 1], [startAngle, safeAngle]);
+  
+  const x = useTransform(() => centerX + Math.cos(angle.get()) * radius.get());
+  const y = useTransform(() => centerY + Math.sin(angle.get()) * radius.get());
+  
+  const pathD = useTransform(
+    () => `M ${centerX} ${centerY + EARTH_RADIUS} L ${x.get()} ${y.get()}`
+  );
 
   useEffect(() => {
     if (!hasPlayedSound.current) {
       hasPlayedSound.current = true;
       playRocketLaunch();
     }
+    
+    const controls = animate(progress, 1, {
+      duration: 1.5,
+      ease: [0.33, 1, 0.68, 1],
+    });
+    
     const timer = setTimeout(onComplete, 1500);
-    return () => clearTimeout(timer);
-  }, [onComplete]);
+    
+    return () => {
+      controls.stop();
+      clearTimeout(timer);
+    };
+  }, [onComplete, progress]);
 
   if (!targetRadius || typeof targetAngle !== 'number' || isNaN(targetAngle)) {
     return null;
@@ -55,26 +78,30 @@ export function LaunchAnimation({ targetLayer, targetAngle, onComplete }: Launch
         pointerEvents: 'none',
       }}
     >
-      <motion.line
-        x1={centerX}
-        y1={centerY + 62.5}
-        initial={{
-          x2: centerX,
-          y2: centerY + 62.5,
-        }}
-        animate={{
-          x2: targetX,
-          y2: targetY,
-          opacity: [0.5, 0.5, 0],
-        }}
+      <motion.circle
+        cx={x}
+        cy={y}
+        r={3}
+        fill={LAYER_COLORS[targetLayer]}
+        initial={{ opacity: 0.8 }}
+        animate={{ opacity: [0.8, 0.8, 0] }}
         transition={{
           duration: 1.5,
-          ease: [0.33, 1, 0.68, 1],
           opacity: { times: [0, 0.7, 1] },
         }}
+      />
+      <motion.path
+        d={pathD}
         stroke={LAYER_COLORS[targetLayer]}
         strokeWidth="1"
         strokeDasharray="5,5"
+        fill="none"
+        initial={{ opacity: 0.5 }}
+        animate={{ opacity: [0.5, 0.5, 0] }}
+        transition={{
+          duration: 1.5,
+          opacity: { times: [0, 0.7, 1] },
+        }}
       />
     </svg>
   );
