@@ -557,13 +557,6 @@ export const gameSlice = createSlice({
       
       state.debrisRemovalVehicles.forEach(drv => {
         if (drv.age >= drv.maxAge) {
-          state.debris.push({
-            id: generateId(),
-            x: drv.x,
-            y: drv.y,
-            layer: drv.layer,
-            type: drv.removalType === 'cooperative' ? 'cooperative' : 'uncooperative',
-          });
           expired.push({
             id: drv.id,
             type: drv.removalType,
