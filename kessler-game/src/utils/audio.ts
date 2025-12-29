@@ -86,6 +86,18 @@ export function playCollision() {
   }
 }
 
+export function playSatelliteCapture() {
+  try {
+    const audio = new Audio('/space-gun.mp3');
+    audio.volume = 0.4;
+    audio.play().catch(() => {
+      // Ignore audio play errors (e.g., autoplay policy)
+    });
+  } catch {
+    // Ignore audio errors
+  }
+}
+
 export function playCascadeWarning() {
   try {
     const audioContext = new AudioContext();

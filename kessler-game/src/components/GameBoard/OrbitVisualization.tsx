@@ -13,7 +13,7 @@ import { DRVsCounter } from '../TimeControl/DRVsCounter';
 import { DebrisRemovedCounter } from '../TimeControl/DebrisRemovedCounter';
 import { mapToPixels } from './utils';
 import { clearOldCollisions, clearCascadeFlag } from '../../store/slices/gameSlice';
-import { playCascadeWarning } from '../../utils/audio';
+import { playCascadeWarning, playSatelliteCapture } from '../../utils/audio';
 import type { RiskLevel } from '../../game/types';
 
 interface LaunchingEntity {
@@ -59,6 +59,7 @@ export function OrbitVisualization() {
   const prevDRVIds = useRef<Set<string>>(new Set());
   const cascadeShownForTurn = useRef<number | undefined>(undefined);
   const solarStormShownForEvent = useRef<string | undefined>(undefined);
+  const prevCapturedSatelliteIds = useRef<Set<string>>(new Set());
   const [launchingSatellites, setLaunchingSatellites] = useState<Set<string>>(new Set());
   const [launchingDRVs, setLaunchingDRVs] = useState<Set<string>>(new Set());
   const [activeTrails, setActiveTrails] = useState<LaunchingEntity[]>([]);
@@ -159,6 +160,23 @@ export function OrbitVisualization() {
     dispatch(clearCascadeFlag());
     setShowCascadeWarning(false);
   }, [dispatch]);
+
+  useEffect(() => {
+    const currentCapturedSatelliteIds = new Set<string>();
+    debrisRemovalVehicles.forEach(drv => {
+      if (drv.capturedDebrisId && satellites.some(s => s.id === drv.capturedDebrisId)) {
+        currentCapturedSatelliteIds.add(drv.capturedDebrisId);
+      }
+    });
+
+    currentCapturedSatelliteIds.forEach(satId => {
+      if (!prevCapturedSatelliteIds.current.has(satId)) {
+        playSatelliteCapture();
+      }
+    });
+
+    prevCapturedSatelliteIds.current = currentCapturedSatelliteIds;
+  }, [debrisRemovalVehicles, satellites]);
 
   return (
     <div className={`relative w-[1000px] h-[1000px] flex items-center justify-center bg-slate-900 border-[3px] ${getBorderColorClass(riskLevel)} rounded-xl overflow-hidden`}>
