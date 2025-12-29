@@ -10,7 +10,7 @@ export function playBackgroundMusic() {
     }
     
     backgroundMusic = new Audio('/space-flight.mp3');
-    backgroundMusic.volume = 0.3;
+    backgroundMusic.volume = 0.4;
     backgroundMusic.loop = true;
     
     backgroundMusic.play().catch(() => {
