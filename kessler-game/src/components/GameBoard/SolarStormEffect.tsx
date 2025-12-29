@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useEffect } from 'react';
+import { playSolarFlare } from '../../utils/audio';
 
 interface SolarStormEffectProps {
   onComplete: () => void;
@@ -7,6 +8,7 @@ interface SolarStormEffectProps {
 
 export function SolarStormEffect({ onComplete }: SolarStormEffectProps) {
   useEffect(() => {
+    playSolarFlare();
     const timer = setTimeout(onComplete, 2000);
     return () => clearTimeout(timer);
   }, [onComplete]);

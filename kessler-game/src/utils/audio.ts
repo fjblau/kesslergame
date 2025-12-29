@@ -10,7 +10,7 @@ export function playBackgroundMusic() {
     }
     
     backgroundMusic = new Audio('/space-flight.mp3');
-    backgroundMusic.volume = 0.2;
+    backgroundMusic.volume = 0.3;
     backgroundMusic.loop = true;
     
     backgroundMusic.play().catch(() => {
@@ -101,7 +101,7 @@ export function playRocketLaunch() {
 export function playCollision() {
   try {
     const audio = new Audio('/small-explosion.mp3');
-    audio.volume = 0.5;
+    audio.volume = 0.3;
     activeAudioElements.add(audio);
     
     audio.addEventListener('ended', () => {
@@ -120,6 +120,24 @@ export function playSatelliteCapture() {
   try {
     const audio = new Audio('/space-gun.mp3');
     audio.volume = 0.4;
+    activeAudioElements.add(audio);
+    
+    audio.addEventListener('ended', () => {
+      activeAudioElements.delete(audio);
+    });
+    
+    audio.play().catch(() => {
+      activeAudioElements.delete(audio);
+    });
+  } catch {
+    // Ignore audio errors
+  }
+}
+
+export function playSolarFlare() {
+  try {
+    const audio = new Audio('/solar-flare.mp3');
+    audio.volume = 0.5;
     activeAudioElements.add(audio);
     
     audio.addEventListener('ended', () => {
