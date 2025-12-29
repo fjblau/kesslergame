@@ -19,7 +19,7 @@ import { useGameSpeed } from './hooks/useGameSpeed';
 import { useAppSelector } from './store/hooks';
 import { GameOverModal } from './components/GameOver/GameOverModal';
 import { ScoreDisplay } from './components/Score/ScoreDisplay';
-import { playBackgroundMusic, stopBackgroundMusic } from './utils/audio';
+import { playBackgroundMusic, stopAllSounds } from './utils/audio';
 
 function App() {
   const [gameStarted, setGameStarted] = useState(false);
@@ -32,13 +32,13 @@ function App() {
     if (gameStarted && !gameOver) {
       playBackgroundMusic();
     } else if (gameOver) {
-      stopBackgroundMusic();
+      stopAllSounds();
     }
   }, [gameStarted, gameOver]);
 
   useEffect(() => {
     return () => {
-      stopBackgroundMusic();
+      stopAllSounds();
     };
   }, []);
 

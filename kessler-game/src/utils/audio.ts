@@ -1,4 +1,6 @@
 let backgroundMusic: HTMLAudioElement | null = null;
+const activeAudioElements: Set<HTMLAudioElement> = new Set();
+const activeAudioContexts: Set<AudioContext> = new Set();
 
 export function playBackgroundMusic() {
   try {
@@ -31,11 +33,31 @@ export function stopBackgroundMusic() {
   }
 }
 
+export function stopAllSounds() {
+  try {
+    stopBackgroundMusic();
+    
+    activeAudioElements.forEach(audio => {
+      audio.pause();
+      audio.currentTime = 0;
+    });
+    activeAudioElements.clear();
+    
+    activeAudioContexts.forEach(ctx => {
+      ctx.close().catch(() => {});
+    });
+    activeAudioContexts.clear();
+  } catch {
+    // Ignore audio errors
+  }
+}
+
 export function playRocketLaunch() {
   try {
     const audio = new Audio('/rocket-launch.mp3');
     audio.volume = 0.5;
     audio.loop = false;
+    activeAudioElements.add(audio);
     
     const playPromise = audio.play();
     
@@ -56,6 +78,7 @@ export function playRocketLaunch() {
               clearInterval(fadeTimer);
               audio.pause();
               audio.currentTime = 0;
+              activeAudioElements.delete(audio);
             }
           }, fadeInterval);
         }, fadeStartTime);
@@ -64,9 +87,10 @@ export function playRocketLaunch() {
           clearTimeout(fadeTimeout);
           audio.pause();
           audio.currentTime = 0;
+          activeAudioElements.delete(audio);
         }, 3000);
       }).catch(() => {
-        // Ignore audio play errors (e.g., autoplay policy)
+        activeAudioElements.delete(audio);
       });
     }
   } catch {
@@ -78,8 +102,14 @@ export function playCollision() {
   try {
     const audio = new Audio('/small-explosion.mp3');
     audio.volume = 0.5;
+    activeAudioElements.add(audio);
+    
+    audio.addEventListener('ended', () => {
+      activeAudioElements.delete(audio);
+    });
+    
     audio.play().catch(() => {
-      // Ignore audio play errors (e.g., autoplay policy)
+      activeAudioElements.delete(audio);
     });
   } catch {
     // Ignore audio errors
@@ -90,8 +120,14 @@ export function playSatelliteCapture() {
   try {
     const audio = new Audio('/space-gun.mp3');
     audio.volume = 0.4;
+    activeAudioElements.add(audio);
+    
+    audio.addEventListener('ended', () => {
+      activeAudioElements.delete(audio);
+    });
+    
     audio.play().catch(() => {
-      // Ignore audio play errors (e.g., autoplay policy)
+      activeAudioElements.delete(audio);
     });
   } catch {
     // Ignore audio errors
@@ -101,6 +137,8 @@ export function playSatelliteCapture() {
 export function playCascadeWarning() {
   try {
     const audioContext = new AudioContext();
+    activeAudioContexts.add(audioContext);
+    
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
     
@@ -120,6 +158,7 @@ export function playCascadeWarning() {
       oscillator.disconnect();
       gainNode.disconnect();
       audioContext.close();
+      activeAudioContexts.delete(audioContext);
     }, 400);
   } catch {
     // Ignore audio errors (e.g., if browser doesn't support Web Audio API)
