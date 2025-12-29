@@ -340,6 +340,12 @@ interface GameConfig {
   debrisDecayRate: number;
   cascadeThreshold: number;
   
+  // Satellite Revenue / Budget Difficulty configuration
+  budgetDifficulty: BudgetDifficulty;
+  incomeAmount: number;      // Revenue received per income interval
+  incomeInterval: number;    // Turns between income payments (0 = no income)
+  drainAmount: number;       // Budget drained per turn (0 = no drain)
+  
   // Debris Removal Vehicle configuration
   drvCosts: Record<OrbitLayer, Record<DRVType, number>>;
   drvCapacity: Record<DRVType, [number, number]>;  // [min, max] per turn
@@ -375,6 +381,51 @@ const DRV_CONFIG = {
 const DEBRIS_TYPE_DISTRIBUTION = {
   cooperative: 0.70,      // 70% of debris is cooperative
   uncooperative: 0.30,    // 30% of debris is uncooperative
+};
+
+// Satellite Revenue / Budget Difficulty Configuration
+type BudgetDifficulty = 'easy' | 'normal' | 'hard' | 'challenge';
+
+const BUDGET_DIFFICULTY_CONFIG: Record<BudgetDifficulty, {
+  startingBudget: number;
+  incomeAmount: number;
+  incomeInterval: number;  // Turns between income (0 = no income)
+  drainAmount: number;     // Per-turn budget drain (0 = no drain)
+  label: string;
+  description: string;
+}> = {
+  easy: {
+    startingBudget: 300_000_000,  // $300M starting budget
+    incomeAmount: 10_000_000,     // $10M revenue per income
+    incomeInterval: 10,            // Income every 10 turns
+    drainAmount: 0,                // No budget drain
+    label: 'Easy',
+    description: 'Generous budget with regular income - ideal for learning',
+  },
+  normal: {
+    startingBudget: 200_000_000,  // $200M starting budget
+    incomeAmount: 5_000_000,      // $5M revenue per income
+    incomeInterval: 20,            // Income every 20 turns
+    drainAmount: 0,                // No budget drain
+    label: 'Normal',
+    description: 'Balanced challenge requiring strategic resource management',
+  },
+  hard: {
+    startingBudget: 150_000_000,  // $150M starting budget
+    incomeAmount: 0,               // No revenue
+    incomeInterval: 0,             // No income
+    drainAmount: 0,                // No budget drain
+    label: 'Hard',
+    description: 'Limited budget with no income - every launch must count',
+  },
+  challenge: {
+    startingBudget: 100_000_000,  // $100M starting budget
+    incomeAmount: 0,               // No revenue
+    incomeInterval: 0,             // No income
+    drainAmount: 2_000_000,        // $2M drain per turn
+    label: 'Challenge',
+    description: 'Tight budget with continuous drain - race against bankruptcy',
+  },
 };
 ```
 
@@ -479,6 +530,63 @@ npm run preview
 - ✅ All missions achievable
 - ✅ UI responsive on mobile and desktop
 - ✅ Performance: 60fps with 100+ objects
+
+---
+
+## Satellite Revenue Economics
+
+The game implements a **difficulty-based revenue system** where income generation varies based on the chosen difficulty level. Unlike individual satellite revenue, the game provides periodic budget income that represents aggregate satellite operations revenue.
+
+### Revenue Model by Difficulty
+
+#### Easy Mode
+- **Starting Budget**: $300M
+- **Revenue**: $10M every 10 turns
+- **Expected Income**: ~$100M over 100 turns
+- **Strategy**: Aggressive expansion possible, can afford multiple GEO satellites and DRVs
+- **Use Case**: Learning the game mechanics without budget pressure
+
+#### Normal Mode (Recommended)
+- **Starting Budget**: $200M
+- **Revenue**: $5M every 20 turns
+- **Expected Income**: ~$25M over 100 turns
+- **Strategy**: Balanced approach required, must plan expensive launches around income timing
+- **Use Case**: Standard gameplay experience with meaningful resource decisions
+
+#### Hard Mode
+- **Starting Budget**: $150M
+- **Revenue**: None
+- **Expected Income**: $0
+- **Strategy**: Every launch must be justified, insurance becomes critical, focus on high-value missions
+- **Use Case**: Expert players who want to optimize every decision
+
+#### Challenge Mode
+- **Starting Budget**: $100M
+- **Revenue**: None
+- **Budget Drain**: -$2M per turn
+- **Total Drain**: -$200M over 100 turns (if game lasts that long)
+- **Strategy**: Speed-run approach, complete high-scoring missions quickly, avoid prolonged gameplay
+- **Use Case**: Time-based challenge for experienced players
+
+### Economic Strategy Implications
+
+**Income Timing (Easy/Normal)**:
+- Plan expensive launches (GEO satellites $5M, DRVs $4M-$17.5M) immediately after receiving income
+- Track turns until next income payment in the UI
+- Build a reserve budget for emergency DRV deployments during debris crises
+
+**No-Income Strategy (Hard/Challenge)**:
+- Prioritize missions with highest score-to-cost ratios
+- Insurance becomes more valuable as you cannot afford satellite losses
+- Focus on LEO satellites ($2M) to maximize satellite count
+- Deploy DRVs only when absolutely necessary to prevent cascades
+- In Challenge mode, aim to complete the game before turn 50 to minimize drain impact
+
+**Budget Tracking**:
+- Display current budget prominently
+- Show "Next Income" countdown on Easy/Normal difficulties
+- Warning indicators when budget drops below critical thresholds ($20M, $10M, $5M)
+- Projected budget graph showing income vs. expenditure trends
 
 ---
 

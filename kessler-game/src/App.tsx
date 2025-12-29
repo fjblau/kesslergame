@@ -211,8 +211,25 @@ function App() {
                 <p>Complete missions to earn bonus points and unlock achievements. Missions vary from launching specific satellites to maintaining low debris levels.</p>
               </div>
               <div>
-                <h3 className="text-xl font-semibold text-purple-400 mb-2">Budget Management</h3>
-                <p>Balance spending between satellite launches, DRV deployments, and insurance. Monitor your income intervals and avoid running out of funds.</p>
+                <h3 className="text-xl font-semibold text-purple-400 mb-2">Budget Management & Revenue</h3>
+                <p>Your budget is the lifeblood of your operations. Each satellite launch, DRV deployment, and insurance purchase costs money. Revenue generation depends on your chosen difficulty level:</p>
+                <div className="mt-3 ml-4 space-y-2 text-sm">
+                  <div className="p-3 bg-gray-800 rounded">
+                    <strong className="text-green-400">Easy Mode:</strong> $10M revenue every 10 turns - generous income allows aggressive expansion
+                  </div>
+                  <div className="p-3 bg-gray-800 rounded">
+                    <strong className="text-blue-400">Normal Mode:</strong> $5M revenue every 20 turns - balanced income requires strategic planning
+                  </div>
+                  <div className="p-3 bg-gray-800 rounded">
+                    <strong className="text-orange-400">Hard Mode:</strong> No revenue - manage your starting budget carefully as there's no income
+                  </div>
+                  <div className="p-3 bg-gray-800 rounded">
+                    <strong className="text-red-400">Challenge Mode:</strong> No revenue + $2M drain per turn - race against budget depletion
+                  </div>
+                </div>
+                <p className="mt-3 text-sm text-gray-400">
+                  <strong>Strategy tip:</strong> In Easy and Normal modes, time your expensive launches (GEO satellites, DRVs) right after receiving income. In Hard and Challenge modes, every expense must be carefully justified.
+                </p>
               </div>
             </div>
           </section>

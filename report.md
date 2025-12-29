@@ -43,16 +43,27 @@ This is the **core game simulation** perfect for React adaptation. Here's what i
   - Highest collision threshold
   - Safest long-term orbit
 
-#### 3. **Resource Management**
-- Starting budget: $100M
-- Launch costs vary by orbit
-- Optional insurance: $500K (pays $1M on collision)
-- Running budget constraint
+#### 3. **Resource Management & Satellite Revenue**
+The game implements a difficulty-based budget system with varying revenue streams:
+
+**Budget Difficulty Levels:**
+- **Easy Mode**: $300M starting budget, $10M revenue every 10 turns
+- **Normal Mode**: $200M starting budget, $5M revenue every 20 turns
+- **Hard Mode**: $150M starting budget, no revenue
+- **Challenge Mode**: $100M starting budget, no revenue, -$2M drain per turn
+
+**Costs:**
+- Launch costs vary by orbit (LEO: $2M, MEO: $3M, GEO: $5M)
+- Optional insurance: Basic ($500K cost, $1M payout) or Premium ($1M cost, $2.5M payout)
+- Debris Removal Vehicles: $4M-$17.5M depending on orbit and type
+
+**Economic Strategy:** Revenue timing is critical in Easy/Normal modes - plan expensive launches after income payments. In Hard/Challenge modes, every expense must be carefully justified as resources are finite.
 
 #### 4. **Satellite Types**
 - **Weather** satellites
 - **Communications** satellites
 - **GPS** satellites
+- **Random** (10% discount on launch cost)
 - Each type tracked separately for mission objectives
 
 #### 5. **Risk System**
