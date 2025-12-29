@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useEffect, useRef } from 'react';
+import { useAppSelector } from '../../store/hooks';
 import { playSolarFlare } from '../../utils/audio';
 
 interface SolarStormEffectProps {
@@ -8,15 +9,16 @@ interface SolarStormEffectProps {
 
 export function SolarStormEffect({ onComplete }: SolarStormEffectProps) {
   const hasPlayedSound = useRef(false);
+  const gameOver = useAppSelector(state => state.game.gameOver);
   
   useEffect(() => {
-    if (!hasPlayedSound.current) {
+    if (!hasPlayedSound.current && !gameOver) {
       hasPlayedSound.current = true;
       playSolarFlare();
     }
     const timer = setTimeout(onComplete, 2000);
     return () => clearTimeout(timer);
-  }, [onComplete]);
+  }, [onComplete, gameOver]);
 
   const sunX = 150;
   const sunY = 150;

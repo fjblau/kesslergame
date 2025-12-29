@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useEffect } from 'react';
+import { useAppSelector } from '../../store/hooks';
 import { playCollision } from '../../utils/audio';
 
 interface CollisionEffectProps {
@@ -9,11 +10,15 @@ interface CollisionEffectProps {
 }
 
 export function CollisionEffect({ x, y, onComplete }: CollisionEffectProps) {
+  const gameOver = useAppSelector(state => state.game.gameOver);
+  
   useEffect(() => {
-    playCollision();
+    if (!gameOver) {
+      playCollision();
+    }
     const timer = setTimeout(onComplete, 500);
     return () => clearTimeout(timer);
-  }, [onComplete]);
+  }, [onComplete, gameOver]);
 
   return (
     <div style={{ position: 'absolute', left: x, top: y, pointerEvents: 'none' }}>

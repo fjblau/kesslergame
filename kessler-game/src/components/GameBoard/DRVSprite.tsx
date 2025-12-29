@@ -42,8 +42,8 @@ export const DRVSprite = memo(function DRVSprite({ drv, x, y, isLaunching = fals
         top: 500,
         x: '-50%',
         y: '-50%',
-        scale: 0.5,
-        opacity: 0,
+        scale: 0.8,
+        opacity: 1,
         rotate: 0,
       } : false}
       animate={{
@@ -56,13 +56,11 @@ export const DRVSprite = memo(function DRVSprite({ drv, x, y, isLaunching = fals
         rotate: rotation,
       }}
       transition={{
-        left: { duration: 1, ease: 'linear' },
-        top: { duration: 1, ease: 'linear' },
+        left: isLaunching ? { duration: 4, ease: [0.2, 0.8, 0.4, 1] } : { duration: 1, ease: 'linear' },
+        top: isLaunching ? { duration: 4, ease: [0.2, 0.8, 0.4, 1] } : { duration: 1, ease: 'linear' },
         rotate: { duration: 1, ease: 'linear' },
-        x: isLaunching ? { duration: 8, ease: [0.2, 0.8, 0.4, 1] } : { duration: 0 },
-        y: isLaunching ? { duration: 8, ease: [0.2, 0.8, 0.4, 1] } : { duration: 0 },
-        scale: isLaunching ? { duration: 8, ease: [0.2, 0.8, 0.4, 1] } : { duration: 1, ease: 'linear' },
-        opacity: isLaunching ? { duration: 1, ease: 'easeIn', delay: 7 } : { duration: 1, ease: 'linear' },
+        scale: isLaunching ? { duration: 4, ease: [0.2, 0.8, 0.4, 1] } : { duration: 1, ease: 'linear' },
+        opacity: { duration: 0.3 },
       }}
       title={`${drv.removalType} DRV (${drv.layer})`}
     >

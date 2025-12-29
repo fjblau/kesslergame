@@ -50,6 +50,7 @@ export function OrbitVisualization() {
   const events = useAppSelector(state => state.events.events);
   const days = useAppSelector(state => state.game.days);
   const riskLevel = useAppSelector(state => state.game.riskLevel);
+  const gameOver = useAppSelector(state => state.game.gameOver);
   const orbitalSpeeds = useAppSelector(state => ({
     LEO: state.game.orbitalSpeedLEO,
     MEO: state.game.orbitalSpeedMEO,
@@ -107,7 +108,7 @@ export function OrbitVisualization() {
         setTimeout(() => {
           setLaunchingSatellites(new Set());
           setLaunchingDRVs(new Set());
-        }, 8000);
+        }, 4000);
       });
     }
   }, [satellites, debrisRemovalVehicles]);
@@ -148,7 +149,7 @@ export function OrbitVisualization() {
   };
 
   useEffect(() => {
-    if (cascadeTriggered && !showCascadeWarning && lastCascadeTurn !== undefined) {
+    if (cascadeTriggered && !showCascadeWarning && lastCascadeTurn !== undefined && !gameOver) {
       if (cascadeShownForTurn.current !== lastCascadeTurn) {
         cascadeShownForTurn.current = lastCascadeTurn;
         requestAnimationFrame(() => {
@@ -157,7 +158,7 @@ export function OrbitVisualization() {
         });
       }
     }
-  }, [cascadeTriggered, showCascadeWarning, lastCascadeTurn]);
+  }, [cascadeTriggered, showCascadeWarning, lastCascadeTurn, gameOver]);
 
   const handleCascadeWarningComplete = useCallback(() => {
     dispatch(clearCascadeFlag());
@@ -173,19 +174,19 @@ export function OrbitVisualization() {
     });
 
     currentCapturedSatelliteIds.forEach(satId => {
-      if (!prevCapturedSatelliteIds.current.has(satId)) {
+      if (!prevCapturedSatelliteIds.current.has(satId) && !gameOver) {
         playSatelliteCapture();
       }
     });
 
     prevCapturedSatelliteIds.current = currentCapturedSatelliteIds;
-  }, [debrisRemovalVehicles, satellites]);
+  }, [debrisRemovalVehicles, satellites, gameOver]);
 
   useEffect(() => {
     const uncooperativeRemovals = recentDebrisRemovals.filter(removal => removal.drvType !== 'cooperative');
     const currentRemovalCount = uncooperativeRemovals.length;
     
-    if (currentRemovalCount > 0 && currentRemovalCount > prevDebrisRemovalCount.current) {
+    if (currentRemovalCount > 0 && currentRemovalCount > prevDebrisRemovalCount.current && !gameOver) {
       if (!hasPlayedDebrisSound.current) {
         hasPlayedDebrisSound.current = true;
         playDebrisRemoval();
@@ -196,7 +197,7 @@ export function OrbitVisualization() {
     }
     
     prevDebrisRemovalCount.current = currentRemovalCount;
-  }, [recentDebrisRemovals]);
+  }, [recentDebrisRemovals, gameOver]);
 
   return (
     <div className={`relative w-[1000px] h-[1000px] flex items-center justify-center bg-slate-900 border-[3px] ${getBorderColorClass(riskLevel)} rounded-xl overflow-hidden`}>

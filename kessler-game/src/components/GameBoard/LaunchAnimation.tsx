@@ -1,5 +1,6 @@
 import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
 import { useEffect, useRef } from 'react';
+import { useAppSelector } from '../../store/hooks';
 import type { OrbitLayer } from '../../game/types';
 import { playRocketLaunch } from '../../utils/audio';
 
@@ -27,6 +28,7 @@ export function LaunchAnimation({ targetLayer, targetAngle, onComplete }: Launch
   const centerX = 500;
   const centerY = 500;
   const hasPlayedSound = useRef(false);
+  const gameOver = useAppSelector(state => state.game.gameOver);
   
   const targetRadius = ORBIT_RADII[targetLayer] || 140;
   const safeAngle = (typeof targetAngle === 'number' && !isNaN(targetAngle)) ? targetAngle : 0;
@@ -45,23 +47,23 @@ export function LaunchAnimation({ targetLayer, targetAngle, onComplete }: Launch
   );
 
   useEffect(() => {
-    if (!hasPlayedSound.current) {
+    if (!hasPlayedSound.current && !gameOver) {
       hasPlayedSound.current = true;
       playRocketLaunch();
     }
     
     const controls = animate(progress, 1, {
-      duration: 8,
+      duration: 4,
       ease: [0.2, 0.8, 0.4, 1],
     });
     
-    const timer = setTimeout(onComplete, 8000);
+    const timer = setTimeout(onComplete, 4000);
     
     return () => {
       controls.stop();
       clearTimeout(timer);
     };
-  }, [onComplete, progress]);
+  }, [onComplete, progress, gameOver]);
 
   if (!targetRadius || typeof targetAngle !== 'number' || isNaN(targetAngle)) {
     return null;
@@ -78,18 +80,6 @@ export function LaunchAnimation({ targetLayer, targetAngle, onComplete }: Launch
         pointerEvents: 'none',
       }}
     >
-      <motion.circle
-        cx={x}
-        cy={y}
-        r={3}
-        fill={LAYER_COLORS[targetLayer]}
-        initial={{ opacity: 0.8 }}
-        animate={{ opacity: [0.8, 0.8, 0.8, 0] }}
-        transition={{
-          duration: 8,
-          opacity: { times: [0, 0.9, 0.95, 1] },
-        }}
-      />
       <motion.path
         d={pathD}
         stroke={LAYER_COLORS[targetLayer]}
@@ -97,10 +87,10 @@ export function LaunchAnimation({ targetLayer, targetAngle, onComplete }: Launch
         strokeDasharray="5,5"
         fill="none"
         initial={{ opacity: 0.5 }}
-        animate={{ opacity: [0.5, 0.5, 0.5, 0] }}
+        animate={{ opacity: [0.5, 0.5, 0] }}
         transition={{
-          duration: 8,
-          opacity: { times: [0, 0.9, 0.95, 1] },
+          duration: 4,
+          opacity: { times: [0, 0.85, 1] },
         }}
       />
     </svg>
