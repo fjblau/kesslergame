@@ -1,3 +1,36 @@
+let backgroundMusic: HTMLAudioElement | null = null;
+
+export function playBackgroundMusic() {
+  try {
+    if (backgroundMusic) {
+      backgroundMusic.pause();
+      backgroundMusic.currentTime = 0;
+    }
+    
+    backgroundMusic = new Audio('/space-flight.mp3');
+    backgroundMusic.volume = 0.2;
+    backgroundMusic.loop = true;
+    
+    backgroundMusic.play().catch(() => {
+      // Ignore audio play errors (e.g., autoplay policy)
+    });
+  } catch {
+    // Ignore audio errors
+  }
+}
+
+export function stopBackgroundMusic() {
+  try {
+    if (backgroundMusic) {
+      backgroundMusic.pause();
+      backgroundMusic.currentTime = 0;
+      backgroundMusic = null;
+    }
+  } catch {
+    // Ignore audio errors
+  }
+}
+
 export function playRocketLaunch() {
   try {
     const audio = new Audio('/rocket-launch.mp3');

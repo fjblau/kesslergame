@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { GameSetupScreen } from './components/Setup/GameSetupScreen';
 import { ControlPanel } from './components/ControlPanel/ControlPanel';
 import { GameSpeedControl } from './components/TimeControl/GameSpeedControl';
@@ -19,6 +19,7 @@ import { useGameSpeed } from './hooks/useGameSpeed';
 import { useAppSelector } from './store/hooks';
 import { GameOverModal } from './components/GameOver/GameOverModal';
 import { ScoreDisplay } from './components/Score/ScoreDisplay';
+import { playBackgroundMusic, stopBackgroundMusic } from './utils/audio';
 
 function App() {
   const [gameStarted, setGameStarted] = useState(false);
@@ -26,6 +27,20 @@ function App() {
   const gameOver = useAppSelector(state => state.game.gameOver);
 
   useGameSpeed();
+
+  useEffect(() => {
+    if (gameStarted && !gameOver) {
+      playBackgroundMusic();
+    } else if (gameOver) {
+      stopBackgroundMusic();
+    }
+  }, [gameStarted, gameOver]);
+
+  useEffect(() => {
+    return () => {
+      stopBackgroundMusic();
+    };
+  }, []);
 
   if (!gameStarted) {
     return <GameSetupScreen onStart={() => setGameStarted(true)} />;
