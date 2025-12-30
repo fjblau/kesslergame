@@ -12,6 +12,8 @@ const eventColorMap = {
   'mission-complete': { border: 'border-yellow-400', bg: 'bg-yellow-400/10', text: 'text-yellow-400' },
   'drv-expired': { border: 'border-gray-500', bg: 'bg-gray-500/10', text: 'text-gray-400' },
   'solar-storm': { border: 'border-orange-500', bg: 'bg-orange-500/10', text: 'text-orange-400' },
+  'satellite-graveyard': { border: 'border-purple-500', bg: 'bg-purple-500/10', text: 'text-purple-400' },
+  'geotug-decommission': { border: 'border-gray-500', bg: 'bg-gray-500/10', text: 'text-gray-400' },
 };
 
 function formatTimestamp(timestamp: number): string {

@@ -38,7 +38,7 @@ export function ControlPanel() {
       const priorityModifier = DRV_PRIORITY_CONFIG[drvPriority].costModifier;
       return baseCost * priorityModifier;
     } else {
-      return 50000000;
+      return DRV_CONFIG.costs['GEO']['geotug'];
     }
   };
 
@@ -60,6 +60,9 @@ export function ControlPanel() {
       dispatch(launchSatellite({ orbit: selectedOrbit, insuranceTier, purpose, day: gameState.days }));
     } else if (launchType === 'drv') {
       dispatch(launchDRV({ orbit: selectedOrbit, drvType, targetPriority: drvPriority, day: gameState.days }));
+      dispatch(trackDRVLaunch());
+    } else {
+      dispatch(launchDRV({ orbit: 'GEO', drvType: 'geotug', targetPriority: 'auto', day: gameState.days }));
       dispatch(trackDRVLaunch());
     }
 
@@ -113,17 +116,18 @@ export function ControlPanel() {
       </div>
 
       <div className="space-y-2 mb-6">
-        <label className="text-base font-medium text-gray-300">Orbit Layer</label>
+        <label className="text-base font-medium text-gray-300">Orbit Layer{launchType === 'geotug' ? ' (Fixed to GEO)' : ''}</label>
         <div className="flex gap-3">
           {(['LEO', 'MEO', 'GEO'] as OrbitLayer[]).map(orbit => (
             <button
               key={orbit}
               onClick={() => setSelectedOrbit(orbit)}
+              disabled={launchType === 'geotug'}
               className={`flex-1 py-2 px-6 rounded-xl font-medium transition-colors ${
-                selectedOrbit === orbit
+                (launchType === 'geotug' ? 'GEO' : selectedOrbit) === orbit
                   ? 'bg-blue-600 text-white shadow-lg'
                   : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
-              }`}
+              } ${launchType === 'geotug' ? 'cursor-not-allowed opacity-60' : ''}`}
             >
               {orbit}
             </button>

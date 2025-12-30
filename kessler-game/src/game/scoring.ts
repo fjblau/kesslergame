@@ -7,6 +7,7 @@ export const SCORE_CONFIG = {
       LEO: 0,
       MEO: 50,
       GEO: 100,
+      GRAVEYARD: 0,
     },
   },
   DEBRIS_REMOVAL: {

@@ -1,41 +1,105 @@
 # Graveyard Orbit Implementation Report
 
 ## Summary
-Successfully added a 4th GRAVEYARD orbit layer outside the GEO orbit and adjusted the sizes of all existing orbits and the Earth icon to create proper spacing. Also added a new "GEO TUG" launch type button to the control panel.
+Successfully implemented a complete GEO TUG system that moves end-of-life satellites from GEO orbit to a new GRAVEYARD orbit. Added visual representation, functional logic for targeting, capturing, and moving satellites, and event logging.
 
 ## Changes Made
 
-### 1. OrbitVisualization.tsx
-- Added GRAVEYARD orbit ring at 950px diameter with blue circle styling matching other orbits
-- Reduced GEO orbit from 875px to 800px
-- Reduced MEO orbit from 730px to 650px
-- Reduced LEO orbit from 512px to 450px
-- Reduced Earth icon from 125px to 100px (with emoji font size reduced from 60px to 48px)
-- Distance from GEO to GRAVEYARD: 150px (approximately half the original MEO-GEO distance of 145px, scaled proportionally)
-- Adjusted background tint ring from 87.5% to 95% to align with GRAVEYARD orbit edge
+### 1. Type System Updates (types.ts)
+- Added 'GRAVEYARD' to OrbitLayer type
+- Added 'geotug' to DRVType  
+- Added `inGraveyard?: boolean` flag to Satellite interface
+- Added new event types: 'satellite-graveyard', 'geotug-decommission'
+- Added GraveyardMoveInfo interface for tracking satellite movements
+- Added recentGraveyardMoves to GameState
 
-### 2. utils.ts
-- Updated ORBIT_RADII to match new visual orbit sizes:
-  - LEO: inner 50px, outer 225px (was 62.5px, 256px)
-  - MEO: inner 225px, outer 325px (was 256px, 365px)
-  - GEO: inner 325px, outer 400px (was 365px, 437.5px)
+### 2. Constants Updates (constants.ts)
+- Added GRAVEYARD to LAUNCH_COSTS (value: 0)
+- Added geotug costs to DRV_CONFIG ($50M for all orbits)
+- Added geotug capacity: [1, 1] (single satellite at a time)
+- Added geotug success rate: 1.0 (100%)
+- Added geotug duration: 999 (effectively permanent until decommission)
+- Added GRAVEYARD to LAYER_BOUNDS: [150, 200]
+- Added GRAVEYARD to ORBITAL_SPEEDS: 2.2
+- Added GRAVEYARD to COLLISION_THRESHOLDS: 70
 
-### 3. LaunchAnimation.tsx
-- Updated ORBIT_RADII constants to match new sizes (LEO: 225, MEO: 325, GEO: 400)
-- Updated EARTH_RADIUS from 62.5px to 50px
+### 3. Visual Representation Updates
+**OrbitVisualization.tsx:**
+- Added GRAVEYARD orbit ring at 950px diameter
+- Reduced other orbits: GEO (800px), MEO (650px), LEO (450px)
+- Reduced Earth icon to 100px
+- Adjusted background tint to 95% to align with GRAVEYARD edge
+- Added GRAVEYARD orbital speed support
+- Filter out graveyard satellites from launch animations
 
-### 4. ControlPanel.tsx
-- Added 'geotug' as a new launch type option alongside 'satellite' and 'drv'
-- Resized all three launch type buttons (reduced padding and gap, added smaller font)
-- Added GEO TUG configuration section with description
-- Updated cost calculation to return $50M for GEO Tug
-- Updated launch button text to handle GEO Tug case
-- GEO Tug currently spends budget but doesn't launch any entity (placeholder for future implementation)
+**utils.ts, collision.ts:**
+- Updated ORBIT_RADII to include GRAVEYARD: inner 400px, outer 475px
+- Updated mapToPixels to support GRAVEYARD orbital speed
+
+**LaunchAnimation.tsx:**
+- Added GRAVEYARD radius (475px) and color (purple #a855f7)
+
+**Sprite Components:**
+- Updated DRVSprite with purple color (#a855f7) for GEO TUG
+- Added GRAVEYARD orbital speed support to all sprite components (DRV, Satellite, Debris)
+
+### 4. Game Logic (debrisRemoval.ts, gameSlice.ts)
+**debrisRemoval.ts:**
+- Updated selectTarget to exclude satellites with inGraveyard flag
+- Added selectGeoTugTarget function (targets only GEO satellites)
+- Added processGeoTugOperations function:
+  - Targets GEO satellites only
+  - Captures satellites using same mechanism as cooperative DRVs
+  - Moves captured satellites to GRAVEYARD after 2 orbits
+  - Sets shouldDecommission flag after moving satellite
+
+**gameSlice.ts:**
+- Added processGeoTugOperations import
+- Added orbitalSpeedGRAVEYARD to state
+- Updated DRV processing to handle 'geotug' type
+- When satellite is moved to graveyard:
+  - Sets layer to 'GRAVEYARD'
+  - Sets inGraveyard flag to true
+  - Sets y position to 175 (middle of graveyard layer)
+  - Tracks move in recentGraveyardMoves array
+- Decommissions GEO TUG after moving satellite (age = maxAge)
+- Updated movement logic for GEO TUG (uses same cooperative DRV movement)
+
+### 5. Collision Updates (collision.ts)
+- Updated detectCollisions to filter out satellites with inGraveyard flag
+- Added GRAVEYARD to layers array for collision detection
+- Updated ORBIT_RADII to match new sizes
+
+### 6. Control Panel (ControlPanel.tsx)
+- Added 'geotug' as third launch type option (purple "GEO TUG" button)
+- Resized all launch type buttons (smaller padding, gap, font)
+- Force orbit selection to GEO when GEO TUG is selected (disabled orbit buttons)
+- Updated cost calculation to use DRV_CONFIG for geotug ($50M)
+- Updated handleLaunch to dispatch launchDRV with geotug type
+- Added GEO TUG configuration panel with description
+
+### 7. Event System (EventItem.tsx, gameSlice.ts)
+- Added event colors for 'satellite-graveyard' (purple) and 'geotug-decommission' (gray)
+- Added recentGraveyardMoves tracking in GameState
+- GEO TUG operations populate graveyardMoves array for event logging
+
+### 8. Scoring (scoring.ts)
+- Added GRAVEYARD to SATELLITE_LAUNCH.LAYER_BONUS (value: 0)
+
+## Behavior
+1. **Launching GEO TUG**: Costs $50M, launches into GEO orbit with purple color
+2. **Targeting**: Automatically targets satellites in GEO orbit only (excludes graveyard satellites)
+3. **Capturing**: Uses same capture mechanism as cooperative DRVs with sound effects
+4. **Moving to Graveyard**: After holding satellite for 2 orbits, moves it to GRAVEYARD layer
+5. **Decommissioning**: GEO TUG automatically decommissions itself after moving a satellite
+6. **Graveyard Satellites**: 
+   - Cannot be captured by any DRV
+   - Cannot collide with other objects
+   - Remain in graveyard orbit for remainder of game
+   - Visible on visualization but non-interactive
 
 ## Verification
 - Linter: ✓ Passed with no errors
 - Build: ✓ Passed TypeScript compilation and Vite build successfully
-
-## Notes
-- The GRAVEYARD orbit is purely visual - it does not support satellites, debris, or DRVs as it's not part of the functional OrbitLayer type
-- GEO TUG button is functional but the actual tug launch logic is not yet implemented
+- All TypeScript type errors resolved
+- All sprite components updated for GRAVEYARD support

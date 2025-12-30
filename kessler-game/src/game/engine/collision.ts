@@ -25,9 +25,10 @@ export interface CollisionPair {
 }
 
 const ORBIT_RADII = {
-  LEO: { inner: 62.5, outer: 256 },
-  MEO: { inner: 256, outer: 365 },
-  GEO: { inner: 365, outer: 437.5 },
+  LEO: { inner: 50, outer: 225 },
+  MEO: { inner: 225, outer: 325 },
+  GEO: { inner: 325, outer: 400 },
+  GRAVEYARD: { inner: 400, outer: 475 },
 };
 
 interface PolarCoordinates {
@@ -102,12 +103,12 @@ export function detectCollisions(
     drvs.filter(drv => drv.capturedDebrisId).map(drv => drv.capturedDebrisId)
   );
   
-  const activeSatellites = satellites.filter(s => !capturedObjectIds.has(s.id) && s.age >= 3);
+  const activeSatellites = satellites.filter(s => !capturedObjectIds.has(s.id) && s.age >= 3 && !s.inGraveyard);
   const activeDebris = debris.filter(d => !capturedObjectIds.has(d.id));
   
   const allObjects: GameObject[] = [...activeSatellites, ...activeDebris];
 
-  const layers: OrbitLayer[] = ['LEO', 'MEO', 'GEO'];
+  const layers: OrbitLayer[] = ['LEO', 'MEO', 'GEO', 'GRAVEYARD'];
 
   for (const layer of layers) {
     const objectsInLayer = allObjects.filter(obj => obj.layer === layer);

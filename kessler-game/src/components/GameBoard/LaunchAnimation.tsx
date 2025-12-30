@@ -14,12 +14,14 @@ const ORBIT_RADII = {
   LEO: 225,
   MEO: 325,
   GEO: 400,
+  GRAVEYARD: 475,
 };
 
 const LAYER_COLORS = {
   LEO: '#3b82f6',
   MEO: '#10b981',
   GEO: '#f59e0b',
+  GRAVEYARD: '#a855f7',
 };
 
 const EARTH_RADIUS = 50;

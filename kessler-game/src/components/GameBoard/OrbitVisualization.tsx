@@ -55,6 +55,7 @@ export function OrbitVisualization() {
     LEO: state.game.orbitalSpeedLEO,
     MEO: state.game.orbitalSpeedMEO,
     GEO: state.game.orbitalSpeedGEO,
+    GRAVEYARD: state.game.orbitalSpeedGRAVEYARD,
   }));
 
   const prevSatelliteIds = useRef<Set<string>>(new Set());
@@ -81,10 +82,12 @@ export function OrbitVisualization() {
     const newTrails: LaunchingEntity[] = [];
 
     satellites.forEach(satellite => {
-      if (!prevSatelliteIds.current.has(satellite.id)) {
+      if (!prevSatelliteIds.current.has(satellite.id) && !satellite.inGraveyard) {
         newSatelliteIds.add(satellite.id);
         const angle = (satellite.x / 100) * 2 * Math.PI;
-        newTrails.push({ id: satellite.id, layer: satellite.layer, angle });
+        if (satellite.layer !== 'GRAVEYARD') {
+          newTrails.push({ id: satellite.id, layer: satellite.layer, angle });
+        }
       }
     });
 
@@ -92,7 +95,9 @@ export function OrbitVisualization() {
       if (!prevDRVIds.current.has(drv.id)) {
         newDRVIds.add(drv.id);
         const angle = (drv.x / 100) * 2 * Math.PI;
-        newTrails.push({ id: drv.id, layer: drv.layer, angle });
+        if (drv.layer !== 'GRAVEYARD') {
+          newTrails.push({ id: drv.id, layer: drv.layer, angle });
+        }
       }
     });
 
