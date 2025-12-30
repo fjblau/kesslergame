@@ -6,7 +6,7 @@ const ORBITS_TO_TARGET = 1;
 
 type CapturableObject = Debris | Satellite;
 
-function isWithinCaptureRange(
+export function isWithinCaptureRange(
   drv: DebrisRemovalVehicle,
   target: CapturableObject
 ): boolean {
