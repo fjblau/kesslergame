@@ -11,9 +11,9 @@ interface LaunchAnimationProps {
 }
 
 const ORBIT_RADII = {
-  LEO: 256,
-  MEO: 365,
-  GEO: 437.5,
+  LEO: 225,
+  MEO: 325,
+  GEO: 400,
 };
 
 const LAYER_COLORS = {
@@ -22,7 +22,7 @@ const LAYER_COLORS = {
   GEO: '#f59e0b',
 };
 
-const EARTH_RADIUS = 62.5;
+const EARTH_RADIUS = 50;
 
 export function LaunchAnimation({ targetLayer, targetAngle, onComplete }: LaunchAnimationProps) {
   const centerX = 500;

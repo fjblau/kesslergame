@@ -2,9 +2,9 @@ import type { OrbitLayer } from '../../game/types';
 import { LAYER_BOUNDS } from '../../game/constants';
 
 const ORBIT_RADII = {
-  LEO: { inner: 62.5, outer: 256 },
-  MEO: { inner: 256, outer: 365 },
-  GEO: { inner: 365, outer: 437.5 },
+  LEO: { inner: 50, outer: 225 },
+  MEO: { inner: 225, outer: 325 },
+  GEO: { inner: 325, outer: 400 },
 };
 
 interface EntityPosition {
