@@ -1,10 +1,27 @@
 import type { DebrisRemovalVehicle, Debris, Satellite, OrbitLayer } from '../types';
 import { ORBITAL_SPEEDS } from '../constants';
 
-const CAPTURE_DISTANCE_THRESHOLD = 15;
 const ORBITS_TO_HOLD = 2;
 
 type CapturableObject = Debris | Satellite;
+
+function isWithinCaptureRange(
+  drv: DebrisRemovalVehicle,
+  target: CapturableObject
+): boolean {
+  const dx = target.x - drv.x;
+  const dxWrapped = dx > 50 ? dx - 100 : (dx < -50 ? dx + 100 : dx);
+  const dy = target.y - drv.y;
+  
+  const distanceSquared = dxWrapped * dxWrapped + dy * dy;
+  
+  const drvCaptureRadius = drv.captureRadius ?? drv.radius;
+  const targetCaptureRadius = target.captureRadius ?? target.radius;
+  const captureDistance = drvCaptureRadius + targetCaptureRadius;
+  const captureDistanceSquared = captureDistance * captureDistance;
+  
+  return distanceSquared <= captureDistanceSquared;
+}
 
 function hashId(id: string): number {
   let hash = 0;
@@ -67,12 +84,6 @@ export function selectGeoTugTarget(
 
 export function attemptDebrisRemoval(drv: DebrisRemovalVehicle): boolean {
   return Math.random() < drv.successRate;
-}
-
-function calculateDistance(x1: number, y1: number, x2: number, y2: number): number {
-  const dx = Math.min(Math.abs(x1 - x2), 100 - Math.abs(x1 - x2));
-  const dy = Math.abs(y1 - y2);
-  return Math.sqrt(dx * dx + dy * dy);
 }
 
 export function calculateInterceptionAdjustment(
@@ -210,9 +221,7 @@ export function processCooperativeDRVOperations(
     };
   }
   
-  const distance = calculateDistance(drv.x, drv.y, currentTarget.x, currentTarget.y);
-  
-  if (distance < CAPTURE_DISTANCE_THRESHOLD) {
+  if (isWithinCaptureRange(drv, currentTarget)) {
     return {
       removedDebrisIds,
       removedSatelliteIds,
@@ -309,9 +318,7 @@ export function processGeoTugOperations(
     };
   }
   
-  const distance = calculateDistance(drv.x, drv.y, currentSatellite.x, currentSatellite.y);
-  
-  if (distance < CAPTURE_DISTANCE_THRESHOLD) {
+  if (isWithinCaptureRange(drv, currentSatellite)) {
     return {
       movedSatelliteId: undefined,
       newTargetId: drv.targetDebrisId,

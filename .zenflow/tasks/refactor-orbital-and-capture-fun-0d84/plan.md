@@ -75,22 +75,23 @@ Key findings:
 
 ---
 
-### [ ] Step 3: Update Capture Detection
+### [x] Step 3: Update Capture Detection
+<!-- chat-id: 4148637b-7417-4e40-b6a3-c6796c48cd04 -->
 
 **Objective**: Replace fixed distance threshold with radius-based capture detection.
 
 **Changes**:
 - `src/game/engine/debrisRemoval.ts`:
-  - Add `isWithinCaptureRange(drv, target)` function
-  - Update `processCooperativeDRVOperations()` to use `isWithinCaptureRange`
-  - Update `processGeoTugOperations()` to use `isWithinCaptureRange`
-  - Mark `CAPTURE_DISTANCE_THRESHOLD` as deprecated
+  - Add `isWithinCaptureRange(drv, target)` function ✅
+  - Update `processCooperativeDRVOperations()` to use `isWithinCaptureRange` ✅
+  - Update `processGeoTugOperations()` to use `isWithinCaptureRange` ✅
+  - Remove deprecated `CAPTURE_DISTANCE_THRESHOLD` and `calculateDistance()` ✅
 
 **Verification**:
-- Run `npm run build`
-- Run `npm run lint`
-- Test in browser: Launch cooperative DRV and verify it can still capture debris
-- Check that capture behavior feels consistent
+- Run `npm run build` ✅
+- Run `npm run lint` ✅
+- Test in browser: Launch cooperative DRV and verify it can still capture debris (pending manual testing)
+- Check that capture behavior feels consistent (pending manual testing)
 
 ---
 
