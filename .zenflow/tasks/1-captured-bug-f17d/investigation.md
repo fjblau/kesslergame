@@ -70,31 +70,16 @@ This ensures satellites are held for the full `ORBITS_TO_HOLD` (2) orbits before
 
 ## Implementation
 
-### Initial Changes Made (First Fix)
+### Initial Changes Made (INCORRECT - Later Reverted)
 
-Fixed the bug by changing the holding condition from `orbitsRemaining <= 0` to `orbitsRemaining < 0` in two locations:
+Initially tried changing the holding condition from `orbitsRemaining <= 0` to `orbitsRemaining < 0`, but this was **incorrect** and caused satellites to be held for 3 turns instead of 2.
 
-1. **Line 213** in `processCooperativeDRVOperations` function
-   - Changed: `if (orbitsRemaining <= 0)` → `if (orbitsRemaining < 0)`
-   
-2. **Line 352** in `processGeoTugOperations` function
-   - Changed: `if (orbitsRemaining <= 0)` → `if (orbitsRemaining < 0)`
+### Root Cause - Misunderstanding of Counter Semantics
 
-### Additional Investigation - Targeting vs Holding Logic
-
-After user testing, discovered confusion about targeting condition. Initially thought the same off-by-one error existed in targeting, but **this was incorrect**.
-
-**Key Insight:** Targeting and holding have different semantics:
-- `ORBITS_TO_HOLD = 2` means "hold for 2 complete orbits AFTER capturing"
-  - Requires `< 0` condition to ensure 2 full orbits of holding
-- `ORBITS_TO_TARGET = 1` means "takes 1 orbit TO capture" (not "hold for 1 orbit before capturing")
-  - Requires `<= 0` condition to capture after 1 orbit of targeting
-
-### Second Fix - REVERTED (Was Incorrect)
-
-Initially changed targeting conditions to `< 0`, but this was **wrong** and prevented captures.
-
-**Corrected approach:** Keep targeting at `<= 0`, only holding uses `< 0`
+**Key Insight:** Both targeting and holding use countdown timers that should trigger when they reach 0, not when they go negative:
+- `ORBITS_TO_HOLD = 2` means "hold for 2 turns AFTER capturing" → triggers when counter reaches 0
+- `ORBITS_TO_TARGET = 1` means "takes 1 turn TO capture" → triggers when counter reaches 0
+- **Both require `<= 0` condition**
 
 ### Third Bug Discovered - targetDebrisId Not Cleared
 
@@ -120,24 +105,37 @@ Changed four locations to return `newTargetId: undefined` instead of `newTargetI
 
 This ensures proper state transitions: targeting → captured (clear target) → holding (keep target clear) → removed (find new target).
 
+### Fourth Bug - Holding Condition Wrong (FINAL FIX)
+
+After user verification, discovered that satellites were **still** not being removed. The holding condition `< 0` was incorrect - it caused satellites to be held for 3 turns instead of 2.
+
+**Final Fix:** Reverted holding conditions back to `<= 0`:
+
+9. **Line 213** in `processCooperativeDRVOperations` function
+   - Reverted: `if (orbitsRemaining < 0)` → `if (orbitsRemaining <= 0)`
+   
+10. **Line 352** in `processGeoTugOperations` function
+    - Reverted: `if (orbitsRemaining < 0)` → `if (orbitsRemaining <= 0)`
+
+### Final Implementation Summary
+
+**Holding behavior** - Satellites are held for exactly `ORBITS_TO_HOLD` (2) turns:
+- Turn when captured: Set `captureOrbitsRemaining = 2`
+- Turn 1 of holding: Decrement to 1, continue holding
+- Turn 2 of holding: Decrement to 0, check `0 <= 0` → **remove**
+- Total: Held for exactly 2 turns
+
+**Targeting behavior** - Targets for exactly `ORBITS_TO_TARGET` (1) turn:
+- Turn when targeted: Set `targetingTurnsRemaining = 1`
+- Next turn: Decrement to 0, check `0 <= 0` → **capture**
+- Total: 1 turn of targeting before capture
+
+**State management** - Clear `targetDebrisId` during capture and holding:
+- Prevents inconsistent state where both target and captured IDs are set
+- Ensures proper state transitions through the DRV lifecycle
+
 ### Verification
 
 - **Build**: ✅ Passed (`npm run build`)
 - **Lint**: ✅ Passed (`npm run lint`)
 - **Tests**: N/A (No testing framework configured in project)
-
-### Implementation Notes
-
-**Holding behavior** - The fix ensures that captured satellites are held for the full `ORBITS_TO_HOLD` (2) orbits before being removed:
-- Turn when captured: Set `captureOrbitsRemaining = 2`
-- Next turn: Decrement to 1, continue holding
-- Next turn: Decrement to 0, continue holding  
-- Next turn: Decrement to -1, check `-1 < 0` → **remove**
-- Total: Held for 2 full turns before removal
-
-**Targeting behavior** - Uses `<= 0` to capture after `ORBITS_TO_TARGET` (1) orbit:
-- Turn when targeted: Set `targetingTurnsRemaining = 1`
-- Next turn: Decrement to 0, check `0 <= 0` → **capture**
-- Total: 1 turn of targeting before capture
-
-This corrects the buggy holding behavior where satellites were removed after only 1 orbit instead of 2.

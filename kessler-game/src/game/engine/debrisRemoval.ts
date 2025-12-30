@@ -210,7 +210,7 @@ export function processCooperativeDRVOperations(
     
     const orbitsRemaining = (drv.captureOrbitsRemaining ?? ORBITS_TO_HOLD) - 1;
     
-    if (orbitsRemaining < 0) {
+    if (orbitsRemaining <= 0) {
       if (capturedSatellite) {
         removedSatelliteIds.push(capturedSatellite.id);
       } else if (capturedDebris) {
@@ -349,7 +349,7 @@ export function processGeoTugOperations(
     
     const orbitsRemaining = (drv.captureOrbitsRemaining ?? ORBITS_TO_HOLD) - 1;
     
-    if (orbitsRemaining < 0) {
+    if (orbitsRemaining <= 0) {
       return {
         movedSatelliteId: capturedSatellite.id,
         newTargetId: undefined,
