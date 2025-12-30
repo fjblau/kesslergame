@@ -212,14 +212,18 @@ export function processCooperativeDRVOperations(
     
     if (orbitsRemaining <= 0) {
       if (capturedSatellite) {
+        console.log(`[DRV ${drv.id}] Removing captured satellite ${capturedSatellite.id}`);
         removedSatelliteIds.push(capturedSatellite.id);
       } else if (capturedDebris) {
         const success = attemptDebrisRemoval(drv);
         if (success) {
           removedDebrisIds.push(capturedDebris.id);
         }
+      } else {
+        console.warn(`[DRV ${drv.id}] Capture countdown complete but no captured object found! capturedDebrisId: ${drv.capturedDebrisId}`);
       }
       
+      console.log(`[DRV ${drv.id}] Clearing capture state, removed ${removedSatelliteIds.length} satellites, ${removedDebrisIds.length} debris`);
       return {
         removedDebrisIds,
         removedSatelliteIds,
@@ -229,6 +233,8 @@ export function processCooperativeDRVOperations(
         targetingTurnsRemaining: undefined
       };
     }
+    
+    console.log(`[DRV ${drv.id}] Holding satellite ${drv.capturedDebrisId}, orbits remaining: ${orbitsRemaining}`);
     
     return {
       removedDebrisIds,
@@ -260,6 +266,7 @@ export function processCooperativeDRVOperations(
     const turnsRemaining = (drv.targetingTurnsRemaining ?? ORBITS_TO_TARGET) - 1;
     
     if (turnsRemaining <= 0) {
+      console.log(`[DRV ${drv.id}] Capturing target ${currentTarget.id}, setting captureOrbitsRemaining to ${ORBITS_TO_HOLD}`);
       return {
         removedDebrisIds,
         removedSatelliteIds,
