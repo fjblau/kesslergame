@@ -46,6 +46,7 @@ export interface DebrisRemovalVehicle {
   targetDebrisId?: string;
   capturedDebrisId?: string;
   captureOrbitsRemaining?: number;
+  targetingTurnsRemaining?: number;
   radius: number;
   captureRadius?: number;
 }

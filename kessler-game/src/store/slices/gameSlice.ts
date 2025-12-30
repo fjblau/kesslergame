@@ -344,9 +344,25 @@ export const gameSlice = createSlice({
           
           const totalRemoved = result.removedDebrisIds.length + result.removedSatelliteIds.length;
           drv.debrisRemoved += totalRemoved;
+          
+          const wasTargeting = drv.targetDebrisId && !drv.capturedDebrisId;
+          const isNowCaptured = result.capturedObjectId && !wasTargeting;
+          
+          if (isNowCaptured && result.capturedObjectId) {
+            const capturedDebris = state.debris.find(d => d.id === result.capturedObjectId);
+            const capturedSatellite = state.satellites.find(s => s.id === result.capturedObjectId);
+            const capturedObject = capturedDebris || capturedSatellite;
+            
+            if (capturedObject) {
+              drv.x = capturedObject.x;
+              drv.y = capturedObject.y;
+            }
+          }
+          
           drv.targetDebrisId = result.newTargetId;
           drv.capturedDebrisId = result.capturedObjectId;
           drv.captureOrbitsRemaining = result.captureOrbitsRemaining;
+          drv.targetingTurnsRemaining = result.targetingTurnsRemaining;
           
           if (result.removedSatelliteIds.length > 0) {
             state.satellitesRecovered += result.removedSatelliteIds.length;
@@ -370,9 +386,21 @@ export const gameSlice = createSlice({
         } else if (drv.removalType === 'geotug') {
           const result = processGeoTugOperations(drv, state.satellites);
           
+          const wasTargeting = drv.targetDebrisId && !drv.capturedDebrisId;
+          const isNowCaptured = result.capturedSatelliteId && !wasTargeting;
+          
+          if (isNowCaptured && result.capturedSatelliteId) {
+            const capturedSatellite = state.satellites.find(s => s.id === result.capturedSatelliteId);
+            if (capturedSatellite) {
+              drv.x = capturedSatellite.x;
+              drv.y = capturedSatellite.y;
+            }
+          }
+          
           drv.targetDebrisId = result.newTargetId;
           drv.capturedDebrisId = result.capturedSatelliteId;
           drv.captureOrbitsRemaining = result.captureOrbitsRemaining;
+          drv.targetingTurnsRemaining = result.targetingTurnsRemaining;
           
           if (result.movedSatelliteId) {
             const satellite = state.satellites.find(s => s.id === result.movedSatelliteId);
