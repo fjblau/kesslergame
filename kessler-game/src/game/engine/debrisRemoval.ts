@@ -58,10 +58,29 @@ function selectDebrisTarget(
 export function selectTarget(
   drv: DebrisRemovalVehicle,
   debris: Debris[],
-  satellites: Satellite[]
+  satellites: Satellite[],
+  allDRVs?: DebrisRemovalVehicle[]
 ): CapturableObject | null {
-  const satellitesInLayer = satellites.filter(s => s.layer === drv.layer && !s.inGraveyard);
-  const debrisInLayer = debris.filter(d => d.layer === drv.layer && d.type === 'cooperative');
+  const alreadyTargetedIds = new Set<string>();
+  if (allDRVs) {
+    allDRVs.forEach(otherDrv => {
+      if (otherDrv.id !== drv.id) {
+        if (otherDrv.targetDebrisId) alreadyTargetedIds.add(otherDrv.targetDebrisId);
+        if (otherDrv.capturedDebrisId) alreadyTargetedIds.add(otherDrv.capturedDebrisId);
+      }
+    });
+  }
+  
+  const satellitesInLayer = satellites.filter(s => 
+    s.layer === drv.layer && 
+    !s.inGraveyard && 
+    !alreadyTargetedIds.has(s.id)
+  );
+  const debrisInLayer = debris.filter(d => 
+    d.layer === drv.layer && 
+    d.type === 'cooperative' &&
+    !alreadyTargetedIds.has(d.id)
+  );
   
   const allTargets: CapturableObject[] = [
     ...satellitesInLayer,
@@ -73,9 +92,25 @@ export function selectTarget(
 }
 
 export function selectGeoTugTarget(
-  satellites: Satellite[]
+  drv: DebrisRemovalVehicle,
+  satellites: Satellite[],
+  allDRVs?: DebrisRemovalVehicle[]
 ): Satellite | null {
-  const satellitesInGEO = satellites.filter(s => s.layer === 'GEO' && !s.inGraveyard);
+  const alreadyTargetedIds = new Set<string>();
+  if (allDRVs) {
+    allDRVs.forEach(otherDrv => {
+      if (otherDrv.id !== drv.id) {
+        if (otherDrv.targetDebrisId) alreadyTargetedIds.add(otherDrv.targetDebrisId);
+        if (otherDrv.capturedDebrisId) alreadyTargetedIds.add(otherDrv.capturedDebrisId);
+      }
+    });
+  }
+  
+  const satellitesInGEO = satellites.filter(s => 
+    s.layer === 'GEO' && 
+    !s.inGraveyard &&
+    !alreadyTargetedIds.has(s.id)
+  );
   
   if (satellitesInGEO.length === 0) return null;
   return satellitesInGEO[Math.floor(Math.random() * satellitesInGEO.length)];
@@ -144,7 +179,8 @@ export function processDRVRemoval(
 export function processCooperativeDRVOperations(
   drv: DebrisRemovalVehicle,
   debris: Debris[],
-  satellites: Satellite[]
+  satellites: Satellite[],
+  allDRVs?: DebrisRemovalVehicle[]
 ): {
   removedDebrisIds: string[];
   removedSatelliteIds: string[];
@@ -210,7 +246,7 @@ export function processCooperativeDRVOperations(
     const currentTarget = currentDebris || currentSatellite;
     
     if (!currentTarget) {
-      const newTarget = selectTarget(drv, debris, satellites);
+      const newTarget = selectTarget(drv, debris, satellites, allDRVs);
       return { 
         removedDebrisIds,
         removedSatelliteIds,
@@ -244,7 +280,7 @@ export function processCooperativeDRVOperations(
     };
   }
   
-  const newTarget = selectTarget(drv, debris, satellites);
+  const newTarget = selectTarget(drv, debris, satellites, allDRVs);
   return {
     removedDebrisIds,
     removedSatelliteIds,
@@ -287,7 +323,8 @@ export function moveCooperativeDRV(
 
 export function processGeoTugOperations(
   drv: DebrisRemovalVehicle,
-  satellites: Satellite[]
+  satellites: Satellite[],
+  allDRVs?: DebrisRemovalVehicle[]
 ): {
   movedSatelliteId: string | undefined;
   newTargetId: string | undefined;
@@ -337,7 +374,7 @@ export function processGeoTugOperations(
     const currentSatellite = satellites.find(s => s.id === drv.targetDebrisId);
     
     if (!currentSatellite) {
-      const newTarget = selectGeoTugTarget(satellites);
+      const newTarget = selectGeoTugTarget(drv, satellites, allDRVs);
       return {
         movedSatelliteId: undefined,
         newTargetId: newTarget?.id,
@@ -371,7 +408,7 @@ export function processGeoTugOperations(
     };
   }
   
-  const newTarget = selectGeoTugTarget(satellites);
+  const newTarget = selectGeoTugTarget(drv, satellites, allDRVs);
   return {
     movedSatelliteId: undefined,
     newTargetId: newTarget?.id,

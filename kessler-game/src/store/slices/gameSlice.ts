@@ -340,7 +340,7 @@ export const gameSlice = createSlice({
 
       activeDRVs.forEach(drv => {
         if (drv.removalType === 'cooperative') {
-          const result = processCooperativeDRVOperations(drv, state.debris, state.satellites);
+          const result = processCooperativeDRVOperations(drv, state.debris, state.satellites, state.debrisRemovalVehicles);
           
           const totalRemoved = result.removedDebrisIds.length + result.removedSatelliteIds.length;
           drv.debrisRemoved += totalRemoved;
@@ -370,7 +370,7 @@ export const gameSlice = createSlice({
           state.debris = state.debris.filter(d => !result.removedDebrisIds.includes(d.id));
           state.satellites = state.satellites.filter(s => !result.removedSatelliteIds.includes(s.id));
         } else if (drv.removalType === 'geotug') {
-          const result = processGeoTugOperations(drv, state.satellites);
+          const result = processGeoTugOperations(drv, state.satellites, state.debrisRemovalVehicles);
           
           drv.targetDebrisId = result.newTargetId;
           drv.capturedDebrisId = result.capturedSatelliteId;
