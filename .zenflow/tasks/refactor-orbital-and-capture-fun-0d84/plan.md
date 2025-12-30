@@ -18,47 +18,136 @@ Do not make assumptions on important decisions — get clarification first.
 
 ## Workflow Steps
 
-### [ ] Step: Technical Specification
+### [x] Step: Technical Specification
+<!-- chat-id: e60a1234-2190-48d0-8db1-bbd7bb0a6713 -->
 
-Assess the task's difficulty, as underestimating it leads to poor outcomes.
-- easy: Straightforward implementation, trivial bug fix or feature
-- medium: Moderate complexity, some edge cases or caveats to consider
-- hard: Complex logic, many caveats, architectural considerations, or high-risk changes
+**Difficulty: Medium**
 
-Create a technical specification for the task that is appropriate for the complexity level:
-- Review the existing codebase architecture and identify reusable components.
-- Define the implementation approach based on established patterns in the project.
-- Identify all source code files that will be created or modified.
-- Define any necessary data model, API, or interface changes.
-- Describe verification steps using the project's test and lint commands.
+Technical specification created at `.zenflow/tasks/refactor-orbital-and-capture-fun-0d84/spec.md`
 
-Save the output to `{@artifacts_path}/spec.md` with:
-- Technical context (language, dependencies)
-- Implementation approach
-- Source code structure changes
-- Data model / API / interface changes
-- Verification approach
-
-If the task is complex enough, create a detailed implementation plan based on `{@artifacts_path}/spec.md`:
-- Break down the work into concrete tasks (incrementable, testable milestones)
-- Each task should reference relevant contracts and include verification steps
-- Replace the Implementation step below with the planned tasks
-
-Rule of thumb for step size: each step should represent a coherent unit of work (e.g., implement a component, add an API endpoint, write tests for a module). Avoid steps that are too granular (single function).
-
-Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warrant this breakdown, keep the Implementation step below as is.
+Key findings:
+- Current collision uses polar coordinates (angle + radius) which is scale-dependent
+- Need to add `radius` and `captureRadius` fields to all orbital objects
+- Replace angular/radial collision with Euclidean distance + object radii
+- Must handle x-axis wraparound (toroidal geometry)
+- Spatial hash optimization should be preserved
 
 ---
 
-### [ ] Step: Implementation
+## Implementation Steps
 
-Implement the task according to the technical specification and general engineering best practices.
+### [ ] Step 1: Update Data Model and Constants
 
-1. Break the task into steps where possible.
-2. Implement the required changes in the codebase.
-3. Add and run relevant tests and linters.
-4. Perform basic manual verification if applicable.
-5. After completion, write a report to `{@artifacts_path}/report.md` describing:
-   - What was implemented
-   - How the solution was tested
-   - The biggest issues or challenges encountered
+**Objective**: Add radius properties to type definitions and create radius constants.
+
+**Changes**:
+- `src/game/types.ts`: Add `radius` and `captureRadius?` to `Satellite`, `Debris`, `DebrisRemovalVehicle`
+- `src/game/constants.ts`: Add `OBJECT_RADII` and `CAPTURE_RADIUS_MULTIPLIER` constants
+
+**Verification**:
+- Run `npm run build` to check TypeScript compilation
+- Run `npm run lint` to verify code style
+- No runtime errors expected (additive changes only)
+
+---
+
+### [ ] Step 2: Implement Euclidean Collision Detection
+
+**Objective**: Replace polar coordinate collision with Euclidean distance-based detection.
+
+**Changes**:
+- `src/game/engine/collision.ts`:
+  - Add `areObjectsColliding(obj1, obj2)` function using Euclidean distance
+  - Update `detectCollisions()` to use new collision function
+  - Update spatial hash grid to bucket by x-position instead of angle
+  - Keep `toPolarCoordinates` and `normalizeAngleDiff` as commented reference
+  - Remove dependency on `ORBIT_RADII` constant
+
+**Verification**:
+- Run `npm run build` to check TypeScript compilation
+- Run `npm run lint`
+- Test in browser: Launch satellites and verify collisions still occur
+- Check browser console for errors
+
+---
+
+### [ ] Step 3: Update Capture Detection
+
+**Objective**: Replace fixed distance threshold with radius-based capture detection.
+
+**Changes**:
+- `src/game/engine/debrisRemoval.ts`:
+  - Add `isWithinCaptureRange(drv, target)` function
+  - Update `processCooperativeDRVOperations()` to use `isWithinCaptureRange`
+  - Update `processGeoTugOperations()` to use `isWithinCaptureRange`
+  - Mark `CAPTURE_DISTANCE_THRESHOLD` as deprecated
+
+**Verification**:
+- Run `npm run build`
+- Run `npm run lint`
+- Test in browser: Launch cooperative DRV and verify it can still capture debris
+- Check that capture behavior feels consistent
+
+---
+
+### [ ] Step 4: Initialize Radius Fields on Entity Creation
+
+**Objective**: Ensure all new entities (satellites, DRVs, debris) are created with radius fields.
+
+**Changes**:
+- `src/store/slices/gameSlice.ts`:
+  - Update `launchSatellite` reducer to add `radius` and `captureRadius`
+  - Update `launchDRV` reducer to add `radius` and `captureRadius`
+  - Import `OBJECT_RADII` and `CAPTURE_RADIUS_MULTIPLIER` from constants
+- `src/game/engine/collision.ts`:
+  - Update `generateDebrisFromCollision()` to add `radius` and `captureRadius` to debris
+
+**Verification**:
+- Run `npm run build`
+- Run `npm run lint`
+- Test in browser: Launch satellites/DRVs and inspect state to verify radius fields exist
+- Verify collisions work with newly created objects
+
+---
+
+### [ ] Step 5: Manual Testing and Tuning
+
+**Objective**: Verify all game features work correctly and tune radius values for game balance.
+
+**Testing Checklist**:
+- [ ] Game starts without errors
+- [ ] Satellites can be launched in all layers (LEO, MEO, GEO)
+- [ ] Collisions occur and visual overlap matches collision timing
+- [ ] Collisions work across 0°/360° boundary (x-axis wraparound)
+- [ ] Collision detection is consistent at small and large radii
+- [ ] Cooperative DRVs can capture debris
+- [ ] Geotug can capture and move satellites to graveyard
+- [ ] Uncooperative DRVs remove debris
+- [ ] Debris is generated from collisions
+- [ ] Insurance payouts work correctly
+- [ ] Game performance is smooth with 100+ objects
+- [ ] Settings load from localStorage correctly
+- [ ] Browser console has no errors
+
+**Tuning**:
+- Adjust `OBJECT_RADII` values if collisions feel too frequent/rare
+- Adjust `CAPTURE_RADIUS_MULTIPLIER` if capture feels too easy/hard
+
+**Verification**:
+- All manual tests pass
+- Game feels balanced and playable
+- No console errors
+
+---
+
+### [ ] Step 6: Final Report
+
+**Objective**: Document what was implemented and lessons learned.
+
+**Deliverable**: Write report to `.zenflow/tasks/refactor-orbital-and-capture-fun-0d84/report.md` covering:
+- Summary of changes made
+- Final radius values chosen and rationale
+- Testing results
+- Any issues encountered and how they were resolved
+- Comparison of collision behavior before/after refactor
+- Recommendations for future improvements (elliptical orbits, etc.)
