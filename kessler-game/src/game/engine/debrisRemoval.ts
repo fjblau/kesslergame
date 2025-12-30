@@ -1,7 +1,7 @@
 import type { DebrisRemovalVehicle, Debris, Satellite, OrbitLayer } from '../types';
 import { ORBITAL_SPEEDS } from '../constants';
 
-const ORBITS_TO_HOLD = 2;
+const ORBITS_TO_HOLD = 1;
 
 type CapturableObject = Debris | Satellite;
 
