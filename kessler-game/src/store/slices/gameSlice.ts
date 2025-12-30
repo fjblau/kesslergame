@@ -501,7 +501,10 @@ export const gameSlice = createSlice({
           if (drv.capturedDebrisId) {
             const capturedSatellite = state.satellites.find(s => s.id === drv.capturedDebrisId);
             if (capturedSatellite) {
-              capturedSatellite.x = drv.x;
+              const speed = getEntitySpeedVariation(capturedSatellite.id, capturedSatellite.layer, orbitalSpeeds);
+              const newX = (drv.x + speed) % 100;
+              drv.x = newX;
+              capturedSatellite.x = newX;
               capturedSatellite.y = drv.y + 1;
             }
           }
@@ -512,10 +515,10 @@ export const gameSlice = createSlice({
             const capturedObject = capturedDebris || capturedSatellite;
             
             if (capturedObject) {
-              const newPosition = moveCooperativeDRV(drv, undefined);
-              drv.x = newPosition.x;
-              drv.y = newPosition.y;
-              capturedObject.x = drv.x;
+              const speed = getEntitySpeedVariation(capturedObject.id, capturedObject.layer, orbitalSpeeds);
+              const newX = (drv.x + speed) % 100;
+              drv.x = newX;
+              capturedObject.x = newX;
               capturedObject.y = drv.y + 1;
             }
           } else {
