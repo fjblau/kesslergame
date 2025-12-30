@@ -141,9 +141,9 @@ export const COLLISION_THRESHOLDS = {
 };
 
 export const OBJECT_RADII = {
-  satellite: 8,
-  debris: 6,
-  drv: 10,
+  satellite: 4,
+  debris: 3,
+  drv: 5,
 };
 
 export const CAPTURE_RADIUS_MULTIPLIER = 1.5;
