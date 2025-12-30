@@ -36,7 +36,7 @@ export const DRVSprite = memo(function DRVSprite({ drv, x, y, isLaunching = fals
       style={{
         position: 'absolute',
         color,
-        fontSize: '20px',
+        fontSize: '16px',
         filter: hasCapturedObject ? 'drop-shadow(0 0 8px #ef4444)' : 'none',
       }}
       initial={isLaunching ? {
