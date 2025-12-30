@@ -94,16 +94,16 @@ export function calculateInterceptionAdjustment(
   const dxWrapped = dx > 50 ? dx - 100 : (dx < -50 ? dx + 100 : dx);
   const dy = target.y - drv.y;
   
-  const maxXAdjustment = 0.12;
-  const maxYAdjustment = 3.5;
+  const maxXAdjustment = 0.8;
+  const maxYAdjustment = 5.0;
   
-  const xAdjustment = Math.abs(dxWrapped) < 1 
+  const xAdjustment = Math.abs(dxWrapped) < 0.3 
     ? 0 
-    : Math.sign(dxWrapped) * Math.min(Math.abs(dxWrapped) * 0.05, maxXAdjustment);
+    : Math.sign(dxWrapped) * Math.min(Math.abs(dxWrapped) * 0.3, maxXAdjustment);
   
-  const yAdjustment = Math.abs(dy) < 2 
+  const yAdjustment = Math.abs(dy) < 1 
     ? 0 
-    : Math.sign(dy) * Math.min(Math.abs(dy) * 0.5, maxYAdjustment);
+    : Math.sign(dy) * Math.min(Math.abs(dy) * 0.8, maxYAdjustment);
   
   return { xAdjustment, yAdjustment };
 }
@@ -251,7 +251,17 @@ export function moveCooperativeDRV(
   if (target && !drv.capturedDebrisId) {
     const adjustments = calculateInterceptionAdjustment(drv, target);
     
-    newX = (drv.x + baseSpeed + adjustments.xAdjustment) % 100;
+    const dx = target.x - drv.x;
+    const dxWrapped = dx > 50 ? dx - 100 : (dx < -50 ? dx + 100 : dx);
+    
+    let speedMultiplier = 1.0;
+    if (Math.abs(dxWrapped) < 5) {
+      speedMultiplier = 0.3;
+    } else if (dxWrapped < -10) {
+      speedMultiplier = -0.5;
+    }
+    
+    newX = (drv.x + baseSpeed * speedMultiplier + adjustments.xAdjustment) % 100;
     if (newX < 0) newX += 100;
     
     newY = drv.y + adjustments.yAdjustment;
