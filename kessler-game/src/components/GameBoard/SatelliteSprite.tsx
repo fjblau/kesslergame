@@ -11,9 +11,10 @@ interface SatelliteSpriteProps {
   y: number;
   isLaunching?: boolean;
   isCaptured?: boolean;
+  isTargeted?: boolean;
 }
 
-export const SatelliteSprite = memo(function SatelliteSprite({ satellite, x, y, isLaunching = false, isCaptured = false }: SatelliteSpriteProps) {
+export const SatelliteSprite = memo(function SatelliteSprite({ satellite, x, y, isLaunching = false, isCaptured = false, isTargeted = false }: SatelliteSpriteProps) {
   const icon = SATELLITE_PURPOSE_CONFIG[satellite.purpose].icon;
   const days = useAppSelector(state => state.game.days);
   const orbitalSpeed = useAppSelector(state => {
@@ -33,7 +34,7 @@ export const SatelliteSprite = memo(function SatelliteSprite({ satellite, x, y, 
       style={{
         position: 'absolute',
         color: isCaptured ? '#ef4444' : '#60a5fa',
-        fontSize: '20px',
+        fontSize: '16px',
         filter: isCaptured ? 'drop-shadow(0 0 8px #ef4444)' : 'none',
       }}
       initial={isLaunching ? {
@@ -74,11 +75,26 @@ export const SatelliteSprite = memo(function SatelliteSprite({ satellite, x, y, 
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: '28px',
-            height: '28px',
+            width: '22px',
+            height: '22px',
             border: '2px solid #ef4444',
             borderRadius: '50%',
             pointerEvents: 'none',
+          }} />
+        )}
+        {isTargeted && !isCaptured && (
+          <span style={{ 
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '22px',
+            height: '22px',
+            border: '3px solid #ff0000',
+            borderRadius: '50%',
+            pointerEvents: 'none',
+            animation: 'blink 0.8s infinite',
+            boxShadow: '0 0 16px #ff0000, 0 0 24px #ff0000',
           }} />
         )}
       </span>

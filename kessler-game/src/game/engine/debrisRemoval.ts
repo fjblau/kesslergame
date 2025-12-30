@@ -1,10 +1,26 @@
 import type { DebrisRemovalVehicle, Debris, Satellite, OrbitLayer } from '../types';
 import { ORBITAL_SPEEDS } from '../constants';
 
-const CAPTURE_DISTANCE_THRESHOLD = 15;
 const ORBITS_TO_HOLD = 2;
+const ORBITS_TO_TARGET = 1;
 
 type CapturableObject = Debris | Satellite;
+
+export function isWithinCaptureRange(
+  drv: DebrisRemovalVehicle,
+  target: CapturableObject
+): boolean {
+  const dx = target.x - drv.x;
+  const dxWrapped = dx > 50 ? dx - 100 : (dx < -50 ? dx + 100 : dx);
+  const dy = target.y - drv.y;
+  
+  const distanceSquared = dxWrapped * dxWrapped + dy * dy;
+  
+  const captureDistance = 15;
+  const captureDistanceSquared = captureDistance * captureDistance;
+  
+  return distanceSquared <= captureDistanceSquared;
+}
 
 function hashId(id: string): number {
   let hash = 0;
@@ -42,10 +58,29 @@ function selectDebrisTarget(
 export function selectTarget(
   drv: DebrisRemovalVehicle,
   debris: Debris[],
-  satellites: Satellite[]
+  satellites: Satellite[],
+  allDRVs?: DebrisRemovalVehicle[]
 ): CapturableObject | null {
-  const satellitesInLayer = satellites.filter(s => s.layer === drv.layer && !s.inGraveyard);
-  const debrisInLayer = debris.filter(d => d.layer === drv.layer && d.type === 'cooperative');
+  const alreadyTargetedIds = new Set<string>();
+  if (allDRVs) {
+    allDRVs.forEach(otherDrv => {
+      if (otherDrv.id !== drv.id) {
+        if (otherDrv.targetDebrisId) alreadyTargetedIds.add(otherDrv.targetDebrisId);
+        if (otherDrv.capturedDebrisId) alreadyTargetedIds.add(otherDrv.capturedDebrisId);
+      }
+    });
+  }
+  
+  const satellitesInLayer = satellites.filter(s => 
+    s.layer === drv.layer && 
+    !s.inGraveyard && 
+    !alreadyTargetedIds.has(s.id)
+  );
+  const debrisInLayer = debris.filter(d => 
+    d.layer === drv.layer && 
+    d.type === 'cooperative' &&
+    !alreadyTargetedIds.has(d.id)
+  );
   
   const allTargets: CapturableObject[] = [
     ...satellitesInLayer,
@@ -57,9 +92,25 @@ export function selectTarget(
 }
 
 export function selectGeoTugTarget(
-  satellites: Satellite[]
+  drv: DebrisRemovalVehicle,
+  satellites: Satellite[],
+  allDRVs?: DebrisRemovalVehicle[]
 ): Satellite | null {
-  const satellitesInGEO = satellites.filter(s => s.layer === 'GEO' && !s.inGraveyard);
+  const alreadyTargetedIds = new Set<string>();
+  if (allDRVs) {
+    allDRVs.forEach(otherDrv => {
+      if (otherDrv.id !== drv.id) {
+        if (otherDrv.targetDebrisId) alreadyTargetedIds.add(otherDrv.targetDebrisId);
+        if (otherDrv.capturedDebrisId) alreadyTargetedIds.add(otherDrv.capturedDebrisId);
+      }
+    });
+  }
+  
+  const satellitesInGEO = satellites.filter(s => 
+    s.layer === 'GEO' && 
+    !s.inGraveyard &&
+    !alreadyTargetedIds.has(s.id)
+  );
   
   if (satellitesInGEO.length === 0) return null;
   return satellitesInGEO[Math.floor(Math.random() * satellitesInGEO.length)];
@@ -67,12 +118,6 @@ export function selectGeoTugTarget(
 
 export function attemptDebrisRemoval(drv: DebrisRemovalVehicle): boolean {
   return Math.random() < drv.successRate;
-}
-
-function calculateDistance(x1: number, y1: number, x2: number, y2: number): number {
-  const dx = Math.min(Math.abs(x1 - x2), 100 - Math.abs(x1 - x2));
-  const dy = Math.abs(y1 - y2);
-  return Math.sqrt(dx * dx + dy * dy);
 }
 
 export function calculateInterceptionAdjustment(
@@ -83,16 +128,16 @@ export function calculateInterceptionAdjustment(
   const dxWrapped = dx > 50 ? dx - 100 : (dx < -50 ? dx + 100 : dx);
   const dy = target.y - drv.y;
   
-  const maxXAdjustment = 0.12;
-  const maxYAdjustment = 3.5;
+  const maxXAdjustment = 3.0;
+  const maxYAdjustment = 8.0;
   
-  const xAdjustment = Math.abs(dxWrapped) < 1 
+  const xAdjustment = Math.abs(dxWrapped) < 0.1 
     ? 0 
-    : Math.sign(dxWrapped) * Math.min(Math.abs(dxWrapped) * 0.05, maxXAdjustment);
+    : Math.sign(dxWrapped) * Math.min(Math.abs(dxWrapped) * 1.0, maxXAdjustment);
   
-  const yAdjustment = Math.abs(dy) < 2 
+  const yAdjustment = Math.abs(dy) < 0.5 
     ? 0 
-    : Math.sign(dy) * Math.min(Math.abs(dy) * 0.5, maxYAdjustment);
+    : Math.sign(dy) * Math.min(Math.abs(dy) * 1.5, maxYAdjustment);
   
   return { xAdjustment, yAdjustment };
 }
@@ -134,13 +179,15 @@ export function processDRVRemoval(
 export function processCooperativeDRVOperations(
   drv: DebrisRemovalVehicle,
   debris: Debris[],
-  satellites: Satellite[]
+  satellites: Satellite[],
+  allDRVs?: DebrisRemovalVehicle[]
 ): {
   removedDebrisIds: string[];
   removedSatelliteIds: string[];
   newTargetId: string | undefined;
   capturedObjectId: string | undefined;
   captureOrbitsRemaining: number | undefined;
+  targetingTurnsRemaining: number | undefined;
 } {
   const removedDebrisIds: string[] = [];
   const removedSatelliteIds: string[] = [];
@@ -151,13 +198,13 @@ export function processCooperativeDRVOperations(
     const capturedObject = capturedDebris || capturedSatellite;
     
     if (!capturedObject) {
-      const newTarget = selectTarget(drv, debris, satellites);
       return {
         removedDebrisIds,
         removedSatelliteIds,
-        newTargetId: newTarget?.id,
+        newTargetId: undefined,
         capturedObjectId: undefined,
-        captureOrbitsRemaining: undefined
+        captureOrbitsRemaining: undefined,
+        targetingTurnsRemaining: undefined
       };
     }
     
@@ -173,16 +220,13 @@ export function processCooperativeDRVOperations(
         }
       }
       
-      const remainingDebris = debris.filter(d => d.id !== capturedObject.id);
-      const remainingSatellites = satellites.filter(s => s.id !== capturedObject.id);
-      const nextTarget = selectTarget(drv, remainingDebris, remainingSatellites);
-      
       return {
         removedDebrisIds,
         removedSatelliteIds,
-        newTargetId: nextTarget?.id,
+        newTargetId: undefined,
         capturedObjectId: undefined,
-        captureOrbitsRemaining: undefined
+        captureOrbitsRemaining: undefined,
+        targetingTurnsRemaining: undefined
       };
     }
     
@@ -191,43 +235,59 @@ export function processCooperativeDRVOperations(
       removedSatelliteIds,
       newTargetId: drv.targetDebrisId,
       capturedObjectId: drv.capturedDebrisId,
-      captureOrbitsRemaining: orbitsRemaining
+      captureOrbitsRemaining: orbitsRemaining,
+      targetingTurnsRemaining: undefined
     };
   }
   
-  const currentDebris = debris.find(d => d.id === drv.targetDebrisId);
-  const currentSatellite = satellites.find(s => s.id === drv.targetDebrisId);
-  const currentTarget = currentDebris || currentSatellite;
-  
-  if (!currentTarget) {
-    const newTarget = selectTarget(drv, debris, satellites);
-    return { 
-      removedDebrisIds,
-      removedSatelliteIds,
-      newTargetId: newTarget?.id,
-      capturedObjectId: undefined,
-      captureOrbitsRemaining: undefined
-    };
-  }
-  
-  const distance = calculateDistance(drv.x, drv.y, currentTarget.x, currentTarget.y);
-  
-  if (distance < CAPTURE_DISTANCE_THRESHOLD) {
+  if (drv.targetDebrisId) {
+    const currentDebris = debris.find(d => d.id === drv.targetDebrisId);
+    const currentSatellite = satellites.find(s => s.id === drv.targetDebrisId);
+    const currentTarget = currentDebris || currentSatellite;
+    
+    if (!currentTarget) {
+      const newTarget = selectTarget(drv, debris, satellites, allDRVs);
+      return { 
+        removedDebrisIds,
+        removedSatelliteIds,
+        newTargetId: newTarget?.id,
+        capturedObjectId: undefined,
+        captureOrbitsRemaining: undefined,
+        targetingTurnsRemaining: newTarget ? ORBITS_TO_TARGET : undefined
+      };
+    }
+    
+    const turnsRemaining = (drv.targetingTurnsRemaining ?? ORBITS_TO_TARGET) - 1;
+    
+    if (turnsRemaining <= 0) {
+      return {
+        removedDebrisIds,
+        removedSatelliteIds,
+        newTargetId: drv.targetDebrisId,
+        capturedObjectId: currentTarget.id,
+        captureOrbitsRemaining: ORBITS_TO_HOLD,
+        targetingTurnsRemaining: undefined
+      };
+    }
+    
     return {
       removedDebrisIds,
       removedSatelliteIds,
       newTargetId: drv.targetDebrisId,
-      capturedObjectId: currentTarget.id,
-      captureOrbitsRemaining: ORBITS_TO_HOLD
+      capturedObjectId: undefined,
+      captureOrbitsRemaining: undefined,
+      targetingTurnsRemaining: turnsRemaining
     };
   }
   
+  const newTarget = selectTarget(drv, debris, satellites, allDRVs);
   return {
     removedDebrisIds,
     removedSatelliteIds,
-    newTargetId: drv.targetDebrisId,
+    newTargetId: newTarget?.id,
     capturedObjectId: undefined,
-    captureOrbitsRemaining: undefined
+    captureOrbitsRemaining: undefined,
+    targetingTurnsRemaining: newTarget ? ORBITS_TO_TARGET : undefined
   };
 }
 
@@ -242,7 +302,17 @@ export function moveCooperativeDRV(
   if (target && !drv.capturedDebrisId) {
     const adjustments = calculateInterceptionAdjustment(drv, target);
     
-    newX = (drv.x + baseSpeed + adjustments.xAdjustment) % 100;
+    const dx = target.x - drv.x;
+    const dxWrapped = dx > 50 ? dx - 100 : (dx < -50 ? dx + 100 : dx);
+    
+    let speedMultiplier = 3.0;
+    if (Math.abs(dxWrapped) < 3) {
+      speedMultiplier = 0.5;
+    } else if (dxWrapped < -5) {
+      speedMultiplier = -2.0;
+    }
+    
+    newX = (drv.x + baseSpeed * speedMultiplier + adjustments.xAdjustment) % 100;
     if (newX < 0) newX += 100;
     
     newY = drv.y + adjustments.yAdjustment;
@@ -253,24 +323,26 @@ export function moveCooperativeDRV(
 
 export function processGeoTugOperations(
   drv: DebrisRemovalVehicle,
-  satellites: Satellite[]
+  satellites: Satellite[],
+  allDRVs?: DebrisRemovalVehicle[]
 ): {
   movedSatelliteId: string | undefined;
   newTargetId: string | undefined;
   capturedSatelliteId: string | undefined;
   captureOrbitsRemaining: number | undefined;
+  targetingTurnsRemaining: number | undefined;
   shouldDecommission: boolean;
 } {
   if (drv.capturedDebrisId) {
     const capturedSatellite = satellites.find(s => s.id === drv.capturedDebrisId);
     
     if (!capturedSatellite) {
-      const newTarget = selectGeoTugTarget(satellites);
       return {
         movedSatelliteId: undefined,
-        newTargetId: newTarget?.id,
+        newTargetId: undefined,
         capturedSatelliteId: undefined,
         captureOrbitsRemaining: undefined,
+        targetingTurnsRemaining: undefined,
         shouldDecommission: false
       };
     }
@@ -283,6 +355,7 @@ export function processGeoTugOperations(
         newTargetId: undefined,
         capturedSatelliteId: undefined,
         captureOrbitsRemaining: undefined,
+        targetingTurnsRemaining: undefined,
         shouldDecommission: true
       };
     }
@@ -292,40 +365,56 @@ export function processGeoTugOperations(
       newTargetId: drv.targetDebrisId,
       capturedSatelliteId: drv.capturedDebrisId,
       captureOrbitsRemaining: orbitsRemaining,
+      targetingTurnsRemaining: undefined,
       shouldDecommission: false
     };
   }
   
-  const currentSatellite = satellites.find(s => s.id === drv.targetDebrisId);
-  
-  if (!currentSatellite) {
-    const newTarget = selectGeoTugTarget(satellites);
-    return {
-      movedSatelliteId: undefined,
-      newTargetId: newTarget?.id,
-      capturedSatelliteId: undefined,
-      captureOrbitsRemaining: undefined,
-      shouldDecommission: false
-    };
-  }
-  
-  const distance = calculateDistance(drv.x, drv.y, currentSatellite.x, currentSatellite.y);
-  
-  if (distance < CAPTURE_DISTANCE_THRESHOLD) {
+  if (drv.targetDebrisId) {
+    const currentSatellite = satellites.find(s => s.id === drv.targetDebrisId);
+    
+    if (!currentSatellite) {
+      const newTarget = selectGeoTugTarget(drv, satellites, allDRVs);
+      return {
+        movedSatelliteId: undefined,
+        newTargetId: newTarget?.id,
+        capturedSatelliteId: undefined,
+        captureOrbitsRemaining: undefined,
+        targetingTurnsRemaining: newTarget ? ORBITS_TO_TARGET : undefined,
+        shouldDecommission: false
+      };
+    }
+    
+    const turnsRemaining = (drv.targetingTurnsRemaining ?? ORBITS_TO_TARGET) - 1;
+    
+    if (turnsRemaining <= 0) {
+      return {
+        movedSatelliteId: undefined,
+        newTargetId: drv.targetDebrisId,
+        capturedSatelliteId: currentSatellite.id,
+        captureOrbitsRemaining: ORBITS_TO_HOLD,
+        targetingTurnsRemaining: undefined,
+        shouldDecommission: false
+      };
+    }
+    
     return {
       movedSatelliteId: undefined,
       newTargetId: drv.targetDebrisId,
-      capturedSatelliteId: currentSatellite.id,
-      captureOrbitsRemaining: ORBITS_TO_HOLD,
+      capturedSatelliteId: undefined,
+      captureOrbitsRemaining: undefined,
+      targetingTurnsRemaining: turnsRemaining,
       shouldDecommission: false
     };
   }
   
+  const newTarget = selectGeoTugTarget(drv, satellites, allDRVs);
   return {
     movedSatelliteId: undefined,
-    newTargetId: drv.targetDebrisId,
+    newTargetId: newTarget?.id,
     capturedSatelliteId: undefined,
     captureOrbitsRemaining: undefined,
+    targetingTurnsRemaining: newTarget ? ORBITS_TO_TARGET : undefined,
     shouldDecommission: false
   };
 }

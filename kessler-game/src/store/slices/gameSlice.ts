@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { GameState, OrbitLayer, SatelliteType, InsuranceTier, DRVType, DRVTargetPriority, BudgetDifficulty, DebrisRemovalVehicle, ExpiredDRVInfo, DebrisRemovalInfo, GraveyardMoveInfo } from '../../game/types';
-import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG, MAX_DEBRIS_LIMIT, ORBITAL_SPEEDS, CASCADE_THRESHOLD, RISK_SPEED_MULTIPLIERS, SATELLITE_REVENUE } from '../../game/constants';
+import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG, MAX_DEBRIS_LIMIT, ORBITAL_SPEEDS, CASCADE_THRESHOLD, RISK_SPEED_MULTIPLIERS, SATELLITE_REVENUE, OBJECT_RADII, CAPTURE_RADIUS_MULTIPLIER } from '../../game/constants';
 import { detectCollisions, generateDebrisFromCollision, calculateTotalPayout } from '../../game/engine/collision';
 import { processDRVRemoval, processCooperativeDRVOperations, moveCooperativeDRV, processGeoTugOperations } from '../../game/engine/debrisRemoval';
 import { calculateRiskLevel } from '../../game/engine/risk';
@@ -256,6 +256,8 @@ export const gameSlice = createSlice({
           purpose,
           age: 0,
           insuranceTier,
+          radius: OBJECT_RADII.satellite,
+          captureRadius: OBJECT_RADII.satellite * CAPTURE_RADIUS_MULTIPLIER,
         };
         state.satellites.push(satellite);
       },
@@ -300,6 +302,8 @@ export const gameSlice = createSlice({
           capacity: Math.floor(Math.random() * (maxCapacity - minCapacity + 1)) + minCapacity,
           successRate,
           debrisRemoved: 0,
+          radius: OBJECT_RADII.drv,
+          captureRadius: OBJECT_RADII.drv * CAPTURE_RADIUS_MULTIPLIER,
         };
         state.debrisRemovalVehicles.push(drv);
       },
@@ -336,13 +340,15 @@ export const gameSlice = createSlice({
 
       activeDRVs.forEach(drv => {
         if (drv.removalType === 'cooperative') {
-          const result = processCooperativeDRVOperations(drv, state.debris, state.satellites);
+          const result = processCooperativeDRVOperations(drv, state.debris, state.satellites, state.debrisRemovalVehicles);
           
           const totalRemoved = result.removedDebrisIds.length + result.removedSatelliteIds.length;
           drv.debrisRemoved += totalRemoved;
+          
           drv.targetDebrisId = result.newTargetId;
           drv.capturedDebrisId = result.capturedObjectId;
           drv.captureOrbitsRemaining = result.captureOrbitsRemaining;
+          drv.targetingTurnsRemaining = result.targetingTurnsRemaining;
           
           if (result.removedSatelliteIds.length > 0) {
             state.satellitesRecovered += result.removedSatelliteIds.length;
@@ -364,11 +370,12 @@ export const gameSlice = createSlice({
           state.debris = state.debris.filter(d => !result.removedDebrisIds.includes(d.id));
           state.satellites = state.satellites.filter(s => !result.removedSatelliteIds.includes(s.id));
         } else if (drv.removalType === 'geotug') {
-          const result = processGeoTugOperations(drv, state.satellites);
+          const result = processGeoTugOperations(drv, state.satellites, state.debrisRemovalVehicles);
           
           drv.targetDebrisId = result.newTargetId;
           drv.capturedDebrisId = result.capturedSatelliteId;
           drv.captureOrbitsRemaining = result.captureOrbitsRemaining;
+          drv.targetingTurnsRemaining = result.targetingTurnsRemaining;
           
           if (result.movedSatelliteId) {
             const satellite = state.satellites.find(s => s.id === result.movedSatelliteId);
@@ -386,6 +393,9 @@ export const gameSlice = createSlice({
           
           if (result.shouldDecommission) {
             drv.age = drv.maxAge;
+            drv.targetDebrisId = undefined;
+            drv.capturedDebrisId = undefined;
+            drv.captureOrbitsRemaining = undefined;
           }
         } else {
           const result = processDRVRemoval(drv, state.debris);
@@ -460,33 +470,9 @@ export const gameSlice = createSlice({
           const newPosition = moveCooperativeDRV(drv, targetSatellite);
           drv.x = newPosition.x;
           drv.y = newPosition.y;
-          
-          if (drv.capturedDebrisId) {
-            const capturedSatellite = state.satellites.find(s => s.id === drv.capturedDebrisId);
-            if (capturedSatellite) {
-              capturedSatellite.x = drv.x;
-              capturedSatellite.y = drv.y;
-            }
-          }
         } else {
-          const targetDebris = state.debris.find(d => d.id === drv.targetDebrisId);
-          const targetSatellite = state.satellites.find(s => s.id === drv.targetDebrisId);
-          const target = targetDebris || targetSatellite;
-          const newPosition = moveCooperativeDRV(drv, target);
-          drv.x = newPosition.x;
-          drv.y = newPosition.y;
-          
-          if (drv.capturedDebrisId) {
-            const capturedDebris = state.debris.find(d => d.id === drv.capturedDebrisId);
-            const capturedSatellite = state.satellites.find(s => s.id === drv.capturedDebrisId);
-            if (capturedDebris) {
-              capturedDebris.x = drv.x;
-              capturedDebris.y = drv.y;
-            } else if (capturedSatellite) {
-              capturedSatellite.x = drv.x;
-              capturedSatellite.y = drv.y;
-            }
-          }
+          const speed = getEntitySpeedVariation(drv.id, drv.layer, orbitalSpeeds);
+          drv.x = (drv.x + speed) % 100;
         }
       });
       
@@ -620,7 +606,11 @@ export const gameSlice = createSlice({
       const expired: ExpiredDRVInfo[] = [];
       
       state.debrisRemovalVehicles.forEach(drv => {
-        if (drv.age >= drv.maxAge) {
+        const hasActiveTarget = drv.targetDebrisId !== undefined;
+        const hasCapturedObject = drv.capturedDebrisId !== undefined;
+        const shouldKeepActive = hasActiveTarget || hasCapturedObject;
+        
+        if (drv.age >= drv.maxAge && !shouldKeepActive) {
           expired.push({
             id: drv.id,
             type: drv.removalType,

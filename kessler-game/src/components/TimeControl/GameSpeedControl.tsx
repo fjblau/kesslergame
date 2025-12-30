@@ -12,7 +12,7 @@ export function GameSpeedControl() {
 
   const speeds: { value: GameSpeed; label: string; icon: string }[] = [
     { value: 'paused', label: 'Pause', icon: '⏸' },
-    { value: 'normal', label: 'Normal', icon: '▶' },
+    { value: 'normal', label: 'Play', icon: '▶' },
     { value: 'fast', label: 'Fast (2s)', icon: '⏩' },
   ];
 

@@ -140,6 +140,14 @@ export const COLLISION_THRESHOLDS = {
   },
 };
 
+export const OBJECT_RADII = {
+  satellite: 0.6,
+  debris: 0.4,
+  drv: 0.7,
+};
+
+export const CAPTURE_RADIUS_MULTIPLIER = 1.5;
+
 export const DEBRIS_PER_COLLISION = 5;
 export const DEBRIS_TYPE_DISTRIBUTION = { cooperative: 0.70, uncooperative: 0.30 };
 export const MAX_STEPS = 100;
