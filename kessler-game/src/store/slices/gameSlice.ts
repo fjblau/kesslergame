@@ -624,7 +624,11 @@ export const gameSlice = createSlice({
       const expired: ExpiredDRVInfo[] = [];
       
       state.debrisRemovalVehicles.forEach(drv => {
-        if (drv.age >= drv.maxAge) {
+        const hasActiveTarget = drv.targetDebrisId !== undefined;
+        const hasCapturedObject = drv.capturedDebrisId !== undefined;
+        const shouldKeepActive = hasActiveTarget || hasCapturedObject;
+        
+        if (drv.age >= drv.maxAge && !shouldKeepActive) {
           expired.push({
             id: drv.id,
             type: drv.removalType,
