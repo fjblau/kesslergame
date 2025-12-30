@@ -15,9 +15,7 @@ function isWithinCaptureRange(
   
   const distanceSquared = dxWrapped * dxWrapped + dy * dy;
   
-  const drvCaptureRadius = drv.captureRadius ?? drv.radius;
-  const targetCaptureRadius = target.captureRadius ?? target.radius;
-  const captureDistance = drvCaptureRadius + targetCaptureRadius;
+  const captureDistance = 15;
   const captureDistanceSquared = captureDistance * captureDistance;
   
   return distanceSquared <= captureDistanceSquared;
