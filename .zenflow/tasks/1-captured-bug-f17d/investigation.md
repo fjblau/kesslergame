@@ -96,6 +96,30 @@ Initially changed targeting conditions to `< 0`, but this was **wrong** and prev
 
 **Corrected approach:** Keep targeting at `<= 0`, only holding uses `< 0`
 
+### Third Bug Discovered - targetDebrisId Not Cleared
+
+After user testing again, discovered satellites were being captured but **never removed**. Investigation revealed that while holding, the DRV was keeping `targetDebrisId` pointing to the captured satellite.
+
+**Issue:** When capturing or holding, the code was returning `newTargetId: drv.targetDebrisId`, which kept the target ID set even while the object was captured. This created an inconsistent state where both `targetDebrisId` and `capturedDebrisId` pointed to the same object.
+
+### Third Fix - Clear targetDebrisId During Capture and Holding
+
+Changed four locations to return `newTargetId: undefined` instead of `newTargetId: drv.targetDebrisId`:
+
+5. **Line 266** in `processCooperativeDRVOperations` (capture transition)
+   - Changed: `newTargetId: drv.targetDebrisId` → `newTargetId: undefined`
+   
+6. **Line 236** in `processCooperativeDRVOperations` (while holding)
+   - Changed: `newTargetId: drv.targetDebrisId` → `newTargetId: undefined`
+   
+7. **Line 393** in `processGeoTugOperations` (capture transition)
+   - Changed: `newTargetId: drv.targetDebrisId` → `newTargetId: undefined`
+   
+8. **Line 365** in `processGeoTugOperations` (while holding)
+   - Changed: `newTargetId: drv.targetDebrisId` → `newTargetId: undefined`
+
+This ensures proper state transitions: targeting → captured (clear target) → holding (keep target clear) → removed (find new target).
+
 ### Verification
 
 - **Build**: ✅ Passed (`npm run build`)
