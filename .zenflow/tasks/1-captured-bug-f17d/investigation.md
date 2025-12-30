@@ -65,3 +65,33 @@ This ensures satellites are held for the full `ORBITS_TO_HOLD` (2) orbits before
 2. DRV captures satellite, satellite collides during holding - DRV should release gracefully
 3. Multiple DRVs capture multiple satellites - all should be held for 2 orbits
 4. GeoTug captures satellite - should hold for 2 orbits then move to graveyard
+
+---
+
+## Implementation
+
+### Changes Made
+
+Fixed the bug by changing the condition from `orbitsRemaining <= 0` to `orbitsRemaining < 0` in two locations:
+
+1. **Line 213** in `processCooperativeDRVOperations` function
+   - Changed: `if (orbitsRemaining <= 0)` → `if (orbitsRemaining < 0)`
+   
+2. **Line 352** in `processGeoTugOperations` function
+   - Changed: `if (orbitsRemaining <= 0)` → `if (orbitsRemaining < 0)`
+
+### Verification
+
+- **Build**: ✅ Passed (`npm run build`)
+- **Lint**: ✅ Passed (`npm run lint`)
+- **Tests**: N/A (No testing framework configured in project)
+
+### Implementation Notes
+
+The fix ensures that captured satellites are held for the full `ORBITS_TO_HOLD` (2) orbits before being removed:
+- Turn 1: Capture, set counter to 2
+- Turn 2: Decrement to 1 (1st orbit completed), continue holding
+- Turn 3: Decrement to 0 (2nd orbit completed), continue holding
+- Turn 4: Decrement to -1 (holding period over), remove satellite
+
+This corrects the previous behavior where satellites were removed after only 1 complete orbit instead of 2.
