@@ -192,6 +192,8 @@ export function processCooperativeDRVOperations(
   const removedDebrisIds: string[] = [];
   const removedSatelliteIds: string[] = [];
   
+  console.log(`[DRV ${drv.id}] Processing - targetDebrisId: ${drv.targetDebrisId}, capturedDebrisId: ${drv.capturedDebrisId}, targetingTurns: ${drv.targetingTurnsRemaining}, captureOrbits: ${drv.captureOrbitsRemaining}`);
+  
   if (drv.capturedDebrisId) {
     const capturedDebris = debris.find(d => d.id === drv.capturedDebrisId);
     const capturedSatellite = satellites.find(s => s.id === drv.capturedDebrisId);
@@ -287,7 +289,9 @@ export function processCooperativeDRVOperations(
     };
   }
   
+  console.log(`[DRV ${drv.id}] No target or capture, selecting new target. Available satellites: ${satellites.length}, debris: ${debris.length}`);
   const newTarget = selectTarget(drv, debris, satellites, allDRVs);
+  console.log(`[DRV ${drv.id}] Selected new target: ${newTarget?.id || 'NONE'}`);
   return {
     removedDebrisIds,
     removedSatelliteIds,
