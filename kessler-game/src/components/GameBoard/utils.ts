@@ -2,9 +2,10 @@ import type { OrbitLayer } from '../../game/types';
 import { LAYER_BOUNDS } from '../../game/constants';
 
 const ORBIT_RADII = {
-  LEO: { inner: 62.5, outer: 256 },
-  MEO: { inner: 256, outer: 365 },
-  GEO: { inner: 365, outer: 437.5 },
+  LEO: { inner: 50, outer: 225 },
+  MEO: { inner: 225, outer: 325 },
+  GEO: { inner: 325, outer: 400 },
+  GRAVEYARD: { inner: 400, outer: 475 },
 };
 
 interface EntityPosition {
@@ -29,7 +30,7 @@ export function getEntitySpeedMultiplier(id?: string): number {
   return 0.7 + (hash % 600) / 1000;
 }
 
-export function mapToPixels(entity: EntityPosition, days: number = 0, orbitalSpeeds?: { LEO: number; MEO: number; GEO: number }) {
+export function mapToPixels(entity: EntityPosition, days: number = 0, orbitalSpeeds?: { LEO: number; MEO: number; GEO: number; GRAVEYARD: number }) {
   const centerX = 500;
   const centerY = 500;
   const { inner, outer } = ORBIT_RADII[entity.layer];

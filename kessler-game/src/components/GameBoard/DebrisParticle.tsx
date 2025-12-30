@@ -20,6 +20,7 @@ export const DebrisParticle = memo(function DebrisParticle({ debris, x, y }: Deb
       case 'LEO': return state.game.orbitalSpeedLEO;
       case 'MEO': return state.game.orbitalSpeedMEO;
       case 'GEO': return state.game.orbitalSpeedGEO;
+      case 'GRAVEYARD': return state.game.orbitalSpeedGRAVEYARD;
     }
   });
   const baseAngle = (debris.x / 100) * 360;

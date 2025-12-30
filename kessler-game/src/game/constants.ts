@@ -10,6 +10,7 @@ export const LAUNCH_COSTS: Record<OrbitLayer, number> = {
   LEO: 2_000_000,
   MEO: 3_000_000,
   GEO: 5_000_000,
+  GRAVEYARD: 0,
 };
 
 export const INSURANCE_CONFIG: Record<InsuranceTier, { cost: number; payout: number }> = {
@@ -20,21 +21,25 @@ export const INSURANCE_CONFIG: Record<InsuranceTier, { cost: number; payout: num
 
 export const DRV_CONFIG = {
   costs: {
-    LEO: { cooperative: 4_000_000, uncooperative: 7_000_000 },
-    MEO: { cooperative: 6_000_000, uncooperative: 10_500_000 },
-    GEO: { cooperative: 10_000_000, uncooperative: 17_500_000 },
+    LEO: { cooperative: 4_000_000, uncooperative: 7_000_000, geotug: 50_000_000 },
+    MEO: { cooperative: 6_000_000, uncooperative: 10_500_000, geotug: 50_000_000 },
+    GEO: { cooperative: 10_000_000, uncooperative: 17_500_000, geotug: 50_000_000 },
+    GRAVEYARD: { cooperative: 0, uncooperative: 0, geotug: 0 },
   },
   capacity: {
     cooperative: [2, 3] as [number, number],
     uncooperative: [6, 9] as [number, number],
+    geotug: [1, 1] as [number, number],
   },
   successRate: {
     cooperative: 0.85,
     uncooperative: 0.90,
+    geotug: 1.0,
   },
   duration: {
     cooperative: 10,
     uncooperative: 10,
+    geotug: 999,
   },
 };
 
@@ -122,6 +127,7 @@ export const LAYER_BOUNDS: Record<OrbitLayer, [number, number]> = {
   LEO: [0, 50],
   MEO: [50, 100],
   GEO: [100, 150],
+  GRAVEYARD: [150, 200],
 };
 
 export const COLLISION_THRESHOLDS = {
@@ -130,6 +136,7 @@ export const COLLISION_THRESHOLDS = {
     LEO: 40,
     MEO: 50,
     GEO: 60,
+    GRAVEYARD: 70,
   },
 };
 
@@ -146,6 +153,7 @@ export const ORBITAL_SPEEDS: Record<OrbitLayer, number> = {
   LEO: 6.4,
   MEO: 4,
   GEO: 2.4,
+  GRAVEYARD: 2.2,
 };
 
 export const CASCADE_THRESHOLD = 3;

@@ -20,7 +20,7 @@ export function ControlPanel() {
   const budget = useAppSelector(state => state.game.budget);
   const budgetDifficulty = useAppSelector(state => state.game.budgetDifficulty);
 
-  const [launchType, setLaunchType] = useState<'satellite' | 'drv'>('satellite');
+  const [launchType, setLaunchType] = useState<'satellite' | 'drv' | 'geotug'>('satellite');
   const [selectedOrbit, setSelectedOrbit] = useState<OrbitLayer>('LEO');
   const [insuranceTier, setInsuranceTier] = useState<InsuranceTier>('basic');
   const [satellitePurpose, setSatellitePurpose] = useState<SatelliteType | 'Random'>('Random');
@@ -33,10 +33,12 @@ export function ControlPanel() {
       const purposeDiscount = satellitePurpose === 'Random' ? SATELLITE_PURPOSE_CONFIG.Random.discount : 0;
       const insuranceCost = INSURANCE_CONFIG[insuranceTier].cost;
       return baseCost * (1 - purposeDiscount) + insuranceCost;
-    } else {
+    } else if (launchType === 'drv') {
       const baseCost = DRV_CONFIG.costs[selectedOrbit][drvType];
       const priorityModifier = DRV_PRIORITY_CONFIG[drvPriority].costModifier;
       return baseCost * priorityModifier;
+    } else {
+      return DRV_CONFIG.costs['GEO']['geotug'];
     }
   };
 
@@ -56,8 +58,11 @@ export function ControlPanel() {
         : satellitePurpose;
 
       dispatch(launchSatellite({ orbit: selectedOrbit, insuranceTier, purpose, day: gameState.days }));
-    } else {
+    } else if (launchType === 'drv') {
       dispatch(launchDRV({ orbit: selectedOrbit, drvType, targetPriority: drvPriority, day: gameState.days }));
+      dispatch(trackDRVLaunch());
+    } else {
+      dispatch(launchDRV({ orbit: 'GEO', drvType: 'geotug', targetPriority: 'auto', day: gameState.days }));
       dispatch(trackDRVLaunch());
     }
 
@@ -93,35 +98,36 @@ export function ControlPanel() {
 
         <div className="space-y-2 mb-6">
         <label className="text-base font-medium text-gray-300">Launch Type</label>
-        <div className="flex gap-3">
-          {(['satellite', 'drv'] as const).map(type => (
+        <div className="flex gap-2">
+          {(['satellite', 'drv', 'geotug'] as const).map(type => (
             <button
               key={type}
               onClick={() => setLaunchType(type)}
-              className={`flex-1 py-2 px-6 rounded-xl font-medium transition-colors ${
+              className={`flex-1 py-2 px-3 rounded-xl font-medium transition-colors text-sm ${
                 launchType === type
                   ? 'bg-blue-600 text-white shadow-lg'
                   : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
               }`}
             >
-              {type === 'satellite' ? 'Satellite' : 'DRV'}
+              {type === 'satellite' ? 'Satellite' : type === 'drv' ? 'DRV' : 'GEO TUG'}
             </button>
           ))}
         </div>
       </div>
 
       <div className="space-y-2 mb-6">
-        <label className="text-base font-medium text-gray-300">Orbit Layer</label>
+        <label className="text-base font-medium text-gray-300">Orbit Layer{launchType === 'geotug' ? ' (Fixed to GEO)' : ''}</label>
         <div className="flex gap-3">
           {(['LEO', 'MEO', 'GEO'] as OrbitLayer[]).map(orbit => (
             <button
               key={orbit}
               onClick={() => setSelectedOrbit(orbit)}
+              disabled={launchType === 'geotug'}
               className={`flex-1 py-2 px-6 rounded-xl font-medium transition-colors ${
-                selectedOrbit === orbit
+                (launchType === 'geotug' ? 'GEO' : selectedOrbit) === orbit
                   ? 'bg-blue-600 text-white shadow-lg'
                   : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
-              }`}
+              } ${launchType === 'geotug' ? 'cursor-not-allowed opacity-60' : ''}`}
             >
               {orbit}
             </button>
@@ -135,7 +141,7 @@ export function ControlPanel() {
             <SatellitePurposeSelector selected={satellitePurpose} onChange={setSatellitePurpose} />
             <InsuranceTierSelector selected={insuranceTier} onChange={setInsuranceTier} />
           </>
-        ) : (
+        ) : launchType === 'drv' ? (
           <>
             <div className="space-y-2">
               <label className="text-base font-medium text-gray-300">DRV Type</label>
@@ -157,6 +163,13 @@ export function ControlPanel() {
             </div>
             <DRVTargetPrioritySelector selected={drvPriority} onChange={setDrvPriority} />
           </>
+        ) : (
+          <div className="space-y-2">
+            <label className="text-base font-medium text-gray-300">GEO Tug Configuration</label>
+            <div className="bg-slate-700/50 rounded-xl p-4 text-gray-400 text-sm">
+              GEO Tugs transport end-of-life satellites to graveyard orbit, preventing them from becoming debris.
+            </div>
+          </div>
         )}
       </div>
 
@@ -181,7 +194,7 @@ export function ControlPanel() {
               : 'bg-slate-700 text-slate-500 cursor-not-allowed'
           }`}
         >
-          {canAfford ? (launchType === 'satellite' ? 'Launch Satellite' : 'Launch DRV') : 'Insufficient Budget'}
+          {canAfford ? (launchType === 'satellite' ? 'Launch Satellite' : launchType === 'drv' ? 'Launch DRV' : 'Launch GEO Tug') : 'Insufficient Budget'}
         </button>
       </div>
     </div>

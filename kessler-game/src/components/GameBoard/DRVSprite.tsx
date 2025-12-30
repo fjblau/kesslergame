@@ -13,14 +13,16 @@ interface DRVSpriteProps {
 
 export const DRVSprite = memo(function DRVSprite({ drv, x, y, isLaunching = false }: DRVSpriteProps) {
   const isCooperative = drv.removalType === 'cooperative';
+  const isGeoTug = drv.removalType === 'geotug';
   const hasCapturedObject = drv.capturedDebrisId !== undefined;
-  const color = hasCapturedObject ? '#ef4444' : (isCooperative ? '#34d399' : '#fb923c');
+  const color = hasCapturedObject ? '#ef4444' : (isGeoTug ? '#a855f7' : (isCooperative ? '#34d399' : '#fb923c'));
   const days = useAppSelector(state => state.game.days);
   const orbitalSpeed = useAppSelector(state => {
     switch (drv.layer) {
       case 'LEO': return state.game.orbitalSpeedLEO;
       case 'MEO': return state.game.orbitalSpeedMEO;
       case 'GEO': return state.game.orbitalSpeedGEO;
+      case 'GRAVEYARD': return state.game.orbitalSpeedGRAVEYARD;
     }
   });
   const baseAngle = (drv.x / 100) * 360;

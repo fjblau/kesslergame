@@ -55,6 +55,7 @@ export function OrbitVisualization() {
     LEO: state.game.orbitalSpeedLEO,
     MEO: state.game.orbitalSpeedMEO,
     GEO: state.game.orbitalSpeedGEO,
+    GRAVEYARD: state.game.orbitalSpeedGRAVEYARD,
   }));
 
   const prevSatelliteIds = useRef<Set<string>>(new Set());
@@ -81,10 +82,12 @@ export function OrbitVisualization() {
     const newTrails: LaunchingEntity[] = [];
 
     satellites.forEach(satellite => {
-      if (!prevSatelliteIds.current.has(satellite.id)) {
+      if (!prevSatelliteIds.current.has(satellite.id) && !satellite.inGraveyard) {
         newSatelliteIds.add(satellite.id);
         const angle = (satellite.x / 100) * 2 * Math.PI;
-        newTrails.push({ id: satellite.id, layer: satellite.layer, angle });
+        if (satellite.layer !== 'GRAVEYARD') {
+          newTrails.push({ id: satellite.id, layer: satellite.layer, angle });
+        }
       }
     });
 
@@ -92,7 +95,9 @@ export function OrbitVisualization() {
       if (!prevDRVIds.current.has(drv.id)) {
         newDRVIds.add(drv.id);
         const angle = (drv.x / 100) * 2 * Math.PI;
-        newTrails.push({ id: drv.id, layer: drv.layer, angle });
+        if (drv.layer !== 'GRAVEYARD') {
+          newTrails.push({ id: drv.id, layer: drv.layer, angle });
+        }
       }
     });
 
@@ -205,7 +210,7 @@ export function OrbitVisualization() {
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: `radial-gradient(circle closest-side at center, transparent 0%, transparent 87.5%, ${getBackgroundTintColor(riskLevel)} 87.5%, ${getBackgroundTintColor(riskLevel)} 100%)`
+          background: `radial-gradient(circle closest-side at center, transparent 0%, transparent 95%, ${getBackgroundTintColor(riskLevel)} 95%, ${getBackgroundTintColor(riskLevel)} 100%)`
         }}
       />
       
@@ -229,29 +234,36 @@ export function OrbitVisualization() {
         <DRVsCounter />
       </div>
 
+      {/* GRAVEYARD orbit */}
+      <div style={{ position: 'absolute', width: '950px', height: '950px', border: '2px solid rgba(96, 165, 250, 0.5)', borderRadius: '50%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+        <div style={{ position: 'absolute', top: '8px', left: '50%', transform: 'translate(-50%, 0)', fontSize: '12px', fontWeight: 600, color: '#60a5fa', backgroundColor: 'rgba(15, 23, 42, 0.8)', padding: '4px 8px', borderRadius: '4px' }}>
+          GRAVEYARD
+        </div>
+      </div>
+
       {/* GEO orbit */}
-      <div style={{ position: 'absolute', width: '875px', height: '875px', border: '2px solid rgba(96, 165, 250, 0.5)', borderRadius: '50%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+      <div style={{ position: 'absolute', width: '800px', height: '800px', border: '2px solid rgba(96, 165, 250, 0.5)', borderRadius: '50%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
         <div style={{ position: 'absolute', top: '8px', left: '50%', transform: 'translate(-50%, 0)', fontSize: '12px', fontWeight: 600, color: '#60a5fa', backgroundColor: 'rgba(15, 23, 42, 0.8)', padding: '4px 8px', borderRadius: '4px' }}>
           GEO
         </div>
       </div>
       
       {/* MEO orbit */}
-      <div style={{ position: 'absolute', width: '730px', height: '730px', border: '2px solid rgba(96, 165, 250, 0.5)', borderRadius: '50%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+      <div style={{ position: 'absolute', width: '650px', height: '650px', border: '2px solid rgba(96, 165, 250, 0.5)', borderRadius: '50%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
         <div style={{ position: 'absolute', top: '8px', left: '50%', transform: 'translate(-50%, 0)', fontSize: '12px', fontWeight: 600, color: '#60a5fa', backgroundColor: 'rgba(15, 23, 42, 0.8)', padding: '4px 8px', borderRadius: '4px' }}>
           MEO
         </div>
       </div>
       
       {/* LEO orbit */}
-      <div style={{ position: 'absolute', width: '512px', height: '512px', border: '2px solid rgba(96, 165, 250, 0.5)', borderRadius: '50%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+      <div style={{ position: 'absolute', width: '450px', height: '450px', border: '2px solid rgba(96, 165, 250, 0.5)', borderRadius: '50%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
         <div style={{ position: 'absolute', top: '8px', left: '50%', transform: 'translate(-50%, 0)', fontSize: '12px', fontWeight: 600, color: '#60a5fa', backgroundColor: 'rgba(15, 23, 42, 0.8)', padding: '4px 8px', borderRadius: '4px' }}>
           LEO
         </div>
       </div>
       
       {/* Earth */}
-      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '125px', height: '125px', borderRadius: '50%', background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '60px', boxShadow: '0 0 40px rgba(147, 197, 253, 0.5)' }}>
+      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '100px', height: '100px', borderRadius: '50%', background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '48px', boxShadow: '0 0 40px rgba(147, 197, 253, 0.5)' }}>
         🌍
       </div>
 

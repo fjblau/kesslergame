@@ -21,6 +21,7 @@ export const SatelliteSprite = memo(function SatelliteSprite({ satellite, x, y, 
       case 'LEO': return state.game.orbitalSpeedLEO;
       case 'MEO': return state.game.orbitalSpeedMEO;
       case 'GEO': return state.game.orbitalSpeedGEO;
+      case 'GRAVEYARD': return state.game.orbitalSpeedGRAVEYARD;
     }
   });
   const baseAngle = (satellite.x / 100) * 360;

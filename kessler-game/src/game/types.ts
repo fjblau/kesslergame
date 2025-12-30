@@ -1,7 +1,7 @@
-export type OrbitLayer = 'LEO' | 'MEO' | 'GEO';
+export type OrbitLayer = 'LEO' | 'MEO' | 'GEO' | 'GRAVEYARD';
 export type SatelliteType = 'Weather' | 'Comms' | 'GPS';
 export type InsuranceTier = 'none' | 'basic' | 'premium';
-export type DRVType = 'cooperative' | 'uncooperative';
+export type DRVType = 'cooperative' | 'uncooperative' | 'geotug';
 export type DRVTargetPriority = 'auto' | 'cooperative-focus' | 'uncooperative-focus';
 export type DebrisType = 'cooperative' | 'uncooperative';
 export type GameSpeed = 'paused' | 'normal' | 'fast';
@@ -16,6 +16,7 @@ export interface Satellite {
   purpose: SatelliteType;
   age: number;
   insuranceTier: InsuranceTier;
+  inGraveyard?: boolean;
 }
 
 export interface Debris {
@@ -75,6 +76,12 @@ export interface DebrisRemovalInfo {
   count: number;
 }
 
+export interface GraveyardMoveInfo {
+  satelliteId: string;
+  tugId: string;
+  purpose: SatelliteType;
+}
+
 export interface GameState {
   step: number;
   maxSteps: number;
@@ -94,12 +101,14 @@ export interface GameState {
   recentCollisions: CollisionEvent[];
   recentlyExpiredDRVs: ExpiredDRVInfo[];
   recentDebrisRemovals: DebrisRemovalInfo[];
+  recentGraveyardMoves: GraveyardMoveInfo[];
   collisionAngleThreshold: number;
   collisionRadiusMultiplier: number;
   debrisPerCollision: number;
   orbitalSpeedLEO: number;
   orbitalSpeedMEO: number;
   orbitalSpeedGEO: number;
+  orbitalSpeedGRAVEYARD: number;
   solarStormProbability: number;
   drvUncooperativeCapacityMin: number;
   drvUncooperativeCapacityMax: number;
@@ -155,7 +164,7 @@ export interface MissionsState {
   };
 }
 
-export type EventType = 'satellite-launch' | 'drv-launch' | 'collision' | 'debris-removal' | 'mission-complete' | 'drv-expired' | 'solar-storm';
+export type EventType = 'satellite-launch' | 'drv-launch' | 'collision' | 'debris-removal' | 'mission-complete' | 'drv-expired' | 'solar-storm' | 'satellite-graveyard' | 'geotug-decommission';
 
 export interface GameEvent {
   id: string;
