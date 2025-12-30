@@ -146,7 +146,7 @@ export const OBJECT_RADII = {
   drv: 0.7,
 };
 
-export const CAPTURE_RADIUS_MULTIPLIER = 1.5;
+export const CAPTURE_RADIUS_MULTIPLIER = 15.0;
 
 export const DEBRIS_PER_COLLISION = 5;
 export const DEBRIS_TYPE_DISTRIBUTION = { cooperative: 0.70, uncooperative: 0.30 };
