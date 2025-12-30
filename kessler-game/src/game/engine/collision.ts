@@ -1,9 +1,10 @@
 import type { Satellite, Debris, DebrisRemovalVehicle, OrbitLayer } from '../types';
 import { 
   INSURANCE_CONFIG, 
-  COLLISION_THRESHOLDS, 
   DEBRIS_PER_COLLISION,
-  LAYER_BOUNDS 
+  LAYER_BOUNDS,
+  OBJECT_RADII,
+  CAPTURE_RADIUS_MULTIPLIER
 } from '../constants';
 
 export function calculateInsurancePayout(satellite: Satellite): number {
@@ -24,38 +25,25 @@ export interface CollisionPair {
   layer: OrbitLayer;
 }
 
-const ORBIT_RADII = {
-  LEO: { inner: 50, outer: 225 },
-  MEO: { inner: 225, outer: 325 },
-  GEO: { inner: 325, outer: 400 },
-  GRAVEYARD: { inner: 400, outer: 475 },
-};
-
-interface PolarCoordinates {
-  angle: number;
-  radius: number;
-}
-
-function toPolarCoordinates(obj: GameObject): PolarCoordinates {
-  const { x, y, layer } = obj;
-  const angle = (x / 100) * 360;
+function areObjectsColliding(obj1: GameObject, obj2: GameObject): boolean {
+  const r1 = obj1.captureRadius ?? obj1.radius;
+  const r2 = obj2.captureRadius ?? obj2.radius;
+  const captureDistance = r1 + r2;
+  const captureDistanceSquared = captureDistance * captureDistance;
   
-  const [yMin, yMax] = LAYER_BOUNDS[layer];
-  const normalizedY = (y - yMin) / (yMax - yMin);
-  const { inner, outer } = ORBIT_RADII[layer];
-  const radius = inner + normalizedY * (outer - inner);
+  let dx = obj1.x - obj2.x;
+  const dy = obj1.y - obj2.y;
   
-  return { angle, radius };
+  if (dx > 50) dx -= 100;
+  else if (dx < -50) dx += 100;
+  
+  const distanceSquared = dx * dx + dy * dy;
+  
+  return distanceSquared <= captureDistanceSquared;
 }
 
-function normalizeAngleDiff(diff: number): number {
-  while (diff > 180) diff -= 360;
-  while (diff < -180) diff += 360;
-  return Math.abs(diff);
-}
-
-function getBucketIndex(angle: number, bucketSize: number): number {
-  return Math.floor(angle / bucketSize);
+function getBucketIndex(x: number, bucketSize: number): number {
+  return Math.floor(x / bucketSize);
 }
 
 function getAdjacentBucketIndices(
@@ -78,8 +66,7 @@ function createSpatialHashGrid(
   const grid = new Map<number, SpatialBucket>();
   
   for (const obj of objects) {
-    const polar = toPolarCoordinates(obj);
-    const bucketIndex = getBucketIndex(polar.angle, bucketSize);
+    const bucketIndex = getBucketIndex(obj.x, bucketSize);
     
     if (!grid.has(bucketIndex)) {
       grid.set(bucketIndex, { objects: [] });
@@ -93,10 +80,12 @@ function createSpatialHashGrid(
 export function detectCollisions(
   satellites: Satellite[],
   debris: Debris[],
-  angleThresholdDegrees: number = COLLISION_THRESHOLDS.angleDegrees,
+  angleThresholdDegrees: number = 0,
   radiusMultiplier: number = 1,
   drvs: DebrisRemovalVehicle[] = []
 ): CollisionPair[] {
+  void angleThresholdDegrees;
+  void radiusMultiplier;
   const collisions: CollisionPair[] = [];
   
   const capturedObjectIds = new Set(
@@ -113,11 +102,9 @@ export function detectCollisions(
   for (const layer of layers) {
     const objectsInLayer = allObjects.filter(obj => obj.layer === layer);
     const drvsInLayer = drvs.filter(drv => drv.layer === layer);
-    const radiusThreshold = COLLISION_THRESHOLDS.radiusPixels[layer] * radiusMultiplier;
-    const angleThreshold = angleThresholdDegrees;
 
-    const bucketSize = Math.max(angleThreshold * 2, 10);
-    const bucketCount = Math.ceil(360 / bucketSize);
+    const bucketSize = 10;
+    const bucketCount = Math.ceil(100 / bucketSize);
     const spatialGrid = createSpatialHashGrid(objectsInLayer, bucketSize);
     
     const checkedPairs = new Set<string>();
@@ -145,13 +132,7 @@ export function detectCollisions(
           if (checkedPairs.has(pairKey)) continue;
           checkedPairs.add(pairKey);
 
-          const polar1 = toPolarCoordinates(obj1);
-          const polar2 = toPolarCoordinates(obj2);
-
-          const angleDiff = normalizeAngleDiff(polar1.angle - polar2.angle);
-          const radiusDiff = Math.abs(polar1.radius - polar2.radius);
-
-          if (angleDiff < angleThreshold && radiusDiff < radiusThreshold) {
+          if (areObjectsColliding(obj1, obj2)) {
             collisions.push({ obj1, obj2, layer });
           }
         }
@@ -159,8 +140,7 @@ export function detectCollisions(
     }
     
     for (const drv of drvsInLayer) {
-      const drvPolar = toPolarCoordinates(drv);
-      const bucketIndex = getBucketIndex(drvPolar.angle, bucketSize);
+      const bucketIndex = getBucketIndex(drv.x, bucketSize);
       const adjacentBuckets = getAdjacentBucketIndices(bucketIndex, bucketCount);
       
       for (const adjIndex of adjacentBuckets) {
@@ -168,11 +148,7 @@ export function detectCollisions(
         if (!bucket) continue;
         
         for (const obj of bucket.objects) {
-          const objPolar = toPolarCoordinates(obj);
-          const angleDiff = normalizeAngleDiff(drvPolar.angle - objPolar.angle);
-          const radiusDiff = Math.abs(drvPolar.radius - objPolar.radius);
-          
-          if (angleDiff < angleThreshold && radiusDiff < radiusThreshold) {
+          if (areObjectsColliding(drv, obj)) {
             collisions.push({ obj1: drv, obj2: obj, layer });
           }
         }
@@ -208,6 +184,8 @@ export function generateDebrisFromCollision(
       y: clampToLayer(y + yOffset, layer),
       layer,
       type: 'uncooperative',
+      radius: OBJECT_RADII.debris,
+      captureRadius: OBJECT_RADII.debris * CAPTURE_RADIUS_MULTIPLIER,
     });
   }
 

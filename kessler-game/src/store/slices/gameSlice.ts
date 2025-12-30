@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { GameState, OrbitLayer, SatelliteType, InsuranceTier, DRVType, DRVTargetPriority, BudgetDifficulty, DebrisRemovalVehicle, ExpiredDRVInfo, DebrisRemovalInfo, GraveyardMoveInfo } from '../../game/types';
-import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG, MAX_DEBRIS_LIMIT, ORBITAL_SPEEDS, CASCADE_THRESHOLD, RISK_SPEED_MULTIPLIERS, SATELLITE_REVENUE } from '../../game/constants';
+import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG, MAX_DEBRIS_LIMIT, ORBITAL_SPEEDS, CASCADE_THRESHOLD, RISK_SPEED_MULTIPLIERS, SATELLITE_REVENUE, OBJECT_RADII, CAPTURE_RADIUS_MULTIPLIER } from '../../game/constants';
 import { detectCollisions, generateDebrisFromCollision, calculateTotalPayout } from '../../game/engine/collision';
 import { processDRVRemoval, processCooperativeDRVOperations, moveCooperativeDRV, processGeoTugOperations } from '../../game/engine/debrisRemoval';
 import { calculateRiskLevel } from '../../game/engine/risk';
@@ -256,6 +256,8 @@ export const gameSlice = createSlice({
           purpose,
           age: 0,
           insuranceTier,
+          radius: OBJECT_RADII.satellite,
+          captureRadius: OBJECT_RADII.satellite * CAPTURE_RADIUS_MULTIPLIER,
         };
         state.satellites.push(satellite);
       },
@@ -300,6 +302,8 @@ export const gameSlice = createSlice({
           capacity: Math.floor(Math.random() * (maxCapacity - minCapacity + 1)) + minCapacity,
           successRate,
           debrisRemoved: 0,
+          radius: OBJECT_RADII.drv,
+          captureRadius: OBJECT_RADII.drv * CAPTURE_RADIUS_MULTIPLIER,
         };
         state.debrisRemovalVehicles.push(drv);
       },

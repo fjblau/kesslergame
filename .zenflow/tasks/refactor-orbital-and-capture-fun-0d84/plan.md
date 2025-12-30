@@ -52,7 +52,8 @@ Key findings:
 
 ---
 
-### [ ] Step 2: Implement Euclidean Collision Detection
+### [x] Step 2: Implement Euclidean Collision Detection
+<!-- chat-id: 143be75c-6540-40da-8c39-435111610517 -->
 
 **Objective**: Replace polar coordinate collision with Euclidean distance-based detection.
 
@@ -65,10 +66,12 @@ Key findings:
   - Remove dependency on `ORBIT_RADII` constant
 
 **Verification**:
-- Run `npm run build` to check TypeScript compilation
-- Run `npm run lint`
-- Test in browser: Launch satellites and verify collisions still occur
-- Check browser console for errors
+- Run `npm run build` to check TypeScript compilation ✅
+- Run `npm run lint` ✅
+- Test in browser: Launch satellites and verify collisions still occur (pending manual testing)
+- Check browser console for errors (pending manual testing)
+
+**Note**: Also implemented radius field initialization in `gameSlice.ts` and `generateDebrisFromCollision()` from Step 4.
 
 ---
 
@@ -91,23 +94,25 @@ Key findings:
 
 ---
 
-### [ ] Step 4: Initialize Radius Fields on Entity Creation
+### [x] Step 4: Initialize Radius Fields on Entity Creation
 
 **Objective**: Ensure all new entities (satellites, DRVs, debris) are created with radius fields.
 
 **Changes**:
 - `src/store/slices/gameSlice.ts`:
-  - Update `launchSatellite` reducer to add `radius` and `captureRadius`
-  - Update `launchDRV` reducer to add `radius` and `captureRadius`
-  - Import `OBJECT_RADII` and `CAPTURE_RADIUS_MULTIPLIER` from constants
+  - Update `launchSatellite` reducer to add `radius` and `captureRadius` ✅
+  - Update `launchDRV` reducer to add `radius` and `captureRadius` ✅
+  - Import `OBJECT_RADII` and `CAPTURE_RADIUS_MULTIPLIER` from constants ✅
 - `src/game/engine/collision.ts`:
-  - Update `generateDebrisFromCollision()` to add `radius` and `captureRadius` to debris
+  - Update `generateDebrisFromCollision()` to add `radius` and `captureRadius` to debris ✅
 
 **Verification**:
-- Run `npm run build`
-- Run `npm run lint`
-- Test in browser: Launch satellites/DRVs and inspect state to verify radius fields exist
-- Verify collisions work with newly created objects
+- Run `npm run build` ✅
+- Run `npm run lint` ✅
+- Test in browser: Launch satellites/DRVs and inspect state to verify radius fields exist (pending manual testing)
+- Verify collisions work with newly created objects (pending manual testing)
+
+**Note**: Completed during Step 2 implementation.
 
 ---
 
