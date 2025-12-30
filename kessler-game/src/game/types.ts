@@ -17,6 +17,8 @@ export interface Satellite {
   age: number;
   insuranceTier: InsuranceTier;
   inGraveyard?: boolean;
+  radius: number;
+  captureRadius?: number;
 }
 
 export interface Debris {
@@ -25,6 +27,8 @@ export interface Debris {
   y: number;
   layer: OrbitLayer;
   type: DebrisType;
+  radius: number;
+  captureRadius?: number;
 }
 
 export interface DebrisRemovalVehicle {
@@ -42,6 +46,8 @@ export interface DebrisRemovalVehicle {
   targetDebrisId?: string;
   capturedDebrisId?: string;
   captureOrbitsRemaining?: number;
+  radius: number;
+  captureRadius?: number;
 }
 
 export interface TurnHistory {
