@@ -90,10 +90,11 @@ export const SatelliteSprite = memo(function SatelliteSprite({ satellite, x, y, 
             transform: 'translate(-50%, -50%)',
             width: '22px',
             height: '22px',
-            border: '2px solid #ef4444',
+            border: '2px solid #ff4444',
             borderRadius: '50%',
             pointerEvents: 'none',
             animation: 'blink 0.8s infinite',
+            boxShadow: '0 0 8px #ff4444',
           }} />
         )}
       </span>
