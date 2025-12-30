@@ -165,8 +165,8 @@ export function processCooperativeDRVOperations(
         removedDebrisIds,
         removedSatelliteIds,
         newTargetId: newTarget?.id,
-        capturedObjectId: undefined,
-        captureOrbitsRemaining: undefined
+        capturedObjectId: newTarget?.id,
+        captureOrbitsRemaining: newTarget ? ORBITS_TO_HOLD : undefined
       };
     }
     
@@ -190,8 +190,8 @@ export function processCooperativeDRVOperations(
         removedDebrisIds,
         removedSatelliteIds,
         newTargetId: nextTarget?.id,
-        capturedObjectId: undefined,
-        captureOrbitsRemaining: undefined
+        capturedObjectId: nextTarget?.id,
+        captureOrbitsRemaining: nextTarget ? ORBITS_TO_HOLD : undefined
       };
     }
     
@@ -214,18 +214,8 @@ export function processCooperativeDRVOperations(
       removedDebrisIds,
       removedSatelliteIds,
       newTargetId: newTarget?.id,
-      capturedObjectId: undefined,
-      captureOrbitsRemaining: undefined
-    };
-  }
-  
-  if (isWithinCaptureRange(drv, currentTarget)) {
-    return {
-      removedDebrisIds,
-      removedSatelliteIds,
-      newTargetId: drv.targetDebrisId,
-      capturedObjectId: currentTarget.id,
-      captureOrbitsRemaining: ORBITS_TO_HOLD
+      capturedObjectId: newTarget?.id,
+      captureOrbitsRemaining: newTarget ? ORBITS_TO_HOLD : undefined
     };
   }
   
@@ -233,8 +223,8 @@ export function processCooperativeDRVOperations(
     removedDebrisIds,
     removedSatelliteIds,
     newTargetId: drv.targetDebrisId,
-    capturedObjectId: undefined,
-    captureOrbitsRemaining: undefined
+    capturedObjectId: currentTarget.id,
+    captureOrbitsRemaining: ORBITS_TO_HOLD
   };
 }
 
@@ -286,8 +276,8 @@ export function processGeoTugOperations(
       return {
         movedSatelliteId: undefined,
         newTargetId: newTarget?.id,
-        capturedSatelliteId: undefined,
-        captureOrbitsRemaining: undefined,
+        capturedSatelliteId: newTarget?.id,
+        captureOrbitsRemaining: newTarget ? ORBITS_TO_HOLD : undefined,
         shouldDecommission: false
       };
     }
@@ -320,18 +310,8 @@ export function processGeoTugOperations(
     return {
       movedSatelliteId: undefined,
       newTargetId: newTarget?.id,
-      capturedSatelliteId: undefined,
-      captureOrbitsRemaining: undefined,
-      shouldDecommission: false
-    };
-  }
-  
-  if (isWithinCaptureRange(drv, currentSatellite)) {
-    return {
-      movedSatelliteId: undefined,
-      newTargetId: drv.targetDebrisId,
-      capturedSatelliteId: currentSatellite.id,
-      captureOrbitsRemaining: ORBITS_TO_HOLD,
+      capturedSatelliteId: newTarget?.id,
+      captureOrbitsRemaining: newTarget ? ORBITS_TO_HOLD : undefined,
       shouldDecommission: false
     };
   }
@@ -339,8 +319,8 @@ export function processGeoTugOperations(
   return {
     movedSatelliteId: undefined,
     newTargetId: drv.targetDebrisId,
-    capturedSatelliteId: undefined,
-    captureOrbitsRemaining: undefined,
+    capturedSatelliteId: currentSatellite.id,
+    captureOrbitsRemaining: ORBITS_TO_HOLD,
     shouldDecommission: false
   };
 }
