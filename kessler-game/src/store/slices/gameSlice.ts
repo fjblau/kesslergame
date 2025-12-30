@@ -368,13 +368,7 @@ export const gameSlice = createSlice({
           }
           
           state.debris = state.debris.filter(d => !result.removedDebrisIds.includes(d.id));
-          if (result.removedSatelliteIds.length > 0) {
-            console.log(`[GameSlice] Filtering satellites, before: ${state.satellites.length}, removing: ${result.removedSatelliteIds}`);
-          }
           state.satellites = state.satellites.filter(s => !result.removedSatelliteIds.includes(s.id));
-          if (result.removedSatelliteIds.length > 0) {
-            console.log(`[GameSlice] Filtered satellites, after: ${state.satellites.length}`);
-          }
         } else if (drv.removalType === 'geotug') {
           const result = processGeoTugOperations(drv, state.satellites, state.debrisRemovalVehicles);
           
