@@ -233,7 +233,7 @@ export function processCooperativeDRVOperations(
     return {
       removedDebrisIds,
       removedSatelliteIds,
-      newTargetId: drv.targetDebrisId,
+      newTargetId: undefined,
       capturedObjectId: drv.capturedDebrisId,
       captureOrbitsRemaining: orbitsRemaining,
       targetingTurnsRemaining: undefined
@@ -263,7 +263,7 @@ export function processCooperativeDRVOperations(
       return {
         removedDebrisIds,
         removedSatelliteIds,
-        newTargetId: drv.targetDebrisId,
+        newTargetId: undefined,
         capturedObjectId: currentTarget.id,
         captureOrbitsRemaining: ORBITS_TO_HOLD,
         targetingTurnsRemaining: undefined
@@ -362,7 +362,7 @@ export function processGeoTugOperations(
     
     return {
       movedSatelliteId: undefined,
-      newTargetId: drv.targetDebrisId,
+      newTargetId: undefined,
       capturedSatelliteId: drv.capturedDebrisId,
       captureOrbitsRemaining: orbitsRemaining,
       targetingTurnsRemaining: undefined,
@@ -390,7 +390,7 @@ export function processGeoTugOperations(
     if (turnsRemaining <= 0) {
       return {
         movedSatelliteId: undefined,
-        newTargetId: drv.targetDebrisId,
+        newTargetId: undefined,
         capturedSatelliteId: currentSatellite.id,
         captureOrbitsRemaining: ORBITS_TO_HOLD,
         targetingTurnsRemaining: undefined,
