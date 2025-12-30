@@ -9,9 +9,10 @@ interface DRVSpriteProps {
   x: number;
   y: number;
   isLaunching?: boolean;
+  capturedSatelliteIcon?: string;
 }
 
-export const DRVSprite = memo(function DRVSprite({ drv, x, y, isLaunching = false }: DRVSpriteProps) {
+export const DRVSprite = memo(function DRVSprite({ drv, x, y, isLaunching = false, capturedSatelliteIcon }: DRVSpriteProps) {
   const isCooperative = drv.removalType === 'cooperative';
   const isGeoTug = drv.removalType === 'geotug';
   const hasCapturedObject = drv.capturedDebrisId !== undefined;
@@ -28,8 +29,6 @@ export const DRVSprite = memo(function DRVSprite({ drv, x, y, isLaunching = fals
   const baseAngle = (drv.x / 100) * 360;
   const speedMultiplier = getEntitySpeedMultiplier(drv.id);
   const rotation = baseAngle + (days * orbitalSpeed * speedMultiplier * 3.6);
-  
-  const offset = hasCapturedObject ? 2 : 0;
   
   return (
     <motion.div
@@ -49,8 +48,8 @@ export const DRVSprite = memo(function DRVSprite({ drv, x, y, isLaunching = fals
         rotate: 0,
       } : false}
       animate={{
-        left: x + offset,
-        top: y + offset,
+        left: x,
+        top: y,
         x: '-50%',
         y: '-50%',
         scale: 1,
@@ -64,9 +63,16 @@ export const DRVSprite = memo(function DRVSprite({ drv, x, y, isLaunching = fals
         scale: isLaunching ? { duration: 4, ease: [0.2, 0.8, 0.4, 1] } : { duration: 1, ease: 'linear' },
         opacity: { duration: 0.3 },
       }}
-      title={`${drv.removalType} DRV (${drv.layer})`}
+      title={hasCapturedObject ? `${drv.removalType} DRV (${drv.layer}) - WITH CAPTURED SATELLITE` : `${drv.removalType} DRV (${drv.layer})`}
     >
-      ⬟
+      {capturedSatelliteIcon ? (
+        <span style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: '2px' }}>
+          <span>⬟</span>
+          <span style={{ fontSize: '14px' }}>{capturedSatelliteIcon}</span>
+        </span>
+      ) : (
+        '⬟'
+      )}
     </motion.div>
   );
 });

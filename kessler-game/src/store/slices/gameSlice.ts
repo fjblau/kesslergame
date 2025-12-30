@@ -356,7 +356,6 @@ export const gameSlice = createSlice({
             if (capturedObject) {
               drv.x = capturedObject.x;
               drv.y = capturedObject.y;
-              capturedObject.y = capturedObject.y + 1;
             }
           }
           
@@ -395,7 +394,6 @@ export const gameSlice = createSlice({
             if (capturedSatellite) {
               drv.x = capturedSatellite.x;
               drv.y = capturedSatellite.y;
-              capturedSatellite.y = capturedSatellite.y + 1;
             }
           }
           
@@ -497,34 +495,9 @@ export const gameSlice = createSlice({
           const newPosition = moveCooperativeDRV(drv, targetSatellite);
           drv.x = newPosition.x;
           drv.y = newPosition.y;
-          
-          if (drv.capturedDebrisId) {
-            const capturedSatellite = state.satellites.find(s => s.id === drv.capturedDebrisId);
-            if (capturedSatellite) {
-              const speed = getEntitySpeedVariation(capturedSatellite.id, capturedSatellite.layer, orbitalSpeeds);
-              const newX = (drv.x + speed) % 100;
-              drv.x = newX;
-              capturedSatellite.x = newX;
-              capturedSatellite.y = drv.y + 1;
-            }
-          }
         } else {
-          if (drv.capturedDebrisId) {
-            const capturedDebris = state.debris.find(d => d.id === drv.capturedDebrisId);
-            const capturedSatellite = state.satellites.find(s => s.id === drv.capturedDebrisId);
-            const capturedObject = capturedDebris || capturedSatellite;
-            
-            if (capturedObject) {
-              const speed = getEntitySpeedVariation(capturedObject.id, capturedObject.layer, orbitalSpeeds);
-              const newX = (drv.x + speed) % 100;
-              drv.x = newX;
-              capturedObject.x = newX;
-              capturedObject.y = drv.y + 1;
-            }
-          } else {
-            const speed = getEntitySpeedVariation(drv.id, drv.layer, orbitalSpeeds);
-            drv.x = (drv.x + speed) % 100;
-          }
+          const speed = getEntitySpeedVariation(drv.id, drv.layer, orbitalSpeeds);
+          drv.x = (drv.x + speed) % 100;
         }
       });
       

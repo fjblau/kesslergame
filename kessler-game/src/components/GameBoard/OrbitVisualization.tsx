@@ -14,6 +14,7 @@ import { DebrisRemovedCounter } from '../TimeControl/DebrisRemovedCounter';
 import { mapToPixels } from './utils';
 import { clearOldCollisions, clearCascadeFlag } from '../../store/slices/gameSlice';
 import { playCascadeWarning, playSatelliteCapture, playDebrisRemoval } from '../../utils/audio';
+import { SATELLITE_PURPOSE_CONFIG } from '../../game/constants';
 import type { RiskLevel } from '../../game/types';
 
 interface LaunchingEntity {
@@ -296,6 +297,7 @@ export function OrbitVisualization() {
         const isLaunching = launchingSatellites.has(satellite.id);
         const isCaptured = debrisRemovalVehicles.some(drv => drv.capturedDebrisId === satellite.id);
         const isTargeted = !isCaptured && debrisRemovalVehicles.some(drv => drv.targetDebrisId === satellite.id);
+        if (isCaptured) return null;
         return <SatelliteSprite key={satellite.id} satellite={satellite} x={x} y={y} isLaunching={isLaunching} isCaptured={isCaptured} isTargeted={isTargeted} />;
       })}
 
@@ -309,7 +311,9 @@ export function OrbitVisualization() {
       {debrisRemovalVehicles.map(drv => {
         const { x, y } = mapToPixels(drv, days, orbitalSpeeds);
         const isLaunching = launchingDRVs.has(drv.id);
-        return <DRVSprite key={drv.id} drv={drv} x={x} y={y} isLaunching={isLaunching} />;
+        const capturedSatellite = drv.capturedDebrisId ? satellites.find(s => s.id === drv.capturedDebrisId) : undefined;
+        const capturedSatelliteIcon = capturedSatellite ? SATELLITE_PURPOSE_CONFIG[capturedSatellite.purpose].icon : undefined;
+        return <DRVSprite key={drv.id} drv={drv} x={x} y={y} isLaunching={isLaunching} capturedSatelliteIcon={capturedSatelliteIcon} />;
       })}
 
       {/* Solar Storm Effect */}
