@@ -390,6 +390,9 @@ export const gameSlice = createSlice({
           
           if (result.shouldDecommission) {
             drv.age = drv.maxAge;
+            drv.targetDebrisId = undefined;
+            drv.capturedDebrisId = undefined;
+            drv.captureOrbitsRemaining = undefined;
           }
         } else {
           const result = processDRVRemoval(drv, state.debris);
@@ -473,23 +476,21 @@ export const gameSlice = createSlice({
             }
           }
         } else {
-          const targetDebris = state.debris.find(d => d.id === drv.targetDebrisId);
-          const targetSatellite = state.satellites.find(s => s.id === drv.targetDebrisId);
-          const target = targetDebris || targetSatellite;
-          const newPosition = moveCooperativeDRV(drv, target);
-          drv.x = newPosition.x;
-          drv.y = newPosition.y;
-          
           if (drv.capturedDebrisId) {
             const capturedDebris = state.debris.find(d => d.id === drv.capturedDebrisId);
             const capturedSatellite = state.satellites.find(s => s.id === drv.capturedDebrisId);
-            if (capturedDebris) {
-              capturedDebris.x = drv.x;
-              capturedDebris.y = drv.y;
-            } else if (capturedSatellite) {
-              capturedSatellite.x = drv.x;
-              capturedSatellite.y = drv.y;
+            const capturedObject = capturedDebris || capturedSatellite;
+            
+            if (capturedObject) {
+              const newPosition = moveCooperativeDRV(drv, undefined);
+              drv.x = newPosition.x;
+              drv.y = newPosition.y;
+              capturedObject.x = drv.x;
+              capturedObject.y = drv.y;
             }
+          } else {
+            const speed = getEntitySpeedVariation(drv.id, drv.layer, orbitalSpeeds);
+            drv.x = (drv.x + speed) % 100;
           }
         }
       });
