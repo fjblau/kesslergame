@@ -259,7 +259,7 @@ export function processCooperativeDRVOperations(
     
     const turnsRemaining = (drv.targetingTurnsRemaining ?? ORBITS_TO_TARGET) - 1;
     
-    if (turnsRemaining <= 0) {
+    if (turnsRemaining < 0) {
       return {
         removedDebrisIds,
         removedSatelliteIds,
@@ -387,7 +387,7 @@ export function processGeoTugOperations(
     
     const turnsRemaining = (drv.targetingTurnsRemaining ?? ORBITS_TO_TARGET) - 1;
     
-    if (turnsRemaining <= 0) {
+    if (turnsRemaining < 0) {
       return {
         movedSatelliteId: undefined,
         newTargetId: drv.targetDebrisId,

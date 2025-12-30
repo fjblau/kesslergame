@@ -70,15 +70,35 @@ This ensures satellites are held for the full `ORBITS_TO_HOLD` (2) orbits before
 
 ## Implementation
 
-### Changes Made
+### Initial Changes Made (First Fix)
 
-Fixed the bug by changing the condition from `orbitsRemaining <= 0` to `orbitsRemaining < 0` in two locations:
+Fixed the bug by changing the holding condition from `orbitsRemaining <= 0` to `orbitsRemaining < 0` in two locations:
 
 1. **Line 213** in `processCooperativeDRVOperations` function
    - Changed: `if (orbitsRemaining <= 0)` → `if (orbitsRemaining < 0)`
    
 2. **Line 352** in `processGeoTugOperations` function
    - Changed: `if (orbitsRemaining <= 0)` → `if (orbitsRemaining < 0)`
+
+### Additional Bug Discovered
+
+After user testing, discovered that satellites were being **targeted but never captured**. Investigation revealed the same off-by-one error exists in the targeting logic.
+
+With `ORBITS_TO_TARGET = 1` and the buggy condition `<= 0`:
+- Turn 1: Start targeting, set counter to 1
+- Turn 2: Calculate turnsRemaining = 0, condition true, capture immediately
+
+This means satellites are captured instantly (0 orbits) instead of after 1 complete orbit.
+
+### Additional Changes Made (Second Fix)
+
+Fixed the targeting bug by changing the targeting condition from `turnsRemaining <= 0` to `turnsRemaining < 0` in two locations:
+
+3. **Line 262** in `processCooperativeDRVOperations` function
+   - Changed: `if (turnsRemaining <= 0)` → `if (turnsRemaining < 0)`
+   
+4. **Line 390** in `processGeoTugOperations` function
+   - Changed: `if (turnsRemaining <= 0)` → `if (turnsRemaining < 0)`
 
 ### Verification
 
@@ -88,10 +108,17 @@ Fixed the bug by changing the condition from `orbitsRemaining <= 0` to `orbitsRe
 
 ### Implementation Notes
 
-The fix ensures that captured satellites are held for the full `ORBITS_TO_HOLD` (2) orbits before being removed:
+**Holding behavior** - The fix ensures that captured satellites are held for the full `ORBITS_TO_HOLD` (2) orbits before being removed:
 - Turn 1: Capture, set counter to 2
 - Turn 2: Decrement to 1 (1st orbit completed), continue holding
 - Turn 3: Decrement to 0 (2nd orbit completed), continue holding
 - Turn 4: Decrement to -1 (holding period over), remove satellite
 
-This corrects the previous behavior where satellites were removed after only 1 complete orbit instead of 2.
+**Targeting behavior** - The fix ensures that satellites are targeted for the full `ORBITS_TO_TARGET` (1) orbit before being captured:
+- Turn 1: Start targeting, set counter to 1
+- Turn 2: Decrement to 0 (1st orbit completed), continue targeting
+- Turn 3: Decrement to -1 (targeting period over), capture satellite
+
+This corrects the previous behavior where:
+- Satellites were removed after only 1 complete orbit instead of 2
+- Satellites were captured immediately instead of after 1 complete orbit
