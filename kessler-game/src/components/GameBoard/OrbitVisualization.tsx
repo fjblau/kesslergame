@@ -205,7 +205,7 @@ export function OrbitVisualization() {
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: `radial-gradient(circle closest-side at center, transparent 0%, transparent 87.5%, ${getBackgroundTintColor(riskLevel)} 87.5%, ${getBackgroundTintColor(riskLevel)} 100%)`
+          background: `radial-gradient(circle closest-side at center, transparent 0%, transparent 95%, ${getBackgroundTintColor(riskLevel)} 95%, ${getBackgroundTintColor(riskLevel)} 100%)`
         }}
       />
       
