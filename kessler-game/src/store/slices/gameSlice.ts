@@ -370,7 +370,9 @@ export const gameSlice = createSlice({
     },
 
     processDRVOperations: (state) => {
+      console.log(`[processDRVOperations] Called at turn ${state.step}`);
       const activeDRVs = state.debrisRemovalVehicles.filter(drv => drv.age < drv.maxAge);
+      console.log(`[processDRVOperations] Total DRVs: ${state.debrisRemovalVehicles.length}, Active: ${activeDRVs.length}`);
       const removalEvents: DebrisRemovalInfo[] = [];
       const satelliteCaptures: SatelliteCaptureInfo[] = [];
       const graveyardMoves: GraveyardMoveInfo[] = [];

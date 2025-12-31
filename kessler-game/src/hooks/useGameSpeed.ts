@@ -69,6 +69,7 @@ export function useGameSpeed() {
     const intervalDuration = Math.round(baseInterval * multiplier);
 
     const interval = setInterval(() => {
+      console.log(`[useGameSpeed] Interval tick at ${new Date().toISOString()}`);
       dispatch(processDRVOperations());
       dispatch(advanceTurn());
 
