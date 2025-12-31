@@ -37,10 +37,20 @@ export function EventItem({ event, showDetails = false }: EventItemProps & { sho
         <div className="text-sm text-gray-300 flex-1">
           {event.message}
           {showDetails && event.details && Object.keys(event.details).length > 0 && (
-            <div className="mt-2 text-xs font-mono bg-slate-900/50 rounded p-2 overflow-x-auto">
-              <pre className="text-gray-400 whitespace-pre-wrap break-all">
-                {JSON.stringify(event.details, null, 2)}
-              </pre>
+            <div className="mt-2 text-xs bg-slate-900/50 rounded p-2 overflow-x-auto">
+              <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1">
+                {Object.entries(event.details).map(([key, value]) => (
+                  <div key={key} className="contents">
+                    <div className="text-gray-500 font-semibold text-right">{key}:</div>
+                    <div className="text-gray-300 font-mono">
+                      {typeof value === 'object' && value !== null 
+                        ? JSON.stringify(value, null, 2)
+                        : String(value)
+                      }
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
