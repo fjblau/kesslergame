@@ -377,13 +377,14 @@ export const gameSlice = createSlice({
 
       activeDRVs.forEach(drv => {
         if (drv.removalType === 'cooperative') {
+          console.log(`[gameSlice] DRV ${drv.id} BEFORE: target=${drv.targetDebrisId}, captured=${drv.capturedDebrisId}, targetingTurns=${drv.targetingTurnsRemaining}, captureOrbits=${drv.captureOrbitsRemaining}`);
+          
           const result = processCooperativeDRVOperations(drv, state.debris, state.satellites, state.debrisRemovalVehicles);
+          
+          console.log(`[gameSlice] DRV ${drv.id} RESULT: target=${result.newTargetId}, captured=${result.capturedObjectId}, targetingTurns=${result.targetingTurnsRemaining}, captureOrbits=${result.captureOrbitsRemaining}`);
           
           const totalRemoved = result.removedDebrisIds.length + result.removedSatelliteIds.length;
           drv.debrisRemoved += totalRemoved;
-          
-          console.log(`[gameSlice] DRV ${drv.id} BEFORE: target=${drv.targetDebrisId}, captured=${drv.capturedDebrisId}, targetingTurns=${drv.targetingTurnsRemaining}, captureOrbits=${drv.captureOrbitsRemaining}`);
-          console.log(`[gameSlice] DRV ${drv.id} RESULT: target=${result.newTargetId}, captured=${result.capturedObjectId}, targetingTurns=${result.targetingTurnsRemaining}, captureOrbits=${result.captureOrbitsRemaining}`);
           
           drv.targetDebrisId = result.newTargetId;
           drv.capturedDebrisId = result.capturedObjectId;

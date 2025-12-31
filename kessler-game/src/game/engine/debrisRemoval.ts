@@ -273,7 +273,6 @@ export function processCooperativeDRVOperations(
       };
     }
     
-    console.log(`[DRV ${drv.id}] Still targeting, turnsRemaining=${turnsRemaining}`);
     return {
       removedDebrisIds,
       removedSatelliteIds,
@@ -285,7 +284,6 @@ export function processCooperativeDRVOperations(
   }
   
   const newTarget = selectTarget(drv, debris, satellites, allDRVs);
-  console.log(`[DRV ${drv.id}] Selecting NEW target: ${newTarget?.id}, turnsToTarget=${newTarget ? ORBITS_TO_TARGET : undefined}`);
   return {
     removedDebrisIds,
     removedSatelliteIds,
