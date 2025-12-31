@@ -116,6 +116,7 @@ const handleClose = () => {
    - Add `activeTab` state
    - Pass state and setter to `Tabs` component
    - Pass `setActiveTab` callback to `GameOverModal`
+   - Add "Game Ending Conditions" section to documentation tab
 
 3. **`kessler-game/src/components/ui/Tabs.tsx`**
    - Change from controlled to uncontrolled component
