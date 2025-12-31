@@ -156,7 +156,7 @@ export function ControlPanel() {
       <div className="space-y-6 flex-1">
         {launchType === 'satellite' ? (
           <>
-            <SatellitePurposeSelector selected={satellitePurpose} onChange={setSatellitePurpose} />
+            <SatellitePurposeSelector selected={satellitePurpose} onChange={setSatellitePurpose} selectedOrbit={selectedOrbit} insuranceTier={insuranceTier} />
             <InsuranceTierSelector selected={insuranceTier} onChange={setInsuranceTier} />
           </>
         ) : launchType === 'drv' ? (
