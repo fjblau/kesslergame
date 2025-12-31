@@ -1,3 +1,5 @@
+import type { SatelliteMetadata } from './satelliteMetadata';
+
 export type OrbitLayer = 'LEO' | 'MEO' | 'GEO' | 'GRAVEYARD';
 export type SatelliteType = 'Weather' | 'Comms' | 'GPS';
 export type InsuranceTier = 'none' | 'basic' | 'premium';
@@ -19,6 +21,13 @@ export interface Satellite {
   inGraveyard?: boolean;
   radius: number;
   captureRadius?: number;
+  metadata?: {
+    name: string;
+    country: string;
+    weight_kg: number;
+    launch_vehicle: string;
+    launch_site: string;
+  };
 }
 
 export interface Debris {
@@ -131,6 +140,7 @@ export interface GameState {
   };
   soundEnabled: boolean;
   drvDecommissionTime: number;
+  availableSatellitePool: SatelliteMetadata[];
 }
 
 export interface UIState {
