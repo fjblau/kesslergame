@@ -94,3 +94,56 @@ useEffect(() => {
 4. Pause game, trigger events that would normally play sounds, verify no sounds play
 5. Disable sound in settings, unpause, verify no sounds play
 6. Enable sound while paused, unpause, verify sounds resume
+
+---
+
+## Implementation Notes
+
+### Changes Made
+
+#### 1. audio.ts (kessler-game/src/utils/audio.ts)
+- Added `audioPaused` flag to track audio pause state
+- Implemented `pauseAllAudio()` function that:
+  - Sets `audioPaused` to true
+  - Pauses background music without resetting currentTime
+- Implemented `resumeAllAudio()` function that:
+  - Sets `audioPaused` to false
+  - Resumes background music if soundEnabled is true
+- Implemented `getAudioPaused()` getter function
+- Updated all sound effect functions to check `audioPaused` before playing:
+  - `playRocketLaunch()`
+  - `playCollision()`
+  - `playSatelliteCapture()`
+  - `playSolarFlare()`
+  - `playCascadeWarning()`
+  - `playDebrisRemoval()`
+
+#### 2. App.tsx (kessler-game/src/App.tsx)
+- Imported `pauseAllAudio` and `resumeAllAudio` from audio utils
+- Added `gameSpeed` selector to get current game speed from Redux store
+- Added new useEffect hook to monitor gameSpeed changes:
+  - Calls `pauseAllAudio()` when gameSpeed is 'paused'
+  - Calls `resumeAllAudio()` when gameSpeed is 'normal' or 'fast' (only if game is started and not over)
+  - Dependencies: [gameSpeed, gameStarted, gameOver]
+
+### Build and Lint Results
+✅ **TypeScript compilation**: Passed with no errors
+✅ **ESLint**: Passed with no warnings or errors
+✅ **Build output**: Successfully built dist/index.html and assets
+
+### Edge Cases Handled
+1. ✅ Sound disabled via settings: `resumeAllAudio()` checks `soundEnabled` before playing
+2. ✅ Game over state: Resume only happens if `!gameOver` 
+3. ✅ Multiple pause/unpause cycles: Audio resumes from currentTime (not reset)
+4. ✅ Sound effects during pause: All sound effect functions check `audioPaused` flag
+5. ✅ Background music state: Background music reference is maintained across pause/resume
+
+### How It Works
+1. When user clicks pause, `gameSpeed` changes to 'paused'
+2. The useEffect detects the change and calls `pauseAllAudio()`
+3. Background music is paused (currentTime preserved)
+4. All sound effect functions will return early if called during pause
+5. When user unpauses, `gameSpeed` changes to 'normal' or 'fast'
+6. The useEffect calls `resumeAllAudio()`
+7. Background music resumes from where it was paused
+8. Sound effects can play again
