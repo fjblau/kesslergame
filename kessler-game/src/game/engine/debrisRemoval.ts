@@ -208,7 +208,7 @@ export function processCooperativeDRVOperations(
       };
     }
     
-    const orbitsRemaining = (drv.captureOrbitsRemaining ?? ORBITS_TO_HOLD) - 1;
+    const orbitsRemaining = (drv.captureOrbitsRemaining !== undefined ? drv.captureOrbitsRemaining : ORBITS_TO_HOLD) - 1;
     
     if (orbitsRemaining <= 0) {
       if (capturedSatellite) {
@@ -257,7 +257,7 @@ export function processCooperativeDRVOperations(
       };
     }
     
-    const turnsRemaining = (drv.targetingTurnsRemaining ?? ORBITS_TO_TARGET) - 1;
+    const turnsRemaining = (drv.targetingTurnsRemaining !== undefined ? drv.targetingTurnsRemaining : ORBITS_TO_TARGET) - 1;
     
     if (turnsRemaining <= 0) {
       return {
@@ -385,7 +385,7 @@ export function processGeoTugOperations(
       };
     }
     
-    const turnsRemaining = (drv.targetingTurnsRemaining ?? ORBITS_TO_TARGET) - 1;
+    const turnsRemaining = (drv.targetingTurnsRemaining !== undefined ? drv.targetingTurnsRemaining : ORBITS_TO_TARGET) - 1;
     
     if (turnsRemaining <= 0) {
       return {
