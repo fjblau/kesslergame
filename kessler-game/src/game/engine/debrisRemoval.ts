@@ -246,6 +246,20 @@ export function processCooperativeDRVOperations(
     const currentTarget = currentDebris || currentSatellite;
     
     if (!currentTarget) {
+      const turnsRemaining = drv.maxAge - drv.age;
+      const minTurnsNeeded = ORBITS_TO_TARGET + ORBITS_TO_HOLD + 1;
+      
+      if (turnsRemaining < minTurnsNeeded) {
+        return {
+          removedDebrisIds,
+          removedSatelliteIds,
+          newTargetId: undefined,
+          capturedObjectId: undefined,
+          captureOrbitsRemaining: undefined,
+          targetingTurnsRemaining: undefined
+        };
+      }
+      
       const newTarget = selectTarget(drv, debris, satellites, allDRVs);
       return { 
         removedDebrisIds,
@@ -259,10 +273,7 @@ export function processCooperativeDRVOperations(
     
     const turnsRemaining = (drv.targetingTurnsRemaining !== undefined ? drv.targetingTurnsRemaining : ORBITS_TO_TARGET) - 1;
     
-    console.log(`[DRV ${drv.id}] Targeting: currentTurns=${drv.targetingTurnsRemaining}, calculated=${turnsRemaining}, target=${drv.targetDebrisId}`);
-    
     if (turnsRemaining <= 0) {
-      console.log(`[DRV ${drv.id}] Transitioning to CAPTURE`);
       return {
         removedDebrisIds,
         removedSatelliteIds,
@@ -280,6 +291,20 @@ export function processCooperativeDRVOperations(
       capturedObjectId: undefined,
       captureOrbitsRemaining: undefined,
       targetingTurnsRemaining: turnsRemaining
+    };
+  }
+  
+  const turnsRemaining = drv.maxAge - drv.age;
+  const minTurnsNeeded = ORBITS_TO_TARGET + ORBITS_TO_HOLD + 1;
+  
+  if (turnsRemaining < minTurnsNeeded) {
+    return {
+      removedDebrisIds,
+      removedSatelliteIds,
+      newTargetId: undefined,
+      capturedObjectId: undefined,
+      captureOrbitsRemaining: undefined,
+      targetingTurnsRemaining: undefined
     };
   }
   
@@ -377,6 +402,20 @@ export function processGeoTugOperations(
     const currentSatellite = satellites.find(s => s.id === drv.targetDebrisId);
     
     if (!currentSatellite) {
+      const turnsRemaining = drv.maxAge - drv.age;
+      const minTurnsNeeded = ORBITS_TO_TARGET + ORBITS_TO_HOLD + 1;
+      
+      if (turnsRemaining < minTurnsNeeded) {
+        return {
+          movedSatelliteId: undefined,
+          newTargetId: undefined,
+          capturedSatelliteId: undefined,
+          captureOrbitsRemaining: undefined,
+          targetingTurnsRemaining: undefined,
+          shouldDecommission: false
+        };
+      }
+      
       const newTarget = selectGeoTugTarget(drv, satellites, allDRVs);
       return {
         movedSatelliteId: undefined,
@@ -407,6 +446,20 @@ export function processGeoTugOperations(
       capturedSatelliteId: undefined,
       captureOrbitsRemaining: undefined,
       targetingTurnsRemaining: turnsRemaining,
+      shouldDecommission: false
+    };
+  }
+  
+  const turnsRemaining = drv.maxAge - drv.age;
+  const minTurnsNeeded = ORBITS_TO_TARGET + ORBITS_TO_HOLD + 1;
+  
+  if (turnsRemaining < minTurnsNeeded) {
+    return {
+      movedSatelliteId: undefined,
+      newTargetId: undefined,
+      capturedSatelliteId: undefined,
+      captureOrbitsRemaining: undefined,
+      targetingTurnsRemaining: undefined,
       shouldDecommission: false
     };
   }
