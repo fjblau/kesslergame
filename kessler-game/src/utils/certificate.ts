@@ -40,7 +40,10 @@ export function generateCertificate(data: CertificateData): void {
   doc.setLineWidth(1);
   doc.rect(12, 12, pageWidth - 24, pageHeight - 24);
 
-  doc.addImage(missionPatchImage, 'JPEG', 15, 15, 30, 30);
+  doc.setDrawColor(96, 165, 250);
+  doc.setLineWidth(2);
+  doc.rect(13, 13, 38, 38);
+  doc.addImage(missionPatchImage, 'JPEG', 15, 15, 36, 36);
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(36);
