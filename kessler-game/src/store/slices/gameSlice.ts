@@ -516,9 +516,33 @@ export const gameSlice = createSlice({
           const newPosition = moveCooperativeDRV(drv, targetSatellite);
           drv.x = newPosition.x;
           drv.y = newPosition.y;
+        } else if (drv.removalType === 'cooperative') {
+          const targetId = drv.capturedDebrisId || drv.targetDebrisId;
+          let target = undefined;
+          if (targetId) {
+            target = state.debris.find(d => d.id === targetId) || state.satellites.find(s => s.id === targetId);
+          }
+          const newPosition = moveCooperativeDRV(drv, target);
+          drv.x = newPosition.x;
+          drv.y = newPosition.y;
         } else {
           const speed = getEntitySpeedVariation(drv.id, drv.layer, orbitalSpeeds);
           drv.x = (drv.x + speed) % 100;
+        }
+      });
+      
+      state.debrisRemovalVehicles.forEach(drv => {
+        if (drv.capturedDebrisId) {
+          const capturedSatellite = state.satellites.find(s => s.id === drv.capturedDebrisId);
+          const capturedDebris = state.debris.find(d => d.id === drv.capturedDebrisId);
+          
+          if (capturedSatellite) {
+            capturedSatellite.x = drv.x;
+            capturedSatellite.y = drv.y;
+          } else if (capturedDebris) {
+            capturedDebris.x = drv.x;
+            capturedDebris.y = drv.y;
+          }
         }
       });
       
