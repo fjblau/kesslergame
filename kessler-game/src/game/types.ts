@@ -1,3 +1,5 @@
+import type { SatelliteMetadata } from './satelliteMetadata';
+
 export type OrbitLayer = 'LEO' | 'MEO' | 'GEO' | 'GRAVEYARD';
 export type SatelliteType = 'Weather' | 'Comms' | 'GPS';
 export type InsuranceTier = 'none' | 'basic' | 'premium';
@@ -19,6 +21,13 @@ export interface Satellite {
   inGraveyard?: boolean;
   radius: number;
   captureRadius?: number;
+  metadata?: {
+    name: string;
+    country: string;
+    weight_kg: number;
+    launch_vehicle: string;
+    launch_site: string;
+  };
 }
 
 export interface Debris {
@@ -89,6 +98,19 @@ export interface GraveyardMoveInfo {
   purpose: SatelliteType;
 }
 
+export interface SatelliteCaptureInfo {
+  satellite: Satellite;
+  drvId: string;
+  drvType: DRVType;
+  layer: OrbitLayer;
+}
+
+export interface LaunchedSatelliteInfo {
+  satellite: Satellite;
+  turn: number;
+  day: number;
+}
+
 export interface GameState {
   step: number;
   maxSteps: number;
@@ -108,7 +130,9 @@ export interface GameState {
   recentCollisions: CollisionEvent[];
   recentlyExpiredDRVs: ExpiredDRVInfo[];
   recentDebrisRemovals: DebrisRemovalInfo[];
+  recentSatelliteCaptures: SatelliteCaptureInfo[];
   recentGraveyardMoves: GraveyardMoveInfo[];
+  recentlyLaunchedSatellites: LaunchedSatelliteInfo[];
   collisionAngleThreshold: number;
   collisionRadiusMultiplier: number;
   debrisPerCollision: number;
@@ -131,6 +155,7 @@ export interface GameState {
   };
   soundEnabled: boolean;
   drvDecommissionTime: number;
+  availableSatellitePool: SatelliteMetadata[];
 }
 
 export interface UIState {

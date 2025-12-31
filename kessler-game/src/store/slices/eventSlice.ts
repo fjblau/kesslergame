@@ -4,7 +4,6 @@ import type { EventsState, GameEvent, EventType } from '../../game/types';
 import type { RootState } from '../index';
 import { 
   initializeGame, 
-  launchSatellite, 
   launchDRV
 } from './gameSlice';
 import { notifyMissionComplete } from './missionsSlice';
@@ -64,16 +63,6 @@ export const eventSlice = createSlice({
     builder
       .addCase(initializeGame, (state) => {
         state.events = [];
-      })
-      .addCase(launchSatellite, (state, action) => {
-        addEventToState(
-          state,
-          'satellite-launch',
-          action.payload.turn,
-          action.payload.day ?? 0,
-          `Launched ${action.payload.purpose} satellite in ${action.payload.orbit} orbit`,
-          { orbit: action.payload.orbit, purpose: action.payload.purpose, insuranceTier: action.payload.insuranceTier }
-        );
       })
       .addCase(launchDRV, (state, action) => {
         addEventToState(

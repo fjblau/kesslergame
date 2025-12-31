@@ -23,6 +23,7 @@ export function useGameSpeed() {
   const previousMissionCompletionStatus = useRef(new Map<string, boolean>());
   const loggedCollisionIds = useRef(new Set<string>());
   const loggedExpiredDRVIds = useRef(new Set<string>());
+  const loggedLaunchedSatelliteIds = useRef(new Set<string>());
 
   useEffect(() => {
     if (autoPauseOnRiskChange && riskLevel !== previousRiskLevel.current) {
@@ -83,6 +84,94 @@ export function useGameSpeed() {
         }));
       });
 
+      currentState.recentSatelliteCaptures.forEach(capture => {
+        let message = `Cooperative DRV captured ${capture.satellite.purpose} satellite in ${capture.layer} orbit`;
+        
+        if (capture.satellite.metadata) {
+          message = `Cooperative DRV captured '${capture.satellite.metadata.name}' (${capture.satellite.metadata.country}, ${capture.satellite.metadata.weight_kg} kg, ${capture.satellite.metadata.launch_vehicle} from ${capture.satellite.metadata.launch_site}) in ${capture.layer} orbit`;
+        }
+        
+        dispatch(addEvent({
+          type: 'debris-removal',
+          turn: currentState.step,
+          day: currentState.days,
+          message,
+          details: {
+            drvId: capture.drvId,
+            drvType: capture.drvType,
+            layer: capture.layer,
+            satelliteId: capture.satellite.id,
+            purpose: capture.satellite.purpose,
+            ...(capture.satellite.metadata && {
+              name: capture.satellite.metadata.name,
+              country: capture.satellite.metadata.country,
+              weight_kg: capture.satellite.metadata.weight_kg,
+              launch_vehicle: capture.satellite.metadata.launch_vehicle,
+              launch_site: capture.satellite.metadata.launch_site,
+            })
+          }
+        }));
+      });
+
+      currentState.recentGraveyardMoves.forEach(move => {
+        const satellite = currentState.satellites.find(s => s.id === move.satelliteId);
+        let message = `GeoTug moved ${move.purpose} satellite to graveyard orbit`;
+        
+        if (satellite?.metadata) {
+          message = `GeoTug moved '${satellite.metadata.name}' (${satellite.metadata.country}, ${satellite.metadata.weight_kg} kg, ${satellite.metadata.launch_vehicle} from ${satellite.metadata.launch_site}) to graveyard orbit`;
+        }
+        
+        dispatch(addEvent({
+          type: 'satellite-graveyard',
+          turn: currentState.step,
+          day: currentState.days,
+          message,
+          details: {
+            satelliteId: move.satelliteId,
+            tugId: move.tugId,
+            purpose: move.purpose,
+            ...(satellite?.metadata && {
+              name: satellite.metadata.name,
+              country: satellite.metadata.country,
+              weight_kg: satellite.metadata.weight_kg,
+              launch_vehicle: satellite.metadata.launch_vehicle,
+              launch_site: satellite.metadata.launch_site,
+            })
+          }
+        }));
+      });
+
+      currentState.recentlyLaunchedSatellites.forEach(launchedInfo => {
+        if (!loggedLaunchedSatelliteIds.current.has(launchedInfo.satellite.id)) {
+          loggedLaunchedSatelliteIds.current.add(launchedInfo.satellite.id);
+          const sat = launchedInfo.satellite;
+          let message = `Launched ${sat.purpose} satellite in ${sat.layer} orbit`;
+          
+          if (sat.metadata) {
+            message = `Launched ${sat.purpose} satellite '${sat.metadata.name}' (${sat.metadata.country}, ${sat.metadata.weight_kg} kg, ${sat.metadata.launch_vehicle} from ${sat.metadata.launch_site}) in ${sat.layer} orbit`;
+          }
+          
+          dispatch(addEvent({
+            type: 'satellite-launch',
+            turn: launchedInfo.turn,
+            day: launchedInfo.day,
+            message,
+            details: { 
+              orbit: sat.layer, 
+              purpose: sat.purpose, 
+              insuranceTier: sat.insuranceTier,
+              ...(sat.metadata && {
+                name: sat.metadata.name,
+                country: sat.metadata.country,
+                weight_kg: sat.metadata.weight_kg,
+                launch_vehicle: sat.metadata.launch_vehicle,
+                launch_site: sat.metadata.launch_site,
+              })
+            }
+          }));
+        }
+      });
+
       dispatch(processCollisions());
       dispatch(addSatelliteRevenue());
 
@@ -91,12 +180,40 @@ export function useGameSpeed() {
         updatedState.recentCollisions.forEach(collision => {
           if (!loggedCollisionIds.current.has(collision.id)) {
             loggedCollisionIds.current.add(collision.id);
+            
+            const involvedSatellites = updatedState.satellites.filter(s => collision.objectIds.includes(s.id));
+            let message = `Collision detected in ${collision.layer} orbit - debris created`;
+            const satelliteMetadata: Array<{ name: string; country: string; weight_kg: number; launch_vehicle: string; launch_site: string; }> = [];
+            
+            if (involvedSatellites.length > 0) {
+              const satelliteNames = involvedSatellites
+                .map(s => s.metadata ? `'${s.metadata.name}' (${s.metadata.country})` : `${s.purpose} satellite`)
+                .join(' and ');
+              message = `Collision in ${collision.layer} orbit involving ${satelliteNames} - debris created`;
+              
+              involvedSatellites.forEach(s => {
+                if (s.metadata) {
+                  satelliteMetadata.push({
+                    name: s.metadata.name,
+                    country: s.metadata.country,
+                    weight_kg: s.metadata.weight_kg,
+                    launch_vehicle: s.metadata.launch_vehicle,
+                    launch_site: s.metadata.launch_site,
+                  });
+                }
+              });
+            }
+            
             dispatch(addEvent({
               type: 'collision',
               turn: updatedState.step,
               day: updatedState.days,
-              message: `Collision detected in ${collision.layer} orbit - debris created`,
-              details: { layer: collision.layer, objectIds: collision.objectIds }
+              message,
+              details: { 
+                layer: collision.layer, 
+                objectIds: collision.objectIds,
+                ...(satelliteMetadata.length > 0 && { satelliteMetadata })
+              }
             }));
           }
         });
