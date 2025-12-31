@@ -13,7 +13,7 @@ import { DRVsCounter } from '../TimeControl/DRVsCounter';
 import { DebrisRemovedCounter } from '../TimeControl/DebrisRemovedCounter';
 import { mapToPixels } from './utils';
 import { clearOldCollisions, clearCascadeFlag } from '../../store/slices/gameSlice';
-import { playCascadeWarning, playSatelliteCapture, playDebrisRemoval } from '../../utils/audio';
+import { playCascadeWarning, playSatelliteCapture, playDebrisRemoval, playSatelliteDrop } from '../../utils/audio';
 import { SATELLITE_PURPOSE_CONFIG } from '../../game/constants';
 import type { RiskLevel } from '../../game/types';
 
@@ -48,6 +48,7 @@ export function OrbitVisualization() {
   const recentDebrisRemovals = useAppSelector(state => state.game.recentDebrisRemovals);
   const cascadeTriggered = useAppSelector(state => state.game.cascadeTriggered);
   const lastCascadeTurn = useAppSelector(state => state.game.lastCascadeTurn);
+  const satellitesRecovered = useAppSelector(state => state.game.satellitesRecovered);
   const events = useAppSelector(state => state.events.events);
   const days = useAppSelector(state => state.game.days);
   const riskLevel = useAppSelector(state => state.game.riskLevel);
@@ -65,6 +66,7 @@ export function OrbitVisualization() {
   const solarStormShownForEvent = useRef<string | undefined>(undefined);
   const prevCapturedSatelliteIds = useRef<Set<string>>(new Set());
   const prevDebrisRemovalCount = useRef<number>(0);
+  const prevSatellitesRecovered = useRef<number>(0);
   const hasPlayedDebrisSound = useRef<boolean>(false);
   const [launchingSatellites, setLaunchingSatellites] = useState<Set<string>>(new Set());
   const [launchingDRVs, setLaunchingDRVs] = useState<Set<string>>(new Set());
@@ -204,6 +206,13 @@ export function OrbitVisualization() {
     
     prevDebrisRemovalCount.current = currentRemovalCount;
   }, [recentDebrisRemovals, gameOver]);
+
+  useEffect(() => {
+    if (satellitesRecovered > prevSatellitesRecovered.current && !gameOver) {
+      playSatelliteDrop();
+    }
+    prevSatellitesRecovered.current = satellitesRecovered;
+  }, [satellitesRecovered, gameOver]);
 
   return (
     <div className={`relative w-[1000px] h-[1000px] flex items-center justify-center bg-slate-900 border-[3px] ${getBorderColorClass(riskLevel)} rounded-xl overflow-hidden`}>

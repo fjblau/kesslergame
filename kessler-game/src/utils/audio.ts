@@ -1,4 +1,5 @@
 let backgroundMusic: HTMLAudioElement | null = null;
+let targetingLoopAudio: HTMLAudioElement | null = null;
 const activeAudioElements: Set<HTMLAudioElement> = new Set();
 const activeAudioContexts: Set<AudioContext> = new Set();
 
@@ -48,6 +49,7 @@ export function stopBackgroundMusic() {
 export function stopAllSounds() {
   try {
     stopBackgroundMusic();
+    stopTargetingLoop();
     
     activeAudioElements.forEach(audio => {
       audio.pause();
@@ -70,6 +72,9 @@ export function pauseAllAudio() {
     if (backgroundMusic) {
       backgroundMusic.pause();
     }
+    if (targetingLoopAudio) {
+      targetingLoopAudio.pause();
+    }
   } catch {
     // Ignore audio errors
   }
@@ -80,6 +85,9 @@ export function resumeAllAudio() {
   try {
     if (backgroundMusic && soundEnabled) {
       backgroundMusic.play().catch(() => {});
+    }
+    if (targetingLoopAudio && soundEnabled) {
+      targetingLoopAudio.play().catch(() => {});
     }
   } catch {
     // Ignore audio errors
@@ -296,6 +304,56 @@ export function playDebrisRemoval() {
         activeAudioElements.delete(audio);
       });
     }
+  } catch {
+    // Ignore audio errors
+  }
+}
+
+export function playTargetingLoop() {
+  if (!soundEnabled || audioPaused) return;
+  try {
+    if (targetingLoopAudio) {
+      return;
+    }
+    
+    targetingLoopAudio = new Audio('/targeting-beep.mp3');
+    targetingLoopAudio.volume = 0.3;
+    targetingLoopAudio.loop = true;
+    
+    targetingLoopAudio.play().catch(() => {
+      // Ignore audio play errors
+    });
+  } catch {
+    // Ignore audio errors
+  }
+}
+
+export function stopTargetingLoop() {
+  try {
+    if (targetingLoopAudio) {
+      targetingLoopAudio.pause();
+      targetingLoopAudio.currentTime = 0;
+      targetingLoopAudio = null;
+    }
+  } catch {
+    // Ignore audio errors
+  }
+}
+
+export function playSatelliteDrop() {
+  if (!soundEnabled || audioPaused) return;
+  try {
+    const audio = new Audio('/satellite-drop.mp3');
+    audio.volume = 0.5;
+    activeAudioElements.add(audio);
+    
+    audio.addEventListener('ended', () => {
+      activeAudioElements.delete(audio);
+    });
+    
+    audio.play().catch(() => {
+      activeAudioElements.delete(audio);
+    });
   } catch {
     // Ignore audio errors
   }

@@ -19,18 +19,23 @@ import { SoundSettings } from './components/Configuration/SoundSettings';
 import { GeneralSettings } from './components/Configuration/GeneralSettings';
 import { Tabs } from './components/ui/Tabs';
 import { useGameSpeed } from './hooks/useGameSpeed';
-import { useAppSelector } from './store/hooks';
+import { useAppSelector, useAppDispatch } from './store/hooks';
+import { resetGame } from './store/slices/gameSlice';
+import { resetScore } from './store/slices/scoreSlice';
 import { GameOverModal } from './components/GameOver/GameOverModal';
 import { ScoreDisplay } from './components/Score/ScoreDisplay';
-import { playBackgroundMusic, stopAllSounds, setSoundEnabled, pauseAllAudio, resumeAllAudio } from './utils/audio';
+import { playBackgroundMusic, stopAllSounds, setSoundEnabled, pauseAllAudio, resumeAllAudio, playTargetingLoop, stopTargetingLoop } from './utils/audio';
 
 function App() {
   const [gameStarted, setGameStarted] = useState(false);
   const [activeTab, setActiveTab] = useState('launch');
+  const dispatch = useAppDispatch();
   const history = useAppSelector(state => state.game.history);
   const gameOver = useAppSelector(state => state.game.gameOver);
   const soundEnabledState = useAppSelector(state => state.game.soundEnabled);
   const gameSpeed = useAppSelector(state => state.ui.gameSpeed);
+  const debrisRemovalVehicles = useAppSelector(state => state.game.debrisRemovalVehicles);
+  const satellites = useAppSelector(state => state.game.satellites);
 
   useGameSpeed();
 
@@ -55,6 +60,29 @@ function App() {
   }, [gameSpeed, gameStarted, gameOver]);
 
   useEffect(() => {
+    if (!gameStarted || gameOver || gameSpeed === 'paused') {
+      stopTargetingLoop();
+      return;
+    }
+
+    const targetedSatelliteIds = new Set<string>();
+    debrisRemovalVehicles.forEach(drv => {
+      if (drv.targetDebrisId) {
+        const isSatellite = satellites.some(sat => sat.id === drv.targetDebrisId);
+        if (isSatellite) {
+          targetedSatelliteIds.add(drv.targetDebrisId);
+        }
+      }
+    });
+
+    if (targetedSatelliteIds.size > 0) {
+      playTargetingLoop();
+    } else {
+      stopTargetingLoop();
+    }
+  }, [debrisRemovalVehicles, satellites, gameStarted, gameOver, gameSpeed]);
+
+  useEffect(() => {
     return () => {
       stopAllSounds();
     };
@@ -63,6 +91,13 @@ function App() {
   if (!gameStarted) {
     return <GameSetupScreen onStart={() => setGameStarted(true)} />;
   }
+
+  const handleNewGame = () => {
+    dispatch(resetGame());
+    dispatch(resetScore());
+    stopAllSounds();
+    setGameStarted(false);
+  };
 
   const tabs = [
     {
@@ -75,7 +110,7 @@ function App() {
           </div>
           <div className="flex flex-col gap-6">
             <OrbitVisualization />
-            <GameSpeedControl />
+            <GameSpeedControl onNewGame={handleNewGame} />
           </div>
           <div className="w-[600px] flex flex-col gap-6 h-full">
             <StatsPanel />

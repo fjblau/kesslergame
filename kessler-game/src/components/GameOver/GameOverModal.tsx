@@ -5,6 +5,7 @@ import { initializeMissions } from '../../store/slices/missionsSlice';
 import { MAX_DEBRIS_LIMIT } from '../../game/constants';
 import { SCORE_GRADES } from '../../game/scoring';
 import { selectScore } from '../../store/slices/scoreSlice';
+import { generateCertificate } from '../../utils/certificate';
 
 interface GameOverModalProps {
   onViewAnalytics?: () => void;
@@ -12,7 +13,7 @@ interface GameOverModalProps {
 
 export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
   const dispatch = useAppDispatch();
-  const { budget, step, maxSteps, debris, satellites, debrisRemovalVehicles, budgetDifficulty } = useAppSelector(state => state.game);
+  const { budget, step, maxSteps, debris, satellites, debrisRemovalVehicles, budgetDifficulty, playerName } = useAppSelector(state => state.game);
   const scoreState = useAppSelector(selectScore);
   const [isVisible, setIsVisible] = useState(true);
 
@@ -45,7 +46,7 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
   );
 
   const handlePlayAgain = () => {
-    dispatch(initializeGame(budgetDifficulty));
+    dispatch(initializeGame({ difficulty: budgetDifficulty, playerName }));
     dispatch(initializeMissions(3));
     setIsVisible(true);
   };
@@ -53,6 +54,26 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
   const handleClose = () => {
     setIsVisible(false);
     onViewAnalytics?.();
+  };
+
+  const handleDownloadCertificate = () => {
+    generateCertificate({
+      playerName,
+      finalScore: scoreState.totalScore,
+      grade,
+      turnsSurvived: step,
+      maxTurns: maxSteps,
+      finalBudget: budget,
+      satellitesLaunched: satellites.length,
+      debrisRemoved: totalDebrisRemoved,
+      totalDebris: debris.length,
+      difficulty: budgetDifficulty,
+      satelliteLaunchScore: scoreState.satelliteLaunchScore,
+      debrisRemovalScore: scoreState.debrisRemovalScore,
+      satelliteRecoveryScore: scoreState.satelliteRecoveryScore,
+      budgetManagementScore: scoreState.budgetManagementScore,
+      survivalScore: scoreState.survivalScore,
+    });
   };
 
   if (!isVisible) {
@@ -99,7 +120,7 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
             </div>
             <div className="flex justify-between items-center py-2 px-3 bg-slate-800/50 rounded-lg">
               <span className="text-gray-300 text-sm flex items-center gap-2">
-                <span>♻️</span> Satellites Recovered
+                <span>♻️</span> Satellites Recovered ({scoreState.satellitesRecovered})
               </span>
               <span className="text-cyan-400 font-semibold">+{scoreState.satelliteRecoveryScore.toLocaleString()}</span>
             </div>
@@ -146,6 +167,16 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
               <p className="text-2xl font-bold text-purple-400">{totalDebrisRemoved} pieces</p>
             </div>
           </div>
+        </div>
+
+        <div className="mb-4">
+          <button
+            onClick={handleDownloadCertificate}
+            className="w-full py-4 px-8 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white rounded-xl font-bold text-xl uppercase tracking-wide transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+          >
+            <span>📄</span>
+            Download Mission Certificate
+          </button>
         </div>
 
         <div className="flex gap-4">

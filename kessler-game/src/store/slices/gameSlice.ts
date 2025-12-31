@@ -145,6 +145,7 @@ const initialState: GameState = {
   step: 0,
   maxSteps: MAX_STEPS,
   days: 0,
+  playerName: '',
   satellites: [],
   debris: [],
   debrisRemovalVehicles: [],
@@ -192,13 +193,14 @@ export const gameSlice = createSlice({
   name: 'game',
   initialState,
   reducers: {
-    initializeGame: (state, action: PayloadAction<BudgetDifficulty>) => {
-      const config = BUDGET_DIFFICULTY_CONFIG[action.payload];
+    initializeGame: (state, action: PayloadAction<{ difficulty: BudgetDifficulty; playerName: string }>) => {
+      const config = BUDGET_DIFFICULTY_CONFIG[action.payload.difficulty];
       return {
         ...initialState,
         days: 0,
+        playerName: action.payload.playerName,
         budget: config.startingBudget,
-        budgetDifficulty: action.payload,
+        budgetDifficulty: action.payload.difficulty,
         budgetIncomeAmount: config.incomeAmount,
         budgetIncomeInterval: config.incomeInterval,
         budgetDrainAmount: config.drainAmount,
@@ -225,6 +227,7 @@ export const gameSlice = createSlice({
       const config = BUDGET_DIFFICULTY_CONFIG[state.budgetDifficulty];
       state.step = 0;
       state.days = 0;
+      state.playerName = '';
       state.satellites = [];
       state.debris = [];
       state.debrisRemovalVehicles = [];
@@ -514,9 +517,33 @@ export const gameSlice = createSlice({
           const newPosition = moveCooperativeDRV(drv, targetSatellite);
           drv.x = newPosition.x;
           drv.y = newPosition.y;
+        } else if (drv.removalType === 'cooperative') {
+          const targetId = drv.capturedDebrisId || drv.targetDebrisId;
+          let target = undefined;
+          if (targetId) {
+            target = state.debris.find(d => d.id === targetId) || state.satellites.find(s => s.id === targetId);
+          }
+          const newPosition = moveCooperativeDRV(drv, target);
+          drv.x = newPosition.x;
+          drv.y = newPosition.y;
         } else {
           const speed = getEntitySpeedVariation(drv.id, drv.layer, orbitalSpeeds);
           drv.x = (drv.x + speed) % 100;
+        }
+      });
+      
+      state.debrisRemovalVehicles.forEach(drv => {
+        if (drv.capturedDebrisId) {
+          const capturedSatellite = state.satellites.find(s => s.id === drv.capturedDebrisId);
+          const capturedDebris = state.debris.find(d => d.id === drv.capturedDebrisId);
+          
+          if (capturedSatellite) {
+            capturedSatellite.x = drv.x;
+            capturedSatellite.y = drv.y;
+          } else if (capturedDebris) {
+            capturedDebris.x = drv.x;
+            capturedDebris.y = drv.y;
+          }
         }
       });
       

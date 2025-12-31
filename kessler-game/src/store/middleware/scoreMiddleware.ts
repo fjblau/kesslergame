@@ -27,7 +27,9 @@ export const scoreMiddleware: Middleware = (store) => (next) => (action) => {
     addBudget.match(action)
   ) {
     const state = store.getState();
-    store.dispatch(calculateScore(state.game));
+    if (!state.game.gameOver) {
+      store.dispatch(calculateScore(state.game));
+    }
   }
 
   return result;

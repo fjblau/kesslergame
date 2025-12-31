@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
-import { advanceTurn, decommissionExpiredDRVs, triggerSolarStorm, incrementDays, processCollisions, processDRVOperations, addSatelliteRevenue } from '../store/slices/gameSlice';
+import { advanceTurn, decommissionExpiredDRVs, triggerSolarStorm, incrementDays, processCollisions, processDRVOperations, addSatelliteRevenue, checkGameOver } from '../store/slices/gameSlice';
 import { setGameSpeed } from '../store/slices/uiSlice';
 import { updateMissionProgress, notifyMissionComplete, selectActiveMissions } from '../store/slices/missionsSlice';
 import { addEvent } from '../store/slices/eventSlice';
@@ -12,6 +12,7 @@ export function useGameSpeed() {
   const store = useStore();
   const speed = useAppSelector(state => state.ui.gameSpeed);
   const budget = useAppSelector(state => state.game.budget);
+  const gameOver = useAppSelector(state => state.game.gameOver);
   const riskLevel = useAppSelector(state => state.game.riskLevel);
   const riskSpeedMultipliers = useAppSelector(state => state.game.riskSpeedMultipliers);
   const days = useAppSelector(state => state.game.days);
@@ -43,17 +44,17 @@ export function useGameSpeed() {
   }, [missions, dispatch, days]);
 
   useEffect(() => {
-    if (speed === 'paused') return;
+    if (speed === 'paused' || gameOver) return;
 
     const daysInterval = setInterval(() => {
       dispatch(incrementDays());
     }, 1000);
 
     return () => clearInterval(daysInterval);
-  }, [speed, dispatch]);
+  }, [speed, gameOver, dispatch]);
 
   useEffect(() => {
-    if (speed === 'paused') {
+    if (speed === 'paused' || gameOver) {
       return;
     }
 
@@ -69,8 +70,8 @@ export function useGameSpeed() {
     const intervalDuration = Math.round(baseInterval * multiplier);
 
     const interval = setInterval(() => {
-      dispatch(advanceTurn());
       dispatch(processDRVOperations());
+      dispatch(advanceTurn());
 
       const currentState = (store.getState() as RootState).game;
 
@@ -272,6 +273,7 @@ export function useGameSpeed() {
 
       dispatch(updateMissionProgress(currentState));
       dispatch(decommissionExpiredDRVs());
+      dispatch(checkGameOver());
 
       setTimeout(() => {
         const updatedState = (store.getState() as RootState).game;
@@ -291,5 +293,5 @@ export function useGameSpeed() {
     }, intervalDuration);
 
     return () => clearInterval(interval);
-  }, [speed, budget, autoPauseBudgetLow, riskSpeedMultipliers, riskLevel, dispatch, store]);
+  }, [speed, gameOver, budget, autoPauseBudgetLow, riskSpeedMultipliers, riskLevel, dispatch, store]);
 }
