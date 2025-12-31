@@ -259,7 +259,10 @@ export function processCooperativeDRVOperations(
     
     const turnsRemaining = (drv.targetingTurnsRemaining !== undefined ? drv.targetingTurnsRemaining : ORBITS_TO_TARGET) - 1;
     
+    console.log(`[DRV ${drv.id}] Targeting: currentTurns=${drv.targetingTurnsRemaining}, calculated=${turnsRemaining}, target=${drv.targetDebrisId}`);
+    
     if (turnsRemaining <= 0) {
+      console.log(`[DRV ${drv.id}] Transitioning to CAPTURE`);
       return {
         removedDebrisIds,
         removedSatelliteIds,
@@ -270,6 +273,7 @@ export function processCooperativeDRVOperations(
       };
     }
     
+    console.log(`[DRV ${drv.id}] Still targeting, turnsRemaining=${turnsRemaining}`);
     return {
       removedDebrisIds,
       removedSatelliteIds,
@@ -281,6 +285,7 @@ export function processCooperativeDRVOperations(
   }
   
   const newTarget = selectTarget(drv, debris, satellites, allDRVs);
+  console.log(`[DRV ${drv.id}] Selecting NEW target: ${newTarget?.id}, turnsToTarget=${newTarget ? ORBITS_TO_TARGET : undefined}`);
   return {
     removedDebrisIds,
     removedSatelliteIds,

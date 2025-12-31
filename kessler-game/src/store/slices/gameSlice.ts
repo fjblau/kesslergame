@@ -382,10 +382,15 @@ export const gameSlice = createSlice({
           const totalRemoved = result.removedDebrisIds.length + result.removedSatelliteIds.length;
           drv.debrisRemoved += totalRemoved;
           
+          console.log(`[gameSlice] DRV ${drv.id} BEFORE: target=${drv.targetDebrisId}, captured=${drv.capturedDebrisId}, targetingTurns=${drv.targetingTurnsRemaining}, captureOrbits=${drv.captureOrbitsRemaining}`);
+          console.log(`[gameSlice] DRV ${drv.id} RESULT: target=${result.newTargetId}, captured=${result.capturedObjectId}, targetingTurns=${result.targetingTurnsRemaining}, captureOrbits=${result.captureOrbitsRemaining}`);
+          
           drv.targetDebrisId = result.newTargetId;
           drv.capturedDebrisId = result.capturedObjectId;
           drv.captureOrbitsRemaining = result.captureOrbitsRemaining;
           drv.targetingTurnsRemaining = result.targetingTurnsRemaining;
+          
+          console.log(`[gameSlice] DRV ${drv.id} AFTER: target=${drv.targetDebrisId}, captured=${drv.capturedDebrisId}, targetingTurns=${drv.targetingTurnsRemaining}, captureOrbits=${drv.captureOrbitsRemaining}`);
           
           if (result.removedSatelliteIds.length > 0) {
             state.satellitesRecovered += result.removedSatelliteIds.length;
