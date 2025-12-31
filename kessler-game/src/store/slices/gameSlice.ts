@@ -145,6 +145,7 @@ const initialState: GameState = {
   step: 0,
   maxSteps: MAX_STEPS,
   days: 0,
+  playerName: '',
   satellites: [],
   debris: [],
   debrisRemovalVehicles: [],
@@ -192,13 +193,14 @@ export const gameSlice = createSlice({
   name: 'game',
   initialState,
   reducers: {
-    initializeGame: (state, action: PayloadAction<BudgetDifficulty>) => {
-      const config = BUDGET_DIFFICULTY_CONFIG[action.payload];
+    initializeGame: (state, action: PayloadAction<{ difficulty: BudgetDifficulty; playerName: string }>) => {
+      const config = BUDGET_DIFFICULTY_CONFIG[action.payload.difficulty];
       return {
         ...initialState,
         days: 0,
+        playerName: action.payload.playerName,
         budget: config.startingBudget,
-        budgetDifficulty: action.payload,
+        budgetDifficulty: action.payload.difficulty,
         budgetIncomeAmount: config.incomeAmount,
         budgetIncomeInterval: config.incomeInterval,
         budgetDrainAmount: config.drainAmount,

@@ -12,7 +12,7 @@ interface GameOverModalProps {
 
 export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
   const dispatch = useAppDispatch();
-  const { budget, step, maxSteps, debris, satellites, debrisRemovalVehicles, budgetDifficulty } = useAppSelector(state => state.game);
+  const { budget, step, maxSteps, debris, satellites, debrisRemovalVehicles, budgetDifficulty, playerName } = useAppSelector(state => state.game);
   const scoreState = useAppSelector(selectScore);
   const [isVisible, setIsVisible] = useState(true);
 
@@ -45,7 +45,7 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
   );
 
   const handlePlayAgain = () => {
-    dispatch(initializeGame(budgetDifficulty));
+    dispatch(initializeGame({ difficulty: budgetDifficulty, playerName }));
     dispatch(initializeMissions(3));
     setIsVisible(true);
   };

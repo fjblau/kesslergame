@@ -124,6 +124,7 @@ export interface GameState {
   step: number;
   maxSteps: number;
   days: number;
+  playerName: string;
   satellites: Satellite[];
   debris: Debris[];
   debrisRemovalVehicles: DebrisRemovalVehicle[];
