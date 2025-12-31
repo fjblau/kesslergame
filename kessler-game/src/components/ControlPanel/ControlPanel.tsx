@@ -42,6 +42,21 @@ export function ControlPanel() {
     }
   };
 
+  const getLaunchTypeCost = (type: 'satellite' | 'drv' | 'geotug') => {
+    if (type === 'satellite') {
+      const baseCost = LAUNCH_COSTS[selectedOrbit];
+      const purposeDiscount = satellitePurpose === 'Random' ? SATELLITE_PURPOSE_CONFIG.Random.discount : 0;
+      const insuranceCost = INSURANCE_CONFIG[insuranceTier].cost;
+      return baseCost * (1 - purposeDiscount) + insuranceCost;
+    } else if (type === 'drv') {
+      const baseCost = DRV_CONFIG.costs[selectedOrbit][drvType];
+      const priorityModifier = DRV_PRIORITY_CONFIG[drvPriority].costModifier;
+      return baseCost * priorityModifier;
+    } else {
+      return DRV_CONFIG.costs['GEO']['geotug'];
+    }
+  };
+
   const totalCost = calculateCost();
   const canAfford = budget >= totalCost;
 
@@ -103,13 +118,16 @@ export function ControlPanel() {
             <button
               key={type}
               onClick={() => setLaunchType(type)}
-              className={`flex-1 py-2 px-3 rounded-xl font-medium transition-colors text-sm ${
+              className={`flex-1 py-3 px-3 rounded-xl font-medium transition-colors text-sm flex flex-col items-center ${
                 launchType === type
                   ? 'bg-blue-600 text-white shadow-lg'
                   : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
               }`}
             >
-              {type === 'satellite' ? 'Satellite' : type === 'drv' ? 'DRV' : 'GEO TUG'}
+              <span>{type === 'satellite' ? 'Satellite' : type === 'drv' ? 'DRV' : 'GEO TUG'}</span>
+              <span className="text-xs opacity-75 mt-1">
+                ${(getLaunchTypeCost(type) / 1e6).toFixed(1)}M
+              </span>
             </button>
           ))}
         </div>
@@ -123,7 +141,7 @@ export function ControlPanel() {
               key={orbit}
               onClick={() => setSelectedOrbit(orbit)}
               disabled={launchType === 'geotug'}
-              className={`flex-1 py-2 px-6 rounded-xl font-medium transition-colors ${
+              className={`flex-1 py-3 px-6 rounded-xl font-medium transition-colors ${
                 (launchType === 'geotug' ? 'GEO' : selectedOrbit) === orbit
                   ? 'bg-blue-600 text-white shadow-lg'
                   : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
