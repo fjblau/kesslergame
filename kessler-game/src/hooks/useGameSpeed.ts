@@ -12,6 +12,7 @@ export function useGameSpeed() {
   const store = useStore();
   const speed = useAppSelector(state => state.ui.gameSpeed);
   const budget = useAppSelector(state => state.game.budget);
+  const gameOver = useAppSelector(state => state.game.gameOver);
   const riskLevel = useAppSelector(state => state.game.riskLevel);
   const riskSpeedMultipliers = useAppSelector(state => state.game.riskSpeedMultipliers);
   const days = useAppSelector(state => state.game.days);
@@ -43,17 +44,17 @@ export function useGameSpeed() {
   }, [missions, dispatch, days]);
 
   useEffect(() => {
-    if (speed === 'paused') return;
+    if (speed === 'paused' || gameOver) return;
 
     const daysInterval = setInterval(() => {
       dispatch(incrementDays());
     }, 1000);
 
     return () => clearInterval(daysInterval);
-  }, [speed, dispatch]);
+  }, [speed, gameOver, dispatch]);
 
   useEffect(() => {
-    if (speed === 'paused') {
+    if (speed === 'paused' || gameOver) {
       return;
     }
 
@@ -292,5 +293,5 @@ export function useGameSpeed() {
     }, intervalDuration);
 
     return () => clearInterval(interval);
-  }, [speed, budget, autoPauseBudgetLow, riskSpeedMultipliers, riskLevel, dispatch, store]);
+  }, [speed, gameOver, budget, autoPauseBudgetLow, riskSpeedMultipliers, riskLevel, dispatch, store]);
 }
