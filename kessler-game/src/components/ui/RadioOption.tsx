@@ -11,7 +11,7 @@ interface RadioOptionProps {
 export function RadioOption({ checked, onChange, label, description, children }: RadioOptionProps) {
   return (
     <label className={`
-      flex items-start gap-3 px-4 py-[15px] rounded-xl cursor-pointer transition-all
+      flex items-start gap-3 px-4 py-[10px] rounded-xl cursor-pointer transition-all
       ${checked ? 'bg-blue-600 border-2 border-blue-500 shadow-lg' : 'bg-slate-700 border-2 border-slate-600 hover:bg-slate-600 hover:border-slate-500'}
     `}>
       <input
