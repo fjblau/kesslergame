@@ -1,4 +1,5 @@
 import { jsPDF } from 'jspdf';
+import missionPatchImage from '../assets/mission-patch.jpeg';
 
 interface CertificateData {
   playerName: string;
@@ -38,6 +39,8 @@ export function generateCertificate(data: CertificateData): void {
   doc.setDrawColor(139, 92, 246);
   doc.setLineWidth(1);
   doc.rect(12, 12, pageWidth - 24, pageHeight - 24);
+
+  doc.addImage(missionPatchImage, 'JPEG', 15, 15, 30, 30);
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(36);
@@ -143,29 +146,29 @@ export function generateCertificate(data: CertificateData): void {
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(203, 213, 225);
-  doc.text('🛰️  Satellite Operations:', leftCol, yPos);
+  doc.text('Satellite Operations:', leftCol, yPos);
   doc.setTextColor(96, 165, 250);
   doc.text('+' + data.satelliteLaunchScore.toLocaleString(), leftCol + 55, yPos);
 
   doc.setTextColor(203, 213, 225);
-  doc.text('🧹  Debris Removal:', rightCol, yPos);
+  doc.text('Debris Removal:', rightCol, yPos);
   doc.setTextColor(134, 239, 172);
   doc.text('+' + data.debrisRemovalScore.toLocaleString(), rightCol + 55, yPos);
   yPos += 7;
 
   doc.setTextColor(203, 213, 225);
-  doc.text('♻️  Satellite Recovery:', leftCol, yPos);
+  doc.text('Satellite Recovery:', leftCol, yPos);
   doc.setTextColor(103, 232, 249);
   doc.text('+' + data.satelliteRecoveryScore.toLocaleString(), leftCol + 55, yPos);
 
   doc.setTextColor(203, 213, 225);
-  doc.text('💰  Budget Management:', rightCol, yPos);
+  doc.text('Budget Management:', rightCol, yPos);
   doc.setTextColor(253, 224, 71);
   doc.text('+' + data.budgetManagementScore.toLocaleString(), rightCol + 55, yPos);
   yPos += 7;
 
   doc.setTextColor(203, 213, 225);
-  doc.text('⏱️  Survival:', leftCol, yPos);
+  doc.text('Survival:', leftCol, yPos);
   doc.setTextColor(192, 132, 252);
   doc.text('+' + data.survivalScore.toLocaleString(), leftCol + 55, yPos);
 
