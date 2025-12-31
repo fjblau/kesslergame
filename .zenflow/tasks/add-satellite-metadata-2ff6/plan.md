@@ -112,7 +112,8 @@ Do not make assumptions on important decisions — get clarification first.
 
 ---
 
-### [ ] Step: Update Event Logging - Collisions, Captures, Graveyard
+### [x] Step: Update Event Logging - Collisions, Captures, Graveyard
+<!-- chat-id: c979e58d-9dbd-4cd4-837e-123e531c78cf -->
 
 **Objective**: Include satellite metadata in all satellite-related events.
 

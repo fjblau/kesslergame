@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { GameState, OrbitLayer, SatelliteType, InsuranceTier, DRVType, DRVTargetPriority, BudgetDifficulty, DebrisRemovalVehicle, ExpiredDRVInfo, DebrisRemovalInfo, GraveyardMoveInfo } from '../../game/types';
+import type { GameState, OrbitLayer, SatelliteType, InsuranceTier, DRVType, DRVTargetPriority, BudgetDifficulty, DebrisRemovalVehicle, ExpiredDRVInfo, DebrisRemovalInfo, SatelliteCaptureInfo, GraveyardMoveInfo } from '../../game/types';
 import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG, MAX_DEBRIS_LIMIT, ORBITAL_SPEEDS, CASCADE_THRESHOLD, RISK_SPEED_MULTIPLIERS, SATELLITE_REVENUE, OBJECT_RADII, CAPTURE_RADIUS_MULTIPLIER } from '../../game/constants';
 import { detectCollisions, generateDebrisFromCollision, calculateTotalPayout } from '../../game/engine/collision';
 import { processDRVRemoval, processCooperativeDRVOperations, moveCooperativeDRV, processGeoTugOperations } from '../../game/engine/debrisRemoval';
@@ -171,6 +171,7 @@ const initialState: GameState = {
   recentCollisions: [],
   recentlyExpiredDRVs: [],
   recentDebrisRemovals: [],
+  recentSatelliteCaptures: [],
   recentGraveyardMoves: [],
   recentlyLaunchedSatellites: [],
   cascadeTriggered: false,
@@ -238,6 +239,8 @@ export const gameSlice = createSlice({
       state.recentCollisions = [];
       state.recentlyExpiredDRVs = [];
       state.recentDebrisRemovals = [];
+      state.recentSatelliteCaptures = [];
+      state.recentGraveyardMoves = [];
       state.recentlyLaunchedSatellites = [];
       state.cascadeTriggered = false;
       state.lastCascadeTurn = undefined;
@@ -369,6 +372,7 @@ export const gameSlice = createSlice({
     processDRVOperations: (state) => {
       const activeDRVs = state.debrisRemovalVehicles.filter(drv => drv.age < drv.maxAge);
       const removalEvents: DebrisRemovalInfo[] = [];
+      const satelliteCaptures: SatelliteCaptureInfo[] = [];
       const graveyardMoves: GraveyardMoveInfo[] = [];
 
       activeDRVs.forEach(drv => {
@@ -385,6 +389,15 @@ export const gameSlice = createSlice({
           
           if (result.removedSatelliteIds.length > 0) {
             state.satellitesRecovered += result.removedSatelliteIds.length;
+            const removedSatellites = state.satellites.filter(s => result.removedSatelliteIds.includes(s.id));
+            removedSatellites.forEach(satellite => {
+              satelliteCaptures.push({
+                satellite,
+                drvId: drv.id,
+                drvType: drv.removalType,
+                layer: drv.layer,
+              });
+            });
           }
           
           if (totalRemoved > 0) {
@@ -453,6 +466,7 @@ export const gameSlice = createSlice({
       });
 
       state.recentDebrisRemovals = removalEvents;
+      state.recentSatelliteCaptures = satelliteCaptures;
       state.recentGraveyardMoves = graveyardMoves;
       state.riskLevel = calculateRiskLevel(state.debris.length);
     },
