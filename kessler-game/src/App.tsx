@@ -26,6 +26,7 @@ import { playBackgroundMusic, stopAllSounds, setSoundEnabled, pauseAllAudio, res
 
 function App() {
   const [gameStarted, setGameStarted] = useState(false);
+  const [activeTab, setActiveTab] = useState('launch');
   const history = useAppSelector(state => state.game.history);
   const gameOver = useAppSelector(state => state.game.gameOver);
   const soundEnabledState = useAppSelector(state => state.game.soundEnabled);
@@ -335,6 +336,34 @@ function App() {
                   <li>• Pause on mission completion</li>
                 </ul>
               </div>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-blue-400 mb-3">Game Ending Conditions</h2>
+            <div className="space-y-4 text-gray-300">
+              <p className="mb-4">The game ends when any of the following conditions are met. Your final score and statistics will be displayed in the Game Over screen.</p>
+              
+              <div className="space-y-3">
+                <div className="p-4 bg-red-900/30 border border-red-500/50 rounded-lg">
+                  <h4 className="text-lg font-semibold text-red-300 mb-2">💸 Budget Depletion</h4>
+                  <p>The game ends if your budget drops below $0. Manage your finances carefully by balancing satellite launches, DRV deployments, and insurance costs with your revenue from satellites and periodic income bonuses.</p>
+                </div>
+
+                <div className="p-4 bg-orange-900/30 border border-orange-500/50 rounded-lg">
+                  <h4 className="text-lg font-semibold text-orange-300 mb-2">⏰ Time Limit Reached</h4>
+                  <p>The game ends after 100 turns. This represents the maximum simulation duration. Make the most of your time by efficiently deploying resources and completing missions.</p>
+                </div>
+
+                <div className="p-4 bg-yellow-900/30 border border-yellow-500/50 rounded-lg">
+                  <h4 className="text-lg font-semibold text-yellow-300 mb-2">🌪️ Debris Cascade</h4>
+                  <p>The game ends if space debris exceeds 500 pieces. This represents an uncontrollable Kessler Syndrome scenario. Deploy DRVs proactively and monitor the debris count to prevent reaching this critical threshold.</p>
+                </div>
+              </div>
+
+              <p className="mt-4 text-sm text-gray-400">
+                <strong>Tip:</strong> After the game ends, click "View Analytics" to review detailed charts of your performance, or click "Play Again" to start a new game.
+              </p>
             </div>
           </section>
 
@@ -690,10 +719,10 @@ function App() {
           </div>
         </header>
 
-        <Tabs tabs={tabs} defaultTab="launch" />
+        <Tabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
 
-      {gameOver && <GameOverModal />}
+      {gameOver && <GameOverModal onViewAnalytics={() => setActiveTab('analytics')} />}
     </div>
   );
 }

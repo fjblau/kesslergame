@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 interface Tab {
   id: string;
   label: string;
@@ -8,12 +6,11 @@ interface Tab {
 
 interface TabsProps {
   tabs: Tab[];
-  defaultTab?: string;
+  activeTab: string;
+  onTabChange: (tabId: string) => void;
 }
 
-export function Tabs({ tabs, defaultTab }: TabsProps) {
-  const [activeTab, setActiveTab] = useState(defaultTab || tabs[0]?.id);
-
+export function Tabs({ tabs, activeTab, onTabChange }: TabsProps) {
   const activeTabContent = tabs.find(tab => tab.id === activeTab)?.content;
 
   return (
@@ -22,7 +19,7 @@ export function Tabs({ tabs, defaultTab }: TabsProps) {
         {tabs.map(tab => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => onTabChange(tab.id)}
             className={`
               flex-1 py-3 rounded-xl font-semibold text-lg transition-colors duration-200
               ${activeTab === tab.id 

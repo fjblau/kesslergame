@@ -42,6 +42,21 @@ export function ControlPanel() {
     }
   };
 
+  const getLaunchTypeCost = (type: 'satellite' | 'drv' | 'geotug') => {
+    if (type === 'satellite') {
+      const baseCost = LAUNCH_COSTS[selectedOrbit];
+      const purposeDiscount = satellitePurpose === 'Random' ? SATELLITE_PURPOSE_CONFIG.Random.discount : 0;
+      const insuranceCost = INSURANCE_CONFIG[insuranceTier].cost;
+      return baseCost * (1 - purposeDiscount) + insuranceCost;
+    } else if (type === 'drv') {
+      const baseCost = DRV_CONFIG.costs[selectedOrbit][drvType];
+      const priorityModifier = DRV_PRIORITY_CONFIG[drvPriority].costModifier;
+      return baseCost * priorityModifier;
+    } else {
+      return DRV_CONFIG.costs['GEO']['geotug'];
+    }
+  };
+
   const totalCost = calculateCost();
   const canAfford = budget >= totalCost;
 
@@ -92,7 +107,7 @@ export function ControlPanel() {
   return (
     <>
       <div className="bg-slate-800 border-2 border-slate-600 rounded-xl px-6 pt-1 pb-6 w-full h-[1100px] flex flex-col">
-        <div className="mt-[17px]" style={{ marginBottom: 'calc(1.5rem - 17px)' }}>
+        <div className="mt-[17px]" style={{ marginBottom: 'calc(1.5rem - 27px)' }}>
           <h2 className="text-xl font-bold text-blue-300 mb-4 pb-3 border-b-2 border-slate-700 uppercase tracking-wide">Launch Controls</h2>
         </div>
 
@@ -103,13 +118,16 @@ export function ControlPanel() {
             <button
               key={type}
               onClick={() => setLaunchType(type)}
-              className={`flex-1 py-2 px-3 rounded-xl font-medium transition-colors text-sm ${
+              className={`flex-1 py-[7px] px-3 rounded-xl font-medium transition-colors text-base flex flex-col items-center ${
                 launchType === type
                   ? 'bg-blue-600 text-white shadow-lg'
                   : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
               }`}
             >
-              {type === 'satellite' ? 'Satellite' : type === 'drv' ? 'DRV' : 'GEO TUG'}
+              <span>{type === 'satellite' ? 'Satellite' : type === 'drv' ? 'DRV' : 'GEO Tug'}</span>
+              <span className="text-xs opacity-75 mt-1">
+                ${(getLaunchTypeCost(type) / 1e6).toFixed(1)}M
+              </span>
             </button>
           ))}
         </div>
@@ -123,7 +141,7 @@ export function ControlPanel() {
               key={orbit}
               onClick={() => setSelectedOrbit(orbit)}
               disabled={launchType === 'geotug'}
-              className={`flex-1 py-2 px-6 rounded-xl font-medium transition-colors ${
+              className={`flex-1 py-[7px] px-6 rounded-xl font-medium transition-colors text-lg ${
                 (launchType === 'geotug' ? 'GEO' : selectedOrbit) === orbit
                   ? 'bg-blue-600 text-white shadow-lg'
                   : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
@@ -150,7 +168,7 @@ export function ControlPanel() {
                   <button
                     key={type}
                     onClick={() => setDrvType(type)}
-                    className={`flex-1 py-3 px-6 rounded-xl font-medium capitalize transition-colors ${
+                    className={`flex-1 py-[7px] px-6 rounded-xl font-medium capitalize transition-colors text-lg ${
                       drvType === type
                         ? 'bg-blue-600 text-white shadow-lg'
                         : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
@@ -188,7 +206,7 @@ export function ControlPanel() {
         <button
           onClick={handleLaunch}
           disabled={!canAfford}
-          className={`w-full py-3 px-6 rounded-xl font-bold uppercase tracking-wide transition-all mt-[30px] ${
+          className={`w-full py-[11px] px-6 rounded-xl font-bold uppercase tracking-wide transition-all mt-[30px] text-lg ${
             canAfford
               ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white shadow-lg hover:shadow-xl'
               : 'bg-slate-700 text-slate-500 cursor-not-allowed'
