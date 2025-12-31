@@ -27,18 +27,20 @@ No new dependencies required. Will use existing:
 
 ### CSV Structure (`satellites.csv`)
 - **Location**: `/Users/frankblau/Downloads/satellites.csv`
-- **Total records**: 196 satellites
+- **Total records**: 794 satellites
 - **Columns**: 
-  - `name`: Satellite name (e.g., "Meteosat-11", "Starlink-1001")
-  - `country`: Country of origin (e.g., "Germany", "USA", "Japan")
+  - `name`: Satellite name (e.g., "Meteosat-11", "Starlink-1001", "GPS III SV01")
+  - `country`: Country of origin (e.g., "Germany", "USA", "Japan", "China", "India")
   - `type`: Satellite type - "Weather", "Comms", or "GPS"
   - `weight_kg`: Weight in kilograms (numeric)
+  - `launch_vehicle`: Launch vehicle name (e.g., "Falcon 9", "Ariane 5", "Long March 3B")
+  - `launch_site`: Launch site location (e.g., "Cape Canaveral", "Kourou", "Xichang")
 
 ### Type Distribution
-- **Weather**: 46 satellites
-- **Comms**: 99 satellites  
-- **GPS**: 51 satellites
-- **Total**: 196 satellites
+- **Weather**: 234 satellites
+- **Comms**: 322 satellites  
+- **GPS**: 238 satellites
+- **Total**: 794 satellites
 
 ## Implementation Approach
 
@@ -56,6 +58,8 @@ interface SatelliteMetadata {
   country: string;
   type: SatelliteType; // 'Weather' | 'Comms' | 'GPS'
   weight_kg: number;
+  launch_vehicle: string;
+  launch_site: string;
 }
 ```
 
@@ -79,6 +83,8 @@ export interface Satellite {
     name: string;
     country: string;
     weight_kg: number;
+    launch_vehicle: string;
+    launch_site: string;
   };
 }
 ```
@@ -143,11 +149,15 @@ export interface GameState {
 
 ### 6. Event Message Formats
 
-**Enhanced message examples**:
+**Enhanced message examples** (with extended metadata):
+- **Launch**: `"Launched GPS satellite 'QZSS-2' (Japan, 4000 kg, H-IIA from Tanegashima) in MEO orbit"`
+- **Collision**: `"Collision in LEO orbit involving 'Starlink-1234' (USA, 260 kg, Falcon 9) - debris created"`
+- **Capture**: `"Cooperative DRV captured satellite 'Meteosat-11' (Germany, 2100 kg, Ariane 5 from Kourou) in GEO orbit"`
+- **Graveyard**: `"GeoTug moved 'GOES-16' (USA, 2857 kg, Atlas V from Cape Canaveral) to graveyard orbit"`
+
+**Alternative shorter format** (if messages too long):
 - **Launch**: `"Launched GPS satellite 'QZSS-2' (Japan, 4000 kg) in MEO orbit"`
-- **Collision**: `"Collision in LEO orbit involving 'Starlink-1234' (USA, 260 kg) - debris created"`
-- **Capture**: `"Cooperative DRV captured satellite 'Meteosat-11' (Germany, 2100 kg) in GEO orbit"`
-- **Graveyard**: `"GeoTug moved 'GOES-16' (USA, 2857 kg) to graveyard orbit"`
+- Include full metadata in `details` object only
 
 ## Source Code Changes
 
@@ -204,7 +214,9 @@ If time permits, update UI components to display satellite metadata:
   metadata: {
     name: "Meteosat-11",
     country: "Germany",
-    weight_kg: 2100
+    weight_kg: 2100,
+    launch_vehicle: "Ariane 5",
+    launch_site: "Kourou"
   },
   // ... other fields
 }
@@ -225,7 +237,7 @@ If time permits, update UI components to display satellite metadata:
 2. **Verify pool management**: Launch multiple satellites of same type, ensure no duplicates
 3. **Verify event logs**: Check that all event types include satellite metadata
 4. **Game reset**: Verify pool resets properly between games
-5. **Pool exhaustion**: Launch 46+ Weather satellites to test pool exhaustion behavior (Weather has smallest pool relative to typical usage)
+5. **Pool exhaustion**: Launch 234+ Weather satellites to test pool exhaustion behavior (Weather has smallest pool)
 
 ### Event Verification Checklist
 - [ ] Satellite launch events show metadata
@@ -241,9 +253,11 @@ If time permits, update UI components to display satellite metadata:
 
 ## Performance Considerations
 
-- Satellite pool size is small (196 items total), no performance concerns
-- Pool lookup by type is O(n) but n is small (max 99 for Comms)
-- Consider using Map/Set if performance becomes an issue (unlikely)
+- Satellite pool size is moderate (794 items total), minimal performance concerns
+- Pool lookup by type is O(n) but n is manageable (max 322 for Comms)
+- Random selection from filtered pool is O(n) where n ≤ 322
+- Array operations (filter, splice) are acceptable for this dataset size
+- Consider using Map/Set grouped by type if performance becomes an issue (unlikely given typical game length)
 
 ## Future Enhancements (Out of Scope)
 

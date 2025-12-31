@@ -38,14 +38,15 @@ Do not make assumptions on important decisions — get clarification first.
 **Tasks**:
 1. Convert CSV file to TypeScript array (manually or programmatically)
 2. Create `kessler-game/src/game/satelliteMetadata.ts` with:
-   - `SatelliteMetadata` interface
-   - Exported array of all satellite metadata (196 satellites total)
+   - `SatelliteMetadata` interface (6 fields: name, country, type, weight_kg, launch_vehicle, launch_site)
+   - Exported array of all satellite metadata (794 satellites total)
 3. Verify type alignment (CSV types match SatelliteType enum: "Weather", "Comms", "GPS")
 
 **Verification**:
 - TypeScript compilation succeeds
 - Data structure matches spec
-- All 196 satellites properly converted (46 Weather, 99 Comms, 51 GPS)
+- All 794 satellites properly converted (234 Weather, 322 Comms, 238 GPS)
+- All 6 metadata fields present for each satellite
 
 ---
 
@@ -54,9 +55,9 @@ Do not make assumptions on important decisions — get clarification first.
 **Objective**: Extend type system to support satellite metadata and pool management.
 
 **Tasks**:
-1. Update `src/game/types.ts`:
-   - Add optional `metadata` field to `Satellite` interface
-   - Add `SatelliteMetadata` interface (if not in data file)
+1. Update `kessler-game/src/game/types.ts`:
+   - Add optional `metadata` field to `Satellite` interface (with 5 fields: name, country, weight_kg, launch_vehicle, launch_site)
+   - Add `SatelliteMetadata` interface (if not in data file) with all 6 fields
    - Add `availableSatellitePool` to `GameState` interface
 2. Verify no TypeScript errors introduced
 
@@ -95,10 +96,11 @@ Do not make assumptions on important decisions — get clarification first.
 **Objective**: Include satellite metadata in launch event messages.
 
 **Tasks**:
-1. Update `src/store/slices/eventSlice.ts`:
+1. Update `kessler-game/src/store/slices/eventSlice.ts`:
    - Modify `launchSatellite` event case to include metadata in message
-   - Format: `"Launched GPS satellite 'QZSS-2' (Japan, 4000 kg) in MEO orbit"`
-   - Add metadata to event details object
+   - Format: `"Launched GPS satellite 'QZSS-2' (Japan, 4000 kg, H-IIA from Tanegashima) in MEO orbit"`
+   - Alternative shorter format if too long: Include name/country/weight in message, full metadata in details
+   - Add all metadata fields to event details object
 
 **Verification**:
 - Launch events show satellite metadata
@@ -111,18 +113,19 @@ Do not make assumptions on important decisions — get clarification first.
 **Objective**: Include satellite metadata in all satellite-related events.
 
 **Tasks**:
-1. Update `src/hooks/useGameSpeed.ts`:
+1. Update `kessler-game/src/hooks/useGameSpeed.ts`:
    - **Collision events** (line ~94-100):
      - Look up satellites involved using `collision.objectIds`
-     - Include satellite metadata in collision messages
-     - Add metadata to event details
+     - Include satellite metadata in collision messages (name, country, weight, vehicle/site)
+     - Add all metadata fields to event details
    - **Debris removal events** (line ~76-84):
      - When satellites are captured/removed, include their metadata
-     - Update message format
+     - Update message format with extended metadata
    - **Graveyard move events** (currently missing):
      - Add event logging for `recentGraveyardMoves`
      - Include satellite metadata in messages
-     - Format: `"GeoTug moved 'GOES-16' (USA, 2857 kg) to graveyard orbit"`
+     - Format: `"GeoTug moved 'GOES-16' (USA, 2857 kg, Atlas V from Cape Canaveral) to graveyard orbit"`
+     - Or shorter format if messages too verbose
 
 **Verification**:
 - All event types include satellite metadata when applicable
@@ -138,10 +141,10 @@ Do not make assumptions on important decisions — get clarification first.
 **Tasks**:
 1. Manual testing:
    - Launch satellites of each type (Weather, Comms, GPS)
-   - Verify unique metadata assigned
+   - Verify unique metadata assigned (all 6 fields populated)
    - Verify no duplicate satellites used
    - Verify pool resets on game restart
-   - Test pool exhaustion (launch 46+ Weather satellites to exhaust Weather pool)
+   - Test pool exhaustion (launch 234+ Weather satellites to exhaust Weather pool)
 2. Check all event types:
    - Launch events
    - Collision events involving satellites
