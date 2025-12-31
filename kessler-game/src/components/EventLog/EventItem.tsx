@@ -25,17 +25,24 @@ function formatTimestamp(timestamp: number): string {
   return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${milliseconds.toString().padStart(3, '0')}`;
 }
 
-export function EventItem({ event }: EventItemProps) {
+export function EventItem({ event, showDetails = false }: EventItemProps & { showDetails?: boolean }) {
   const colors = eventColorMap[event.type];
   
   return (
     <div className={`${colors.bg} border-l-4 ${colors.border} rounded-lg pl-[10px] pr-[5px] py-[5px] transition-all hover:translate-x-1`}>
       <div className="flex items-start gap-3">
         <div className={`text-xs font-mono ${colors.text} font-semibold min-w-[110px]`}>
-          Day {event.day} • {formatTimestamp(event.timestamp)}
+          {showDetails ? `T${event.turn} • ` : ''}Day {event.day} • {formatTimestamp(event.timestamp)}
         </div>
         <div className="text-sm text-gray-300 flex-1">
           {event.message}
+          {showDetails && event.details && Object.keys(event.details).length > 0 && (
+            <div className="mt-2 text-xs font-mono bg-slate-900/50 rounded p-2 overflow-x-auto">
+              <pre className="text-gray-400 whitespace-pre-wrap break-all">
+                {JSON.stringify(event.details, null, 2)}
+              </pre>
+            </div>
+          )}
         </div>
       </div>
     </div>

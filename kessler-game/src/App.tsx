@@ -9,6 +9,7 @@ import { SatelliteChart } from './components/Charts/SatelliteChart';
 import { DebrisRemovalChart } from './components/Charts/DebrisRemovalChart';
 import { MissionPanel } from './components/MissionPanel/MissionPanel';
 import { EventLog } from './components/EventLog/EventLog';
+import { DetailedEventLog } from './components/EventLog/DetailedEventLog';
 import { CollisionSettings } from './components/Configuration/CollisionSettings';
 import { OrbitalSpeedSettings } from './components/Configuration/OrbitalSpeedSettings';
 import { SolarStormSettings } from './components/Configuration/SolarStormSettings';
@@ -86,10 +87,13 @@ function App() {
       id: 'analytics',
       label: 'Analytics',
       content: (
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          <DebrisChart data={history} />
-          <SatelliteChart data={history} />
-          <DebrisRemovalChart data={history} />
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            <DebrisChart data={history} />
+            <SatelliteChart data={history} />
+            <DebrisRemovalChart data={history} />
+          </div>
+          <DetailedEventLog />
         </div>
       ),
     },
