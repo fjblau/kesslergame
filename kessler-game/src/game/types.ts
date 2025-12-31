@@ -9,6 +9,7 @@ export type DebrisType = 'cooperative' | 'uncooperative';
 export type GameSpeed = 'paused' | 'normal' | 'fast';
 export type BudgetDifficulty = 'easy' | 'normal' | 'hard' | 'challenge';
 export type RiskLevel = 'LOW' | 'MEDIUM' | 'CRITICAL';
+export type SolarFlareClass = 'A' | 'B' | 'C' | 'M' | 'X';
 
 export interface Satellite {
   id: string;
@@ -111,6 +112,14 @@ export interface LaunchedSatelliteInfo {
   day: number;
 }
 
+export interface SolarFlareEvent {
+  class: SolarFlareClass;
+  intensity: number;
+  xRayFlux: number;
+  debrisRemovalRate: Record<OrbitLayer, number>;
+  affectedLayers: OrbitLayer[];
+}
+
 export interface GameState {
   step: number;
   maxSteps: number;
@@ -141,6 +150,7 @@ export interface GameState {
   orbitalSpeedGEO: number;
   orbitalSpeedGRAVEYARD: number;
   solarStormProbability: number;
+  lastSolarFlare?: SolarFlareEvent;
   drvUncooperativeCapacityMin: number;
   drvUncooperativeCapacityMax: number;
   drvUncooperativeSuccessRate: number;
