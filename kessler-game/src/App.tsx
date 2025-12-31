@@ -67,6 +67,13 @@ function App() {
     return <GameSetupScreen onStart={() => setGameStarted(true)} />;
   }
 
+  const handleNewGame = () => {
+    dispatch(resetGame());
+    dispatch(resetScore());
+    stopAllSounds();
+    setGameStarted(false);
+  };
+
   const tabs = [
     {
       id: 'launch',
@@ -78,7 +85,7 @@ function App() {
           </div>
           <div className="flex flex-col gap-6">
             <OrbitVisualization />
-            <GameSpeedControl />
+            <GameSpeedControl onNewGame={handleNewGame} />
           </div>
           <div className="w-[600px] flex flex-col gap-6 h-full">
             <StatsPanel />
@@ -710,27 +717,10 @@ function App() {
     },
   ];
 
-  const handleNewGame = () => {
-    dispatch(resetGame());
-    dispatch(resetScore());
-    stopAllSounds();
-    setGameStarted(false);
-  };
-
   return (
     <div className="min-h-screen p-8">
       <div className="max-w-[2350px] mx-auto space-y-6">
         <header className="relative text-center mb-8">
-          <div className="absolute left-0 top-0">
-            <button
-              onClick={handleNewGame}
-              className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-semibold transition-all shadow-md hover:shadow-lg"
-              title="Return to start screen"
-            >
-              <span className="text-xl">🏠</span>
-              <span>New Game</span>
-            </button>
-          </div>
           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
             Space Debris Removal
           </h1>
