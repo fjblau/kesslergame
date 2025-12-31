@@ -339,3 +339,22 @@ export function stopTargetingLoop() {
     // Ignore audio errors
   }
 }
+
+export function playSatelliteDrop() {
+  if (!soundEnabled || audioPaused) return;
+  try {
+    const audio = new Audio('/satellite-drop.mp3');
+    audio.volume = 0.5;
+    activeAudioElements.add(audio);
+    
+    audio.addEventListener('ended', () => {
+      activeAudioElements.delete(audio);
+    });
+    
+    audio.play().catch(() => {
+      activeAudioElements.delete(audio);
+    });
+  } catch {
+    // Ignore audio errors
+  }
+}
