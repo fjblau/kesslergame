@@ -172,6 +172,7 @@ const initialState: GameState = {
   recentlyExpiredDRVs: [],
   recentDebrisRemovals: [],
   recentGraveyardMoves: [],
+  recentlyLaunchedSatellites: [],
   cascadeTriggered: false,
   lastCascadeTurn: undefined,
   totalCascades: 0,
@@ -207,6 +208,7 @@ export const gameSlice = createSlice({
         recentCollisions: [],
         recentlyExpiredDRVs: [],
         recentDebrisRemovals: [],
+        recentlyLaunchedSatellites: [],
         cascadeTriggered: false,
         lastCascadeTurn: undefined,
         totalCascades: 0,
@@ -236,6 +238,7 @@ export const gameSlice = createSlice({
       state.recentCollisions = [];
       state.recentlyExpiredDRVs = [];
       state.recentDebrisRemovals = [];
+      state.recentlyLaunchedSatellites = [];
       state.cascadeTriggered = false;
       state.lastCascadeTurn = undefined;
       state.totalCascades = 0;
@@ -285,6 +288,11 @@ export const gameSlice = createSlice({
           ...(metadata && { metadata }),
         };
         state.satellites.push(satellite);
+        state.recentlyLaunchedSatellites.push({
+          satellite,
+          turn: action.payload.turn,
+          day: action.payload.day,
+        });
       },
       prepare: (payload: {
         orbit: OrbitLayer;

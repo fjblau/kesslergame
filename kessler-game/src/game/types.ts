@@ -98,6 +98,12 @@ export interface GraveyardMoveInfo {
   purpose: SatelliteType;
 }
 
+export interface LaunchedSatelliteInfo {
+  satellite: Satellite;
+  turn: number;
+  day: number;
+}
+
 export interface GameState {
   step: number;
   maxSteps: number;
@@ -118,6 +124,7 @@ export interface GameState {
   recentlyExpiredDRVs: ExpiredDRVInfo[];
   recentDebrisRemovals: DebrisRemovalInfo[];
   recentGraveyardMoves: GraveyardMoveInfo[];
+  recentlyLaunchedSatellites: LaunchedSatelliteInfo[];
   collisionAngleThreshold: number;
   collisionRadiusMultiplier: number;
   debrisPerCollision: number;
