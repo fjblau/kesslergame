@@ -30,7 +30,7 @@ export function SatellitePurposeSelector({ selected, onChange }: SatellitePurpos
             >
               <div className="flex items-center justify-center gap-2">
                 <span className="text-2xl">{config.icon}</span>
-                <span className="font-medium">{option}</span>
+                <span className="font-medium text-lg">{option}</span>
               </div>
               {config.discount > 0 && (
                 <div className="text-xs text-green-400 mt-1">

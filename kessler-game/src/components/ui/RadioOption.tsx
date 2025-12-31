@@ -21,11 +21,11 @@ export function RadioOption({ checked, onChange, label, description, children }:
         className="mt-1 w-4 h-4 accent-blue-500 cursor-pointer"
       />
       <div className="flex-1">
-        <div className={`font-semibold text-base ${checked ? 'text-white' : 'text-gray-200'}`}>
+        <div className={`font-semibold text-lg ${checked ? 'text-white' : 'text-gray-200'}`}>
           {label}
         </div>
         {description && (
-          <div className={`text-base mt-1 ${checked ? 'text-blue-100' : 'text-gray-400'}`}>{description}</div>
+          <div className={`text-lg mt-1 ${checked ? 'text-blue-100' : 'text-gray-400'}`}>{description}</div>
         )}
         {children}
       </div>
