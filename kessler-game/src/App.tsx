@@ -21,13 +21,14 @@ import { useGameSpeed } from './hooks/useGameSpeed';
 import { useAppSelector } from './store/hooks';
 import { GameOverModal } from './components/GameOver/GameOverModal';
 import { ScoreDisplay } from './components/Score/ScoreDisplay';
-import { playBackgroundMusic, stopAllSounds, setSoundEnabled } from './utils/audio';
+import { playBackgroundMusic, stopAllSounds, setSoundEnabled, pauseAllAudio, resumeAllAudio } from './utils/audio';
 
 function App() {
   const [gameStarted, setGameStarted] = useState(false);
   const history = useAppSelector(state => state.game.history);
   const gameOver = useAppSelector(state => state.game.gameOver);
   const soundEnabledState = useAppSelector(state => state.game.soundEnabled);
+  const gameSpeed = useAppSelector(state => state.ui.gameSpeed);
 
   useGameSpeed();
 
@@ -42,6 +43,14 @@ function App() {
       stopAllSounds();
     }
   }, [gameStarted, gameOver]);
+
+  useEffect(() => {
+    if (gameSpeed === 'paused') {
+      pauseAllAudio();
+    } else if (gameStarted && !gameOver) {
+      resumeAllAudio();
+    }
+  }, [gameSpeed, gameStarted, gameOver]);
 
   useEffect(() => {
     return () => {
