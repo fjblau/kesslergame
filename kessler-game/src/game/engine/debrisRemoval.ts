@@ -347,7 +347,7 @@ export function processGeoTugOperations(
       };
     }
     
-    const orbitsRemaining = (drv.captureOrbitsRemaining ?? ORBITS_TO_HOLD) - 1;
+    const orbitsRemaining = (drv.captureOrbitsRemaining !== undefined ? drv.captureOrbitsRemaining : ORBITS_TO_HOLD) - 1;
     
     if (orbitsRemaining <= 0) {
       return {
