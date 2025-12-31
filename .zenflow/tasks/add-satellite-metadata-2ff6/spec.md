@@ -27,7 +27,7 @@ No new dependencies required. Will use existing:
 
 ### CSV Structure (`satellites.csv`)
 - **Location**: `/Users/frankblau/Downloads/satellites.csv`
-- **Total records**: 197 satellites
+- **Total records**: 196 satellites
 - **Columns**: 
   - `name`: Satellite name (e.g., "Meteosat-11", "Starlink-1001")
   - `country`: Country of origin (e.g., "Germany", "USA", "Japan")
@@ -35,18 +35,18 @@ No new dependencies required. Will use existing:
   - `weight_kg`: Weight in kilograms (numeric)
 
 ### Type Distribution
-- **Weather**: 26 satellites
-- **Comms**: 96 satellites  
+- **Weather**: 46 satellites
+- **Comms**: 99 satellites  
 - **GPS**: 51 satellites
-- **Total**: 173 satellites (some rows might be empty/headers)
+- **Total**: 196 satellites
 
 ## Implementation Approach
 
 ### 1. Data Conversion & Storage
 
 **Convert CSV to TypeScript data**:
-- Parse the CSV file and convert to a TypeScript/JSON data structure
-- Store as `src/game/data/satelliteMetadata.ts`
+- Manually convert the CSV file to a TypeScript data structure (or parse programmatically)
+- Store as `kessler-game/src/game/satelliteMetadata.ts` (at project root, matching existing pattern)
 - Export as a typed array with interface matching CSV structure
 
 **Data Interface**:
@@ -94,9 +94,10 @@ export interface GameState {
 ```
 
 **State Management Requirements**:
-- Initialize `availableSatellitePool` from metadata on game start
+- Add `availableSatellitePool` to `initialState` constant in `gameSlice.ts`
+- Since `initializeGame` spreads `initialState`, this automatically handles game initialization
+- `resetGame` explicitly resets the pool from full metadata
 - Remove assigned satellite from pool when launching
-- Reset pool when game resets/initializes
 - Filter pool by satellite type when assigning
 
 ### 4. Game Logic Modifications
@@ -151,9 +152,10 @@ export interface GameState {
 ## Source Code Changes
 
 ### Files to Create
-1. **`src/game/data/satelliteMetadata.ts`**
-   - TypeScript file with satellite metadata array
+1. **`kessler-game/src/game/satelliteMetadata.ts`**
+   - TypeScript file with satellite metadata array (converted from CSV)
    - Exported constant and type definition
+   - Note: File placed in `src/game/` to match existing structure (no `data/` subfolder)
 
 ### Files to Modify
 1. **`src/game/types.ts`**
@@ -223,7 +225,7 @@ If time permits, update UI components to display satellite metadata:
 2. **Verify pool management**: Launch multiple satellites of same type, ensure no duplicates
 3. **Verify event logs**: Check that all event types include satellite metadata
 4. **Game reset**: Verify pool resets properly between games
-5. **Pool exhaustion**: Launch 26+ Weather satellites, verify behavior
+5. **Pool exhaustion**: Launch 46+ Weather satellites to test pool exhaustion behavior (Weather has smallest pool relative to typical usage)
 
 ### Event Verification Checklist
 - [ ] Satellite launch events show metadata
@@ -239,8 +241,8 @@ If time permits, update UI components to display satellite metadata:
 
 ## Performance Considerations
 
-- Satellite pool size is small (197 items), no performance concerns
-- Pool lookup by type is O(n) but n is small
+- Satellite pool size is small (196 items total), no performance concerns
+- Pool lookup by type is O(n) but n is small (max 99 for Comms)
 - Consider using Map/Set if performance becomes an issue (unlikely)
 
 ## Future Enhancements (Out of Scope)

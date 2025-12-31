@@ -36,16 +36,16 @@ Do not make assumptions on important decisions — get clarification first.
 **Objective**: Convert the satellites.csv file into a TypeScript data structure.
 
 **Tasks**:
-1. Parse the CSV file and convert to TypeScript array
-2. Create `src/game/data/satelliteMetadata.ts` with:
+1. Convert CSV file to TypeScript array (manually or programmatically)
+2. Create `kessler-game/src/game/satelliteMetadata.ts` with:
    - `SatelliteMetadata` interface
-   - Exported array of all satellite metadata
-3. Verify type alignment (CSV types match SatelliteType enum)
+   - Exported array of all satellite metadata (196 satellites total)
+3. Verify type alignment (CSV types match SatelliteType enum: "Weather", "Comms", "GPS")
 
 **Verification**:
 - TypeScript compilation succeeds
 - Data structure matches spec
-- All 197 satellites properly converted
+- All 196 satellites properly converted (46 Weather, 99 Comms, 51 GPS)
 
 ---
 
@@ -71,17 +71,17 @@ Do not make assumptions on important decisions — get clarification first.
 **Objective**: Add pool initialization and management in game state.
 
 **Tasks**:
-1. Update `src/store/slices/gameSlice.ts`:
-   - Import satellite metadata
-   - Add `availableSatellitePool` to `initialState`
-   - Update `initializeGame` to reset pool from full metadata
-   - Update `resetGame` to reset pool from full metadata
+1. Update `kessler-game/src/store/slices/gameSlice.ts`:
+   - Import satellite metadata from `../game/satelliteMetadata`
+   - Add `availableSatellitePool` to `initialState` constant (initialized with full metadata array)
+   - Note: `initializeGame` spreads `initialState`, so pool auto-resets on game init
+   - Update `resetGame` to explicitly reset `state.availableSatellitePool` from full metadata
 2. Modify `launchSatellite` reducer:
-   - Filter pool by satellite `purpose` type
+   - Filter `state.availableSatellitePool` by satellite `purpose` type
    - Randomly select one satellite from filtered pool
-   - Assign metadata to new satellite
-   - Remove selected satellite from pool
-   - Handle case where pool is empty (optional metadata)
+   - Assign metadata to new satellite object
+   - Remove selected satellite from `state.availableSatellitePool`
+   - Handle case where pool is empty for that type (launch without metadata)
 
 **Verification**:
 - `npm run lint` passes
@@ -141,7 +141,7 @@ Do not make assumptions on important decisions — get clarification first.
    - Verify unique metadata assigned
    - Verify no duplicate satellites used
    - Verify pool resets on game restart
-   - Test pool exhaustion (launch 26+ Weather satellites)
+   - Test pool exhaustion (launch 46+ Weather satellites to exhaust Weather pool)
 2. Check all event types:
    - Launch events
    - Collision events involving satellites
