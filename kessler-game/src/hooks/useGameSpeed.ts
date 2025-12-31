@@ -220,19 +220,52 @@ export function useGameSpeed() {
       }, 10);
 
       if (checkSolarStorm(currentState.solarStormProbability)) {
-        const leoDebrisCountBefore = currentState.debris.filter(d => d.layer === 'LEO').length;
+        const debrisCountsByLayer: Record<string, number> = {
+          LEO: currentState.debris.filter(d => d.layer === 'LEO').length,
+          MEO: currentState.debris.filter(d => d.layer === 'MEO').length,
+          GEO: currentState.debris.filter(d => d.layer === 'GEO').length,
+        };
+        
         dispatch(triggerSolarStorm());
+        
         setTimeout(() => {
           const afterStormState = (store.getState() as RootState).game;
-          const leoDebrisCountAfter = afterStormState.debris.filter(d => d.layer === 'LEO').length;
-          const removedCount = leoDebrisCountBefore - leoDebrisCountAfter;
+          const flareEvent = afterStormState.lastSolarFlare;
+          
+          if (!flareEvent) return;
+          
+          const debrisRemoved: Record<string, number> = {};
+          let totalRemoved = 0;
+          
+          flareEvent.affectedLayers.forEach(layer => {
+            const afterCount = afterStormState.debris.filter(d => d.layer === layer).length;
+            const removed = debrisCountsByLayer[layer] - afterCount;
+            if (removed > 0) {
+              debrisRemoved[layer] = removed;
+              totalRemoved += removed;
+            }
+          });
+          
+          const layerMessages = Object.entries(debrisRemoved)
+            .map(([layer, count]) => `${count} from ${layer}`)
+            .join(', ');
+          
+          const flareClassification = `${flareEvent.class}${flareEvent.intensity.toFixed(1)}`;
+          const clearanceText = totalRemoved > 0 ? `Cleared ${layerMessages}` : 'No Debris Cleared';
+          const message = `☀️ ${flareClassification} Solar Flare detected! ${clearanceText}`;
           
           dispatch(addEvent({
             type: 'solar-storm',
             turn: afterStormState.step,
             day: afterStormState.days,
-            message: `☀️ Solar storm cleared ${removedCount} debris from LEO!`,
-            details: { debrisRemoved: removedCount }
+            message,
+            details: {
+              flareClass: flareEvent.class,
+              intensity: flareEvent.intensity,
+              xRayFlux: flareEvent.xRayFlux,
+              debrisRemoved,
+              totalRemoved,
+            }
           }));
         }, 10);
       }

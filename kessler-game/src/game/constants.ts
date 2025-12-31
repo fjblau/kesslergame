@@ -3,7 +3,8 @@ import type {
   InsuranceTier, 
   DRVTargetPriority,
   SatelliteType,
-  BudgetDifficulty
+  BudgetDifficulty,
+  SolarFlareClass
 } from './types';
 
 export const LAUNCH_COSTS: Record<OrbitLayer, number> = {
@@ -156,6 +157,69 @@ export const LEO_LIFETIME = 20;
 export const SOLAR_STORM_PROBABILITY = 0.10;
 export const SOLAR_STORM_LEO_REMOVAL_RATE = 0.30;
 export const MAX_DEBRIS_LIMIT = 500;
+
+export const SOLAR_FLARE_CONFIG: Record<SolarFlareClass, {
+  xRayFluxRange: [number, number];
+  intensityRange: [number, number];
+  baseRemovalRate: Record<OrbitLayer, number>;
+  weight: number;
+}> = {
+  A: {
+    xRayFluxRange: [1e-8, 1e-7],
+    intensityRange: [1, 9],
+    baseRemovalRate: {
+      LEO: 0.05,
+      MEO: 0,
+      GEO: 0,
+      GRAVEYARD: 0,
+    },
+    weight: 0.05,
+  },
+  B: {
+    xRayFluxRange: [1e-7, 1e-6],
+    intensityRange: [1, 9],
+    baseRemovalRate: {
+      LEO: 0.10,
+      MEO: 0,
+      GEO: 0,
+      GRAVEYARD: 0,
+    },
+    weight: 0.35,
+  },
+  C: {
+    xRayFluxRange: [1e-6, 1e-5],
+    intensityRange: [1, 9],
+    baseRemovalRate: {
+      LEO: 0.20,
+      MEO: 0,
+      GEO: 0,
+      GRAVEYARD: 0,
+    },
+    weight: 0.35,
+  },
+  M: {
+    xRayFluxRange: [1e-5, 1e-4],
+    intensityRange: [1, 9],
+    baseRemovalRate: {
+      LEO: 0.35,
+      MEO: 0.05,
+      GEO: 0,
+      GRAVEYARD: 0,
+    },
+    weight: 0.20,
+  },
+  X: {
+    xRayFluxRange: [1e-4, 1e-3],
+    intensityRange: [1, 20],
+    baseRemovalRate: {
+      LEO: 0.50,
+      MEO: 0.20,
+      GEO: 0.05,
+      GRAVEYARD: 0,
+    },
+    weight: 0.05,
+  },
+};
 
 export const ORBITAL_SPEEDS: Record<OrbitLayer, number> = {
   LEO: 6.4,

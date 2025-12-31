@@ -5,7 +5,7 @@ import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG, MAX_DEBR
 import { detectCollisions, generateDebrisFromCollision, calculateTotalPayout } from '../../game/engine/collision';
 import { processDRVRemoval, processCooperativeDRVOperations, moveCooperativeDRV, processGeoTugOperations } from '../../game/engine/debrisRemoval';
 import { calculateRiskLevel } from '../../game/engine/risk';
-import { processSolarStorm } from '../../game/engine/events';
+import { processSolarStorm, generateSolarFlare } from '../../game/engine/events';
 import { SATELLITE_METADATA } from '../../game/satelliteMetadata';
 
 function hashId(id: string): number {
@@ -665,8 +665,10 @@ export const gameSlice = createSlice({
     },
 
     triggerSolarStorm: (state) => {
-      const result = processSolarStorm(state.debris);
+      const flareEvent = generateSolarFlare();
+      const result = processSolarStorm(state.debris, flareEvent);
       state.debris = result.remainingDebris;
+      state.lastSolarFlare = flareEvent;
       state.riskLevel = calculateRiskLevel(state.debris.length);
     },
 
