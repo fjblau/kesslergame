@@ -156,7 +156,7 @@ export const LEO_LIFETIME = 20;
 
 export const SOLAR_STORM_PROBABILITY = 0.10;
 export const SOLAR_STORM_LEO_REMOVAL_RATE = 0.30;
-export const MAX_DEBRIS_LIMIT = 500;
+export const MAX_DEBRIS_LIMIT = 250;
 
 export const SOLAR_FLARE_CONFIG: Record<SolarFlareClass, {
   xRayFluxRange: [number, number];
