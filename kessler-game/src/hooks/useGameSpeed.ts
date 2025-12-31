@@ -69,8 +69,8 @@ export function useGameSpeed() {
     const intervalDuration = Math.round(baseInterval * multiplier);
 
     const interval = setInterval(() => {
-      dispatch(advanceTurn());
       dispatch(processDRVOperations());
+      dispatch(advanceTurn());
 
       const currentState = (store.getState() as RootState).game;
 
