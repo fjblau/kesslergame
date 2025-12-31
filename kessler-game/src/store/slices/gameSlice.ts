@@ -6,6 +6,7 @@ import { detectCollisions, generateDebrisFromCollision, calculateTotalPayout } f
 import { processDRVRemoval, processCooperativeDRVOperations, moveCooperativeDRV, processGeoTugOperations } from '../../game/engine/debrisRemoval';
 import { calculateRiskLevel } from '../../game/engine/risk';
 import { processSolarStorm } from '../../game/engine/events';
+import { SATELLITE_METADATA } from '../../game/satelliteMetadata';
 
 function hashId(id: string): number {
   let hash = 0;
@@ -182,6 +183,7 @@ const initialState: GameState = {
   },
   soundEnabled: savedSoundEnabled,
   drvDecommissionTime: savedDRVDecommissionTime,
+  availableSatellitePool: [...SATELLITE_METADATA],
 };
 
 export const gameSlice = createSlice({
@@ -238,6 +240,7 @@ export const gameSlice = createSlice({
       state.lastCascadeTurn = undefined;
       state.totalCascades = 0;
       state.satellitesRecovered = 0;
+      state.availableSatellitePool = [...SATELLITE_METADATA];
     },
 
     launchSatellite: {
@@ -249,6 +252,27 @@ export const gameSlice = createSlice({
         day: number;
       }>) => {
         const { orbit, insuranceTier, purpose } = action.payload;
+        
+        const availableOfType = state.availableSatellitePool.filter(meta => meta.type === purpose);
+        let metadata: { name: string; country: string; weight_kg: number; launch_vehicle: string; launch_site: string } | undefined;
+        
+        if (availableOfType.length > 0) {
+          const randomIndex = Math.floor(Math.random() * availableOfType.length);
+          const selectedMetadata = availableOfType[randomIndex];
+          
+          metadata = {
+            name: selectedMetadata.name,
+            country: selectedMetadata.country,
+            weight_kg: selectedMetadata.weight_kg,
+            launch_vehicle: selectedMetadata.launch_vehicle,
+            launch_site: selectedMetadata.launch_site,
+          };
+          
+          state.availableSatellitePool = state.availableSatellitePool.filter(
+            meta => meta !== selectedMetadata
+          );
+        }
+        
         const satellite = {
           id: generateId(),
           ...randomPositionInLayer(orbit),
@@ -258,6 +282,7 @@ export const gameSlice = createSlice({
           insuranceTier,
           radius: OBJECT_RADII.satellite,
           captureRadius: OBJECT_RADII.satellite * CAPTURE_RADIUS_MULTIPLIER,
+          ...(metadata && { metadata }),
         };
         state.satellites.push(satellite);
       },
