@@ -19,7 +19,9 @@ import { SoundSettings } from './components/Configuration/SoundSettings';
 import { GeneralSettings } from './components/Configuration/GeneralSettings';
 import { Tabs } from './components/ui/Tabs';
 import { useGameSpeed } from './hooks/useGameSpeed';
-import { useAppSelector } from './store/hooks';
+import { useAppSelector, useAppDispatch } from './store/hooks';
+import { resetGame } from './store/slices/gameSlice';
+import { resetScore } from './store/slices/scoreSlice';
 import { GameOverModal } from './components/GameOver/GameOverModal';
 import { ScoreDisplay } from './components/Score/ScoreDisplay';
 import { playBackgroundMusic, stopAllSounds, setSoundEnabled, pauseAllAudio, resumeAllAudio } from './utils/audio';
@@ -27,6 +29,7 @@ import { playBackgroundMusic, stopAllSounds, setSoundEnabled, pauseAllAudio, res
 function App() {
   const [gameStarted, setGameStarted] = useState(false);
   const [activeTab, setActiveTab] = useState('launch');
+  const dispatch = useAppDispatch();
   const history = useAppSelector(state => state.game.history);
   const gameOver = useAppSelector(state => state.game.gameOver);
   const soundEnabledState = useAppSelector(state => state.game.soundEnabled);
@@ -707,10 +710,27 @@ function App() {
     },
   ];
 
+  const handleNewGame = () => {
+    dispatch(resetGame());
+    dispatch(resetScore());
+    stopAllSounds();
+    setGameStarted(false);
+  };
+
   return (
     <div className="min-h-screen p-8">
       <div className="max-w-[2350px] mx-auto space-y-6">
         <header className="relative text-center mb-8">
+          <div className="absolute left-0 top-0">
+            <button
+              onClick={handleNewGame}
+              className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-semibold transition-all shadow-md hover:shadow-lg"
+              title="Return to start screen"
+            >
+              <span className="text-xl">🏠</span>
+              <span>New Game</span>
+            </button>
+          </div>
           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
             Space Debris Removal
           </h1>

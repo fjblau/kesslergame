@@ -227,6 +227,7 @@ export const gameSlice = createSlice({
       const config = BUDGET_DIFFICULTY_CONFIG[state.budgetDifficulty];
       state.step = 0;
       state.days = 0;
+      state.playerName = '';
       state.satellites = [];
       state.debris = [];
       state.debrisRemovalVehicles = [];
