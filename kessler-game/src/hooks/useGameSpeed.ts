@@ -251,7 +251,8 @@ export function useGameSpeed() {
             .join(', ');
           
           const flareClassification = `${flareEvent.class}${flareEvent.intensity.toFixed(1)}`;
-          const message = `☀️ ${flareClassification} Solar Flare detected! Cleared ${layerMessages}`;
+          const clearanceText = totalRemoved > 0 ? `Cleared ${layerMessages}` : 'No Debris Cleared';
+          const message = `☀️ ${flareClassification} Solar Flare detected! ${clearanceText}`;
           
           dispatch(addEvent({
             type: 'solar-storm',
