@@ -324,9 +324,6 @@ export const gameSlice = createSlice({
 
     spendBudget: (state, action: PayloadAction<number>) => {
       state.budget -= action.payload;
-      if (state.budget < 0 || state.step >= state.maxSteps || state.debris.length > MAX_DEBRIS_LIMIT) {
-        state.gameOver = true;
-      }
     },
 
     addBudget: (state, action: PayloadAction<number>) => {
@@ -498,10 +495,6 @@ export const gameSlice = createSlice({
         debrisRemoved: totalDebrisRemoved,
         activeDRVCount: activeDRVs,
       });
-
-      if (state.budget < 0 || state.step >= state.maxSteps || state.debris.length > MAX_DEBRIS_LIMIT) {
-        state.gameOver = true;
-      }
     },
 
     addSatelliteRevenue: (state) => {
@@ -595,10 +588,6 @@ export const gameSlice = createSlice({
       state.recentCollisions.push(...collisionEvents);
 
       state.riskLevel = calculateRiskLevel(state.debris.length);
-
-      if (state.budget < 0 || state.step >= state.maxSteps || state.debris.length > MAX_DEBRIS_LIMIT) {
-        state.gameOver = true;
-      }
     },
 
     decommissionExpiredDRVs: (state) => {

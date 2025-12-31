@@ -6,7 +6,11 @@ import { MAX_DEBRIS_LIMIT } from '../../game/constants';
 import { SCORE_GRADES } from '../../game/scoring';
 import { selectScore } from '../../store/slices/scoreSlice';
 
-export function GameOverModal() {
+interface GameOverModalProps {
+  onViewAnalytics?: () => void;
+}
+
+export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
   const dispatch = useAppDispatch();
   const { budget, step, maxSteps, debris, satellites, debrisRemovalVehicles, budgetDifficulty } = useAppSelector(state => state.game);
   const scoreState = useAppSelector(selectScore);
@@ -48,6 +52,7 @@ export function GameOverModal() {
 
   const handleClose = () => {
     setIsVisible(false);
+    onViewAnalytics?.();
   };
 
   if (!isVisible) {

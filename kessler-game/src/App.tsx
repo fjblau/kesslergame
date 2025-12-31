@@ -25,6 +25,7 @@ import { playBackgroundMusic, stopAllSounds, setSoundEnabled, pauseAllAudio, res
 
 function App() {
   const [gameStarted, setGameStarted] = useState(false);
+  const [activeTab, setActiveTab] = useState('launch');
   const history = useAppSelector(state => state.game.history);
   const gameOver = useAppSelector(state => state.game.gameOver);
   const soundEnabledState = useAppSelector(state => state.game.soundEnabled);
@@ -714,10 +715,10 @@ function App() {
           </div>
         </header>
 
-        <Tabs tabs={tabs} defaultTab="launch" />
+        <Tabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
 
-      {gameOver && <GameOverModal />}
+      {gameOver && <GameOverModal onViewAnalytics={() => setActiveTab('analytics')} />}
     </div>
   );
 }
