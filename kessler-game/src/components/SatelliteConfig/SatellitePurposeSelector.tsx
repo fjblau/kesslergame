@@ -22,7 +22,7 @@ export function SatellitePurposeSelector({ selected, onChange }: SatellitePurpos
               key={option}
               onClick={() => onChange(option)}
               className={`
-                p-4 rounded-xl border-2 transition-all min-h-[88px] flex flex-col items-center justify-center
+                p-[7px] rounded-xl border-2 transition-all min-h-[54px] flex flex-col items-center justify-center
                 ${isSelected 
                   ? 'border-blue-500 bg-blue-600 text-white shadow-lg' 
                   : 'border-slate-600 bg-slate-700 text-gray-300 hover:bg-slate-600 hover:border-slate-500'}
@@ -30,13 +30,8 @@ export function SatellitePurposeSelector({ selected, onChange }: SatellitePurpos
             >
               <div className="flex items-center justify-center gap-2">
                 <span className="text-2xl">{config.icon}</span>
-                <span className="font-medium">{option}</span>
+                <span className="font-medium text-lg">{option}</span>
               </div>
-              {config.discount > 0 && (
-                <div className="text-sm text-green-400 mt-1">
-                  -{(config.discount * 100).toFixed(0)}% cost
-                </div>
-              )}
             </button>
           );
         })}
