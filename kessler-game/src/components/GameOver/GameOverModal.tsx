@@ -120,7 +120,7 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
             </div>
             <div className="flex justify-between items-center py-2 px-3 bg-slate-800/50 rounded-lg">
               <span className="text-gray-300 text-sm flex items-center gap-2">
-                <span>♻️</span> Satellites Recovered
+                <span>♻️</span> Satellites Recovered ({scoreState.satellitesRecovered})
               </span>
               <span className="text-cyan-400 font-semibold">+{scoreState.satelliteRecoveryScore.toLocaleString()}</span>
             </div>
