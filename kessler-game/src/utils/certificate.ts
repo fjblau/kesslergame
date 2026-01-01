@@ -20,13 +20,30 @@ interface CertificateData {
 }
 
 async function loadImageAsDataURL(imageUrl: string): Promise<string> {
-  const response = await fetch(imageUrl);
-  const blob = await response.blob();
   return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsDataURL(blob);
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('Failed to get canvas context'));
+          return;
+        }
+        ctx.drawImage(img, 0, 0);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+        resolve(dataUrl);
+      } catch (error) {
+        reject(error);
+      }
+    };
+    img.onerror = (error) => {
+      console.error('Image load error:', error);
+      reject(new Error(`Failed to load image from ${imageUrl}`));
+    };
+    img.src = imageUrl;
   });
 }
 
