@@ -19,7 +19,28 @@ interface CertificateData {
   survivalScore: number;
 }
 
-export function generateCertificate(data: CertificateData): void {
+async function loadImageAsDataURL(imageUrl: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        reject(new Error('Failed to get canvas context'));
+        return;
+      }
+      ctx.drawImage(img, 0, 0);
+      resolve(canvas.toDataURL('image/jpeg'));
+    };
+    img.onerror = () => reject(new Error('Failed to load image'));
+    img.src = imageUrl;
+  });
+}
+
+export async function generateCertificate(data: CertificateData): Promise<void> {
   const doc = new jsPDF({
     orientation: 'landscape',
     unit: 'mm',
@@ -33,7 +54,7 @@ export function generateCertificate(data: CertificateData): void {
   doc.rect(0, 0, pageWidth, pageHeight, 'F');
 
   doc.setDrawColor(59, 130, 246);
-  doc.setLineWidth(2);
+  doc.setLineWidth(1);
   doc.rect(10, 10, pageWidth - 20, pageHeight - 20);
 
   doc.setDrawColor(139, 92, 246);
@@ -41,9 +62,11 @@ export function generateCertificate(data: CertificateData): void {
   doc.rect(12, 12, pageWidth - 24, pageHeight - 24);
 
   doc.setDrawColor(96, 165, 250);
-  doc.setLineWidth(2);
+  doc.setLineWidth(1);
   doc.rect(13, 13, 38, 38);
-  doc.addImage(missionPatchImage, 'JPEG', 15, 15, 36, 36);
+  
+  const imageDataUrl = await loadImageAsDataURL(missionPatchImage);
+  doc.addImage(imageDataUrl, 'JPEG', 15, 15, 36, 36);
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(36);

@@ -56,8 +56,8 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
     onViewAnalytics?.();
   };
 
-  const handleDownloadCertificate = () => {
-    generateCertificate({
+  const handleDownloadCertificate = async () => {
+    await generateCertificate({
       playerName,
       finalScore: scoreState.totalScore,
       grade,

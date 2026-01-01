@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Certificate Generation</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+  <h1>Certificate Generation Test</h1>
+  <button onclick="generateTestCertificate()">Generate Sample Certificate</button>
+  
+  <script type="module">
+    const missionPatchUrl = './src/assets/mission-patch.jpeg';
+    
+    async function loadImageAsDataURL(imageUrl) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            reject(new Error('Failed to get canvas context'));
+            return;
+          }
+          ctx.drawImage(img, 0, 0);
+          resolve(canvas.toDataURL('image/jpeg'));
+        };
+        img.onerror = () => reject(new Error('Failed to load image'));
+        img.src = imageUrl;
+      });
+    }
+    
+    window.generateTestCertificate = async function() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({
+        orientation: 'landscape',
+        unit: 'mm',
+        format: 'a4',
+      });
+
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+
+      doc.setFillColor(15, 23, 42);
+      doc.rect(0, 0, pageWidth, pageHeight, 'F');
+
+      doc.setDrawColor(59, 130, 246);
+      doc.setLineWidth(1);
+      doc.rect(10, 10, pageWidth - 20, pageHeight - 20);
+
+      doc.setDrawColor(139, 92, 246);
+      doc.setLineWidth(1);
+      doc.rect(12, 12, pageWidth - 24, pageHeight - 24);
+
+      doc.setDrawColor(96, 165, 250);
+      doc.setLineWidth(1);
+      doc.rect(13, 13, 38, 38);
+      
+      try {
+        const imageDataUrl = await loadImageAsDataURL(missionPatchUrl);
+        doc.addImage(imageDataUrl, 'JPEG', 15, 15, 36, 36);
+      } catch (error) {
+        console.error('Failed to load image:', error);
+        alert('Failed to load mission patch image. The PDF will be generated without it.');
+      }
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(36);
+      doc.setTextColor(96, 165, 250);
+      doc.text('MISSION COMPLETE', pageWidth / 2, 30, { align: 'center' });
+
+      doc.setFontSize(24);
+      doc.setTextColor(167, 139, 250);
+      doc.text('Space Debris Removal Certificate', pageWidth / 2, 42, { align: 'center' });
+
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(203, 213, 225);
+      doc.text('This certifies that', pageWidth / 2, 55, { align: 'center' });
+
+      doc.setFontSize(28);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(252, 211, 77);
+      doc.text('Test Player', pageWidth / 2, 67, { align: 'center' });
+
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(203, 213, 225);
+      doc.text('has successfully completed a mission in the Space Debris Management Program', pageWidth / 2, 77, { align: 'center' });
+
+      const leftCol = 30;
+      const rightCol = pageWidth / 2 + 10;
+      let yPos = 95;
+
+      doc.setFontSize(18);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(147, 197, 253);
+      doc.text('Mission Statistics', pageWidth / 2, yPos, { align: 'center' });
+      yPos += 12;
+
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(96, 165, 250);
+      doc.text('Performance Grade:', leftCol, yPos);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(252, 211, 77);
+      doc.text('S', leftCol + 50, yPos);
+
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(96, 165, 250);
+      doc.text('Final Score:', rightCol, yPos);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(252, 211, 77);
+      doc.text('125,000 points', rightCol + 50, yPos);
+      yPos += 8;
+
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(96, 165, 250);
+      doc.text('Difficulty Level:', leftCol, yPos);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(203, 213, 225);
+      doc.text('Hard', leftCol + 50, yPos);
+
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(96, 165, 250);
+      doc.text('Turns Survived:', rightCol, yPos);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(203, 213, 225);
+      doc.text('50 / 50', rightCol + 50, yPos);
+      yPos += 8;
+
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(96, 165, 250);
+      doc.text('Final Budget:', leftCol, yPos);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(203, 213, 225);
+      doc.text('$50,000', leftCol + 50, yPos);
+
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(96, 165, 250);
+      doc.text('Satellites Launched:', rightCol, yPos);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(203, 213, 225);
+      doc.text('10', rightCol + 50, yPos);
+      yPos += 8;
+
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(96, 165, 250);
+      doc.text('Debris Removed:', leftCol, yPos);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(203, 213, 225);
+      doc.text('100 pieces', leftCol + 50, yPos);
+
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(96, 165, 250);
+      doc.text('Final Debris Count:', rightCol, yPos);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(203, 213, 225);
+      doc.text('50 pieces', rightCol + 50, yPos);
+      yPos += 15;
+
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(147, 197, 253);
+      doc.text('Score Breakdown', pageWidth / 2, yPos, { align: 'center' });
+      yPos += 8;
+
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(203, 213, 225);
+      doc.text('Satellite Operations:', leftCol, yPos);
+      doc.setTextColor(96, 165, 250);
+      doc.text('+25,000', leftCol + 55, yPos);
+
+      doc.setTextColor(203, 213, 225);
+      doc.text('Debris Removal:', rightCol, yPos);
+      doc.setTextColor(134, 239, 172);
+      doc.text('+30,000', rightCol + 55, yPos);
+      yPos += 7;
+
+      doc.setTextColor(203, 213, 225);
+      doc.text('Satellite Recovery:', leftCol, yPos);
+      doc.setTextColor(103, 232, 249);
+      doc.text('+20,000', leftCol + 55, yPos);
+
+      doc.setTextColor(203, 213, 225);
+      doc.text('Budget Management:', rightCol, yPos);
+      doc.setTextColor(253, 224, 71);
+      doc.text('+25,000', rightCol + 55, yPos);
+      yPos += 7;
+
+      doc.setTextColor(203, 213, 225);
+      doc.text('Survival:', leftCol, yPos);
+      doc.setTextColor(192, 132, 252);
+      doc.text('+25,000', leftCol + 55, yPos);
+
+      const today = new Date();
+      const dateStr = today.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'italic');
+      doc.setTextColor(148, 163, 184);
+      doc.text(`Issued on ${dateStr}`, pageWidth / 2, pageHeight - 20, { align: 'center' });
+
+      doc.setFontSize(8);
+      doc.text('Space Debris Management Program - Earth Orbital Safety Division', pageWidth / 2, pageHeight - 15, { align: 'center' });
+
+      doc.save('Test_Certificate_Sample.pdf');
+      alert('Certificate generated successfully!');
+    };
+  </script>
+</body>
+</html>
