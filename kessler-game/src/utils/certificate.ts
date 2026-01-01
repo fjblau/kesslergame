@@ -63,10 +63,10 @@ export async function generateCertificate(data: CertificateData): Promise<void> 
 
   doc.setDrawColor(96, 165, 250);
   doc.setLineWidth(1);
-  doc.rect(13, 13, 38, 38);
+  doc.rect(23, 23, 38, 38);
   
   const imageDataUrl = await loadImageAsDataURL(missionPatchImage);
-  doc.addImage(imageDataUrl, 'JPEG', 15, 15, 36, 36);
+  doc.addImage(imageDataUrl, 'JPEG', 25, 25, 36, 36);
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(36);
