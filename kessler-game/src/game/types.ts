@@ -4,7 +4,6 @@ export type OrbitLayer = 'LEO' | 'MEO' | 'GEO' | 'GRAVEYARD';
 export type SatelliteType = 'Weather' | 'Comms' | 'GPS';
 export type InsuranceTier = 'none' | 'basic' | 'premium';
 export type DRVType = 'cooperative' | 'uncooperative' | 'geotug';
-export type DRVTargetPriority = 'auto' | 'cooperative-focus' | 'uncooperative-focus';
 export type DebrisType = 'cooperative' | 'uncooperative';
 export type GameSpeed = 'paused' | 'normal' | 'fast';
 export type BudgetDifficulty = 'easy' | 'normal' | 'hard' | 'challenge';
@@ -47,7 +46,6 @@ export interface DebrisRemovalVehicle {
   y: number;
   layer: OrbitLayer;
   removalType: DRVType;
-  targetPriority: DRVTargetPriority;
   age: number;
   maxAge: number;
   capacity: number;

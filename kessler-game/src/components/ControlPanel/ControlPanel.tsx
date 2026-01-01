@@ -3,12 +3,11 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { launchSatellite, launchDRV, spendBudget, advanceTurn, decommissionExpiredDRVs, triggerSolarStorm } from '../../store/slices/gameSlice';
 import { updateMissionProgress, trackDRVLaunch } from '../../store/slices/missionsSlice';
 import { addEvent } from '../../store/slices/eventSlice';
-import type { OrbitLayer, SatelliteType, InsuranceTier, DRVType, DRVTargetPriority } from '../../game/types';
-import { LAUNCH_COSTS, INSURANCE_CONFIG, DRV_CONFIG, DRV_PRIORITY_CONFIG, SATELLITE_PURPOSE_CONFIG, BUDGET_DIFFICULTY_CONFIG } from '../../game/constants';
+import type { OrbitLayer, SatelliteType, InsuranceTier, DRVType } from '../../game/types';
+import { LAUNCH_COSTS, INSURANCE_CONFIG, DRV_CONFIG, SATELLITE_PURPOSE_CONFIG, BUDGET_DIFFICULTY_CONFIG } from '../../game/constants';
 import { checkSolarStorm } from '../../game/engine/events';
 import { InsuranceTierSelector } from './InsuranceTierSelector';
 import { SatellitePurposeSelector } from '../SatelliteConfig/SatellitePurposeSelector';
-import { DRVTargetPriority as DRVTargetPrioritySelector } from '../DRVPanel/DRVTargetPriority';
 import { BudgetGauge } from './BudgetGauge';
 import { useStore } from 'react-redux';
 import type { RootState } from '../../store';
@@ -25,7 +24,6 @@ export function ControlPanel() {
   const [insuranceTier, setInsuranceTier] = useState<InsuranceTier>('basic');
   const [satellitePurpose, setSatellitePurpose] = useState<SatelliteType | 'Random'>('Random');
   const [drvType, setDrvType] = useState<DRVType>('cooperative');
-  const [drvPriority, setDrvPriority] = useState<DRVTargetPriority>('auto');
 
   const calculateCost = () => {
     if (launchType === 'satellite') {
@@ -35,8 +33,7 @@ export function ControlPanel() {
       return baseCost * (1 - purposeDiscount) + insuranceCost;
     } else if (launchType === 'drv') {
       const baseCost = DRV_CONFIG.costs[selectedOrbit][drvType];
-      const priorityModifier = DRV_PRIORITY_CONFIG[drvPriority].costModifier;
-      return baseCost * priorityModifier;
+      return baseCost;
     } else {
       return DRV_CONFIG.costs['GEO']['geotug'];
     }
@@ -50,8 +47,7 @@ export function ControlPanel() {
       return baseCost * (1 - purposeDiscount) + insuranceCost;
     } else if (type === 'drv') {
       const baseCost = DRV_CONFIG.costs[selectedOrbit][drvType];
-      const priorityModifier = DRV_PRIORITY_CONFIG[drvPriority].costModifier;
-      return baseCost * priorityModifier;
+      return baseCost;
     } else {
       return DRV_CONFIG.costs['GEO']['geotug'];
     }
@@ -74,10 +70,10 @@ export function ControlPanel() {
 
       dispatch(launchSatellite({ orbit: selectedOrbit, insuranceTier, purpose, day: gameState.days }));
     } else if (launchType === 'drv') {
-      dispatch(launchDRV({ orbit: selectedOrbit, drvType, targetPriority: drvPriority, day: gameState.days }));
+      dispatch(launchDRV({ orbit: selectedOrbit, drvType, day: gameState.days }));
       dispatch(trackDRVLaunch());
     } else {
-      dispatch(launchDRV({ orbit: 'GEO', drvType: 'geotug', targetPriority: 'auto', day: gameState.days }));
+      dispatch(launchDRV({ orbit: 'GEO', drvType: 'geotug', day: gameState.days }));
       dispatch(trackDRVLaunch());
     }
 
@@ -102,7 +98,7 @@ export function ControlPanel() {
 
     dispatch(updateMissionProgress(gameState));
     dispatch(decommissionExpiredDRVs());
-  }, [canAfford, store, dispatch, totalCost, launchType, satellitePurpose, selectedOrbit, insuranceTier, drvType, drvPriority]);
+  }, [canAfford, store, dispatch, totalCost, launchType, satellitePurpose, selectedOrbit, insuranceTier, drvType]);
 
   return (
     <>
@@ -179,7 +175,6 @@ export function ControlPanel() {
                 ))}
               </div>
             </div>
-            <DRVTargetPrioritySelector selected={drvPriority} onChange={setDrvPriority} />
           </>
         ) : (
           <div className="space-y-2">
