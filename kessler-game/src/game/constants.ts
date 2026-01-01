@@ -1,7 +1,6 @@
 import type { 
   OrbitLayer, 
   InsuranceTier, 
-  DRVTargetPriority,
   SatelliteType,
   BudgetDifficulty,
   SolarFlareClass
@@ -41,28 +40,6 @@ export const DRV_CONFIG = {
     cooperative: 10,
     uncooperative: 10,
     geotug: 999,
-  },
-};
-
-export const DRV_PRIORITY_CONFIG: Record<DRVTargetPriority, { 
-  cooperativeChance: number; 
-  costModifier: number;
-  description: string 
-}> = {
-  'auto': { 
-    cooperativeChance: 0.70, 
-    costModifier: 1.0,
-    description: '70% cooperative / 30% uncooperative'
-  },
-  'cooperative-focus': { 
-    cooperativeChance: 0.90, 
-    costModifier: 0.90,
-    description: '90% cooperative / 10% uncooperative'
-  },
-  'uncooperative-focus': { 
-    cooperativeChance: 0.10, 
-    costModifier: 1.20,
-    description: '10% cooperative / 90% uncooperative'
   },
 };
 

@@ -255,24 +255,6 @@ function App() {
               </div>
 
               <div className="mt-4 p-4 bg-gray-800 rounded-lg">
-                <h4 className="font-semibold text-purple-300 mb-2">Target Priority Strategies</h4>
-                <ul className="space-y-2">
-                  <li>
-                    <strong>Auto (Balanced):</strong> 70% cooperative / 30% uncooperative targeting
-                    <span className="text-sm text-gray-400 block">Standard cost multiplier (1.0x)</span>
-                  </li>
-                  <li>
-                    <strong>Cooperative-Focus:</strong> 90% cooperative / 10% uncooperative targeting
-                    <span className="text-sm text-gray-400 block">10% cost discount (0.9x multiplier)</span>
-                  </li>
-                  <li>
-                    <strong>Uncooperative-Focus:</strong> 10% cooperative / 90% uncooperative targeting
-                    <span className="text-sm text-gray-400 block">20% cost premium (1.2x multiplier)</span>
-                  </li>
-                </ul>
-              </div>
-
-              <div className="mt-4 p-4 bg-gray-800 rounded-lg">
                 <h4 className="font-semibold text-purple-300 mb-2">DRV Lifecycle</h4>
                 <p className="text-sm">DRVs are automatically decommissioned after a set number of turns (default: 10 turns, configurable in Configuration tab). They are completely removed from orbit and do not become debris—they safely deorbit and burn up in the atmosphere.</p>
                 <p className="text-sm text-gray-400 mt-2">Plan your DRV deployments strategically to ensure continuous debris removal coverage. Adjust decommission time in Configuration to fine-tune your strategy.</p>

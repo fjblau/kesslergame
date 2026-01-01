@@ -71,7 +71,7 @@ export const eventSlice = createSlice({
           action.payload.turn,
           action.payload.day ?? 0,
           `Deployed ${action.payload.drvType} DRV to ${action.payload.orbit} orbit`,
-          { orbit: action.payload.orbit, drvType: action.payload.drvType, targetPriority: action.payload.targetPriority }
+          { orbit: action.payload.orbit, drvType: action.payload.drvType }
         );
       })
       .addCase(notifyMissionComplete, (state, action) => {

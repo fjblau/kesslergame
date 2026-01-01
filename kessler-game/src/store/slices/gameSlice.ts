@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { GameState, OrbitLayer, SatelliteType, InsuranceTier, DRVType, DRVTargetPriority, BudgetDifficulty, DebrisRemovalVehicle, ExpiredDRVInfo, DebrisRemovalInfo, SatelliteCaptureInfo, GraveyardMoveInfo } from '../../game/types';
+import type { GameState, OrbitLayer, SatelliteType, InsuranceTier, DRVType, BudgetDifficulty, DebrisRemovalVehicle, ExpiredDRVInfo, DebrisRemovalInfo, SatelliteCaptureInfo, GraveyardMoveInfo } from '../../game/types';
 import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG, MAX_DEBRIS_LIMIT, ORBITAL_SPEEDS, CASCADE_THRESHOLD, RISK_SPEED_MULTIPLIERS, SATELLITE_REVENUE, OBJECT_RADII, CAPTURE_RADIUS_MULTIPLIER } from '../../game/constants';
 import { detectCollisions, generateDebrisFromCollision, calculateTotalPayout } from '../../game/engine/collision';
 import { processDRVRemoval, processCooperativeDRVOperations, moveCooperativeDRV, processGeoTugOperations } from '../../game/engine/debrisRemoval';
@@ -319,11 +319,10 @@ export const gameSlice = createSlice({
       reducer: (state, action: PayloadAction<{
         orbit: OrbitLayer;
         drvType: DRVType;
-        targetPriority: DRVTargetPriority;
         turn: number;
         day: number;
       }>) => {
-        const { orbit, drvType, targetPriority } = action.payload;
+        const { orbit, drvType } = action.payload;
         const [minCapacity, maxCapacity] = drvType === 'uncooperative' 
           ? [state.drvUncooperativeCapacityMin, state.drvUncooperativeCapacityMax]
           : DRV_CONFIG.capacity[drvType];
@@ -335,7 +334,6 @@ export const gameSlice = createSlice({
           ...randomPositionInLayer(orbit),
           layer: orbit,
           removalType: drvType,
-          targetPriority,
           age: 0,
           maxAge: state.drvDecommissionTime,
           capacity: Math.floor(Math.random() * (maxCapacity - minCapacity + 1)) + minCapacity,
@@ -349,7 +347,6 @@ export const gameSlice = createSlice({
       prepare: (payload: {
         orbit: OrbitLayer;
         drvType: DRVType;
-        targetPriority: DRVTargetPriority;
         turn?: number;
         day?: number;
       }) => ({

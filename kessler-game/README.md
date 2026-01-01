@@ -12,15 +12,11 @@ Modular React + TypeScript implementation of 5 core interactive inputs for the K
 - None ($0) / Basic ($500K → $1M payout) / Premium ($1M → $2.5M payout)
 - Integrated cost calculation
 
-### 3. **DRV Target Priority**
-- Auto (70/30 mix) / Cooperative Focus (90/10) / Uncooperative Focus (10/90)
-- Cost modifiers: Cooperative -10%, Uncooperative +20%
-
-### 4. **Satellite Purpose Selector**
+### 3. **Satellite Purpose Selector**
 - Weather ☁️ / Comms 📡 / GPS 🛰️ / Random 🎲 (-10% discount)
 - Player-controlled vs random selection
 
-### 5. **Budget Difficulty Modifier**
+### 4. **Budget Difficulty Modifier**
 - Easy ($150M, +$10M/10 turns)
 - Normal ($100M, +$5M/20 turns)
 - Hard ($75M, no income)
