@@ -61,10 +61,6 @@ export async function generateCertificate(data: CertificateData): Promise<void> 
   doc.setLineWidth(1);
   doc.rect(12, 12, pageWidth - 24, pageHeight - 24);
 
-  doc.setDrawColor(96, 165, 250);
-  doc.setLineWidth(1);
-  doc.rect(23, 23, 38, 38);
-  
   const imageDataUrl = await loadImageAsDataURL(missionPatchImage);
   doc.addImage(imageDataUrl, 'JPEG', 25, 25, 36, 36);
 
