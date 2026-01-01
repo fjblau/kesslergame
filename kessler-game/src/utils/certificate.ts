@@ -1,5 +1,5 @@
 import { jsPDF } from 'jspdf';
-import missionPatchImage from '../assets/mission-patch.jpeg';
+import missionPatchImage from '../assets/space-logo.png';
 
 interface CertificateData {
   playerName: string;
@@ -33,7 +33,7 @@ async function loadImageAsDataURL(imageUrl: string): Promise<string> {
           return;
         }
         ctx.drawImage(img, 0, 0);
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+        const dataUrl = canvas.toDataURL('image/png');
         resolve(dataUrl);
       } catch (error) {
         reject(error);
@@ -69,7 +69,7 @@ export async function generateCertificate(data: CertificateData): Promise<void> 
   doc.rect(12, 12, pageWidth - 24, pageHeight - 24);
 
   const imageDataUrl = await loadImageAsDataURL(missionPatchImage);
-  doc.addImage(imageDataUrl, 'JPEG', 25, 25, 36, 36);
+  doc.addImage(imageDataUrl, 'PNG', 25, 25, 36, 36);
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(36);

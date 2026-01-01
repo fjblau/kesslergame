@@ -77,7 +77,7 @@
   </div>
   
   <script>
-    const missionPatchUrl = '/mission-patch.jpeg';
+    const missionPatchUrl = '/space-logo.png';
     
     function setStatus(message, type = 'info') {
       const statusDiv = document.getElementById('status');
@@ -99,7 +99,7 @@
               return;
             }
             ctx.drawImage(img, 0, 0);
-            const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+            const dataUrl = canvas.toDataURL('image/png');
             resolve(dataUrl);
           } catch (error) {
             reject(error);
@@ -145,7 +145,7 @@
         setStatus('Loading mission patch...', 'info');
         const imageDataUrl = await loadImageAsDataURL(missionPatchUrl);
         setStatus('Rendering certificate...', 'info');
-        doc.addImage(imageDataUrl, 'JPEG', 25, 25, 36, 36);
+        doc.addImage(imageDataUrl, 'PNG', 25, 25, 36, 36);
 
         // Title
         doc.setFont('helvetica', 'bold');
