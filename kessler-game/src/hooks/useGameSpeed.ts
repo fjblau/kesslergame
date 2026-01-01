@@ -176,6 +176,13 @@ export function useGameSpeed() {
       dispatch(processCollisions());
       dispatch(addSatelliteRevenue());
 
+      const updatedStateAfterRevenue = (store.getState() as RootState).game;
+      if (autoPauseBudgetLow && updatedStateAfterRevenue.budget < 20_000_000 && !updatedStateAfterRevenue.gameOver) {
+        dispatch(setGameSpeed('paused'));
+        clearInterval(interval);
+        return;
+      }
+
       setTimeout(() => {
         const updatedState = (store.getState() as RootState).game;
         updatedState.recentCollisions.forEach(collision => {
