@@ -506,7 +506,7 @@ export const gameSlice = createSlice({
         state.budget -= state.budgetDrainAmount;
       }
 
-      if (state.budgetIncomeInterval > 0 && state.step >= state.nextIncomeAt) {
+      if (state.budgetIncomeInterval > 0 && state.step >= state.nextIncomeAt && state.satellites.length > 0) {
         state.budget += state.budgetIncomeAmount;
         state.nextIncomeAt += state.budgetIncomeInterval;
       }
