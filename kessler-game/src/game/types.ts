@@ -57,6 +57,12 @@ export interface DebrisRemovalVehicle {
   targetingTurnsRemaining?: number;
   radius: number;
   captureRadius?: number;
+  metadata?: {
+    name: string;
+    organization: string;
+    capture_system: string;
+    icon_suggestion: string;
+  };
 }
 
 export interface TurnHistory {

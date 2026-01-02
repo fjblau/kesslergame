@@ -7,6 +7,7 @@ import { processDRVRemoval, processCooperativeDRVOperations, moveCooperativeDRV,
 import { calculateRiskLevel } from '../../game/engine/risk';
 import { processSolarStorm, generateSolarFlare } from '../../game/engine/events';
 import { SATELLITE_METADATA } from '../../game/satelliteMetadata';
+import { selectDRVMetadata } from '../../game/drvMetadata';
 
 function hashId(id: string): number {
   let hash = 0;
@@ -321,14 +322,21 @@ export const gameSlice = createSlice({
         drvType: DRVType;
         turn: number;
         day: number;
+        metadata?: {
+          name: string;
+          organization: string;
+          capture_system: string;
+          icon_suggestion: string;
+        };
       }>) => {
-        const { orbit, drvType } = action.payload;
+        const { orbit, drvType, metadata } = action.payload;
         const [minCapacity, maxCapacity] = drvType === 'uncooperative' 
           ? [state.drvUncooperativeCapacityMin, state.drvUncooperativeCapacityMax]
           : DRV_CONFIG.capacity[drvType];
         const successRate = drvType === 'uncooperative'
           ? state.drvUncooperativeSuccessRate
           : DRV_CONFIG.successRate[drvType];
+        
         const drv = {
           id: generateId(),
           ...randomPositionInLayer(orbit),
@@ -341,6 +349,7 @@ export const gameSlice = createSlice({
           debrisRemoved: 0,
           radius: OBJECT_RADII.drv,
           captureRadius: OBJECT_RADII.drv * CAPTURE_RADIUS_MULTIPLIER,
+          ...(metadata && { metadata }),
         };
         state.debrisRemovalVehicles.push(drv);
       },
@@ -349,13 +358,31 @@ export const gameSlice = createSlice({
         drvType: DRVType;
         turn?: number;
         day?: number;
-      }) => ({
-        payload: { 
-          ...payload, 
-          turn: payload.turn ?? 0,
-          day: payload.day ?? 0
+      }) => {
+        let metadata: { name: string; organization: string; capture_system: string; icon_suggestion: string } | undefined;
+        
+        if (payload.drvType === 'cooperative' || payload.drvType === 'uncooperative') {
+          const selectedMetadata = selectDRVMetadata(payload.drvType);
+          
+          if (selectedMetadata) {
+            metadata = {
+              name: selectedMetadata.vehicle_name,
+              organization: selectedMetadata.organization,
+              capture_system: selectedMetadata.capture_system,
+              icon_suggestion: selectedMetadata.icon_suggestion,
+            };
+          }
         }
-      })
+        
+        return {
+          payload: { 
+            ...payload, 
+            turn: payload.turn ?? 0,
+            day: payload.day ?? 0,
+            metadata
+          }
+        };
+      }
     },
 
     spendBudget: (state, action: PayloadAction<number>) => {
