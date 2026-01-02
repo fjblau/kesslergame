@@ -65,13 +65,29 @@ export const eventSlice = createSlice({
         state.events = [];
       })
       .addCase(launchDRV, (state, action) => {
+        const { drvType, orbit, turn, day, metadata } = action.payload;
+        const drvName = metadata?.name || `${drvType} DRV`;
+        const message = `Deployed ${drvName} to ${orbit} orbit`;
+        
+        const details: Record<string, unknown> = {
+          orbit,
+          drvType,
+        };
+        
+        if (metadata) {
+          details.name = metadata.name;
+          details.organization = metadata.organization;
+          details.capture_system = metadata.capture_system;
+          details.icon_suggestion = metadata.icon_suggestion;
+        }
+        
         addEventToState(
           state,
           'drv-launch',
-          action.payload.turn,
-          action.payload.day ?? 0,
-          `Deployed ${action.payload.drvType} DRV to ${action.payload.orbit} orbit`,
-          { orbit: action.payload.orbit, drvType: action.payload.drvType }
+          turn,
+          day ?? 0,
+          message,
+          details
         );
       })
       .addCase(notifyMissionComplete, (state, action) => {

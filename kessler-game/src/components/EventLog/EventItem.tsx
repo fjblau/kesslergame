@@ -31,16 +31,16 @@ export function EventItem({ event, showDetails = false }: EventItemProps & { sho
   return (
     <div className={`${colors.bg} border-l-4 ${colors.border} rounded-lg pl-[10px] pr-[5px] py-[5px] transition-all hover:translate-x-1`}>
       <div className="flex items-center gap-3">
-        <div className={`text-xs font-mono ${colors.text} font-semibold min-w-[110px]`}>
+        <div className={`text-sm font-mono ${colors.text} font-semibold min-w-[110px]`}>
           {showDetails ? `T${event.turn} • ` : ''}Day {event.day} • {formatTimestamp(event.timestamp)}
         </div>
-        <div className="text-sm text-gray-300 flex-1">
+        <div className="text-base text-gray-300 flex-1">
           {event.message}
         </div>
         {showDetails && event.details && Object.keys(event.details).length > 0 && (
           <>
             {Object.entries(event.details).map(([key, value]) => (
-              <div key={key} className="text-xs text-gray-400 min-w-[100px]">
+              <div key={key} className="text-sm text-gray-400 min-w-[100px]">
                 <div className="font-semibold text-gray-500">{key}</div>
                 <div className="text-gray-300 font-mono">
                   {typeof value === 'object' && value !== null 

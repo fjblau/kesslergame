@@ -1,0 +1,14 @@
+vehicle_name,organization,capture_type,capture_system,icon_suggestion
+ELSA-d Servicer,Astroscale,cooperative,Magnetic capture mechanism that mates with ferromagnetic docking plate,Boxy spacecraft with magnetic disc
+ELSA-M,Astroscale UK,cooperative,Magnetic docking; can service multiple satellites per mission,Multi-port magnetic servicer
+MEV-1,Northrop Grumman,cooperative,Docking probe inserted into standard Liquid Apogee Engine nozzle,Cylindrical craft with central probe
+MEV-2,Northrop Grumman,cooperative,Docking probe inserted into standard Liquid Apogee Engine nozzle,Cylindrical craft with central probe
+MRV (Mission Robotic Vehicle),Northrop Grumman,cooperative,Robotic arms for standardized interfaces,Spacecraft with folded robotic arms
+CAT (Capture Bay for ADR),GMV/ESA,cooperative,MICE mechanical interface designed for D4R-equipped satellites,Bay/dock shaped vehicle
+ClearSpace-1,ClearSpace SA / ESA,non-cooperative,Four-armed robotic claw embrace capture,Four-armed grabber claw
+RemoveDEBRIS,Surrey Space Centre,non-cooperative,Net launcher plus harpoon system,Spacecraft with net cannon and harpoon
+NASA ADRV,NASA,non-cooperative,CARS robotic grappling for tumbling targets up to 25 deg/sec,Compact craft with articulated gripper
+ADRAS-J successor (CRD2 Phase II),Astroscale Japan / JAXA,non-cooperative,Robotic arm grappling,Single large robotic arm craft
+ROGER,QinetiQ,non-cooperative,Telescopic rod with gripper,Extendable boom with pincer
+Dual-arm space robot,DLR and others,non-cooperative,Contact-based detumbling via repeated robotic arm impacts,Humanoid dual-arm torso
+Sky Perfect JSAT Laser,Sky Perfect JSAT,non-cooperative,Contactless laser ablation to alter debris trajectory,Dish/emitter with beam
