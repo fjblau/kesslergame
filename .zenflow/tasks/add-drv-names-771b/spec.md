@@ -45,7 +45,7 @@ The source file `/Users/frankblau/Downloads/space_debris_vehicles.csv` contains:
 ### Type Mapping Challenge
 - **CSV**: Uses "cooperative" and "non-cooperative"
 - **Game**: Uses DRVType = "cooperative" | "uncooperative" | "geotug"
-- **Solution**: Map "non-cooperative" → "uncooperative", handle "geotug" separately
+- **Solution**: Map "non-cooperative" → "uncooperative", **skip geotug DRVs** (no metadata for now)
 
 ## Implementation Approach
 
@@ -83,7 +83,7 @@ export interface DebrisRemovalVehicle {
 In the `launchDRV` reducer (line 320-359):
 - Import DRV metadata selection function
 - Select appropriate metadata based on `drvType` ("cooperative" or "uncooperative")
-- For "geotug" type, use a default/generic metadata or none
+- For "geotug" type, do not attach metadata (will be added later)
 - Attach metadata to DRV object using spread operator pattern
 
 ### 4. Update Event Logging
@@ -158,7 +158,7 @@ npm run lint
 
 ### Edge Cases to Test
 - Launching multiple DRVs of the same type should show different names (random selection)
-- Geotug launches should not crash (handle missing metadata gracefully)
+- Geotug launches should work without metadata (no name displayed)
 - Event log should handle long text in metadata fields without breaking layout
 - Switching between tabs should preserve event history
 
