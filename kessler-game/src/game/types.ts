@@ -172,6 +172,7 @@ export interface GameState {
   drvDecommissionTime: number;
   availableSatellitePool: SatelliteMetadata[];
   collisionPauseCooldown: number;
+  budgetPauseCooldown: number;
 }
 
 export interface UIState {

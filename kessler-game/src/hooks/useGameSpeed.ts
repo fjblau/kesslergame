@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
-import { advanceTurn, decommissionExpiredDRVs, triggerSolarStorm, incrementDays, processCollisions, processDRVOperations, addSatelliteRevenue, checkGameOver, setCollisionPauseCooldown } from '../store/slices/gameSlice';
+import { advanceTurn, decommissionExpiredDRVs, triggerSolarStorm, incrementDays, processCollisions, processDRVOperations, addSatelliteRevenue, checkGameOver, setCollisionPauseCooldown, setBudgetPauseCooldown } from '../store/slices/gameSlice';
 import { setGameSpeed } from '../store/slices/uiSlice';
 import { updateMissionProgress, notifyMissionComplete, selectActiveMissions } from '../store/slices/missionsSlice';
 import { addEvent } from '../store/slices/eventSlice';
@@ -21,6 +21,7 @@ export function useGameSpeed() {
   const autoPauseOnRiskChange = useAppSelector(state => state.ui.autoPauseOnRiskChange);
   const autoPauseOnCollision = useAppSelector(state => state.ui.autoPauseOnCollision);
   const collisionPauseCooldown = useAppSelector(state => state.game.collisionPauseCooldown);
+  const budgetPauseCooldown = useAppSelector(state => state.game.budgetPauseCooldown);
   const dispatch = useAppDispatch();
   const previousRiskLevel = useRef(riskLevel);
   const previousMissionCompletionStatus = useRef(new Map<string, boolean>());
@@ -60,11 +61,12 @@ export function useGameSpeed() {
       return;
     }
 
-    const shouldPause = autoPauseBudgetLow && budget < 20_000_000;
+    const shouldPause = autoPauseBudgetLow && budget < 20_000_000 && budgetPauseCooldown === 0;
 
     if (shouldPause) {
       const currentState = (store.getState() as RootState).game;
       dispatch(setGameSpeed('paused'));
+      dispatch(setBudgetPauseCooldown(2));
       dispatch(addEvent({
         type: 'collision',
         turn: currentState.step,
@@ -244,8 +246,9 @@ export function useGameSpeed() {
           return;
         }
 
-        if (autoPauseBudgetLow && updatedState.budget < 20_000_000 && !updatedState.gameOver) {
+        if (autoPauseBudgetLow && updatedState.budget < 20_000_000 && !updatedState.gameOver && updatedState.budgetPauseCooldown === 0) {
           dispatch(setGameSpeed('paused'));
+          dispatch(setBudgetPauseCooldown(2));
           dispatch(addEvent({
             type: 'collision',
             turn: updatedState.step,
@@ -330,5 +333,5 @@ export function useGameSpeed() {
     }, intervalDuration);
 
     return () => clearInterval(interval);
-  }, [speed, gameOver, budget, autoPauseBudgetLow, autoPauseOnCollision, collisionPauseCooldown, riskSpeedMultipliers, riskLevel, dispatch, store]);
+  }, [speed, gameOver, budget, autoPauseBudgetLow, autoPauseOnCollision, collisionPauseCooldown, budgetPauseCooldown, riskSpeedMultipliers, riskLevel, dispatch, store]);
 }
