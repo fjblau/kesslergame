@@ -66,7 +66,7 @@ export function useGameSpeed() {
     if (shouldPause) {
       const currentState = (store.getState() as RootState).game;
       dispatch(setGameSpeed('paused'));
-      dispatch(setBudgetPauseCooldown(2));
+      dispatch(setBudgetPauseCooldown(4));
       dispatch(addEvent({
         type: 'collision',
         turn: currentState.step,
@@ -248,7 +248,7 @@ export function useGameSpeed() {
 
         if (autoPauseBudgetLow && updatedState.budget < 20_000_000 && !updatedState.gameOver && updatedState.budgetPauseCooldown === 0) {
           dispatch(setGameSpeed('paused'));
-          dispatch(setBudgetPauseCooldown(2));
+          dispatch(setBudgetPauseCooldown(4));
           dispatch(addEvent({
             type: 'collision',
             turn: updatedState.step,
