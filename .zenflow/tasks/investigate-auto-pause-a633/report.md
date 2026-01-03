@@ -240,6 +240,74 @@ Restructured the auto-pause logic to prioritize collision over budget:
 
 Full verification details: `manual-pause-verification.md`
 
+## Fix: Budget Auto-Pause Deadlock Warning
+
+### Problem Identified
+User reported that when budget auto-pause triggers (budget < $20M), the game creates a deadlock:
+1. Budget drops below $20M → auto-pause triggers
+2. Game paused → no turns advance
+3. No turns → no income generated (requires turn advancement + satellites)
+4. User can't launch anything (no money)
+5. Budget keeps draining when game resumes
+6. User stuck in unwinnable state
+
+### Root Cause
+The budget auto-pause feature had **no warning message** explaining:
+- Why the game paused
+- What the user can do to recover
+- That they can disable the setting
+
+Income system (line 514 in gameSlice.ts):
+```typescript
+if (budgetIncomeInterval > 0 && state.step >= nextIncomeAt && state.satellites.length > 0) {
+  state.budget += budgetIncomeAmount;
+}
+```
+Requires:
+- Turn advancement (paused game prevents this)
+- Active satellites (user may not have any)
+- Budget income configured
+
+### Solution
+Added clear warning messages and UI guidance:
+
+**Changes Made**:
+
+1. **Budget Auto-Pause Warning Message** (`useGameSpeed.ts`)
+   - Added event log message at BOTH budget pause trigger points (lines 68-74 and 249-255)
+   - Message: "⚠️ Budget critically low! Game paused. Disable 'Auto-Pause on Low Budget' in Configuration to continue, or wait for satellites to generate income."
+   - Includes `reason: 'budget'` in details for tracking
+
+2. **UI Guidance Update** (`AutoPauseSettings.tsx`)
+   - Updated budget auto-pause description (line 46)
+   - Old: "Pause when budget falls below $20M"
+   - New: "Pause when budget falls below $20M. Note: You can disable this setting or unpause to continue playing."
+   - Clarifies that user has options to recover
+
+### User Recovery Options
+
+When budget auto-pause triggers, users can:
+
+1. **Disable the setting**: Go to Configuration → Auto-Pause Settings → uncheck "Auto-Pause on Low Budget"
+2. **Unpause and continue**: Click Play button to resume, letting satellites generate income
+3. **Wait for income**: If satellites exist, income will be generated on next turn
+4. **Accept game over**: Budget eventually goes negative (< $0) → game over
+
+### Why Not Remove Budget Auto-Pause?
+
+The feature is still useful:
+- Alerts users to financial trouble before it's too late
+- Gives time to strategize recovery
+- Optional (can be disabled in settings)
+- Now has clear warnings and guidance
+
+### Verification
+- ✓ Lint passed
+- ✓ Build successful
+- ✓ Warning messages added to both budget pause locations
+- ✓ UI updated with clearer guidance
+- ✓ User has clear recovery path
+
 ## Summary
 
 The Auto-Pause on Collision feature has been successfully implemented with:
@@ -247,7 +315,10 @@ The Auto-Pause on Collision feature has been successfully implemented with:
 - Comprehensive UI for all auto-pause settings
 - 2-turn cooldown to prevent pause loops
 - Visual notification when paused due to collision
+- Budget auto-pause warnings to prevent user confusion
+- Collision pause priority over budget pause
+- Manual pause works correctly throughout game
 - No breaking changes to existing functionality
 - All linting and build checks passing
 
-The feature is ready for testing and provides users with better control over game flow when collisions occur, allowing them to react strategically by launching DRVs while the game is paused, without being interrupted by repeated auto-pauses.
+The feature is ready for testing and provides users with better control over game flow when collisions or budget issues occur, allowing them to react strategically by launching DRVs while the game is paused, without being interrupted by repeated auto-pauses. Clear warning messages guide users when auto-pause triggers, explaining their options for recovery.

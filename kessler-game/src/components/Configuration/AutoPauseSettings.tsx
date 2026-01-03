@@ -43,7 +43,7 @@ export function AutoPauseSettings() {
           />
           <span>Auto-Pause on Low Budget</span>
         </label>
-        <p className="text-xs text-gray-400 ml-6">Pause when budget falls below $20M</p>
+        <p className="text-xs text-gray-400 ml-6">Pause when budget falls below $20M. Note: You can disable this setting or unpause to continue playing.</p>
 
         <label className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
           <input

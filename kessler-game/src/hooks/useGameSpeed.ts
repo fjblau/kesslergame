@@ -63,7 +63,15 @@ export function useGameSpeed() {
     const shouldPause = autoPauseBudgetLow && budget < 20_000_000;
 
     if (shouldPause) {
+      const currentState = (store.getState() as RootState).game;
       dispatch(setGameSpeed('paused'));
+      dispatch(addEvent({
+        type: 'collision',
+        turn: currentState.step,
+        day: currentState.days,
+        message: '⚠️ Budget critically low! Game paused. Disable "Auto-Pause on Low Budget" in Configuration to continue, or wait for satellites to generate income.',
+        details: { autoPause: true, reason: 'budget' }
+      }));
       return;
     }
 
@@ -238,6 +246,13 @@ export function useGameSpeed() {
 
         if (autoPauseBudgetLow && updatedState.budget < 20_000_000 && !updatedState.gameOver) {
           dispatch(setGameSpeed('paused'));
+          dispatch(addEvent({
+            type: 'collision',
+            turn: updatedState.step,
+            day: updatedState.days,
+            message: '⚠️ Budget critically low! Game paused. Disable "Auto-Pause on Low Budget" in Configuration to continue, or wait for satellites to generate income.',
+            details: { autoPause: true, reason: 'budget' }
+          }));
           clearInterval(interval);
         }
       }, 10);
