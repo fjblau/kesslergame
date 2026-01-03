@@ -69,7 +69,7 @@ export function useGameSpeed() {
         type: 'collision',
         turn: currentState.step,
         day: currentState.days,
-        message: '⚠️ Budget critically low! Game paused. Disable "Auto-Pause on Low Budget" in Configuration to continue, or wait for satellites to generate income.',
+        message: '⚠️ Budget critically low! Game paused. Unpause to let satellites generate income, or disable "Auto-Pause on Low Budget" in Configuration.',
         details: { autoPause: true, reason: 'budget' }
       }));
       return;
@@ -250,7 +250,7 @@ export function useGameSpeed() {
             type: 'collision',
             turn: updatedState.step,
             day: updatedState.days,
-            message: '⚠️ Budget critically low! Game paused. Disable "Auto-Pause on Low Budget" in Configuration to continue, or wait for satellites to generate income.',
+            message: '⚠️ Budget critically low! Game paused. Unpause to let satellites generate income, or disable "Auto-Pause on Low Budget" in Configuration.',
             details: { autoPause: true, reason: 'budget' }
           }));
           clearInterval(interval);
