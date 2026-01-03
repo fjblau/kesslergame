@@ -171,6 +171,10 @@ export interface GameState {
   soundEnabled: boolean;
   drvDecommissionTime: number;
   availableSatellitePool: SatelliteMetadata[];
+  collisionPauseCooldown: number;
+  budgetPauseCooldown: number;
+  totalCooperativeDebrisRemoved: number;
+  totalUncooperativeDebrisRemoved: number;
 }
 
 export interface UIState {

@@ -17,6 +17,7 @@ import { DRVSettings } from './components/Configuration/DRVSettings';
 import { RiskBasedSpeedSettings } from './components/Configuration/RiskBasedSpeedSettings';
 import { SoundSettings } from './components/Configuration/SoundSettings';
 import { GeneralSettings } from './components/Configuration/GeneralSettings';
+import { AutoPauseSettings } from './components/Configuration/AutoPauseSettings';
 import { Tabs } from './components/ui/Tabs';
 import { useGameSpeed } from './hooks/useGameSpeed';
 import { useAppSelector, useAppDispatch } from './store/hooks';
@@ -146,6 +147,7 @@ function App() {
           <div className="grid grid-cols-3 gap-6">
             <SoundSettings />
             <GeneralSettings />
+            <AutoPauseSettings />
             <CollisionSettings />
             <OrbitalSpeedSettings />
             <SolarStormSettings />

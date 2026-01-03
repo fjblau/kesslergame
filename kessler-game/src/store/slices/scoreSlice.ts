@@ -29,7 +29,7 @@ export const scoreSlice = createSlice({
       const gameState = action.payload;
       
       state.satelliteLaunchScore = calculateSatelliteLaunchScore(gameState.satellites);
-      state.debrisRemovalScore = calculateDebrisRemovalScore(gameState.debrisRemovalVehicles);
+      state.debrisRemovalScore = calculateDebrisRemovalScore(gameState);
       state.satelliteRecoveryScore = calculateSatelliteRecoveryScore(gameState.satellitesRecovered);
       state.satellitesRecovered = gameState.satellitesRecovered;
       state.budgetManagementScore = calculateBudgetManagementScore(gameState.budget);

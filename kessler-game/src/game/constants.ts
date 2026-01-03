@@ -21,9 +21,9 @@ export const INSURANCE_CONFIG: Record<InsuranceTier, { cost: number; payout: num
 
 export const DRV_CONFIG = {
   costs: {
-    LEO: { cooperative: 4_000_000, uncooperative: 7_000_000, geotug: 50_000_000 },
-    MEO: { cooperative: 6_000_000, uncooperative: 10_500_000, geotug: 50_000_000 },
-    GEO: { cooperative: 10_000_000, uncooperative: 17_500_000, geotug: 50_000_000 },
+    LEO: { cooperative: 2_000_000, uncooperative: 3_500_000, geotug: 25_000_000 },
+    MEO: { cooperative: 3_000_000, uncooperative: 5_250_000, geotug: 25_000_000 },
+    GEO: { cooperative: 5_000_000, uncooperative: 8_750_000, geotug: 25_000_000 },
     GRAVEYARD: { cooperative: 0, uncooperative: 0, geotug: 0 },
   },
   capacity: {

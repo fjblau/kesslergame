@@ -188,6 +188,10 @@ const initialState: GameState = {
   soundEnabled: savedSoundEnabled,
   drvDecommissionTime: savedDRVDecommissionTime,
   availableSatellitePool: [...SATELLITE_METADATA],
+  collisionPauseCooldown: 0,
+  budgetPauseCooldown: 0,
+  totalCooperativeDebrisRemoved: 0,
+  totalUncooperativeDebrisRemoved: 0,
 };
 
 export const gameSlice = createSlice({
@@ -405,6 +409,7 @@ export const gameSlice = createSlice({
           
           const totalRemoved = result.removedDebrisIds.length + result.removedSatelliteIds.length;
           drv.debrisRemoved += totalRemoved;
+          state.totalCooperativeDebrisRemoved += result.removedDebrisIds.length;
           
           drv.targetDebrisId = result.newTargetId;
           drv.capturedDebrisId = result.capturedObjectId;
@@ -471,6 +476,7 @@ export const gameSlice = createSlice({
           const result = processDRVRemoval(drv, state.debris);
           
           drv.debrisRemoved += result.removedDebrisIds.length;
+          state.totalUncooperativeDebrisRemoved += result.removedDebrisIds.length;
           
           if (result.removedDebrisIds.length > 0) {
             const removedDebris = state.debris.filter(d => result.removedDebrisIds.includes(d.id));
@@ -497,6 +503,14 @@ export const gameSlice = createSlice({
 
     advanceTurn: (state) => {
       state.step += 1;
+
+      if (state.collisionPauseCooldown > 0) {
+        state.collisionPauseCooldown -= 1;
+      }
+
+      if (state.budgetPauseCooldown > 0) {
+        state.budgetPauseCooldown -= 1;
+      }
 
       if (state.step === 1) {
         state.history = [];
@@ -874,6 +888,14 @@ export const gameSlice = createSlice({
         // Ignore localStorage errors
       }
     },
+
+    setCollisionPauseCooldown: (state, action: PayloadAction<number>) => {
+      state.collisionPauseCooldown = action.payload;
+    },
+
+    setBudgetPauseCooldown: (state, action: PayloadAction<number>) => {
+      state.budgetPauseCooldown = action.payload;
+    },
   },
 });
 
@@ -909,6 +931,8 @@ export const {
   setRiskSpeedMultiplierCRITICAL,
   setSoundEnabled,
   setDRVDecommissionTime,
+  setCollisionPauseCooldown,
+  setBudgetPauseCooldown,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

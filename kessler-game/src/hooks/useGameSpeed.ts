@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
-import { advanceTurn, decommissionExpiredDRVs, triggerSolarStorm, incrementDays, processCollisions, processDRVOperations, addSatelliteRevenue, checkGameOver } from '../store/slices/gameSlice';
+import { advanceTurn, decommissionExpiredDRVs, triggerSolarStorm, incrementDays, processCollisions, processDRVOperations, addSatelliteRevenue, checkGameOver, setCollisionPauseCooldown, setBudgetPauseCooldown } from '../store/slices/gameSlice';
 import { setGameSpeed } from '../store/slices/uiSlice';
 import { updateMissionProgress, notifyMissionComplete, selectActiveMissions } from '../store/slices/missionsSlice';
 import { addEvent } from '../store/slices/eventSlice';
@@ -19,6 +19,9 @@ export function useGameSpeed() {
   const missions = useAppSelector(selectActiveMissions);
   const autoPauseBudgetLow = useAppSelector(state => state.ui.autoPauseOnBudgetLow);
   const autoPauseOnRiskChange = useAppSelector(state => state.ui.autoPauseOnRiskChange);
+  const autoPauseOnCollision = useAppSelector(state => state.ui.autoPauseOnCollision);
+  const collisionPauseCooldown = useAppSelector(state => state.game.collisionPauseCooldown);
+  const budgetPauseCooldown = useAppSelector(state => state.game.budgetPauseCooldown);
   const dispatch = useAppDispatch();
   const previousRiskLevel = useRef(riskLevel);
   const previousMissionCompletionStatus = useRef(new Map<string, boolean>());
@@ -58,10 +61,19 @@ export function useGameSpeed() {
       return;
     }
 
-    const shouldPause = autoPauseBudgetLow && budget < 20_000_000;
+    const shouldPause = autoPauseBudgetLow && budget < 20_000_000 && budgetPauseCooldown === 0;
 
     if (shouldPause) {
+      const currentState = (store.getState() as RootState).game;
       dispatch(setGameSpeed('paused'));
+      dispatch(setBudgetPauseCooldown(4));
+      dispatch(addEvent({
+        type: 'collision',
+        turn: currentState.step,
+        day: currentState.days,
+        message: '⚠️ Budget critically low! Game paused. Unpause to let satellites generate income, or disable "Auto-Pause on Low Budget" in Configuration.',
+        details: { autoPause: true, reason: 'budget' }
+      }));
       return;
     }
 
@@ -176,15 +188,9 @@ export function useGameSpeed() {
       dispatch(processCollisions());
       dispatch(addSatelliteRevenue());
 
-      const updatedStateAfterRevenue = (store.getState() as RootState).game;
-      if (autoPauseBudgetLow && updatedStateAfterRevenue.budget < 20_000_000 && !updatedStateAfterRevenue.gameOver) {
-        dispatch(setGameSpeed('paused'));
-        clearInterval(interval);
-        return;
-      }
-
       setTimeout(() => {
         const updatedState = (store.getState() as RootState).game;
+        
         updatedState.recentCollisions.forEach(collision => {
           if (!loggedCollisionIds.current.has(collision.id)) {
             loggedCollisionIds.current.add(collision.id);
@@ -225,6 +231,33 @@ export function useGameSpeed() {
             }));
           }
         });
+
+        if (autoPauseOnCollision && updatedState.recentCollisions.length > 0 && !updatedState.gameOver && updatedState.collisionPauseCooldown === 0) {
+          dispatch(setGameSpeed('paused'));
+          dispatch(setCollisionPauseCooldown(2));
+          dispatch(addEvent({
+            type: 'collision',
+            turn: updatedState.step,
+            day: updatedState.days,
+            message: '⏸️ Game paused due to collision. Launch DRVs to mitigate debris, then resume when ready.',
+            details: { autoPause: true }
+          }));
+          clearInterval(interval);
+          return;
+        }
+
+        if (autoPauseBudgetLow && updatedState.budget < 20_000_000 && !updatedState.gameOver && updatedState.budgetPauseCooldown === 0) {
+          dispatch(setGameSpeed('paused'));
+          dispatch(setBudgetPauseCooldown(4));
+          dispatch(addEvent({
+            type: 'collision',
+            turn: updatedState.step,
+            day: updatedState.days,
+            message: '⚠️ Budget critically low! Game paused. Unpause to let satellites generate income, or disable "Auto-Pause on Low Budget" in Configuration.',
+            details: { autoPause: true, reason: 'budget' }
+          }));
+          clearInterval(interval);
+        }
       }, 10);
 
       if (checkSolarStorm(currentState.solarStormProbability)) {
@@ -300,5 +333,5 @@ export function useGameSpeed() {
     }, intervalDuration);
 
     return () => clearInterval(interval);
-  }, [speed, gameOver, budget, autoPauseBudgetLow, riskSpeedMultipliers, riskLevel, dispatch, store]);
+  }, [speed, gameOver, budget, autoPauseBudgetLow, autoPauseOnCollision, collisionPauseCooldown, budgetPauseCooldown, riskSpeedMultipliers, riskLevel, dispatch, store]);
 }
