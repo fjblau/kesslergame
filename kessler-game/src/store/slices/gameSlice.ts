@@ -190,6 +190,8 @@ const initialState: GameState = {
   availableSatellitePool: [...SATELLITE_METADATA],
   collisionPauseCooldown: 0,
   budgetPauseCooldown: 0,
+  totalCooperativeDebrisRemoved: 0,
+  totalUncooperativeDebrisRemoved: 0,
 };
 
 export const gameSlice = createSlice({
@@ -407,6 +409,7 @@ export const gameSlice = createSlice({
           
           const totalRemoved = result.removedDebrisIds.length + result.removedSatelliteIds.length;
           drv.debrisRemoved += totalRemoved;
+          state.totalCooperativeDebrisRemoved += result.removedDebrisIds.length;
           
           drv.targetDebrisId = result.newTargetId;
           drv.capturedDebrisId = result.capturedObjectId;
@@ -473,6 +476,7 @@ export const gameSlice = createSlice({
           const result = processDRVRemoval(drv, state.debris);
           
           drv.debrisRemoved += result.removedDebrisIds.length;
+          state.totalUncooperativeDebrisRemoved += result.removedDebrisIds.length;
           
           if (result.removedDebrisIds.length > 0) {
             const removedDebris = state.debris.filter(d => result.removedDebrisIds.includes(d.id));

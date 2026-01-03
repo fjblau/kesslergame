@@ -173,6 +173,8 @@ export interface GameState {
   availableSatellitePool: SatelliteMetadata[];
   collisionPauseCooldown: number;
   budgetPauseCooldown: number;
+  totalCooperativeDebrisRemoved: number;
+  totalUncooperativeDebrisRemoved: number;
 }
 
 export interface UIState {

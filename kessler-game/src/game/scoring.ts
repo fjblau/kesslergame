@@ -1,4 +1,4 @@
-import type { Satellite, DebrisRemovalVehicle } from './types';
+import type { Satellite, GameState } from './types';
 
 export const SCORE_CONFIG = {
   SATELLITE_LAUNCH: {
@@ -42,14 +42,10 @@ export function calculateSatelliteLaunchScore(satellites: Satellite[]): number {
   }, 0);
 }
 
-export function calculateDebrisRemovalScore(drvs: DebrisRemovalVehicle[]): number {
-  return drvs.reduce((total, drv) => {
-    const pointsPerDebris =
-      drv.removalType === 'cooperative'
-        ? SCORE_CONFIG.DEBRIS_REMOVAL.COOPERATIVE
-        : SCORE_CONFIG.DEBRIS_REMOVAL.UNCOOPERATIVE;
-    return total + drv.debrisRemoved * pointsPerDebris;
-  }, 0);
+export function calculateDebrisRemovalScore(gameState: GameState): number {
+  const cooperativeScore = gameState.totalCooperativeDebrisRemoved * SCORE_CONFIG.DEBRIS_REMOVAL.COOPERATIVE;
+  const uncooperativeScore = gameState.totalUncooperativeDebrisRemoved * SCORE_CONFIG.DEBRIS_REMOVAL.UNCOOPERATIVE;
+  return cooperativeScore + uncooperativeScore;
 }
 
 export function calculateSatelliteRecoveryScore(satellitesRecovered: number): number {
