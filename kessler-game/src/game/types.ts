@@ -171,6 +171,7 @@ export interface GameState {
   soundEnabled: boolean;
   drvDecommissionTime: number;
   availableSatellitePool: SatelliteMetadata[];
+  collisionPauseCooldown: number;
 }
 
 export interface UIState {

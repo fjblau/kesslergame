@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
-import { advanceTurn, decommissionExpiredDRVs, triggerSolarStorm, incrementDays, processCollisions, processDRVOperations, addSatelliteRevenue, checkGameOver } from '../store/slices/gameSlice';
+import { advanceTurn, decommissionExpiredDRVs, triggerSolarStorm, incrementDays, processCollisions, processDRVOperations, addSatelliteRevenue, checkGameOver, setCollisionPauseCooldown } from '../store/slices/gameSlice';
 import { setGameSpeed } from '../store/slices/uiSlice';
 import { updateMissionProgress, notifyMissionComplete, selectActiveMissions } from '../store/slices/missionsSlice';
 import { addEvent } from '../store/slices/eventSlice';
@@ -20,6 +20,7 @@ export function useGameSpeed() {
   const autoPauseBudgetLow = useAppSelector(state => state.ui.autoPauseOnBudgetLow);
   const autoPauseOnRiskChange = useAppSelector(state => state.ui.autoPauseOnRiskChange);
   const autoPauseOnCollision = useAppSelector(state => state.ui.autoPauseOnCollision);
+  const collisionPauseCooldown = useAppSelector(state => state.game.collisionPauseCooldown);
   const dispatch = useAppDispatch();
   const previousRiskLevel = useRef(riskLevel);
   const previousMissionCompletionStatus = useRef(new Map<string, boolean>());
@@ -227,8 +228,16 @@ export function useGameSpeed() {
           }
         });
 
-        if (autoPauseOnCollision && updatedState.recentCollisions.length > 0 && !updatedState.gameOver) {
+        if (autoPauseOnCollision && updatedState.recentCollisions.length > 0 && !updatedState.gameOver && updatedState.collisionPauseCooldown === 0) {
           dispatch(setGameSpeed('paused'));
+          dispatch(setCollisionPauseCooldown(2));
+          dispatch(addEvent({
+            type: 'collision',
+            turn: updatedState.step,
+            day: updatedState.days,
+            message: '⏸️ Game paused due to collision. Launch DRVs to mitigate debris, then resume when ready.',
+            details: { autoPause: true }
+          }));
           clearInterval(interval);
         }
       }, 10);
@@ -306,5 +315,5 @@ export function useGameSpeed() {
     }, intervalDuration);
 
     return () => clearInterval(interval);
-  }, [speed, gameOver, budget, autoPauseBudgetLow, autoPauseOnCollision, riskSpeedMultipliers, riskLevel, dispatch, store]);
+  }, [speed, gameOver, budget, autoPauseBudgetLow, autoPauseOnCollision, collisionPauseCooldown, riskSpeedMultipliers, riskLevel, dispatch, store]);
 }

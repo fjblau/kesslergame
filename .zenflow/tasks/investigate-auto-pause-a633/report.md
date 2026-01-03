@@ -116,12 +116,56 @@ The implementation uses `setTimeout` with a 10ms delay to check for collisions a
    - Added import for AutoPauseSettings
    - Added component to Configuration tab
 
+## Enhancement: Collision Pause Cooldown (2-Turn)
+
+### Problem
+Initial implementation could cause a pause-unpause-pause loop when collisions happen on consecutive turns, which would be disruptive to gameplay.
+
+### Solution
+Added a 2-turn cooldown mechanism to prevent repeated auto-pauses:
+
+**Changes Made**:
+
+1. **GameState Type** (`types.ts`)
+   - Added `collisionPauseCooldown: number` field to track remaining cooldown turns
+
+2. **Game Slice** (`gameSlice.ts`)
+   - Added `collisionPauseCooldown: 0` to initial state
+   - Added cooldown decrement in `advanceTurn` action (decrements by 1 each turn when > 0)
+   - Added `setCollisionPauseCooldown` action to set the cooldown value
+   - Exported the new action
+
+3. **Game Loop Hook** (`useGameSpeed.ts`)
+   - Added `collisionPauseCooldown` selector
+   - Modified collision pause logic to check `collisionPauseCooldown === 0` before pausing
+   - Sets cooldown to 2 when pausing due to collision
+   - Added cooldown to useEffect dependency array
+
+4. **Visual Notification**
+   - Added event log entry when game pauses due to collision:
+     - Message: "⏸️ Game paused due to collision. Launch DRVs to mitigate debris, then resume when ready."
+     - Includes `autoPause: true` in details for filtering/tracking
+
+### How It Works
+1. When collision detected and auto-pause triggers → set cooldown to 2 turns
+2. Each turn, cooldown decrements automatically in `advanceTurn`
+3. Auto-pause only triggers when cooldown is 0
+4. After resuming, 2 turns must pass before auto-pause can trigger again
+
+### Benefits
+- Prevents pause-loop spam from consecutive collisions
+- Gives user time to respond to initial collision
+- Provides smooth user experience while maintaining safety net
+- Configurable (default 2 turns, can be adjusted if needed)
+
 ## Summary
 
 The Auto-Pause on Collision feature has been successfully implemented with:
 - Clean, maintainable code following existing patterns
 - Comprehensive UI for all auto-pause settings
+- 2-turn cooldown to prevent pause loops
+- Visual notification when paused due to collision
 - No breaking changes to existing functionality
 - All linting and build checks passing
 
-The feature is ready for testing and provides users with better control over game flow when collisions occur, allowing them to react strategically by launching DRVs while the game is paused.
+The feature is ready for testing and provides users with better control over game flow when collisions occur, allowing them to react strategically by launching DRVs while the game is paused, without being interrupted by repeated auto-pauses.

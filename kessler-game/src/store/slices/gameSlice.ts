@@ -188,6 +188,7 @@ const initialState: GameState = {
   soundEnabled: savedSoundEnabled,
   drvDecommissionTime: savedDRVDecommissionTime,
   availableSatellitePool: [...SATELLITE_METADATA],
+  collisionPauseCooldown: 0,
 };
 
 export const gameSlice = createSlice({
@@ -497,6 +498,10 @@ export const gameSlice = createSlice({
 
     advanceTurn: (state) => {
       state.step += 1;
+
+      if (state.collisionPauseCooldown > 0) {
+        state.collisionPauseCooldown -= 1;
+      }
 
       if (state.step === 1) {
         state.history = [];
@@ -874,6 +879,10 @@ export const gameSlice = createSlice({
         // Ignore localStorage errors
       }
     },
+
+    setCollisionPauseCooldown: (state, action: PayloadAction<number>) => {
+      state.collisionPauseCooldown = action.payload;
+    },
   },
 });
 
@@ -909,6 +918,7 @@ export const {
   setRiskSpeedMultiplierCRITICAL,
   setSoundEnabled,
   setDRVDecommissionTime,
+  setCollisionPauseCooldown,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;
