@@ -27,13 +27,14 @@ export const scoreSlice = createSlice({
   reducers: {
     calculateScore: (state, action: PayloadAction<GameState>) => {
       const gameState = action.payload;
+      const hasSatellitesOrDRVs = gameState.satellites.length > 0 || gameState.debrisRemovalVehicles.length > 0;
       
       state.satelliteLaunchScore = calculateSatelliteLaunchScore(gameState.satellites);
       state.debrisRemovalScore = calculateDebrisRemovalScore(gameState);
       state.satelliteRecoveryScore = calculateSatelliteRecoveryScore(gameState.satellitesRecovered);
       state.satellitesRecovered = gameState.satellitesRecovered;
-      state.budgetManagementScore = calculateBudgetManagementScore(gameState.budget);
-      state.survivalScore = calculateSurvivalScore(gameState.days);
+      state.budgetManagementScore = calculateBudgetManagementScore(gameState.budget, hasSatellitesOrDRVs);
+      state.survivalScore = calculateSurvivalScore(gameState.days, hasSatellitesOrDRVs);
       
       state.totalScore = calculateTotalScore({
         satelliteLaunchScore: state.satelliteLaunchScore,

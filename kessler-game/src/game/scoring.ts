@@ -52,12 +52,14 @@ export function calculateSatelliteRecoveryScore(satellitesRecovered: number): nu
   return satellitesRecovered * SCORE_CONFIG.SATELLITE_RECOVERY;
 }
 
-export function calculateBudgetManagementScore(budget: number): number {
+export function calculateBudgetManagementScore(budget: number, hasSatellitesOrDRVs: boolean): number {
   if (budget < 0) return 0;
+  if (!hasSatellitesOrDRVs) return 0;
   return (budget / 1_000_000) * SCORE_CONFIG.BUDGET_MULTIPLIER;
 }
 
-export function calculateSurvivalScore(days: number): number {
+export function calculateSurvivalScore(days: number, hasSatellitesOrDRVs: boolean): number {
+  if (!hasSatellitesOrDRVs) return 0;
   const multiplier = SCORE_CONFIG.SURVIVAL.MULTIPLIERS
     .slice()
     .reverse()
