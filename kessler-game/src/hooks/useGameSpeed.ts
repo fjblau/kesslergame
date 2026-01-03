@@ -178,15 +178,9 @@ export function useGameSpeed() {
       dispatch(processCollisions());
       dispatch(addSatelliteRevenue());
 
-      const updatedStateAfterRevenue = (store.getState() as RootState).game;
-      if (autoPauseBudgetLow && updatedStateAfterRevenue.budget < 20_000_000 && !updatedStateAfterRevenue.gameOver) {
-        dispatch(setGameSpeed('paused'));
-        clearInterval(interval);
-        return;
-      }
-
       setTimeout(() => {
         const updatedState = (store.getState() as RootState).game;
+        
         updatedState.recentCollisions.forEach(collision => {
           if (!loggedCollisionIds.current.has(collision.id)) {
             loggedCollisionIds.current.add(collision.id);
@@ -238,6 +232,12 @@ export function useGameSpeed() {
             message: '⏸️ Game paused due to collision. Launch DRVs to mitigate debris, then resume when ready.',
             details: { autoPause: true }
           }));
+          clearInterval(interval);
+          return;
+        }
+
+        if (autoPauseBudgetLow && updatedState.budget < 20_000_000 && !updatedState.gameOver) {
+          dispatch(setGameSpeed('paused'));
           clearInterval(interval);
         }
       }, 10);

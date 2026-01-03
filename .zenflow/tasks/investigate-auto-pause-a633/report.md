@@ -158,6 +158,46 @@ Added a 2-turn cooldown mechanism to prevent repeated auto-pauses:
 - Provides smooth user experience while maintaining safety net
 - Configurable (default 2 turns, can be adjusted if needed)
 
+## Fix: Collision Pause Priority Over Budget Pause
+
+### Problem Identified
+During verification, discovered that collision auto-pause wouldn't trigger when budget was critically low. The budget check was happening first and returning early, preventing the collision check from running.
+
+### Root Cause
+The original flow was:
+1. Process collisions and revenue
+2. Check budget → if low, pause and return
+3. Check collisions (in setTimeout) → never reached if budget was low
+
+### Solution
+Restructured the auto-pause logic to prioritize collision over budget:
+
+**Changes Made**:
+- Moved budget check into the same setTimeout as collision check
+- Collision check happens first and returns early if triggered
+- Budget check only executes if collision didn't trigger
+- Both checks now use the same updated state snapshot
+
+**New Flow**:
+1. Process collisions and revenue
+2. setTimeout (ensures state is updated):
+   - Check collisions first → pause if detected (priority)
+   - If no collision pause, check budget → pause if low
+   - Proper interval cleanup in both cases
+
+### Why This Matters
+- Collisions are immediate dangerous events requiring user response
+- Budget issues are slower-moving financial concerns
+- User should be able to launch DRVs during collision even if budget is low
+- Gives collision pause higher priority while still maintaining budget pause
+
+### Verification
+- ✓ Lint passed
+- ✓ Build successful  
+- ✓ Logic verified: collision check runs before budget check
+- ✓ Both auto-pause types can trigger independently
+- ✓ Collision pause has priority when both conditions are met
+
 ## Summary
 
 The Auto-Pause on Collision feature has been successfully implemented with:
