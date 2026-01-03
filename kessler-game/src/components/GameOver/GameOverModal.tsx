@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { initializeGame } from '../../store/slices/gameSlice';
 import { initializeMissions } from '../../store/slices/missionsSlice';
@@ -6,6 +6,7 @@ import { MAX_DEBRIS_LIMIT } from '../../game/constants';
 import { SCORE_GRADES } from '../../game/scoring';
 import { selectScore } from '../../store/slices/scoreSlice';
 import { generateCertificate } from '../../utils/certificate';
+import { saveHighScore } from '../../utils/highScores';
 
 interface GameOverModalProps {
   onViewAnalytics?: () => void;
@@ -44,6 +45,18 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
     (sum, drv) => sum + drv.debrisRemoved,
     0
   );
+
+  useEffect(() => {
+    saveHighScore({
+      playerName,
+      score: scoreState.totalScore,
+      grade,
+      date: new Date().toISOString(),
+      difficulty: budgetDifficulty,
+      turnsSurvived: step,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handlePlayAgain = () => {
     dispatch(initializeGame({ difficulty: budgetDifficulty, playerName }));

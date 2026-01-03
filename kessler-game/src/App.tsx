@@ -24,6 +24,7 @@ import { resetGame } from './store/slices/gameSlice';
 import { resetScore } from './store/slices/scoreSlice';
 import { GameOverModal } from './components/GameOver/GameOverModal';
 import { ScoreDisplay } from './components/Score/ScoreDisplay';
+import { HighScoresPanel } from './components/HighScores/HighScoresPanel';
 import { playBackgroundMusic, stopAllSounds, setSoundEnabled, pauseAllAudio, resumeAllAudio, playTargetingLoop, stopTargetingLoop } from './utils/audio';
 
 function App() {
@@ -508,6 +509,11 @@ function App() {
           </section>
         </div>
       ),
+    },
+    {
+      id: 'high-scores',
+      label: 'High Scores',
+      content: <HighScoresPanel />,
     },
     {
       id: 'about',
