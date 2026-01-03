@@ -19,6 +19,7 @@ export function useGameSpeed() {
   const missions = useAppSelector(selectActiveMissions);
   const autoPauseBudgetLow = useAppSelector(state => state.ui.autoPauseOnBudgetLow);
   const autoPauseOnRiskChange = useAppSelector(state => state.ui.autoPauseOnRiskChange);
+  const autoPauseOnCollision = useAppSelector(state => state.ui.autoPauseOnCollision);
   const dispatch = useAppDispatch();
   const previousRiskLevel = useRef(riskLevel);
   const previousMissionCompletionStatus = useRef(new Map<string, boolean>());
@@ -225,6 +226,11 @@ export function useGameSpeed() {
             }));
           }
         });
+
+        if (autoPauseOnCollision && updatedState.recentCollisions.length > 0 && !updatedState.gameOver) {
+          dispatch(setGameSpeed('paused'));
+          clearInterval(interval);
+        }
       }, 10);
 
       if (checkSolarStorm(currentState.solarStormProbability)) {
@@ -300,5 +306,5 @@ export function useGameSpeed() {
     }, intervalDuration);
 
     return () => clearInterval(interval);
-  }, [speed, gameOver, budget, autoPauseBudgetLow, riskSpeedMultipliers, riskLevel, dispatch, store]);
+  }, [speed, gameOver, budget, autoPauseBudgetLow, autoPauseOnCollision, riskSpeedMultipliers, riskLevel, dispatch, store]);
 }
