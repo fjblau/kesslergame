@@ -15,11 +15,12 @@ const MAX_HIGH_SCORES = 10;
 const useLocalStorage = typeof window !== 'undefined' && !import.meta.env.UPSTASH_REDIS_REST_URL;
 
 let redis: Redis | null = null;
-if (!useLocalStorage && import.meta.env.UPSTASH_REDIS_REST_URL && import.meta.env.UPSTASH_REDIS_REST_TOKEN) {
-  redis = new Redis({
-    url: import.meta.env.UPSTASH_REDIS_REST_URL,
-    token: import.meta.env.UPSTASH_REDIS_REST_TOKEN,
-  });
+if (!useLocalStorage) {
+  try {
+    redis = Redis.fromEnv();
+  } catch {
+    // Redis not configured, will fall back to localStorage
+  }
 }
 
 export async function getHighScores(): Promise<HighScore[]> {
