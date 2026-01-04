@@ -96,10 +96,17 @@ If we choose different thresholds than displayed, update the Grade Thresholds se
    - Verify grade colors and display are consistent
 3. **Lint & Type Check**: Run project's lint/typecheck commands to ensure no TypeScript errors
 
-## Questions for User
+## Implementation Notes
 
-Before implementing, need clarification:
+### Vercel KV Sunset (September 2025)
+During implementation, discovered that Vercel KV was sunset in September 2025. Migrated to **Upstash Redis** via Vercel Marketplace instead:
+- Replaced `@vercel/kv` with `@upstash/redis`
+- Updated environment variable detection to use `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`
+- Same Redis API (zadd, zrange, zcard, zpopmin, del)
+- Better free tier: 256 MB storage, 500K commands/month
 
-1. **Preferred threshold values**: Should we use the displayed values (10k/7.5k/5k/2.5k) or adjust them differently?
-2. **Should high scores be server-based?** Currently they're local to each user's browser. Is this acceptable, or should we implement server-side storage?
-3. **Scoring formula adjustments?** Should we also tweak the scoring formulas to make certain grades easier/harder to achieve?
+## Questions for User (Resolved)
+
+1. **Preferred threshold values**: ✅ Used displayed values (10k/7.5k/5k/2.5k)
+2. **Should high scores be server-based?** ✅ Yes, implemented with Upstash Redis
+3. **Scoring formula adjustments?** ✅ No changes needed, thresholds are now realistic

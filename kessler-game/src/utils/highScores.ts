@@ -1,4 +1,4 @@
-import { kv } from '@vercel/kv';
+import { Redis } from '@upstash/redis';
 
 export interface HighScore {
   playerName: string;
@@ -12,7 +12,15 @@ export interface HighScore {
 const HIGH_SCORES_KEY = 'kessler-high-scores';
 const MAX_HIGH_SCORES = 10;
 
-const useLocalStorage = typeof window !== 'undefined' && !import.meta.env.KV_REST_API_URL;
+const useLocalStorage = typeof window !== 'undefined' && !import.meta.env.UPSTASH_REDIS_REST_URL;
+
+let redis: Redis | null = null;
+if (!useLocalStorage && import.meta.env.UPSTASH_REDIS_REST_URL && import.meta.env.UPSTASH_REDIS_REST_TOKEN) {
+  redis = new Redis({
+    url: import.meta.env.UPSTASH_REDIS_REST_URL,
+    token: import.meta.env.UPSTASH_REDIS_REST_TOKEN,
+  });
+}
 
 export async function getHighScores(): Promise<HighScore[]> {
   try {
@@ -22,7 +30,8 @@ export async function getHighScores(): Promise<HighScore[]> {
       return JSON.parse(stored);
     }
 
-    const scores = await kv.zrange('high-scores', 0, MAX_HIGH_SCORES - 1, { rev: true });
+    if (!redis) return [];
+    const scores = await redis.zrange('high-scores', 0, MAX_HIGH_SCORES - 1, { rev: true });
     if (!scores || scores.length === 0) return [];
     return (scores as string[]).map((s: string) => JSON.parse(s) as HighScore);
   } catch (error) {
@@ -43,11 +52,13 @@ export async function saveHighScore(score: HighScore): Promise<void> {
       return;
     }
 
-    await kv.zadd('high-scores', { score: score.score, member: JSON.stringify(score) });
+    if (!redis) return;
     
-    const count = await kv.zcard('high-scores');
+    await redis.zadd('high-scores', { score: score.score, member: JSON.stringify(score) });
+    
+    const count = await redis.zcard('high-scores');
     if (count > MAX_HIGH_SCORES) {
-      await kv.zpopmin('high-scores', count - MAX_HIGH_SCORES);
+      await redis.zpopmin('high-scores', count - MAX_HIGH_SCORES);
     }
   } catch (error) {
     console.error('Failed to save high score:', error);
@@ -72,7 +83,8 @@ export async function clearHighScores(): Promise<void> {
       return;
     }
 
-    await kv.del('high-scores');
+    if (!redis) return;
+    await redis.del('high-scores');
   } catch (error) {
     console.error('Failed to clear high scores:', error);
   }

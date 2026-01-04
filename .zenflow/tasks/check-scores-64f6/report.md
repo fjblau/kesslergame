@@ -14,24 +14,24 @@ Updated `SCORE_GRADES` constant to match realistic, achievable thresholds:
 
 **Rationale**: Original thresholds were unrealistically high. Analysis showed that even strong gameplay (~100 turns, 15 satellites, 40 debris removed) would only achieve ~16,000 points, making the S grade (50k) nearly impossible.
 
-### 2. Implemented Server-Based High Scores with Vercel KV
+### 2. Implemented Server-Based High Scores with Upstash Redis
 **Files Modified**:
 - `src/utils/highScores.ts` - Core storage logic
 - `src/components/HighScores/HighScoresPanel.tsx` - High scores display
 - `src/components/GameOver/GameOverModal.tsx` - Score saving
 
 **Key Changes**:
-- Installed `@vercel/kv` package
+- Installed `@upstash/redis` package (Vercel KV was sunset in Sept 2025)
 - Converted all high score functions to async
-- Implemented fallback to localStorage when KV is not available (local development)
+- Implemented fallback to localStorage when Redis is not available (local development)
 - Used Redis sorted sets (`ZADD`, `ZRANGE`) for efficient leaderboard storage
 - Automatic cleanup to maintain top 10 scores only
 - Added loading states to UI
 
 **Storage Strategy**:
-- **Production** (on Vercel): Uses Vercel KV (Redis) for global leaderboard
+- **Production** (on Vercel): Uses Upstash Redis (via Vercel Marketplace) for global leaderboard
 - **Development** (local): Falls back to localStorage automatically
-- Detection: Checks for `KV_REST_API_URL` environment variable
+- Detection: Checks for `UPSTASH_REDIS_REST_URL` environment variable
 
 ### 3. UI Improvements
 - Added loading state to HighScoresPanel while fetching scores
@@ -81,18 +81,24 @@ Updated `SCORE_GRADES` constant to match realistic, achievable thresholds:
 
 ## Next Steps for User
 
-### 1. Set Up Vercel KV Database
+### 1. Set Up Upstash Redis via Vercel Marketplace
 In Vercel Dashboard:
-1. Go to your project
-2. Navigate to "Storage" tab
-3. Click "Create Database" → "KV"
-4. Name it (e.g., "kessler-high-scores")
-5. Database will auto-connect via environment variables
+1. Go to your project → "Marketplace" tab
+2. Search for "Upstash" and click "Upstash Redis"
+3. Click "Add Integration"
+4. Follow prompts to create Upstash account (if needed)
+5. Create a Redis database
+6. Environment variables (`UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`) will auto-connect
+
+Alternative - Upstash Console:
+1. Go to [console.upstash.com](https://console.upstash.com)
+2. Create new Redis database
+3. Copy REST URL and Token to Vercel environment variables
 
 ### 2. Deploy and Test
 ```bash
 git add .
-git commit -m "Add Vercel KV for global high scores and fix grade thresholds"
+git commit -m "Add Upstash Redis for global high scores and fix grade thresholds"
 git push
 ```
 
@@ -102,13 +108,13 @@ git push
 - Test with multiple browsers/users to verify global leaderboard
 
 ## Cost Estimate
-- **Free tier**: 100 GB-hours/month (effectively unlimited for this use case)
-- **Estimated usage**: ~0.0036 GB-hours/month for high scores
+- **Free tier**: 256 MB storage, 500K commands/month
+- **Estimated usage**: ~5 KB storage, <1000 commands/month for high scores
 - **Cost**: $0.00/month (well within free tier)
 
 ## Files Modified
 1. `kessler-game/src/game/scoring.ts` - Grade thresholds
-2. `kessler-game/src/utils/highScores.ts` - Vercel KV integration
+2. `kessler-game/src/utils/highScores.ts` - Upstash Redis integration
 3. `kessler-game/src/components/HighScores/HighScoresPanel.tsx` - Async loading
 4. `kessler-game/src/components/GameOver/GameOverModal.tsx` - Async save
-5. `kessler-game/package.json` - Added @vercel/kv dependency
+5. `kessler-game/package.json` - Replaced @vercel/kv with @upstash/redis
