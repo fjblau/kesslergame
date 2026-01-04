@@ -14,7 +14,13 @@ const MAX_HIGH_SCORES = 10;
 
 let redis: Redis | null = null;
 try {
-  redis = Redis.fromEnv();
+  // Support both Upstash and legacy Vercel KV env var names
+  const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
+  
+  if (url && token) {
+    redis = new Redis({ url, token });
+  }
 } catch {
   // Redis not configured
 }
