@@ -47,14 +47,17 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
   );
 
   useEffect(() => {
-    saveHighScore({
-      playerName,
-      score: scoreState.totalScore,
-      grade,
-      date: new Date().toISOString(),
-      difficulty: budgetDifficulty,
-      turnsSurvived: step,
-    });
+    const saveScore = async () => {
+      await saveHighScore({
+        playerName,
+        score: scoreState.totalScore,
+        grade,
+        date: new Date().toISOString(),
+        difficulty: budgetDifficulty,
+        turnsSurvived: step,
+      });
+    };
+    saveScore();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

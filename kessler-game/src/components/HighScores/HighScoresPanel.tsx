@@ -1,17 +1,30 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { getHighScores, clearHighScores, type HighScore } from '../../utils/highScores';
 
 export function HighScoresPanel() {
-  const [highScores, setHighScores] = useState<HighScore[]>(getHighScores);
+  const [highScores, setHighScores] = useState<HighScore[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const loadHighScores = () => {
-    setHighScores(getHighScores());
-  };
+  useEffect(() => {
+    let mounted = true;
+    const loadScores = async () => {
+      const scores = await getHighScores();
+      if (mounted) {
+        setHighScores(scores);
+        setLoading(false);
+      }
+    };
+    loadScores();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
-  const handleClearScores = () => {
+  const handleClearScores = async () => {
     if (window.confirm('Are you sure you want to clear all high scores? This cannot be undone.')) {
-      clearHighScores();
-      loadHighScores();
+      await clearHighScores();
+      const scores = await getHighScores();
+      setHighScores(scores);
     }
   };
 
@@ -61,7 +74,12 @@ export function HighScoresPanel() {
         )}
       </div>
 
-      {highScores.length === 0 ? (
+      {loading ? (
+        <div className="bg-slate-800 border border-slate-700 rounded-xl p-12 text-center">
+          <div className="text-6xl mb-4">⏳</div>
+          <h3 className="text-2xl font-bold text-gray-300 mb-2">Loading High Scores...</h3>
+        </div>
+      ) : highScores.length === 0 ? (
         <div className="bg-slate-800 border border-slate-700 rounded-xl p-12 text-center">
           <div className="text-6xl mb-4">🏆</div>
           <h3 className="text-2xl font-bold text-gray-300 mb-2">No High Scores Yet</h3>

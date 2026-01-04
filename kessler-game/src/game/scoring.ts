@@ -27,10 +27,10 @@ export const SCORE_CONFIG = {
 };
 
 export const SCORE_GRADES = {
-  S: 50000,
-  A: 30000,
-  B: 15000,
-  C: 5000,
+  S: 10000,
+  A: 7500,
+  B: 5000,
+  C: 2500,
   D: 0,
 };
 
