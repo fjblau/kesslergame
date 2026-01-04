@@ -1,19 +1,24 @@
-import { useState } from 'react';
-import { getHighScores, clearHighScores, type HighScore } from '../../utils/highScores';
+import { useState, useEffect } from 'react';
+import { getHighScores, type HighScore } from '../../utils/highScores';
 
 export function HighScoresPanel() {
-  const [highScores, setHighScores] = useState<HighScore[]>(getHighScores);
+  const [highScores, setHighScores] = useState<HighScore[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const loadHighScores = () => {
-    setHighScores(getHighScores());
-  };
-
-  const handleClearScores = () => {
-    if (window.confirm('Are you sure you want to clear all high scores? This cannot be undone.')) {
-      clearHighScores();
-      loadHighScores();
-    }
-  };
+  useEffect(() => {
+    let mounted = true;
+    const loadScores = async () => {
+      const scores = await getHighScores();
+      if (mounted) {
+        setHighScores(scores);
+        setLoading(false);
+      }
+    };
+    loadScores();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const getGradeColor = (grade: string): string => {
     switch (grade) {
@@ -46,22 +51,17 @@ export function HighScoresPanel() {
 
   return (
     <div className="p-8 space-y-8 max-w-[1200px] mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="text-4xl font-bold text-blue-400 mb-2">High Scores</h2>
-          <p className="text-gray-400">Top 10 scores from all completed games</p>
-        </div>
-        {highScores.length > 0 && (
-          <button
-            onClick={handleClearScores}
-            className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg font-semibold transition-all"
-          >
-            Clear All Scores
-          </button>
-        )}
+      <div className="mb-6">
+        <h2 className="text-4xl font-bold text-blue-400 mb-2">High Scores</h2>
+        <p className="text-gray-400">Top 10 scores from all completed games</p>
       </div>
 
-      {highScores.length === 0 ? (
+      {loading ? (
+        <div className="bg-slate-800 border border-slate-700 rounded-xl p-12 text-center">
+          <div className="text-6xl mb-4">⏳</div>
+          <h3 className="text-2xl font-bold text-gray-300 mb-2">Loading High Scores...</h3>
+        </div>
+      ) : highScores.length === 0 ? (
         <div className="bg-slate-800 border border-slate-700 rounded-xl p-12 text-center">
           <div className="text-6xl mb-4">🏆</div>
           <h3 className="text-2xl font-bold text-gray-300 mb-2">No High Scores Yet</h3>
