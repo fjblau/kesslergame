@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { initializeGame } from '../../store/slices/gameSlice';
 import { initializeMissions } from '../../store/slices/missionsSlice';
@@ -17,6 +17,7 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
   const { budget, step, maxSteps, debris, satellites, debrisRemovalVehicles, budgetDifficulty, playerName } = useAppSelector(state => state.game);
   const scoreState = useAppSelector(selectScore);
   const [isVisible, setIsVisible] = useState(true);
+  const hasSaved = useRef(false);
 
   const getGameOverReason = () => {
     if (budget < 0) {
@@ -48,6 +49,8 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
 
   useEffect(() => {
     const saveScore = async () => {
+      if (hasSaved.current) return;
+      hasSaved.current = true;
       await saveHighScore({
         playerName,
         score: scoreState.totalScore,
