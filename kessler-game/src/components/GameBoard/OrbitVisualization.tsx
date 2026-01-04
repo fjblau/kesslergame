@@ -53,6 +53,7 @@ export function OrbitVisualization() {
   const days = useAppSelector(state => state.game.days);
   const riskLevel = useAppSelector(state => state.game.riskLevel);
   const gameOver = useAppSelector(state => state.game.gameOver);
+  const gameSpeed = useAppSelector(state => state.ui.gameSpeed);
   const orbitalSpeeds = useAppSelector(state => ({
     LEO: state.game.orbitalSpeedLEO,
     MEO: state.game.orbitalSpeedMEO,
@@ -223,6 +224,21 @@ export function OrbitVisualization() {
           background: `radial-gradient(circle closest-side at center, transparent 0%, transparent 95%, ${getBackgroundTintColor(riskLevel)} 95%, ${getBackgroundTintColor(riskLevel)} 100%)`
         }}
       />
+
+      {/* Pause Text */}
+      {gameSpeed === 'paused' && (
+        <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-20 pointer-events-none">
+          <div 
+            className="text-6xl font-bold tracking-wide"
+            style={{
+              color: 'rgba(239, 68, 68, 0.6)',
+              textShadow: '0 0 20px rgba(239, 68, 68, 0.4)'
+            }}
+          >
+            ORBITS PAUSED
+          </div>
+        </div>
+      )}
       
       {/* Debris Removed Counter */}
       <div className="absolute top-4 left-4 z-10">
