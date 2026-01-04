@@ -1,5 +1,3 @@
-import { Redis } from '@upstash/redis';
-
 export interface HighScore {
   playerName: string;
   score: number;
@@ -11,30 +9,33 @@ export interface HighScore {
 
 const HIGH_SCORES_KEY = 'kessler-high-scores';
 const MAX_HIGH_SCORES = 10;
+const API_BASE = '/api/high-scores';
 
-const useLocalStorage = typeof window !== 'undefined' && !import.meta.env.UPSTASH_REDIS_REST_URL;
+const isDevelopment = import.meta.env.DEV;
 
-let redis: Redis | null = null;
-if (!useLocalStorage) {
+async function callAPI<T>(endpoint: string, options?: RequestInit): Promise<T | null> {
   try {
-    redis = Redis.fromEnv();
-  } catch {
-    // Redis not configured, will fall back to localStorage
+    const response = await fetch(endpoint, options);
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('API call failed:', error);
+    return null;
   }
 }
 
 export async function getHighScores(): Promise<HighScore[]> {
   try {
-    if (useLocalStorage) {
+    if (isDevelopment) {
       const stored = localStorage.getItem(HIGH_SCORES_KEY);
       if (!stored) return [];
       return JSON.parse(stored);
     }
 
-    if (!redis) return [];
-    const scores = await redis.zrange('high-scores', 0, MAX_HIGH_SCORES - 1, { rev: true });
-    if (!scores || scores.length === 0) return [];
-    return (scores as string[]).map((s: string) => JSON.parse(s) as HighScore);
+    const scores = await callAPI<HighScore[]>(API_BASE);
+    return scores || [];
   } catch (error) {
     console.error('Failed to load high scores:', error);
     return [];
@@ -43,7 +44,7 @@ export async function getHighScores(): Promise<HighScore[]> {
 
 export async function saveHighScore(score: HighScore): Promise<void> {
   try {
-    if (useLocalStorage) {
+    if (isDevelopment) {
       const stored = localStorage.getItem(HIGH_SCORES_KEY);
       const scores = stored ? JSON.parse(stored) : [];
       scores.push(score);
@@ -53,14 +54,11 @@ export async function saveHighScore(score: HighScore): Promise<void> {
       return;
     }
 
-    if (!redis) return;
-    
-    await redis.zadd('high-scores', { score: score.score, member: JSON.stringify(score) });
-    
-    const count = await redis.zcard('high-scores');
-    if (count > MAX_HIGH_SCORES) {
-      await redis.zpopmin('high-scores', count - MAX_HIGH_SCORES);
-    }
+    await callAPI(API_BASE, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(score),
+    });
   } catch (error) {
     console.error('Failed to save high score:', error);
   }
@@ -79,13 +77,12 @@ export async function isHighScore(score: number): Promise<boolean> {
 
 export async function clearHighScores(): Promise<void> {
   try {
-    if (useLocalStorage) {
+    if (isDevelopment) {
       localStorage.removeItem(HIGH_SCORES_KEY);
       return;
     }
 
-    if (!redis) return;
-    await redis.del('high-scores');
+    await callAPI(API_BASE, { method: 'DELETE' });
   } catch (error) {
     console.error('Failed to clear high scores:', error);
   }

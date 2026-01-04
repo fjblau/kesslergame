@@ -14,24 +14,35 @@ Updated `SCORE_GRADES` constant to match realistic, achievable thresholds:
 
 **Rationale**: Original thresholds were unrealistically high. Analysis showed that even strong gameplay (~100 turns, 15 satellites, 40 debris removed) would only achieve ~16,000 points, making the S grade (50k) nearly impossible.
 
-### 2. Implemented Server-Based High Scores with Upstash Redis
+### 2. Implemented Server-Based High Scores with Secure API Routes
+**Files Created**:
+- `api/high-scores.ts` - Serverless API endpoint (GET/POST/DELETE)
+
 **Files Modified**:
-- `src/utils/highScores.ts` - Core storage logic
+- `src/utils/highScores.ts` - API client calls
 - `src/components/HighScores/HighScoresPanel.tsx` - High scores display
 - `src/components/GameOver/GameOverModal.tsx` - Score saving
 
+**Architecture**:
+```
+Client (Browser) → /api/high-scores → Upstash Redis
+                   ↑
+                   Secure: Credentials never exposed to client
+```
+
 **Key Changes**:
-- Installed `@upstash/redis` package (Vercel KV was sunset in Sept 2025)
-- Converted all high score functions to async
-- Implemented fallback to localStorage when Redis is not available (local development)
-- Used Redis sorted sets (`ZADD`, `ZRANGE`) for efficient leaderboard storage
+- Created Vercel serverless API route handling GET/POST/DELETE
+- Server-side Redis connection using `@upstash/redis` (Vercel KV was sunset Sept 2025)
+- Client calls API via fetch(), not Redis directly
+- Redis credentials stay server-side (secure)
 - Automatic cleanup to maintain top 10 scores only
 - Added loading states to UI
+- CORS headers for cross-origin access
 
 **Storage Strategy**:
-- **Production** (on Vercel): Uses Upstash Redis (via Vercel Marketplace) for global leaderboard
-- **Development** (local): Falls back to localStorage automatically
-- Detection: Checks for `UPSTASH_REDIS_REST_URL` environment variable
+- **Production** (on Vercel): API → Upstash Redis for global leaderboard
+- **Development** (local): localStorage (test scores stay separate)
+- Detection: Uses `import.meta.env.DEV` to determine environment
 
 ### 3. UI Improvements
 - Added loading state to HighScoresPanel while fetching scores
@@ -60,24 +71,38 @@ Updated `SCORE_GRADES` constant to match realistic, achievable thresholds:
 
 ## Biggest Issues or Challenges
 
-### 1. TypeScript Generic Type Constraints
-**Issue**: `kv.zrange<string>()` caused type errors because TypeScript expected `unknown[]` constraint.
+### 1. Security Issue - Client-Side Database Access (Initial Attempt)
+**Issue**: First implementation attempted to use Upstash Redis directly from client code, which would have:
+- Exposed database credentials in browser bundle
+- Allowed users to manipulate scores via DevTools
+- No validation or rate limiting
 
-**Solution**: Removed generic type parameter and used type assertion: `(scores as string[])` after receiving the data.
+**Solution**: Pivoted to serverless API architecture:
+- Created `/api/high-scores` endpoint on Vercel
+- Redis connection stays server-side only
+- Client calls secure API, not database directly
+- Credentials never exposed to client
 
-### 2. React Hook ESLint Warning
+### 2. Environment Variable Scoping Issue
+**Issue**: Initially tried to detect Redis availability using `import.meta.env.UPSTASH_REDIS_REST_URL` in client code, but Vite only exposes `VITE_*` prefixed variables to client bundle.
+
+**Solution**: Changed detection to use `import.meta.env.DEV` instead:
+- Development mode: use localStorage
+- Production mode: use API endpoint
+- No need to expose database credentials
+
+### 3. React Hook ESLint Warning
 **Issue**: Calling `loadHighScores()` directly in `useEffect` triggered `react-hooks/set-state-in-effect` warning.
 
 **Solution**: Refactored to define async function inside useEffect with proper cleanup using mounted flag to prevent state updates after unmount.
 
-### 3. Async Function Migration
-**Challenge**: Converting synchronous localStorage API to async Vercel KV required updating all call sites.
+### 4. Vercel KV Sunset Discovery
+**Challenge**: During implementation, discovered Vercel KV was sunset in September 2025, requiring migration to Upstash Redis via Vercel Marketplace.
 
 **Solution**: 
-- Made all storage functions async
-- Updated components to handle promises
-- Used useEffect for initial data loading
-- Maintained backwards compatibility with localStorage fallback
+- Replaced `@vercel/kv` with `@upstash/redis`
+- Used `Redis.fromEnv()` for automatic credential detection
+- Same Redis API (zadd, zrange, zcard) so minimal changes needed
 
 ## Next Steps for User
 
@@ -112,9 +137,20 @@ git push
 - **Estimated usage**: ~5 KB storage, <1000 commands/month for high scores
 - **Cost**: $0.00/month (well within free tier)
 
-## Files Modified
-1. `kessler-game/src/game/scoring.ts` - Grade thresholds
-2. `kessler-game/src/utils/highScores.ts` - Upstash Redis integration
-3. `kessler-game/src/components/HighScores/HighScoresPanel.tsx` - Async loading
+## Files Modified and Created
+
+### Created
+1. `kessler-game/api/high-scores.ts` - Serverless API endpoint for high scores
+
+### Modified
+1. `kessler-game/src/game/scoring.ts` - Fixed grade thresholds
+2. `kessler-game/src/utils/highScores.ts` - API client calls instead of direct Redis access
+3. `kessler-game/src/components/HighScores/HighScoresPanel.tsx` - Async loading with proper effects
 4. `kessler-game/src/components/GameOver/GameOverModal.tsx` - Async save
-5. `kessler-game/package.json` - Replaced @vercel/kv with @upstash/redis
+5. `kessler-game/package.json` - Added @upstash/redis and @vercel/node
+
+### Security Improvements
+- ✅ Database credentials never exposed to client
+- ✅ Server-side validation and error handling
+- ✅ CORS headers for API security
+- ✅ Client only calls API endpoints, not database directly
