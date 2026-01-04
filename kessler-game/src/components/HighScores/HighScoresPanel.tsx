@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getHighScores, clearHighScores, type HighScore } from '../../utils/highScores';
+import { getHighScores, type HighScore } from '../../utils/highScores';
 
 export function HighScoresPanel() {
   const [highScores, setHighScores] = useState<HighScore[]>([]);
@@ -19,14 +19,6 @@ export function HighScoresPanel() {
       mounted = false;
     };
   }, []);
-
-  const handleClearScores = async () => {
-    if (window.confirm('Are you sure you want to clear all high scores? This cannot be undone.')) {
-      await clearHighScores();
-      const scores = await getHighScores();
-      setHighScores(scores);
-    }
-  };
 
   const getGradeColor = (grade: string): string => {
     switch (grade) {
@@ -59,19 +51,9 @@ export function HighScoresPanel() {
 
   return (
     <div className="p-8 space-y-8 max-w-[1200px] mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="text-4xl font-bold text-blue-400 mb-2">High Scores</h2>
-          <p className="text-gray-400">Top 10 scores from all completed games</p>
-        </div>
-        {highScores.length > 0 && (
-          <button
-            onClick={handleClearScores}
-            className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg font-semibold transition-all"
-          >
-            Clear All Scores
-          </button>
-        )}
+      <div className="mb-6">
+        <h2 className="text-4xl font-bold text-blue-400 mb-2">High Scores</h2>
+        <p className="text-gray-400">Top 10 scores from all completed games</p>
       </div>
 
       {loading ? (
