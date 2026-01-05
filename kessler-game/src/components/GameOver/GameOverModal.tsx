@@ -144,7 +144,7 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center p-8 z-50 overflow-y-auto">
-      <div className="max-w-2xl w-full bg-slate-800 border border-slate-700 rounded-xl p-10 shadow-2xl my-8">
+      <div className="max-w-6xl w-full bg-slate-800 border border-slate-700 rounded-xl p-10 shadow-2xl my-8">
         <h1 className="text-5xl font-bold text-center mb-6 bg-gradient-to-r from-red-400 to-orange-400 bg-clip-text text-transparent">
           Game Over
         </h1>
@@ -153,7 +153,9 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
           {getGameOverReason()}
         </p>
 
-        <div className="bg-gradient-to-br from-purple-900/50 to-pink-900/50 border-2 border-purple-500/50 rounded-xl p-6 mb-8">
+        <div className="grid lg:grid-cols-2 gap-8">
+          <div className="space-y-8">
+            <div className="bg-gradient-to-br from-purple-900/50 to-pink-900/50 border-2 border-purple-500/50 rounded-xl p-6">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="text-3xl font-bold text-white mb-2">Final Score</h2>
@@ -199,10 +201,10 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
               <span className="text-purple-400 font-semibold">+{scoreState.survivalScore.toLocaleString()}</span>
             </div>
           </div>
-        </div>
+            </div>
 
-        <div className="bg-slate-900 border border-slate-700 rounded-lg p-6 mb-8">
-          <h2 className="text-2xl font-bold text-gray-200 mb-4">Final Statistics</h2>
+            <div className="bg-slate-900 border border-slate-700 rounded-lg p-6">
+              <h2 className="text-2xl font-bold text-gray-200 mb-4">Final Statistics</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-gray-400 text-sm">Turns Survived</p>
@@ -229,9 +231,21 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
               <p className="text-2xl font-bold text-purple-400">{totalDebrisRemoved} pieces</p>
             </div>
           </div>
-        </div>
+            </div>
 
-        <div className="bg-slate-900 border border-slate-700 rounded-lg p-6 mb-8">
+            <div>
+              <button
+                onClick={handleDownloadCertificate}
+                className="w-full py-4 px-8 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white rounded-xl font-bold text-xl uppercase tracking-wide transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+              >
+                <span>📄</span>
+                Download Mission Certificate
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <div className="bg-slate-900 border border-slate-700 rounded-lg p-6">
           <h2 className="text-2xl font-bold text-gray-200 mb-4">Share Your Feedback</h2>
           
           {feedbackSubmitted ? (
@@ -334,19 +348,11 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
               <p className="text-xs text-gray-500 text-center">Optional - Skip if you prefer</p>
             </div>
           )}
+            </div>
+          </div>
         </div>
 
-        <div className="mb-4">
-          <button
-            onClick={handleDownloadCertificate}
-            className="w-full py-4 px-8 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white rounded-xl font-bold text-xl uppercase tracking-wide transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
-          >
-            <span>📄</span>
-            Download Mission Certificate
-          </button>
-        </div>
-
-        <div className="flex gap-4">
+        <div className="flex gap-4 mt-8">
           <button
             onClick={handleClose}
             className="flex-1 py-4 px-8 bg-slate-700 hover:bg-slate-600 text-white rounded-xl font-bold text-xl uppercase tracking-wide transition-all shadow-lg hover:shadow-xl"
