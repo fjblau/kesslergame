@@ -46,10 +46,13 @@ interface PlayRecord {
 
 ### Storage Strategy
 Unlike high scores which use a sorted set (ZSET) for ranking, plays will use a **list** data structure:
-- Key: `"plays"`
-- Operation: `LPUSH` (add to beginning of list)
-- Retrieval: `LRANGE` (get most recent plays)
-- Optionally implement a maximum limit (e.g., keep last 1000 plays)
+- **Database**: upstash-kv-orange-umbrella (Upstash Redis instance name in dashboard)
+- **Key**: `"plays"` (the Redis key within the instance)
+- **Operation**: `LPUSH` (add to beginning of list)
+- **Retrieval**: `LRANGE` (get most recent plays)
+- **Limit**: Optionally implement a maximum (e.g., keep last 1000 plays)
+
+**Note**: The database name is configured via environment variables (`UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN`). No code changes needed for the database name - the existing credentials already connect to upstash-kv-orange-umbrella.
 
 ### Development vs Production
 - **Development**: Use localStorage (key: `"kessler-plays"`)
@@ -81,6 +84,8 @@ Vercel serverless function to handle play logging.
 #### 2. `kessler-game/src/utils/plays.ts`
 Client-side utility functions.
 
+**Note**: Using `plays.ts` for consistency with simple, descriptive naming. The existing `highScores.ts` uses camelCase, but `plays` is a simple plural noun that reads well in lowercase.
+
 **Functions**:
 - `logPlay(playerName: string): Promise<void>` - Log a play with current timestamp
 - `getPlays(limit?: number): Promise<PlayRecord[]>` - Retrieve play records (optional)
@@ -93,13 +98,18 @@ Client-side utility functions.
 
 ### Modified Files
 
-#### 1. `kessler-game/src/store/slices/gameSlice.ts`
-Add play logging to the `initializeGame` reducer.
+#### 1. `kessler-game/src/components/Setup/GameSetupScreen.tsx`
+Add play logging when the game starts.
 
 **Changes**:
-- Import `logPlay` from utils
-- Call `logPlay(action.payload.playerName)` after game initialization
-- Handle async call (fire-and-forget pattern, don't block game start)
+- Import `logPlay` from `../../utils/plays`
+- Call `logPlay(playerName.trim())` in `handleStart` function after dispatching actions
+- Fire-and-forget pattern (async, non-blocking)
+
+**Integration Pattern Comparison**:
+- **High Scores**: Saved at game end in `GameOverModal.tsx` (async, fire-and-forget)
+- **Plays**: Logged at game start in `GameSetupScreen.tsx` (async, fire-and-forget)
+- **Both**: Called from React components (NOT reducers - reducers must be pure functions)
 
 ---
 
