@@ -18,47 +18,67 @@ Do not make assumptions on important decisions — get clarification first.
 
 ## Workflow Steps
 
-### [ ] Step: Technical Specification
+### [x] Step: Technical Specification
+<!-- chat-id: 5661d1bf-15b9-41d8-b778-d9a4b65d0573 -->
 
-Assess the task's difficulty, as underestimating it leads to poor outcomes.
-- easy: Straightforward implementation, trivial bug fix or feature
-- medium: Moderate complexity, some edge cases or caveats to consider
-- hard: Complex logic, many caveats, architectural considerations, or high-risk changes
+**Complexity**: Medium
 
-Create a technical specification for the task that is appropriate for the complexity level:
-- Review the existing codebase architecture and identify reusable components.
-- Define the implementation approach based on established patterns in the project.
-- Identify all source code files that will be created or modified.
-- Define any necessary data model, API, or interface changes.
-- Describe verification steps using the project's test and lint commands.
-
-Save the output to `{@artifacts_path}/spec.md` with:
-- Technical context (language, dependencies)
-- Implementation approach
-- Source code structure changes
-- Data model / API / interface changes
-- Verification approach
-
-If the task is complex enough, create a detailed implementation plan based on `{@artifacts_path}/spec.md`:
-- Break down the work into concrete tasks (incrementable, testable milestones)
-- Each task should reference relevant contracts and include verification steps
-- Replace the Implementation step below with the planned tasks
-
-Rule of thumb for step size: each step should represent a coherent unit of work (e.g., implement a component, add an API endpoint, write tests for a module). Avoid steps that are too granular (single function).
-
-Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warrant this breakdown, keep the Implementation step below as is.
+Technical specification created at `.zenflow/tasks/user-feedback-9346/spec.md`
 
 ---
 
-### [ ] Step: Implementation
+### [ ] Step: Create Feedback TypeScript Types and Utility
 
-Implement the task according to the technical specification and general engineering best practices.
+Create the client-side feedback interface and utility function:
+- Define `Feedback` interface in `kessler-game/src/utils/feedback.ts`
+- Implement `submitFeedback()` function following patterns from `highScores.ts` and `plays.ts`
+- Include proper error handling and TypeScript types
 
-1. Break the task into steps where possible.
-2. Implement the required changes in the codebase.
-3. Add and run relevant tests and linters.
-4. Perform basic manual verification if applicable.
-5. After completion, write a report to `{@artifacts_path}/report.md` describing:
-   - What was implemented
-   - How the solution was tested
-   - The biggest issues or challenges encountered
+**Verification**: TypeScript compilation passes (`npm run build`)
+
+---
+
+### [ ] Step: Create Feedback API Endpoint
+
+Create the serverless API endpoint:
+- Create `kessler-game/api/feedback.ts` following the pattern from `high-scores.ts` and `plays.ts`
+- Implement POST handler to save feedback to Upstash Redis
+- Add CORS headers and input validation
+- Store feedback in a Redis list with size limit
+
+**Verification**: TypeScript compilation passes, endpoint structure matches existing API files
+
+---
+
+### [ ] Step: Update Game Over Modal UI
+
+Modify the Game Over modal to include feedback form:
+- Add feedback form section in `GameOverModal.tsx`
+- Implement form fields for all 4 questions (enjoyment rating, learning rating, user category, comments)
+- Add submit button and success/error messaging
+- Ensure form is optional and doesn't block game flow
+- Style consistently with existing modal design
+
+**Verification**: Visual inspection, TypeScript compilation, ESLint passes
+
+---
+
+### [ ] Step: Test and Verify
+
+Run verification steps:
+- Run `npm run build` to check TypeScript compilation
+- Run `npm run lint` to check code style
+- Manual testing of feedback submission
+- Test edge cases (empty fields, network errors, duplicate submissions)
+- Verify feedback is stored in Upstash
+
+**Verification**: All tests pass, feedback successfully saved to database
+
+---
+
+### [ ] Step: Create Implementation Report
+
+Write completion report to `.zenflow/tasks/user-feedback-9346/report.md`:
+- What was implemented
+- How the solution was tested
+- Any challenges encountered
