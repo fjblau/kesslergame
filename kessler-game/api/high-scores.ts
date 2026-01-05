@@ -43,7 +43,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     if (req.method === 'GET') {
-      const scores = await redis.zrange<string>('high-scores', 0, MAX_HIGH_SCORES - 1, { rev: true });
+      const scores = await redis.zrange('high-scores', 0, MAX_HIGH_SCORES - 1, { rev: true });
       if (!scores || scores.length === 0) {
         return res.status(200).json([]);
       }
