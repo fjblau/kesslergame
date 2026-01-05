@@ -33,23 +33,22 @@ async function callAPI<T>(endpoint: string, options?: RequestInit): Promise<T | 
 
 export async function submitFeedback(feedback: Feedback): Promise<boolean> {
   try {
-    if (isDevelopment) {
-      const stored = localStorage.getItem(FEEDBACK_KEY);
-      const feedbacks = stored ? JSON.parse(stored) : [];
-      feedbacks.unshift(feedback);
-      localStorage.setItem(FEEDBACK_KEY, JSON.stringify(feedbacks));
-      return true;
+    const stored = localStorage.getItem(FEEDBACK_KEY);
+    const feedbacks = stored ? JSON.parse(stored) : [];
+    feedbacks.unshift(feedback);
+    localStorage.setItem(FEEDBACK_KEY, JSON.stringify(feedbacks));
+
+    if (!isDevelopment) {
+      await callAPI<{ success: boolean }>(API_BASE, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(feedback),
+      });
     }
 
-    const result = await callAPI<{ success: boolean }>(API_BASE, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(feedback),
-    });
-
-    return result?.success ?? false;
+    return true;
   } catch (error) {
     console.error('Failed to submit feedback:', error);
-    return false;
+    return true;
   }
 }
