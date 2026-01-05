@@ -52,7 +52,6 @@ export async function submitFeedback(feedback: Feedback): Promise<boolean> {
     }
 
     let result = null;
-    let lastError = null;
     
     for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
       if (attempt > 0) {
@@ -60,22 +59,18 @@ export async function submitFeedback(feedback: Feedback): Promise<boolean> {
         await new Promise(resolve => setTimeout(resolve, delay));
       }
       
-      try {
-        result = await callAPI<{ success: boolean }>(API_BASE, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(feedback),
-        });
-        
-        if (result?.success) {
-          const stored = localStorage.getItem(FEEDBACK_KEY);
-          const feedbacks = stored ? JSON.parse(stored) : [];
-          feedbacks.unshift(feedback);
-          localStorage.setItem(FEEDBACK_KEY, JSON.stringify(feedbacks));
-          return true;
-        }
-      } catch (error) {
-        lastError = error;
+      result = await callAPI<{ success: boolean }>(API_BASE, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(feedback),
+      });
+      
+      if (result?.success) {
+        const stored = localStorage.getItem(FEEDBACK_KEY);
+        const feedbacks = stored ? JSON.parse(stored) : [];
+        feedbacks.unshift(feedback);
+        localStorage.setItem(FEEDBACK_KEY, JSON.stringify(feedbacks));
+        return true;
       }
     }
 
