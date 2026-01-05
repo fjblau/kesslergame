@@ -7,6 +7,7 @@ import { SCORE_GRADES } from '../../game/scoring';
 import { selectScore } from '../../store/slices/scoreSlice';
 import { generateCertificate } from '../../utils/certificate';
 import { saveHighScore } from '../../utils/highScores';
+import { submitFeedback, type Feedback } from '../../utils/feedback';
 
 interface GameOverModalProps {
   onViewAnalytics?: () => void;
@@ -18,6 +19,14 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
   const scoreState = useAppSelector(selectScore);
   const [isVisible, setIsVisible] = useState(true);
   const hasSaved = useRef(false);
+  
+  const [enjoymentRating, setEnjoymentRating] = useState<1 | 2 | 3 | 4 | 5 | null>(null);
+  const [learningRating, setLearningRating] = useState<1 | 2 | 3 | 4 | 5 | null>(null);
+  const [userCategory, setUserCategory] = useState<Feedback['userCategory']>('Other');
+  const [comments, setComments] = useState('');
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+  const [feedbackError, setFeedbackError] = useState(false);
+  const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
 
   const getGameOverReason = () => {
     if (budget < 0) {
@@ -93,6 +102,40 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
       budgetManagementScore: scoreState.budgetManagementScore,
       survivalScore: scoreState.survivalScore,
     });
+  };
+
+  const handleSubmitFeedback = async () => {
+    if (!enjoymentRating || !learningRating) {
+      return;
+    }
+
+    setIsSubmittingFeedback(true);
+    setFeedbackError(false);
+
+    const feedback: Feedback = {
+      playerName,
+      enjoymentRating,
+      learningRating,
+      userCategory,
+      comments,
+      timestamp: new Date().toISOString(),
+      gameContext: {
+        score: scoreState.totalScore,
+        grade,
+        difficulty: budgetDifficulty,
+        turnsSurvived: step,
+      },
+    };
+
+    const success = await submitFeedback(feedback);
+    
+    if (success) {
+      setFeedbackSubmitted(true);
+    } else {
+      setFeedbackError(true);
+    }
+    
+    setIsSubmittingFeedback(false);
   };
 
   if (!isVisible) {
@@ -186,6 +229,111 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
               <p className="text-2xl font-bold text-purple-400">{totalDebrisRemoved} pieces</p>
             </div>
           </div>
+        </div>
+
+        <div className="bg-slate-900 border border-slate-700 rounded-lg p-6 mb-8">
+          <h2 className="text-2xl font-bold text-gray-200 mb-4">Share Your Feedback</h2>
+          
+          {feedbackSubmitted ? (
+            <div className="bg-green-900/50 border border-green-500/50 rounded-lg p-4 text-center">
+              <p className="text-green-400 font-semibold">✓ Thank you for your feedback!</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-gray-300 text-sm mb-2">
+                  1. On a scale of 1-5, did you enjoy playing the game? <span className="text-red-400">*</span>
+                </label>
+                <div className="flex gap-2">
+                  {[1, 2, 3, 4, 5].map((rating) => (
+                    <button
+                      key={rating}
+                      onClick={() => setEnjoymentRating(rating as 1 | 2 | 3 | 4 | 5)}
+                      className={`flex-1 py-2 px-4 rounded-lg font-semibold transition-all ${
+                        enjoymentRating === rating
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
+                      }`}
+                    >
+                      {rating}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-500 mt-1">1 = Not at all, 5 = Very enjoyable</p>
+              </div>
+
+              <div>
+                <label className="block text-gray-300 text-sm mb-2">
+                  2. On a scale of 1-5, did you learn something new from playing the game? <span className="text-red-400">*</span>
+                </label>
+                <div className="flex gap-2">
+                  {[1, 2, 3, 4, 5].map((rating) => (
+                    <button
+                      key={rating}
+                      onClick={() => setLearningRating(rating as 1 | 2 | 3 | 4 | 5)}
+                      className={`flex-1 py-2 px-4 rounded-lg font-semibold transition-all ${
+                        learningRating === rating
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
+                      }`}
+                    >
+                      {rating}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-500 mt-1">1 = Nothing new, 5 = Learned a lot</p>
+              </div>
+
+              <div>
+                <label className="block text-gray-300 text-sm mb-2">
+                  3. How would you describe yourself?
+                </label>
+                <select
+                  value={userCategory}
+                  onChange={(e) => setUserCategory(e.target.value as Feedback['userCategory'])}
+                  className="w-full py-2 px-4 bg-slate-700 text-gray-300 rounded-lg border border-slate-600 focus:border-blue-500 focus:outline-none"
+                >
+                  <option value="Student">Student</option>
+                  <option value="Educator">Educator</option>
+                  <option value="Professional">Professional</option>
+                  <option value="Retired">Retired</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-gray-300 text-sm mb-2">
+                  4. Add any comments or thoughts in the text box below
+                </label>
+                <textarea
+                  value={comments}
+                  onChange={(e) => setComments(e.target.value)}
+                  placeholder="Share your thoughts about the game..."
+                  className="w-full py-2 px-4 bg-slate-700 text-gray-300 rounded-lg border border-slate-600 focus:border-blue-500 focus:outline-none resize-none"
+                  rows={4}
+                />
+              </div>
+
+              {feedbackError && (
+                <div className="bg-red-900/50 border border-red-500/50 rounded-lg p-3 text-center">
+                  <p className="text-red-400 text-sm">Failed to submit feedback. Please try again.</p>
+                </div>
+              )}
+
+              <button
+                onClick={handleSubmitFeedback}
+                disabled={!enjoymentRating || !learningRating || isSubmittingFeedback}
+                className={`w-full py-3 px-6 rounded-lg font-semibold transition-all ${
+                  !enjoymentRating || !learningRating || isSubmittingFeedback
+                    ? 'bg-slate-700 text-gray-500 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white shadow-lg hover:shadow-xl'
+                }`}
+              >
+                {isSubmittingFeedback ? 'Submitting...' : 'Submit Feedback'}
+              </button>
+              <p className="text-xs text-gray-500 text-center">Optional - Skip if you prefer</p>
+            </div>
+          )}
         </div>
 
         <div className="mb-4">

@@ -52,7 +52,8 @@ Create the serverless API endpoint:
 
 ---
 
-### [ ] Step: Update Game Over Modal UI
+### [x] Step: Update Game Over Modal UI
+<!-- chat-id: 8902d71e-3ad9-41cb-95e8-4c46cb0bb359 -->
 
 Modify the Game Over modal to include feedback form:
 - Add feedback form section in `GameOverModal.tsx`
