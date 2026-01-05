@@ -4,6 +4,7 @@ import { initializeGame } from '../../store/slices/gameSlice';
 import { initializeMissions } from '../../store/slices/missionsSlice';
 import type { BudgetDifficulty } from '../../game/types';
 import { BudgetDifficultySettings } from './BudgetDifficultySettings';
+import { logPlay } from '../../utils/plays';
 
 interface GameSetupScreenProps {
   onStart: () => void;
@@ -17,8 +18,10 @@ export function GameSetupScreen({ onStart }: GameSetupScreenProps) {
   const isNameValid = playerName.trim().length > 0 && playerName.trim().length <= 50;
 
   const handleStart = () => {
-    dispatch(initializeGame({ difficulty, playerName: playerName.trim() }));
+    const trimmedName = playerName.trim();
+    dispatch(initializeGame({ difficulty, playerName: trimmedName }));
     dispatch(initializeMissions(3));
+    logPlay(trimmedName);
     onStart();
   };
 
