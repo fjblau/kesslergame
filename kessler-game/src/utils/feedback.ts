@@ -22,7 +22,9 @@ async function callAPI<T>(endpoint: string, options?: RequestInit): Promise<T | 
   try {
     const response = await fetch(endpoint, options);
     if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
+      const errorText = await response.text();
+      console.error(`API error ${response.status}:`, errorText);
+      throw new Error(`API error: ${response.status} - ${errorText}`);
     }
     return await response.json();
   } catch (error) {
@@ -33,22 +35,34 @@ async function callAPI<T>(endpoint: string, options?: RequestInit): Promise<T | 
 
 export async function submitFeedback(feedback: Feedback): Promise<boolean> {
   try {
-    const stored = localStorage.getItem(FEEDBACK_KEY);
-    const feedbacks = stored ? JSON.parse(stored) : [];
-    feedbacks.unshift(feedback);
-    localStorage.setItem(FEEDBACK_KEY, JSON.stringify(feedbacks));
-
-    if (!isDevelopment) {
-      await callAPI<{ success: boolean }>(API_BASE, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(feedback),
-      });
+    if (isDevelopment) {
+      const stored = localStorage.getItem(FEEDBACK_KEY);
+      const feedbacks = stored ? JSON.parse(stored) : [];
+      feedbacks.unshift(feedback);
+      localStorage.setItem(FEEDBACK_KEY, JSON.stringify(feedbacks));
+      return true;
     }
 
-    return true;
+    console.log('Submitting feedback to API:', { endpoint: API_BASE, feedback });
+    const result = await callAPI<{ success: boolean }>(API_BASE, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(feedback),
+    });
+
+    console.log('API response:', result);
+    
+    if (result?.success) {
+      const stored = localStorage.getItem(FEEDBACK_KEY);
+      const feedbacks = stored ? JSON.parse(stored) : [];
+      feedbacks.unshift(feedback);
+      localStorage.setItem(FEEDBACK_KEY, JSON.stringify(feedbacks));
+      return true;
+    }
+    
+    return false;
   } catch (error) {
     console.error('Failed to submit feedback:', error);
-    return true;
+    return false;
   }
 }
