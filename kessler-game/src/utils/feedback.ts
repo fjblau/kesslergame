@@ -15,7 +15,8 @@ export interface Feedback {
 
 const FEEDBACK_KEY = 'kessler-feedback';
 const API_BASE = '/api/feedback';
-const API_TIMEOUT = 10000;
+const API_TIMEOUT = 30000;
+const MAX_RETRIES = 2;
 
 const isDevelopment = import.meta.env.DEV;
 
@@ -49,29 +50,58 @@ async function callAPI<T>(endpoint: string, options?: RequestInit): Promise<T | 
 
 export async function submitFeedback(feedback: Feedback): Promise<boolean> {
   try {
-    const stored = localStorage.getItem(FEEDBACK_KEY);
-    const feedbacks = stored ? JSON.parse(stored) : [];
-    feedbacks.unshift(feedback);
-    localStorage.setItem(FEEDBACK_KEY, JSON.stringify(feedbacks));
+    if (isDevelopment) {
+      const stored = localStorage.getItem(FEEDBACK_KEY);
+      const feedbacks = stored ? JSON.parse(stored) : [];
+      feedbacks.unshift(feedback);
+      localStorage.setItem(FEEDBACK_KEY, JSON.stringify(feedbacks));
+      return true;
+    }
 
-    if (!isDevelopment) {
-      console.log('Submitting feedback to API:', { endpoint: API_BASE, feedback });
-      const result = await callAPI<{ success: boolean }>(API_BASE, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(feedback),
-      });
-
-      if (result?.success) {
-        console.log('Feedback successfully synced to API');
-      } else {
-        console.warn('Feedback saved locally but API sync failed');
+    console.log('Submitting feedback to API:', { 
+      endpoint: API_BASE, 
+      feedback,
+      timestamp: new Date().toISOString(),
+      userAgent: navigator.userAgent,
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+    });
+    
+    let result = null;
+    let lastError = null;
+    
+    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+      if (attempt > 0) {
+        const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000);
+        console.log(`Retry attempt ${attempt}/${MAX_RETRIES} after ${delay}ms...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+      
+      try {
+        result = await callAPI<{ success: boolean }>(API_BASE, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(feedback),
+        });
+        
+        if (result?.success) {
+          console.log(`Feedback successfully submitted${attempt > 0 ? ` (attempt ${attempt + 1})` : ''}`);
+          const stored = localStorage.getItem(FEEDBACK_KEY);
+          const feedbacks = stored ? JSON.parse(stored) : [];
+          feedbacks.unshift(feedback);
+          localStorage.setItem(FEEDBACK_KEY, JSON.stringify(feedbacks));
+          return true;
+        }
+      } catch (error) {
+        lastError = error;
+        console.warn(`Attempt ${attempt + 1} failed:`, error);
       }
     }
 
-    return true;
+    console.error('All retry attempts failed. Last error:', lastError);
+    console.error('Final API response:', result);
+    return false;
   } catch (error) {
     console.error('Failed to submit feedback:', error);
-    return true;
+    return false;
   }
 }

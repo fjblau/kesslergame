@@ -86,42 +86,49 @@ export async function submitFeedback(feedback: Feedback): Promise<boolean> {
 
 ## Implementation Notes
 
-### Changes Made to `kessler-game/src/utils/feedback.ts`
+### Changes Made
 
-**1. Added timeout handling (lines 18, 22-47)**
+**1. `kessler-game/src/utils/feedback.ts`**
+
+**Timeout increased to 30 seconds (line 18)**
 ```typescript
-const API_TIMEOUT = 10000; // 10 second timeout
-
-// AbortController with timeout in callAPI
-const controller = new AbortController();
-const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
+const API_TIMEOUT = 30000; // 30 second timeout for global users
 ```
 
-**2. Modified `submitFeedback` to localStorage-first (lines 50-77)**
+**Added retry logic with exponential backoff (lines 72-98)**
+- 3 total attempts (initial + 2 retries)
+- Exponential backoff: 1s, 2s delays between retries
+- Catches transient network failures
 
-**Before:**
-- Development: localStorage only
-- Production: API-first, return `result?.success ?? false`
-- Failure: Shows error to user
+**Enhanced logging (lines 60-66)**
+- Logs timezone, user agent, timestamp
+- Tracks retry attempts
+- Shows detailed error information
 
-**After:**
-- **Always save to localStorage first** (lines 52-55)
-- **Then attempt API sync** in production (lines 57-70)
-- **Always return true** - feedback is saved regardless of API result (line 72)
-- Logs API sync status for debugging (lines 65-69)
+**2. Created `kessler-game/vercel.json`**
+```json
+{
+  "functions": {
+    "api/**/*.ts": {
+      "maxDuration": 30
+    }
+  }
+}
+```
+Configures Vercel serverless functions to allow 30-second execution time.
 
 ### Why This Solves Geographic Issues
-1. **Timeout protection**: 10s timeout prevents indefinite hangs on slow US→Europe connections
-2. **LocalStorage as source of truth**: Feedback captured immediately, API becomes optional sync
-3. **Resilient to network issues**: US users with high latency or timeouts still succeed
-4. **No user-facing errors**: API failures logged but don't affect UX
+1. **30-second timeout**: Accommodates high-latency US→Vercel→Upstash roundtrips
+2. **Retry logic**: Handles transient network failures or cold starts
+3. **Server-side timeout config**: Prevents Vercel from killing the function prematurely
+4. **Enhanced logging**: Provides diagnostic info to identify remaining issues
 
-### Testing
-- **Manual verification**: Code review confirms localStorage-first pattern
-- **Geographic testing**: Solution addresses Austria (works) vs US (fails) discrepancy
-- **No automated tests**: Project has no test suite
+### API-First Approach Maintained
+- Feedback MUST reach backend database to succeed
+- LocalStorage only saved AFTER successful API submission
+- Failures show error message to user (as required for data collection)
 
 ### Result
-- US users will no longer see "Failed to submit feedback" errors
-- Feedback always saved locally and best-effort synced to API
-- Console logs provide debugging info for API sync failures (timeout, network, validation)
+- US users should now successfully submit feedback via API
+- 30s timeout + retries handles high-latency connections
+- Detailed console logs help diagnose any remaining regional issues
