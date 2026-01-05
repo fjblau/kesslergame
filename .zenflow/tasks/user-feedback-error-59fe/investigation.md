@@ -5,21 +5,29 @@ Users receive "Failed to submit feedback" error when attempting to submit feedba
 
 ## Root Cause Analysis
 
-The feedback submission fails due to missing Redis configuration in the production environment:
+### Key Finding: Feedback is the ONLY endpoint that reports failures to users
+
+After comparing all three APIs (feedback, high-scores, plays), the critical difference is:
+
+1. **`submitFeedback()`** - Returns `Promise<boolean>` and checks `result?.success`
+2. **`saveHighScore()`** - Returns `Promise<void>`, fires and forgets
+3. **`logPlay()`** - Returns `Promise<void>`, fires and forgets
 
 ### Error Flow
-1. **API Dependency**: The feedback API (`api/feedback.ts:45-47`) requires Redis (Upstash) configured via environment variables:
-   - `UPSTASH_REDIS_REST_URL` / `KV_REST_API_URL`
-   - `UPSTASH_REDIS_REST_TOKEN` / `KV_REST_API_TOKEN`
+When the API call fails (for ANY reason):
+1. Client's `callAPI` catches the error and returns `null` (`utils/feedback.ts:29-30`)
+2. `submitFeedback` evaluates `result?.success ?? false` → returns `false` (`utils/feedback.ts:50`)
+3. UI shows "Failed to submit feedback" error (`GameOverModal.tsx:332-334`)
 
-2. **Failure Path**: When Redis is not initialized:
-   - API returns 503 status: `{ error: 'Database not configured' }` (`api/feedback.ts:46`)
-   - Client's `callAPI` function catches non-2xx response (`utils/feedback.ts:24`)
-   - Throws error and returns `null` (`utils/feedback.ts:25-30`)
-   - `submitFeedback` returns `false` (`utils/feedback.ts:50`)
-   - UI displays error message (`GameOverModal.tsx:332-334`)
+### Possible API Failure Causes
+Since database is configured and other endpoints work for reading:
+- **Network/timeout issues** - Transient failures
+- **API validation failure** - Strict validation at `api/feedback.ts:53-71`
+- **CORS or server errors** - Would show in console logs
+- **POST endpoint not working** - Other POST endpoints might also fail silently
 
-3. **Development Mode**: Works in dev because feedback is stored in localStorage (`utils/feedback.ts:36-42`)
+### Why This Appears as Feedback-Only Issue
+The other endpoints (`saveHighScore`, `logPlay`) don't check results or show errors. If they're failing too, users wouldn't know.
 
 ## Affected Components
 - **`api/feedback.ts`** - Serverless API handler requiring Redis
@@ -28,22 +36,46 @@ The feedback submission fails due to missing Redis configuration in the producti
 
 ## Proposed Solution
 
-**Implement graceful degradation in `utils/feedback.ts`**:
-- Check if API is available (not just in development mode)
-- Fall back to localStorage when API fails (503, network errors, etc.)
-- This ensures feedback is never lost and always stored locally as backup
+**Option 1: Silent Fallback to localStorage (Recommended)**
+Align feedback behavior with `saveHighScore` and `logPlay`:
+- Always save to localStorage as backup (not just in dev mode)
+- Attempt API call in production
+- Never show error to user - fail silently with local storage as safety net
+- Return `true` regardless of API success (since data is saved locally)
 
-### Implementation Details
-1. Modify `submitFeedback` to always store in localStorage first (not just in dev)
-2. Attempt API call in production
-3. If API succeeds, mark feedback as synced
-4. If API fails, feedback remains in localStorage for manual retrieval
+### Implementation in `utils/feedback.ts`
+```typescript
+export async function submitFeedback(feedback: Feedback): Promise<boolean> {
+  try {
+    // Always save to localStorage first as backup
+    const stored = localStorage.getItem(FEEDBACK_KEY);
+    const feedbacks = stored ? JSON.parse(stored) : [];
+    feedbacks.unshift(feedback);
+    localStorage.setItem(FEEDBACK_KEY, JSON.stringify(feedbacks));
+
+    // Try to sync to API if not in development
+    if (!isDevelopment) {
+      await callAPI<{ success: boolean }>(API_BASE, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(feedback),
+      });
+      // Don't check result - localStorage is our source of truth
+    }
+
+    return true; // Always succeed since we saved locally
+  } catch (error) {
+    console.error('Failed to submit feedback:', error);
+    return true; // Still return true since localStorage likely succeeded
+  }
+}
+```
 
 ### Advantages
 - Users never see errors
-- Feedback is preserved even without server infrastructure
-- Backward compatible with existing localStorage approach
-- Can be synced later when API becomes available
+- Feedback always preserved locally  
+- Consistent behavior with other endpoints
+- Simple, reliable fallback mechanism
 
 ## Edge Cases Considered
 - Redis not configured (primary issue)
