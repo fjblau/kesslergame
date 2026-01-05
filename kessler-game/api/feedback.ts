@@ -50,26 +50,60 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (req.method === 'POST') {
       const feedback = req.body as Feedback;
       
+      console.log('Received feedback:', JSON.stringify(feedback, null, 2));
+      console.log('Validation checks:', {
+        hasFeedback: !!feedback,
+        hasPlayerName: !!feedback?.playerName,
+        hasTimestamp: !!feedback?.timestamp,
+        enjoymentRating: {
+          value: feedback?.enjoymentRating,
+          type: typeof feedback?.enjoymentRating,
+          isNumber: typeof feedback?.enjoymentRating === 'number',
+          inRange: typeof feedback?.enjoymentRating === 'number' && feedback.enjoymentRating >= 1 && feedback.enjoymentRating <= 5
+        },
+        learningRating: {
+          value: feedback?.learningRating,
+          type: typeof feedback?.learningRating,
+          isNumber: typeof feedback?.learningRating === 'number',
+          inRange: typeof feedback?.learningRating === 'number' && feedback.learningRating >= 1 && feedback.learningRating <= 5
+        },
+        userCategory: {
+          value: feedback?.userCategory,
+          valid: VALID_CATEGORIES.includes(feedback?.userCategory as any)
+        },
+        gameContext: {
+          exists: !!feedback?.gameContext,
+          score: feedback?.gameContext?.score,
+          scoreType: typeof feedback?.gameContext?.score
+        }
+      });
+      
       if (!feedback || !feedback.playerName || !feedback.timestamp) {
+        console.error('Validation failed: missing required fields');
         return res.status(400).json({ error: 'Invalid feedback data: missing required fields' });
       }
 
       if (typeof feedback.enjoymentRating !== 'number' || feedback.enjoymentRating < 1 || feedback.enjoymentRating > 5) {
+        console.error('Validation failed: invalid enjoyment rating', feedback.enjoymentRating);
         return res.status(400).json({ error: 'Invalid enjoyment rating: must be 1-5' });
       }
 
       if (typeof feedback.learningRating !== 'number' || feedback.learningRating < 1 || feedback.learningRating > 5) {
+        console.error('Validation failed: invalid learning rating', feedback.learningRating);
         return res.status(400).json({ error: 'Invalid learning rating: must be 1-5' });
       }
 
       if (!VALID_CATEGORIES.includes(feedback.userCategory)) {
+        console.error('Validation failed: invalid user category', feedback.userCategory);
         return res.status(400).json({ error: 'Invalid user category' });
       }
 
       if (!feedback.gameContext || typeof feedback.gameContext.score !== 'number') {
+        console.error('Validation failed: invalid game context', feedback.gameContext);
         return res.status(400).json({ error: 'Invalid game context data' });
       }
 
+      console.log('All validations passed, storing feedback');
       await redis.lpush('feedback', JSON.stringify(feedback));
       
       const count = await redis.llen('feedback');
