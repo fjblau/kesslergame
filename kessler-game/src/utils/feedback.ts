@@ -15,12 +15,22 @@ export interface Feedback {
 
 const FEEDBACK_KEY = 'kessler-feedback';
 const API_BASE = '/api/feedback';
+const API_TIMEOUT = 10000;
 
 const isDevelopment = import.meta.env.DEV;
 
 async function callAPI<T>(endpoint: string, options?: RequestInit): Promise<T | null> {
   try {
-    const response = await fetch(endpoint, options);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
+    
+    const response = await fetch(endpoint, {
+      ...options,
+      signal: controller.signal,
+    });
+    
+    clearTimeout(timeoutId);
+    
     if (!response.ok) {
       const errorText = await response.text();
       console.error(`API error ${response.status}:`, errorText);
@@ -28,41 +38,40 @@ async function callAPI<T>(endpoint: string, options?: RequestInit): Promise<T | 
     }
     return await response.json();
   } catch (error) {
-    console.error('API call failed:', error);
+    if (error instanceof Error && error.name === 'AbortError') {
+      console.error('API call timeout after', API_TIMEOUT, 'ms');
+    } else {
+      console.error('API call failed:', error);
+    }
     return null;
   }
 }
 
 export async function submitFeedback(feedback: Feedback): Promise<boolean> {
   try {
-    if (isDevelopment) {
-      const stored = localStorage.getItem(FEEDBACK_KEY);
-      const feedbacks = stored ? JSON.parse(stored) : [];
-      feedbacks.unshift(feedback);
-      localStorage.setItem(FEEDBACK_KEY, JSON.stringify(feedbacks));
-      return true;
+    const stored = localStorage.getItem(FEEDBACK_KEY);
+    const feedbacks = stored ? JSON.parse(stored) : [];
+    feedbacks.unshift(feedback);
+    localStorage.setItem(FEEDBACK_KEY, JSON.stringify(feedbacks));
+
+    if (!isDevelopment) {
+      console.log('Submitting feedback to API:', { endpoint: API_BASE, feedback });
+      const result = await callAPI<{ success: boolean }>(API_BASE, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(feedback),
+      });
+
+      if (result?.success) {
+        console.log('Feedback successfully synced to API');
+      } else {
+        console.warn('Feedback saved locally but API sync failed');
+      }
     }
 
-    console.log('Submitting feedback to API:', { endpoint: API_BASE, feedback });
-    const result = await callAPI<{ success: boolean }>(API_BASE, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(feedback),
-    });
-
-    console.log('API response:', result);
-    
-    if (result?.success) {
-      const stored = localStorage.getItem(FEEDBACK_KEY);
-      const feedbacks = stored ? JSON.parse(stored) : [];
-      feedbacks.unshift(feedback);
-      localStorage.setItem(FEEDBACK_KEY, JSON.stringify(feedbacks));
-      return true;
-    }
-    
-    return false;
+    return true;
   } catch (error) {
     console.error('Failed to submit feedback:', error);
-    return false;
+    return true;
   }
 }
