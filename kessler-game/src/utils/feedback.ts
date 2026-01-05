@@ -33,17 +33,10 @@ async function callAPI<T>(endpoint: string, options?: RequestInit): Promise<T | 
     clearTimeout(timeoutId);
     
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`API error ${response.status}:`, errorText);
-      throw new Error(`API error: ${response.status} - ${errorText}`);
+      throw new Error(`API error: ${response.status}`);
     }
     return await response.json();
   } catch (error) {
-    if (error instanceof Error && error.name === 'AbortError') {
-      console.error('API call timeout after', API_TIMEOUT, 'ms');
-    } else {
-      console.error('API call failed:', error);
-    }
     return null;
   }
 }
@@ -58,21 +51,12 @@ export async function submitFeedback(feedback: Feedback): Promise<boolean> {
       return true;
     }
 
-    console.log('Submitting feedback to API:', { 
-      endpoint: API_BASE, 
-      feedback,
-      timestamp: new Date().toISOString(),
-      userAgent: navigator.userAgent,
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
-    });
-    
     let result = null;
     let lastError = null;
     
     for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
       if (attempt > 0) {
         const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000);
-        console.log(`Retry attempt ${attempt}/${MAX_RETRIES} after ${delay}ms...`);
         await new Promise(resolve => setTimeout(resolve, delay));
       }
       
@@ -84,7 +68,6 @@ export async function submitFeedback(feedback: Feedback): Promise<boolean> {
         });
         
         if (result?.success) {
-          console.log(`Feedback successfully submitted${attempt > 0 ? ` (attempt ${attempt + 1})` : ''}`);
           const stored = localStorage.getItem(FEEDBACK_KEY);
           const feedbacks = stored ? JSON.parse(stored) : [];
           feedbacks.unshift(feedback);
@@ -93,12 +76,10 @@ export async function submitFeedback(feedback: Feedback): Promise<boolean> {
         }
       } catch (error) {
         lastError = error;
-        console.warn(`Attempt ${attempt + 1} failed:`, error);
       }
     }
 
-    console.error('All retry attempts failed. Last error:', lastError);
-    console.error('Final API response:', result);
+    console.error('Failed to submit feedback after', MAX_RETRIES + 1, 'attempts');
     return false;
   } catch (error) {
     console.error('Failed to submit feedback:', error);
