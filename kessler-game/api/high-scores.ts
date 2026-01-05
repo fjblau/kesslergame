@@ -47,8 +47,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       if (!scores || scores.length === 0) {
         return res.status(200).json([]);
       }
-      const parsed = scores.map((s) => JSON.parse(s) as HighScore);
-      return res.status(200).json(parsed);
+      return res.status(200).json(scores as HighScore[]);
     }
 
     if (req.method === 'POST') {
