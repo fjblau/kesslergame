@@ -30,18 +30,24 @@ This is the **core game simulation** perfect for React adaptation. Here's what i
 - Max 100 steps per game
 - Each turn: launch decision → collision resolution → event processing → metrics update
 
-#### 2. **Three Orbital Layers**
+#### 2. **Four Orbital Layers**
 - **LEO** (Low Earth Orbit): 0-50km range
   - Cheapest ($2M)
   - Satellites expire after 20 turns
-  - Most vulnerable to solar activity
+  - Most vulnerable to solar flares (orbital speed: 6.4 km/s)
 - **MEO** (Medium Earth Orbit): 50-100km range
   - Mid-tier cost ($3M)
-  - Moderate collision threshold
+  - Satellites expire after 40 turns
+  - Moderate collision threshold (orbital speed: 4.0 km/s)
 - **GEO** (Geostationary Orbit): 100-150km range
   - Most expensive ($5M)
-  - Highest collision threshold
+  - Satellites expire after 60 turns
+  - Highest collision threshold (orbital speed: 2.4 km/s)
   - Safest long-term orbit
+- **GRAVEYARD** (Disposal Orbit): 150-200km range
+  - No launch cost (satellites moved here by GeoTug)
+  - Satellites remain indefinitely (orbital speed: 2.2 km/s)
+  - End-of-life parking orbit to prevent collisions
 
 #### 3. **Resource Management & Satellite Revenue**
 The game implements a dual-revenue system combining per-satellite income with difficulty-based bonus income:
@@ -60,9 +66,16 @@ Each active satellite generates revenue based on its type:
 - **Challenge Mode**: $100M starting budget, no bonus income, -$2M drain per turn
 
 **Costs:**
-- Launch costs vary by orbit (LEO: $2M, MEO: $3M, GEO: $5M)
-- Optional insurance: Basic ($500K cost, $1M payout) or Premium ($1M cost, $2.5M payout)
-- Debris Removal Vehicles: $4M-$17.5M depending on orbit and type
+- Launch costs vary by orbit (LEO: $2M, MEO: $3M, GEO: $5M, GRAVEYARD: $0)
+- Optional insurance tiers:
+  - None: $0 cost, $0 payout
+  - Basic: $500K cost, $1M payout
+  - Premium: $1M cost, $2.5M payout
+- Debris Removal Vehicles:
+  - Cooperative: $2M (LEO) to $5M (GEO)
+  - Uncooperative: $3.5M (LEO) to $8.75M (GEO)
+  - GeoTug: $25M (all orbits) - moves satellites to GRAVEYARD
+  - Refueling: $1.5M (LEO) to $3.75M (GEO) - extends satellite/DRV lifespan
 
 **Economic Strategy:** Your satellite fleet is your primary revenue engine. Launch high-value GPS satellites early to build steady income. Protect revenue-generating satellites with insurance. In Easy/Normal modes, time expensive launches after bonus income. In Hard/Challenge modes, build satellite revenue quickly to sustain operations.
 
@@ -80,9 +93,14 @@ Each active satellite generates revenue based on its type:
 - Risk affects collision probability and mission success
 
 #### 6. **Random Events**
-- **Solar Storms**: 10% chance per turn
-  - Clears 30% of LEO debris
-  - Strategic benefit/opportunity
+- **Solar Flares**: 10% chance per turn, classified by intensity (A, B, C, M, X)
+  - **Class A**: Removes ~5% of LEO debris (most common)
+  - **Class B**: Removes ~10% of LEO debris (common)
+  - **Class C**: Removes ~20% of LEO debris (moderate)
+  - **Class M**: Removes ~35% of LEO debris + ~5% of MEO debris (rare)
+  - **Class X**: Removes ~50% of LEO debris + ~20% of MEO debris + ~5% of GEO debris (very rare)
+  - Strategic benefit/opportunity for debris cleanup
+  - Intensity affects orbital speed multipliers during the event
 - **Collision Cascades**: Triggered by 3+ simultaneous collisions
   - Creates rapid debris multiplication
   - Game-ending scenario if not managed
@@ -180,9 +198,10 @@ const CONFIG = {
   
   // Simulation
   debris_per_collision: 5,
-  max_debris_limit: 500,
+  max_debris_limit: 250,
   max_steps: 100,
-  leo_lifetime: 20,
+  satellite_lifespan: { LEO: 20, MEO: 40, GEO: 60, GRAVEYARD: 999 },
+  orbital_speeds: { LEO: 6.4, MEO: 4.0, GEO: 2.4, GRAVEYARD: 2.2 },
   
   // Events
   solar_activity_chance: 0.1,

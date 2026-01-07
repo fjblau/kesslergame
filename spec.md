@@ -110,7 +110,7 @@ function detectCollisions(satellites: Satellite[]): Collision[] {
   const collisions: Collision[] = [];
   const byLayer = groupByLayer(satellites);
   
-  for (const layer of ['LEO', 'MEO', 'GEO']) {
+  for (const layer of ['LEO', 'MEO', 'GEO', 'GRAVEYARD']) {
     const sats = byLayer[layer] || [];
     const threshold = COLLISION_THRESHOLDS[layer];
     
@@ -159,8 +159,8 @@ src/
 │   ├── ControlPanel/
 │   │   ├── ControlPanel.tsx          # Launch controls
 │   │   ├── LaunchSelector.tsx        # Satellite vs DRV selector
-│   │   ├── OrbitSelector.tsx         # LEO/MEO/GEO buttons
-│   │   ├── DRVConfiguration.tsx      # Cooperative vs Uncooperative DRV
+│   │   ├── OrbitSelector.tsx         # LEO/MEO/GEO/GRAVEYARD buttons
+│   │   ├── DRVConfiguration.tsx      # Cooperative, Uncooperative, GeoTug, Refueling DRV
 │   │   ├── InsuranceToggle.tsx       # Insurance checkbox
 │   │   └── StatusDisplay.tsx         # Metrics display (including DRVs)
 │   ├── StatsPanel/
@@ -222,12 +222,14 @@ src/
 
 ```typescript
 // Game constants
-type OrbitLayer = 'LEO' | 'MEO' | 'GEO';
+type OrbitLayer = 'LEO' | 'MEO' | 'GEO' | 'GRAVEYARD';
 type SatelliteType = 'Weather' | 'Comms' | 'GPS';
+type InsuranceTier = 'none' | 'basic' | 'premium';
 type RiskLevel = 'LOW' | 'MEDIUM' | 'CRITICAL';
 type MissionId = string;
 type DebrisType = 'cooperative' | 'uncooperative';
-type DRVType = 'cooperative' | 'uncooperative';
+type DRVType = 'cooperative' | 'uncooperative' | 'geotug' | 'refueling';
+type SolarFlareClass = 'A' | 'B' | 'C' | 'M' | 'X';
 
 // Core entities
 interface Satellite {
@@ -237,7 +239,18 @@ interface Satellite {
   layer: OrbitLayer;
   purpose: SatelliteType;
   age: number;
-  insured: boolean;
+  maxAge: number;
+  insuranceTier: InsuranceTier;
+  inGraveyard?: boolean;
+  radius: number;
+  captureRadius?: number;
+  metadata?: {
+    name: string;
+    country: string;
+    weight_kg: number;
+    launch_vehicle: string;
+    launch_site: string;
+  };
 }
 
 interface Debris {
@@ -246,6 +259,8 @@ interface Debris {
   y: number;
   layer: OrbitLayer;
   type: DebrisType;  // cooperative (70%) or uncooperative (30%)
+  radius: number;
+  captureRadius?: number;
 }
 
 interface DebrisRemovalVehicle {
@@ -259,6 +274,20 @@ interface DebrisRemovalVehicle {
   capacity: number;  // Debris removed per turn
   successRate: number;  // Probability of successful removal
   debrisRemoved: number;  // Total debris removed
+  targetDebrisId?: string;
+  capturedDebrisId?: string;
+  captureOrbitsRemaining?: number;
+  targetingTurnsRemaining?: number;
+  radius: number;
+  captureRadius?: number;
+  metadata?: {
+    name: string;
+    organization: string;
+    capture_system: string;
+    icon_suggestion: string;
+    operator?: string;
+    country?: string;
+  };
 }
 
 interface Mission {
@@ -314,8 +343,9 @@ type LaunchType = 'satellite' | 'debris-removal';
 interface LaunchAction {
   type: LaunchType;
   orbit: OrbitLayer;
-  insured?: boolean;  // Only for satellites
-  drvType?: DRVType;  // Only for debris removal vehicles
+  insuranceTier?: InsuranceTier;  // Only for satellites (none, basic, premium)
+  drvType?: DRVType;  // Only for debris removal vehicles (cooperative, uncooperative, geotug, refueling)
+  satellitePurpose?: SatelliteType;  // Only for satellites (Weather, Comms, GPS)
 }
 
 interface CollisionResult {
@@ -329,15 +359,20 @@ interface GameConfig {
   collisionThresholds: Record<OrbitLayer, number>;
   layerBounds: Record<OrbitLayer, [number, number]>;
   launchCosts: Record<OrbitLayer, number>;
-  insuranceCost: number;
-  insuranceRefund: number;
+  insuranceTiers: Record<InsuranceTier, { cost: number; payout: number }>;
   startingBudget: number;
   debrisPerCollision: number;
   maxDebrisLimit: number;
   maxSteps: number;
-  leoLifetime: number;
-  solarActivityChance: number;
-  debrisDecayRate: number;
+  satelliteLifespan: Record<OrbitLayer, number>;
+  orbitalSpeeds: Record<OrbitLayer, number>;
+  solarStormProbability: number;
+  solarFlareConfig: Record<SolarFlareClass, {
+    xRayFluxRange: [number, number];
+    intensityRange: [number, number];
+    baseRemovalRate: Record<OrbitLayer, number>;
+    weight: number;
+  }>;
   cascadeThreshold: number;
   
   // Satellite Revenue / Budget Difficulty configuration
@@ -358,21 +393,28 @@ interface GameConfig {
 // Debris Removal Vehicle Configuration Constants
 const DRV_CONFIG = {
   costs: {
-    LEO: { cooperative: 4_000_000, uncooperative: 8_000_000 },
-    MEO: { cooperative: 6_000_000, uncooperative: 12_000_000 },
-    GEO: { cooperative: 10_000_000, uncooperative: 20_000_000 },
+    LEO: { cooperative: 2_000_000, uncooperative: 3_500_000, geotug: 25_000_000, refueling: 1_500_000 },
+    MEO: { cooperative: 3_000_000, uncooperative: 5_250_000, geotug: 25_000_000, refueling: 2_250_000 },
+    GEO: { cooperative: 5_000_000, uncooperative: 8_750_000, geotug: 25_000_000, refueling: 3_750_000 },
+    GRAVEYARD: { cooperative: 0, uncooperative: 0, geotug: 0, refueling: 0 },
   },
   capacity: {
-    cooperative: [2, 3],    // Remove 2-3 debris per turn
-    uncooperative: [1, 2],  // Remove 1-2 debris per turn
+    cooperative: [2, 3],       // Remove 2-3 debris per turn
+    uncooperative: [6, 9],     // Remove 6-9 debris per turn (high capacity)
+    geotug: [1, 1],            // Moves 1 satellite per mission
+    refueling: [1, 1],         // Refuels 1 satellite/DRV per turn
   },
   successRate: {
-    cooperative: 0.85,      // 85% success rate
-    uncooperative: 0.60,    // 60% success rate
+    cooperative: 0.85,         // 85% success rate
+    uncooperative: 0.90,       // 90% success rate
+    geotug: 1.0,               // 100% success rate
+    refueling: 0.95,           // 95% success rate
   },
   duration: {
-    cooperative: 10,        // Active for 10 turns
-    uncooperative: 8,       // Active for 8 turns
+    cooperative: 10,           // Active for 10 turns
+    uncooperative: 10,         // Active for 10 turns
+    geotug: 999,               // Permanent (until decommissioned)
+    refueling: 15,             // Active for 15 turns
   },
   failureDebrisMultiplier: 2,  // Failed removal creates 2 debris
 };
@@ -382,6 +424,37 @@ const DEBRIS_TYPE_DISTRIBUTION = {
   cooperative: 0.70,      // 70% of debris is cooperative
   uncooperative: 0.30,    // 30% of debris is uncooperative
 };
+
+// DRV Type Descriptions
+/**
+ * COOPERATIVE DRV: Standard debris removal vehicle for cooperative debris
+ * - Cost: $2M (LEO) to $5M (GEO)
+ * - Capacity: 2-3 debris per turn
+ * - Success Rate: 85%
+ * - Duration: 10 turns
+ * - Best for: Routine cleanup of cooperative debris (70% of total debris)
+ * 
+ * UNCOOPERATIVE DRV: High-capacity vehicle for tumbling/uncooperative debris
+ * - Cost: $3.5M (LEO) to $8.75M (GEO)
+ * - Capacity: 6-9 debris per turn (high throughput)
+ * - Success Rate: 90%
+ * - Duration: 10 turns
+ * - Best for: Aggressive cleanup campaigns, handling difficult debris (30% of total)
+ * 
+ * GEOTUG: Satellite recovery and graveyard orbit vehicle
+ * - Cost: $25M (all orbits)
+ * - Capacity: 1 satellite per mission
+ * - Success Rate: 100%
+ * - Duration: Permanent (until decommissioned)
+ * - Best for: Moving end-of-life satellites to GRAVEYARD orbit to prevent future collisions
+ * 
+ * REFUELING VEHICLE: Life extension service for satellites and DRVs
+ * - Cost: $1.5M (LEO) to $3.75M (GEO)
+ * - Capacity: 1 satellite/DRV per turn
+ * - Success Rate: 95%
+ * - Duration: 15 turns
+ * - Best for: Extending lifespan of valuable satellites, maintaining DRV operations longer
+ */
 
 // Satellite Revenue Configuration (Per-Turn Revenue by Type)
 export const SATELLITE_REVENUE: Record<SatelliteType, number> = {
@@ -823,8 +896,8 @@ The game includes 18 missions total (13 original + 5 new debris removal missions
 1. **GPS_Priority**: Launch 3 GPS satellites
 2. **Weather_Watch**: Launch 2 weather satellites
 3. **Comms_Network**: Launch 3 communications satellites
-4. **Multi_Layer**: Launch satellites in all three orbital layers
-5. **Insurance_Master**: Insure 5 satellites
+4. **Multi_Layer**: Launch satellites in all four orbital layers (LEO, MEO, GEO, GRAVEYARD via GeoTug)
+5. **Insurance_Master**: Insure 5 satellites with any insurance tier
 6. **Budget_Management**: Maintain budget above $20M for 10 turns
 7. **Risk_Avoidance**: Keep debris count below 50 for 20 turns
 8. **Survivor**: Have 10 satellites active simultaneously
