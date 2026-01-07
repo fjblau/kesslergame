@@ -19,7 +19,7 @@ export function ControlPanel() {
   const budget = useAppSelector(state => state.game.budget);
   const budgetDifficulty = useAppSelector(state => state.game.budgetDifficulty);
 
-  const [launchType, setLaunchType] = useState<'satellite' | 'drv' | 'geotug'>('satellite');
+  const [launchType, setLaunchType] = useState<'satellite' | 'drv' | 'geotug' | 'refueling'>('satellite');
   const [selectedOrbit, setSelectedOrbit] = useState<OrbitLayer>('LEO');
   const [insuranceTier, setInsuranceTier] = useState<InsuranceTier>('basic');
   const [satellitePurpose, setSatellitePurpose] = useState<SatelliteType | 'Random'>('Random');
@@ -34,12 +34,14 @@ export function ControlPanel() {
     } else if (launchType === 'drv') {
       const baseCost = DRV_CONFIG.costs[selectedOrbit][drvType];
       return baseCost;
+    } else if (launchType === 'refueling') {
+      return DRV_CONFIG.costs[selectedOrbit]['refueling'];
     } else {
       return DRV_CONFIG.costs['GEO']['geotug'];
     }
   };
 
-  const getLaunchTypeCost = (type: 'satellite' | 'drv' | 'geotug') => {
+  const getLaunchTypeCost = (type: 'satellite' | 'drv' | 'geotug' | 'refueling') => {
     if (type === 'satellite') {
       const baseCost = LAUNCH_COSTS[selectedOrbit];
       const purposeDiscount = satellitePurpose === 'Random' ? SATELLITE_PURPOSE_CONFIG.Random.discount : 0;
@@ -48,6 +50,8 @@ export function ControlPanel() {
     } else if (type === 'drv') {
       const baseCost = DRV_CONFIG.costs[selectedOrbit][drvType];
       return baseCost;
+    } else if (type === 'refueling') {
+      return DRV_CONFIG.costs[selectedOrbit]['refueling'];
     } else {
       return DRV_CONFIG.costs['GEO']['geotug'];
     }
@@ -71,6 +75,9 @@ export function ControlPanel() {
       dispatch(launchSatellite({ orbit: selectedOrbit, insuranceTier, purpose, day: gameState.days }));
     } else if (launchType === 'drv') {
       dispatch(launchDRV({ orbit: selectedOrbit, drvType, day: gameState.days }));
+      dispatch(trackDRVLaunch());
+    } else if (launchType === 'refueling') {
+      dispatch(launchDRV({ orbit: selectedOrbit, drvType: 'refueling', day: gameState.days }));
       dispatch(trackDRVLaunch());
     } else {
       dispatch(launchDRV({ orbit: 'GEO', drvType: 'geotug', day: gameState.days }));
@@ -109,18 +116,18 @@ export function ControlPanel() {
 
         <div className="space-y-2 mb-6">
         <label className="text-base font-medium text-gray-300">Launch Type</label>
-        <div className="flex gap-2">
-          {(['satellite', 'drv', 'geotug'] as const).map(type => (
+        <div className="grid grid-cols-2 gap-2">
+          {(['satellite', 'drv', 'refueling', 'geotug'] as const).map(type => (
             <button
               key={type}
               onClick={() => setLaunchType(type)}
-              className={`flex-1 py-[7px] px-3 rounded-xl font-medium transition-colors text-base flex flex-col items-center ${
+              className={`py-[7px] px-3 rounded-xl font-medium transition-colors text-base flex flex-col items-center ${
                 launchType === type
                   ? 'bg-blue-600 text-white shadow-lg'
                   : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
               }`}
             >
-              <span>{type === 'satellite' ? 'Satellite' : type === 'drv' ? 'DRV' : 'GEO Tug'}</span>
+              <span>{type === 'satellite' ? 'Satellite' : type === 'drv' ? 'DRV' : type === 'refueling' ? 'Refueling' : 'GEO Tug'}</span>
               <span className="text-xs opacity-75 mt-1">
                 ${(getLaunchTypeCost(type) / 1e6).toFixed(1)}M
               </span>
@@ -159,8 +166,8 @@ export function ControlPanel() {
           <>
             <div className="space-y-2">
               <label className="text-base font-medium text-gray-300">DRV Type</label>
-              <div className="grid grid-cols-3 gap-2">
-                {(['cooperative', 'uncooperative', 'refueling'] as DRVType[]).map(type => (
+              <div className="grid grid-cols-2 gap-2">
+                {(['cooperative', 'uncooperative'] as DRVType[]).map(type => (
                   <button
                     key={type}
                     onClick={() => setDrvType(type)}
@@ -176,6 +183,13 @@ export function ControlPanel() {
               </div>
             </div>
           </>
+        ) : launchType === 'refueling' ? (
+          <div className="space-y-2">
+            <label className="text-base font-medium text-gray-300">Refueling Vehicle Configuration</label>
+            <div className="bg-slate-700/50 rounded-xl p-4 text-gray-400 text-sm">
+              Refueling vehicles extend the operational lifespan of satellites and DRVs by resetting their age to zero.
+            </div>
+          </div>
         ) : (
           <div className="space-y-2">
             <label className="text-base font-medium text-gray-300">GEO Tug Configuration</label>
@@ -207,7 +221,7 @@ export function ControlPanel() {
               : 'bg-slate-700 text-slate-500 cursor-not-allowed'
           }`}
         >
-          {canAfford ? (launchType === 'satellite' ? 'Launch Satellite' : launchType === 'drv' ? 'Launch DRV' : 'Launch GEO Tug') : 'Insufficient Budget'}
+          {canAfford ? (launchType === 'satellite' ? 'Launch Satellite' : launchType === 'drv' ? 'Launch DRV' : launchType === 'refueling' ? 'Launch Refueling Vehicle' : 'Launch GEO Tug') : 'Insufficient Budget'}
         </button>
       </div>
     </div>
