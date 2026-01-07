@@ -196,11 +196,12 @@ function App() {
               </div>
 
               <div className="mt-4 p-4 bg-gray-800 rounded-lg">
-                <h4 className="font-semibold text-purple-300 mb-2">Orbital Zones & Launch Costs</h4>
-                <ul className="space-y-1">
-                  <li><strong>LEO (Low Earth Orbit):</strong> $2M - Closest to Earth, higher collision risk</li>
-                  <li><strong>MEO (Medium Earth Orbit):</strong> $3M - Moderate altitude, balanced risk</li>
-                  <li><strong>GEO (Geostationary Orbit):</strong> $5M - Highest orbit, lower collision risk</li>
+                <h4 className="font-semibold text-purple-300 mb-2">Orbital Layers & Launch Costs</h4>
+                <ul className="space-y-1 text-sm">
+                  <li><strong>LEO (Low Earth Orbit):</strong> $2M launch, 20-turn lifespan, 6.4 km/s orbital speed - Closest to Earth, higher collision risk</li>
+                  <li><strong>MEO (Medium Earth Orbit):</strong> $3M launch, 40-turn lifespan, 4.0 km/s orbital speed - Moderate altitude, balanced risk</li>
+                  <li><strong>GEO (Geostationary Orbit):</strong> $5M launch, 60-turn lifespan, 2.4 km/s orbital speed - Highest orbit, lower collision risk</li>
+                  <li><strong>GRAVEYARD (Disposal Orbit):</strong> No direct launch, 999-turn lifespan, 2.2 km/s orbital speed - End-of-life parking orbit (satellites moved here by GeoTug)</li>
                 </ul>
               </div>
 
@@ -211,7 +212,7 @@ function App() {
                   <li><strong>Basic:</strong> $500K cost, $1M payout if destroyed</li>
                   <li><strong>Premium:</strong> $1M cost, $2.5M payout if destroyed</li>
                 </ul>
-                <p className="text-sm text-gray-400 mt-2">Insurance helps mitigate financial losses from collisions and solar storms.</p>
+                <p className="text-sm text-gray-400 mt-2">Insurance helps mitigate financial losses from collisions and solar flares.</p>
               </div>
             </div>
           </section>
@@ -219,14 +220,14 @@ function App() {
           <section>
             <h2 className="text-2xl font-bold text-blue-400 mb-3">Active Debris Removal (ADR) Vehicles</h2>
             <div className="space-y-4 text-gray-300">
-              <p className="mb-4">ADR vehicles are specialized spacecraft designed to capture and remove space debris. Choose the right type based on the debris you need to clear.</p>
+              <p className="mb-4">ADR vehicles are specialized spacecraft designed to capture and remove space debris, relocate satellites, and extend operational lifespans. Choose the right type based on your mission objectives.</p>
               
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="p-4 bg-gray-800 rounded-lg">
                   <h4 className="text-lg font-semibold text-green-400 mb-2">Cooperative ADR</h4>
-                  <p className="mb-3">Designed for defunct satellites and larger, trackable debris that can be approached safely.</p>
+                  <p className="mb-3">Standard debris removal vehicle for cooperative debris (70% of total debris).</p>
                   <ul className="space-y-1 text-sm">
-                    <li><strong>Capacity:</strong> 2-3 debris pieces</li>
+                    <li><strong>Capacity:</strong> 2-3 debris/turn</li>
                     <li><strong>Success Rate:</strong> 85%</li>
                     <li><strong>Duration:</strong> 10 turns</li>
                     <li><strong>Costs:</strong></li>
@@ -236,14 +237,14 @@ function App() {
                       <li>GEO: $5M</li>
                     </ul>
                   </ul>
-                  <p className="text-xs text-gray-400 mt-2">Best for: Predictable, larger debris with known trajectories</p>
+                  <p className="text-xs text-gray-400 mt-2">Best for: Routine cleanup of cooperative debris with known trajectories</p>
                 </div>
 
                 <div className="p-4 bg-gray-800 rounded-lg">
                   <h4 className="text-lg font-semibold text-orange-400 mb-2">Uncooperative ADR</h4>
-                  <p className="mb-3">Advanced systems for tumbling, uncontrolled debris and small fragments that are harder to capture.</p>
+                  <p className="mb-3">High-capacity vehicle for tumbling/uncooperative debris (30% of total debris).</p>
                   <ul className="space-y-1 text-sm">
-                    <li><strong>Capacity:</strong> 6-9 debris pieces</li>
+                    <li><strong>Capacity:</strong> 6-9 debris/turn</li>
                     <li><strong>Success Rate:</strong> 90%</li>
                     <li><strong>Duration:</strong> 10 turns</li>
                     <li><strong>Costs:</strong></li>
@@ -253,14 +254,43 @@ function App() {
                       <li>GEO: $8.75M</li>
                     </ul>
                   </ul>
-                  <p className="text-xs text-gray-400 mt-2">Best for: Dangerous, unpredictable debris from collisions</p>
+                  <p className="text-xs text-gray-400 mt-2">Best for: Aggressive cleanup campaigns and difficult debris from collisions</p>
+                </div>
+
+                <div className="p-4 bg-gray-800 rounded-lg">
+                  <h4 className="text-lg font-semibold text-blue-400 mb-2">GeoTug</h4>
+                  <p className="mb-3">Satellite recovery vehicle that moves end-of-life satellites to GRAVEYARD orbit.</p>
+                  <ul className="space-y-1 text-sm">
+                    <li><strong>Capacity:</strong> 1 satellite/mission</li>
+                    <li><strong>Success Rate:</strong> 100%</li>
+                    <li><strong>Duration:</strong> Permanent (999 turns)</li>
+                    <li><strong>Cost:</strong> $25M (all orbits)</li>
+                  </ul>
+                  <p className="text-xs text-gray-400 mt-2">Best for: Moving satellites to GRAVEYARD to prevent future collisions</p>
+                </div>
+
+                <div className="p-4 bg-gray-800 rounded-lg">
+                  <h4 className="text-lg font-semibold text-purple-400 mb-2">Servicing Vehicle</h4>
+                  <p className="mb-3">Life extension service that extends satellite/ADR lifespan by 50%.</p>
+                  <ul className="space-y-1 text-sm">
+                    <li><strong>Capacity:</strong> 1 satellite/ADR per turn</li>
+                    <li><strong>Success Rate:</strong> 95%</li>
+                    <li><strong>Duration:</strong> 15 turns</li>
+                    <li><strong>Costs:</strong></li>
+                    <ul className="ml-4">
+                      <li>LEO: $1.5M</li>
+                      <li>MEO: $2.25M</li>
+                      <li>GEO: $3.75M</li>
+                    </ul>
+                  </ul>
+                  <p className="text-xs text-gray-400 mt-2">Best for: Extending lifespan of valuable satellites and maintaining ADR operations</p>
                 </div>
               </div>
 
               <div className="mt-4 p-4 bg-gray-800 rounded-lg">
                 <h4 className="font-semibold text-purple-300 mb-2">ADR Vehicle Lifecycle</h4>
-                <p className="text-sm">ADR vehicles are automatically decommissioned after a set number of turns (default: 10 turns, configurable in Configuration tab). They are completely removed from orbit and do not become debris—they safely deorbit and burn up in the atmosphere.</p>
-                <p className="text-sm text-gray-400 mt-2">Plan your ADR vehicle deployments strategically to ensure continuous debris removal coverage. Adjust decommission time in Configuration to fine-tune your strategy.</p>
+                <p className="text-sm">Most ADR vehicles are decommissioned after a set number of turns (default: 10 turns for cooperative/uncooperative, 15 for servicing, permanent for GeoTug). They are completely removed from orbit and do not become debris—they safely deorbit and burn up in the atmosphere.</p>
+                <p className="text-sm text-gray-400 mt-2">Plan your ADR vehicle deployments strategically to ensure continuous coverage. Adjust decommission time in Configuration to fine-tune your strategy.</p>
               </div>
             </div>
           </section>
@@ -400,7 +430,7 @@ function App() {
 
                 <div className="p-4 bg-gray-800 rounded-lg">
                   <h4 className="text-lg font-semibold text-blue-400 mb-2">Satellite Count Chart</h4>
-                  <p className="text-sm">Shows your active satellite population. Declining numbers indicate collisions or solar storm impacts affecting your assets.</p>
+                  <p className="text-sm">Shows your active satellite population. Declining numbers indicate collisions or solar flare impacts affecting your assets.</p>
                 </div>
 
                 <div className="p-4 bg-gray-800 rounded-lg">
@@ -413,7 +443,7 @@ function App() {
                 <h4 className="font-semibold text-purple-300 mb-2">Using Analytics Effectively</h4>
                 <ul className="space-y-1 text-sm">
                   <li>• Compare debris growth rate vs. removal rate to gauge if you're winning or losing</li>
-                  <li>• Identify patterns before and after major events (collisions, solar storms)</li>
+                  <li>• Identify patterns before and after major events (collisions, solar flares)</li>
                   <li>• Track satellite losses to optimize insurance strategies</li>
                   <li>• Monitor ADR vehicle performance to adjust deployment timing and quantities</li>
                 </ul>
@@ -461,9 +491,17 @@ function App() {
                 </div>
 
                 <div className="p-4 bg-gray-800 rounded-lg">
-                  <h4 className="text-lg font-semibold text-purple-300 mb-3">Solar Storm Settings</h4>
+                  <h4 className="text-lg font-semibold text-purple-300 mb-3">Solar Flare System</h4>
                   <ul className="space-y-2 text-sm">
-                    <li><strong>Storm Probability (0-100%):</strong> Chance of a solar storm occurring each turn. Solar storms can damage or destroy satellites, especially in LEO. Default is 10%.</li>
+                    <li><strong>Flare Probability (0-100%):</strong> Chance of a solar flare occurring each turn. Default is 10%.</li>
+                  </ul>
+                  <p className="text-xs text-gray-400 mt-3 mb-2">Solar flares are classified into 5 intensity classes based on X-ray flux:</p>
+                  <ul className="space-y-1 text-xs ml-4">
+                    <li><strong>Class A:</strong> Removes ~5% LEO debris (most common, 5% weight)</li>
+                    <li><strong>Class B:</strong> Removes ~10% LEO debris (common, 35% weight)</li>
+                    <li><strong>Class C:</strong> Removes ~20% LEO debris (moderate, 35% weight)</li>
+                    <li><strong>Class M:</strong> Removes ~35% LEO + ~5% MEO debris (rare, 20% weight)</li>
+                    <li><strong>Class X:</strong> Removes ~50% LEO + ~20% MEO + ~5% GEO debris (very rare, 5% weight)</li>
                   </ul>
                 </div>
 
