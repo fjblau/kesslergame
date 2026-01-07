@@ -38,7 +38,8 @@ export function StatsPanel() {
     const satelliteCount = satellites.filter(s => s.layer === layer).length;
     const cooperativeDRVs = drvs.filter(d => d.layer === layer && d.removalType === 'cooperative' && d.age < d.maxAge).length;
     const uncooperativeDRVs = drvs.filter(d => d.layer === layer && d.removalType === 'uncooperative' && d.age < d.maxAge).length;
-    return { satelliteCount, cooperativeDRVs, uncooperativeDRVs };
+    const refuelingDRVs = drvs.filter(d => d.layer === layer && d.removalType === 'refueling' && d.age < d.maxAge).length;
+    return { satelliteCount, cooperativeDRVs, uncooperativeDRVs, refuelingDRVs };
   };
 
   return (
@@ -60,13 +61,14 @@ export function StatsPanel() {
               <tr className="bg-slate-900">
                 <th className="py-2 px-3 text-left text-white font-semibold border-b border-slate-700">Orbit Layer</th>
                 <th className="py-2 px-3 text-center text-white font-semibold border-b border-slate-700">Satellites</th>
-                <th colSpan={2} className="py-1 px-3 text-center text-white font-semibold border-b border-slate-700">DRV</th>
+                <th colSpan={3} className="py-1 px-3 text-center text-white font-semibold border-b border-slate-700">DRV</th>
               </tr>
               <tr className="bg-slate-900">
                 <th className="border-b border-slate-700"></th>
                 <th className="border-b border-slate-700"></th>
                 <th className="py-1 px-2 text-center text-white text-sm font-medium border-b border-slate-700 border-l border-slate-700">Cooperative</th>
                 <th className="py-1 px-2 text-center text-white text-sm font-medium border-b border-slate-700">Uncooperative</th>
+                <th className="py-1 px-2 text-center text-white text-sm font-medium border-b border-slate-700">Refueling</th>
               </tr>
             </thead>
             <tbody>
@@ -78,6 +80,7 @@ export function StatsPanel() {
                     <td className="py-1 px-3 text-center text-gray-300">{stats.satelliteCount}</td>
                     <td className="py-1 px-2 text-center text-gray-300 border-l border-slate-700">{stats.cooperativeDRVs}</td>
                     <td className="py-1 px-2 text-center text-gray-300">{stats.uncooperativeDRVs}</td>
+                    <td className="py-1 px-2 text-center text-gray-300">{stats.refuelingDRVs}</td>
                   </tr>
                 );
               })}
