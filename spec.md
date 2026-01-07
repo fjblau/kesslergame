@@ -82,18 +82,18 @@ Use Redux Toolkit with the following slice structure:
 
 **Turn Execution Flow**:
 ```
-1. Player makes launch decision (satellite OR debris removal vehicle)
+1. Player makes launch decision (satellite OR ADR vehicle)
 2. Validate budget availability
-3. Create satellite/DRV if affordable
+3. Create satellite/ADR if affordable
 4. Age all satellites (increment age counter)
-5. Age all DRVs (increment age counter)
-6. Execute DRV debris removal operations
-7. Remove expired LEO satellites
-8. Decommission expired DRVs (convert to debris)
+5. Age all ADR vehicles (increment age counter)
+6. Execute ADR debris removal operations
+7. Remove expired satellites (orbit-specific lifespans)
+8. Decommission expired ADR vehicles (convert to debris)
 9. Detect collisions (O(n²) within each layer)
 10. Resolve collisions (create debris with types, destroy satellites)
 11. Process insurance payouts
-12. Trigger random events (solar storms)
+12. Trigger random events (solar flares with class A-X)
 13. Update metrics and risk level
 14. Update debris type statistics
 15. Check mission completion
@@ -154,15 +154,15 @@ src/
 │   │   ├── GameBoard.tsx             # Main game visualization
 │   │   ├── OrbitVisualization.tsx    # Canvas rendering
 │   │   ├── SatelliteSprite.tsx       # Satellite rendering
-│   │   ├── DRVSprite.tsx             # DRV rendering
+│   │   ├── ADRSprite.tsx             # ADR vehicle rendering
 │   │   └── DebrisParticle.tsx        # Debris rendering (with type variants)
 │   ├── ControlPanel/
 │   │   ├── ControlPanel.tsx          # Launch controls
-│   │   ├── LaunchSelector.tsx        # Satellite vs DRV selector
+│   │   ├── LaunchSelector.tsx        # Satellite vs ADR selector
 │   │   ├── OrbitSelector.tsx         # LEO/MEO/GEO/GRAVEYARD buttons
-│   │   ├── DRVConfiguration.tsx      # Cooperative, Uncooperative, GeoTug, Refueling DRV
+│   │   ├── ADRConfiguration.tsx      # Cooperative, Uncooperative, GeoTug, Servicing ADR
 │   │   ├── InsuranceToggle.tsx       # Insurance checkbox
-│   │   └── StatusDisplay.tsx         # Metrics display (including DRVs)
+│   │   └── StatusDisplay.tsx         # Metrics display (including ADR vehicles)
 │   ├── StatsPanel/
 │   │   ├── StatsPanel.tsx            # Overall stats container
 │   │   └── DebrisBreakdown.tsx       # Cooperative vs Uncooperative debris
@@ -228,7 +228,7 @@ type InsuranceTier = 'none' | 'basic' | 'premium';
 type RiskLevel = 'LOW' | 'MEDIUM' | 'CRITICAL';
 type MissionId = string;
 type DebrisType = 'cooperative' | 'uncooperative';
-type DRVType = 'cooperative' | 'uncooperative' | 'geotug' | 'refueling';
+type ADRType = 'cooperative' | 'uncooperative' | 'geotug' | 'servicing';  // ADR = Active Debris Removal
 type SolarFlareClass = 'A' | 'B' | 'C' | 'M' | 'X';
 
 // Core entities
@@ -263,12 +263,12 @@ interface Debris {
   captureRadius?: number;
 }
 
-interface DebrisRemovalVehicle {
+interface ActiveDebrisRemovalVehicle {  // ADR Vehicle
   id: string;
   x: number;
   y: number;
   layer: OrbitLayer;
-  removalType: DRVType;
+  removalType: ADRType;
   age: number;
   maxAge: number;
   capacity: number;  // Debris removed per turn
@@ -308,7 +308,7 @@ interface GameState {
   // Assets
   satellites: Satellite[];
   debris: Debris[];
-  debrisRemovalVehicles: DebrisRemovalVehicle[];
+  adrVehicles: ActiveDebrisRemovalVehicle[];  // Active Debris Removal vehicles
   
   // Economy
   budget: number;
@@ -338,13 +338,13 @@ interface GameState {
 }
 
 // Actions
-type LaunchType = 'satellite' | 'debris-removal';
+type LaunchType = 'satellite' | 'adr';  // ADR = Active Debris Removal
 
 interface LaunchAction {
   type: LaunchType;
   orbit: OrbitLayer;
   insuranceTier?: InsuranceTier;  // Only for satellites (none, basic, premium)
-  drvType?: DRVType;  // Only for debris removal vehicles (cooperative, uncooperative, geotug, refueling)
+  adrType?: ADRType;  // Only for ADR vehicles (cooperative, uncooperative, geotug, servicing)
   satellitePurpose?: SatelliteType;  // Only for satellites (Weather, Comms, GPS)
 }
 
@@ -381,40 +381,40 @@ interface GameConfig {
   incomeInterval: number;    // Turns between income payments (0 = no income)
   drainAmount: number;       // Budget drained per turn (0 = no drain)
   
-  // Debris Removal Vehicle configuration
-  drvCosts: Record<OrbitLayer, Record<DRVType, number>>;
-  drvCapacity: Record<DRVType, [number, number]>;  // [min, max] per turn
-  drvSuccessRate: Record<DRVType, number>;
-  drvDuration: Record<DRVType, number>;  // Active turns
-  drvFailureDebrisMultiplier: number;  // Debris created on failure
+  // Active Debris Removal (ADR) Vehicle configuration
+  adrCosts: Record<OrbitLayer, Record<ADRType, number>>;
+  adrCapacity: Record<ADRType, [number, number]>;  // [min, max] per turn
+  adrSuccessRate: Record<ADRType, number>;
+  adrDuration: Record<ADRType, number>;  // Active turns
+  adrFailureDebrisMultiplier: number;  // Debris created on failure
   debrisTypeDistribution: Record<DebrisType, number>;  // 70% cooperative, 30% uncooperative
 }
 
-// Debris Removal Vehicle Configuration Constants
-const DRV_CONFIG = {
+// Active Debris Removal (ADR) Vehicle Configuration Constants
+const ADR_CONFIG = {
   costs: {
-    LEO: { cooperative: 2_000_000, uncooperative: 3_500_000, geotug: 25_000_000, refueling: 1_500_000 },
-    MEO: { cooperative: 3_000_000, uncooperative: 5_250_000, geotug: 25_000_000, refueling: 2_250_000 },
-    GEO: { cooperative: 5_000_000, uncooperative: 8_750_000, geotug: 25_000_000, refueling: 3_750_000 },
-    GRAVEYARD: { cooperative: 0, uncooperative: 0, geotug: 0, refueling: 0 },
+    LEO: { cooperative: 2_000_000, uncooperative: 3_500_000, geotug: 25_000_000, servicing: 1_500_000 },
+    MEO: { cooperative: 3_000_000, uncooperative: 5_250_000, geotug: 25_000_000, servicing: 2_250_000 },
+    GEO: { cooperative: 5_000_000, uncooperative: 8_750_000, geotug: 25_000_000, servicing: 3_750_000 },
+    GRAVEYARD: { cooperative: 0, uncooperative: 0, geotug: 0, servicing: 0 },
   },
   capacity: {
     cooperative: [2, 3],       // Remove 2-3 debris per turn
     uncooperative: [6, 9],     // Remove 6-9 debris per turn (high capacity)
     geotug: [1, 1],            // Moves 1 satellite per mission
-    refueling: [1, 1],         // Refuels 1 satellite/DRV per turn
+    servicing: [1, 1],         // Services 1 satellite/ADR per turn
   },
   successRate: {
     cooperative: 0.85,         // 85% success rate
     uncooperative: 0.90,       // 90% success rate
     geotug: 1.0,               // 100% success rate
-    refueling: 0.95,           // 95% success rate
+    servicing: 0.95,           // 95% success rate
   },
   duration: {
     cooperative: 10,           // Active for 10 turns
     uncooperative: 10,         // Active for 10 turns
     geotug: 999,               // Permanent (until decommissioned)
-    refueling: 15,             // Active for 15 turns
+    servicing: 15,             // Active for 15 turns
   },
   failureDebrisMultiplier: 2,  // Failed removal creates 2 debris
 };
@@ -425,16 +425,16 @@ const DEBRIS_TYPE_DISTRIBUTION = {
   uncooperative: 0.30,    // 30% of debris is uncooperative
 };
 
-// DRV Type Descriptions
+// ADR (Active Debris Removal) Type Descriptions
 /**
- * COOPERATIVE DRV: Standard debris removal vehicle for cooperative debris
+ * COOPERATIVE ADR: Standard debris removal vehicle for cooperative debris
  * - Cost: $2M (LEO) to $5M (GEO)
  * - Capacity: 2-3 debris per turn
  * - Success Rate: 85%
  * - Duration: 10 turns
  * - Best for: Routine cleanup of cooperative debris (70% of total debris)
  * 
- * UNCOOPERATIVE DRV: High-capacity vehicle for tumbling/uncooperative debris
+ * UNCOOPERATIVE ADR: High-capacity vehicle for tumbling/uncooperative debris
  * - Cost: $3.5M (LEO) to $8.75M (GEO)
  * - Capacity: 6-9 debris per turn (high throughput)
  * - Success Rate: 90%
@@ -448,12 +448,12 @@ const DEBRIS_TYPE_DISTRIBUTION = {
  * - Duration: Permanent (until decommissioned)
  * - Best for: Moving end-of-life satellites to GRAVEYARD orbit to prevent future collisions
  * 
- * REFUELING VEHICLE: Life extension service for satellites and DRVs
+ * SERVICING VEHICLE: Life extension service for satellites and ADR vehicles
  * - Cost: $1.5M (LEO) to $3.75M (GEO)
- * - Capacity: 1 satellite/DRV per turn
+ * - Capacity: 1 satellite/ADR per turn
  * - Success Rate: 95%
  * - Duration: 15 turns
- * - Best for: Extending lifespan of valuable satellites, maintaining DRV operations longer
+ * - Best for: Extending lifespan of valuable satellites, maintaining ADR operations longer
  */
 
 // Satellite Revenue Configuration (Per-Turn Revenue by Type)
@@ -514,13 +514,13 @@ const BUDGET_DIFFICULTY_CONFIG: Record<BudgetDifficulty, {
 ```typescript
 // Game actions
 const gameActions = {
-  launchSatellite: (orbit: OrbitLayer, insured: boolean) => {},
-  launchDebrisRemovalVehicle: (orbit: OrbitLayer, drvType: DRVType) => {},
+  launchSatellite: (orbit: OrbitLayer, insuranceTier: InsuranceTier) => {},
+  launchADRVehicle: (orbit: OrbitLayer, adrType: ADRType) => {},
   skipTurn: () => {},
   ageSatellites: () => {},
-  ageDRVs: () => {},
-  processDRVOperations: () => {},
-  decommissionExpiredDRVs: () => {},
+  ageADRVehicles: () => {},
+  processADROperations: () => {},
+  decommissionExpiredADRs: () => {},
   processCollisions: () => {},
   triggerSolarEvent: () => {},
   updateMetrics: () => {},
@@ -705,7 +705,7 @@ Each active satellite generates revenue every turn based on its type:
 
 ## UI Wireframes and Screens
 
-### 1. Enhanced Control Panel with Debris Removal
+### 1. Enhanced Control Panel with Active Debris Removal
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -713,12 +713,13 @@ Each active satellite generates revenue every turn based on its type:
 ├─────────────────────────────────────────────┤
 │                                             │
 │  Launch Type:                               │
-│  ● Satellite    ○ Debris Removal Vehicle   │
+│  ● Satellite    ○ ADR    ○ Servicing       │
+│  ○ GeoTug                                   │
 │                                             │
 │  Orbit Layer:                               │
 │  ○ LEO    ● MEO    ○ GEO                    │
 │                                             │
-│  Insurance: ☑                               │
+│  Insurance: Basic ▼                         │
 │  Cost: $3,000,000 + $500,000 insurance     │
 │                                             │
 │  ┌──────────────┐                          │
@@ -729,7 +730,7 @@ Each active satellite generates revenue every turn based on its type:
 └─────────────────────────────────────────────┘
 ```
 
-### 2. DRV Launch Configuration
+### 2. ADR Launch Configuration
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -737,20 +738,21 @@ Each active satellite generates revenue every turn based on its type:
 ├─────────────────────────────────────────────┤
 │                                             │
 │  Launch Type:                               │
-│  ○ Satellite    ● Debris Removal Vehicle   │
+│  ○ Satellite    ● ADR    ○ Servicing       │
+│  ○ GeoTug                                   │
 │                                             │
 │  Orbit Layer:                               │
 │  ○ LEO    ○ MEO    ● GEO                    │
 │                                             │
-│  DRV Type:                                  │
+│  ADR Type:                                  │
 │  ● Cooperative    ○ Uncooperative          │
 │                                             │
-│  Cost: $10,000,000                         │
+│  Cost: $5,000,000                          │
 │  Removes: 2-3 debris/turn (85% success)   │
 │  Active: 10 turns                          │
 │                                             │
 │  ┌──────────────┐                          │
-│  │ LAUNCH  DRV  │                          │
+│  │ LAUNCH  ADR  │                          │
 │  └──────────────┘                          │
 │                                             │
 │  Budget: $45,000,000                       │
@@ -765,7 +767,7 @@ Each active satellite generates revenue every turn based on its type:
 ├─────────────────────────────────────────────┤
 │                                             │
 │  Active Satellites: 12                     │
-│  Active DRVs: 3                            │
+│  Active ADR Vehicles: 3                    │
 │                                             │
 │  Total Debris: 156                         │
 │    ├─ Cooperative: 109 (70%)              │
@@ -779,7 +781,7 @@ Each active satellite generates revenue every turn based on its type:
 └─────────────────────────────────────────────┘
 ```
 
-### 4. DRV Visualization on Orbit Display
+### 4. ADR Visualization on Orbit Display
 
 **Visual Representation**:
 
@@ -788,14 +790,16 @@ Orbital Display Key:
 ┌─────────────────────────────────────────────┐
 │                                             │
 │   ⬤  Satellites (GPS/Weather/Comms)        │
-│   ⬟  DRVs (Pentagon/Shield shape)          │
+│   ⬟  ADR Vehicles (Pentagon/Shield shape)  │
 │      - Cooperative: Blue/Cyan              │
 │      - Uncooperative: Orange/Red           │
+│      - GeoTug: Purple                      │
+│      - Servicing: Green                    │
 │   ·  Debris                                │
 │      - Cooperative: Gray dots              │
 │      - Uncooperative: Red dots             │
 │                                             │
-│   Animation: DRVs show "capture effect"    │
+│   Animation: ADRs show "capture effect"    │
 │              when removing debris           │
 │                                             │
 └─────────────────────────────────────────────┘
@@ -833,15 +837,15 @@ Orbital Display Key:
 └─────────────────────────────────────────────┘
 ```
 
-### 6. Mission Panel with Debris Removal Missions
+### 6. Mission Panel with Active Debris Removal Missions
 
 ```
 ┌─────────────────────────────────────────────┐
 │  MISSIONS                                   │
 ├─────────────────────────────────────────────┤
 │                                             │
-│  ☐ Debris Cleaner                          │
-│     Launch 2 debris removal vehicles       │
+│  ☐ ADR Deployer                            │
+│     Launch 2 ADR vehicles (any type)       │
 │     Progress: 1/2                          │
 │                                             │
 │  ☐ Clean Sweep                             │
@@ -907,13 +911,15 @@ The game includes 18 missions total (13 original + 5 new debris removal missions
 12. **Cascade_Prevention**: Reach 30 turns without triggering cascade
 13. **Long_Term**: Survive 50 turns
 
-### New Debris Removal Missions (5)
+### New Active Debris Removal Missions (5)
 
-14. **Debris_Cleaner**: Launch 2 debris removal vehicles (any type)
-15. **Clean_Sweep**: Remove 50 total debris pieces using DRVs
-16. **Risk_Reduction**: Reduce debris from 200+ to below 100 using DRVs within 10 turns
+14. **ADR_Deployer**: Launch 2 ADR vehicles (any type)
+15. **Clean_Sweep**: Remove 50 total debris pieces using ADR vehicles
+16. **Risk_Reduction**: Reduce debris from 200+ to below 100 using ADR within 10 turns
 17. **Cooperative_Focus**: Remove 30 cooperative debris pieces
-18. **Challenge_Mode**: Launch 1 uncooperative DRV and successfully remove 10 debris with it
+18. **Challenge_Mode**: Launch 1 uncooperative ADR and successfully remove 10 debris with it
+19. **Servicing_Pro**: Use servicing vehicles to extend satellite lifespan 5 times
+20. **GeoTug_Master**: Move 3 satellites to GRAVEYARD orbit using GeoTugove 10 debris with it
 
 These missions integrate seamlessly with the existing mission system and provide strategic objectives that encourage players to use debris removal vehicles as part of their overall strategy.
 
@@ -927,16 +933,16 @@ Given the **HARD** complexity, breaking down into concrete milestones:
 **Files**: `game/engine/`, `store/slices/gameSlice.ts`, `game/types.ts`
 
 **Tasks**:
-- [ ] Set up TypeScript types and interfaces (including DRV and DebrisType)
+- [ ] Set up TypeScript types and interfaces (including ADR and DebrisType)
 - [ ] Implement position generation
 - [ ] Implement collision detection algorithm (with debris typing)
-- [ ] Create game state reducer (including DRVs)
-- [ ] Implement debris removal logic (DRV operations)
+- [ ] Create game state reducer (including ADR vehicles)
+- [ ] Implement debris removal logic (ADR operations)
 - [ ] Write unit tests for collision detection
 - [ ] Write unit tests for debris removal mechanics
-- [ ] Implement turn processing logic (with DRV processing)
+- [ ] Implement turn processing logic (with ADR processing)
 
-**Verification**: Unit tests pass, can simulate turns with DRVs programmatically
+**Verification**: Unit tests pass, can simulate turns with ADR vehicles programmatically
 
 ---
 
@@ -945,13 +951,14 @@ Given the **HARD** complexity, breaking down into concrete milestones:
 
 **Tasks**:
 - [ ] Implement budget tracking
-- [ ] Add launch cost deduction (satellites and DRVs)
-- [ ] Implement insurance system (purchase + payout)
-- [ ] Add DRV cost configuration and validation
-- [ ] Add budget validation (for both satellites and DRVs)
-- [ ] Write tests for economic calculations (including DRV costs)
+- [ ] Add launch cost deduction (satellites and ADR vehicles)
+- [ ] Implement insurance tier system (none, basic, premium with payout)
+- [ ] Add ADR cost configuration and validation
+- [ ] Add budget validation (for both satellites and ADR vehicles)
+- [ ] Implement satellite revenue system by type
+- [ ] Write tests for economic calculations (including ADR costs)
 
-**Verification**: Can launch satellites and DRVs with budget constraints, insurance payouts work
+**Verification**: Can launch satellites and ADR vehicles with budget constraints, insurance tier payouts work
 
 ---
 

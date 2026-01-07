@@ -37,11 +37,12 @@ Implement the task directly based on the task description.
 Save a brief summary of what was done to `{@artifacts_path}/report.md` if significant changes were made.
 
 **COMPLETED**: Updated documentation across spec.md, report.md, and kessler-game/README.md to reflect:
+- **Terminology changes**: DRV → ADR (Active Debris Removal), Refueling → Servicing
 - Four orbital layers (added GRAVEYARD)
-- Four DRV types (added GeoTug and Refueling)
-- Three-tier insurance system
-- Solar flare classification (A, B, C, M, X)
-- Orbit-specific satellite lifespans
-- Updated DRV costs and capabilities
+- Four ADR types (added GeoTug and Servicing)
+- Three-tier insurance system (none, basic, premium)
+- Solar flare classification (A, B, C, M, X classes)
+- Orbit-specific satellite lifespans (LEO: 20, MEO: 40, GEO: 60, GRAVEYARD: 999)
+- Updated ADR costs and capabilities
 - Max debris limit changed to 250
 - Comprehensive report saved to artifacts/report.md

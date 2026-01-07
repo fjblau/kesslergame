@@ -71,11 +71,11 @@ Each active satellite generates revenue based on its type:
   - None: $0 cost, $0 payout
   - Basic: $500K cost, $1M payout
   - Premium: $1M cost, $2.5M payout
-- Debris Removal Vehicles:
-  - Cooperative: $2M (LEO) to $5M (GEO)
-  - Uncooperative: $3.5M (LEO) to $8.75M (GEO)
+- Active Debris Removal (ADR) Vehicles:
+  - Cooperative ADR: $2M (LEO) to $5M (GEO)
+  - Uncooperative ADR: $3.5M (LEO) to $8.75M (GEO)
   - GeoTug: $25M (all orbits) - moves satellites to GRAVEYARD
-  - Refueling: $1.5M (LEO) to $3.75M (GEO) - extends satellite/DRV lifespan
+  - Servicing: $1.5M (LEO) to $3.75M (GEO) - extends satellite/ADR lifespan
 
 **Economic Strategy:** Your satellite fleet is your primary revenue engine. Launch high-value GPS satellites early to build steady income. Protect revenue-generating satellites with insurance. In Easy/Normal modes, time expensive launches after bonus income. In Hard/Challenge modes, build satellite revenue quickly to sustain operations.
 

@@ -10,11 +10,11 @@ Modular React + TypeScript implementation of a comprehensive Kessler space debri
 - **GEO** (Geostationary Orbit): $5M launch cost, 60-turn lifespan
 - **GRAVEYARD** (Disposal Orbit): End-of-life satellite parking orbit (moved by GeoTug)
 
-### 2. **Debris Removal Vehicles (4 Types)**
-- **Cooperative DRV**: Removes 2-3 debris/turn, 85% success rate, $2M-$5M
-- **Uncooperative DRV**: Removes 6-9 debris/turn, 90% success rate, $3.5M-$8.75M
+### 2. **Active Debris Removal (ADR) Vehicles (4 Types)**
+- **Cooperative ADR**: Removes 2-3 debris/turn, 85% success rate, $2M-$5M
+- **Uncooperative ADR**: Removes 6-9 debris/turn, 90% success rate, $3.5M-$8.75M
 - **GeoTug**: Moves satellites to GRAVEYARD orbit, 100% success rate, $25M
-- **Refueling Vehicle**: Extends satellite/DRV lifespan by 50%, 95% success rate, $1.5M-$3.75M
+- **Servicing Vehicle**: Extends satellite/ADR lifespan by 50%, 95% success rate, $1.5M-$3.75M
 
 ### 3. **Insurance Tier Selector**
 - None ($0) / Basic ($500K → $1M payout) / Premium ($1M → $2.5M payout)

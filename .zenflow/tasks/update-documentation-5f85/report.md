@@ -13,26 +13,28 @@ Updated documentation to reflect recent changes in terminology and gameplay mech
 - Orbital speed: 2.2 km/s
 - No direct launch cost (satellites moved here by GeoTug)
 
-### 2. **Four DRV Types (was 2)**
+### 2. **Four ADR (Active Debris Removal) Types (was 2 DRV types)**
+**Terminology Change**: DRV → ADR (Active Debris Removal), Refueling → Servicing
+
 **NEW: GeoTug**
 - Cost: $25M (all orbits)
 - Purpose: Moves satellites to GRAVEYARD orbit
 - Success rate: 100%
 - Duration: Permanent (999 turns)
 
-**NEW: Refueling Vehicle**
+**NEW: Servicing Vehicle** (formerly Refueling)
 - Cost: $1.5M (LEO) to $3.75M (GEO)
-- Purpose: Extends satellite/DRV lifespan by 50%
+- Purpose: Extends satellite/ADR lifespan by 50%
 - Success rate: 95%
 - Duration: 15 turns
 
-**UPDATED: Cooperative DRV**
+**UPDATED: Cooperative ADR** (formerly Cooperative DRV)
 - Cost: $2M (LEO) to $5M (GEO) [was $4M-$10M]
 - Capacity: 2-3 debris/turn [unchanged]
 - Success rate: 85% [unchanged]
 - Duration: 10 turns [unchanged]
 
-**UPDATED: Uncooperative DRV**
+**UPDATED: Uncooperative ADR** (formerly Uncooperative DRV)
 - Cost: $3.5M (LEO) to $8.75M (GEO) [was $8M-$20M]
 - Capacity: 6-9 debris/turn [was 1-2]
 - Success rate: 90% [was 60%]
@@ -115,11 +117,15 @@ All game objects (Satellite, Debris, DRV) now include:
 
 | Old Term | New Term | Notes |
 |----------|----------|-------|
+| DRV (Debris Removal Vehicle) | ADR (Active Debris Removal) | Industry-standard terminology |
+| Refueling Vehicle | Servicing Vehicle | More accurate description |
 | `insured: boolean` | `insuranceTier: InsuranceTier` | More flexible insurance system |
 | Solar Storm | Solar Flare (Class A-X) | Detailed classification system |
 | 3 orbital layers | 4 orbital layers | Added GRAVEYARD |
-| 2 DRV types | 4 DRV types | Added GeoTug and Refueling |
+| 2 DRV types | 4 ADR types | Added GeoTug and Servicing |
 | LEO lifetime | Satellite lifespan | Orbit-specific values |
+| `DRVType` | `ADRType` | Type definition update |
+| `DebrisRemovalVehicle` | `ActiveDebrisRemovalVehicle` | Interface update |
 
 ## Verification
 
