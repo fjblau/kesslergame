@@ -67,7 +67,10 @@ export const eventSlice = createSlice({
       .addCase(launchDRV, (state, action) => {
         const { drvType, orbit, turn, day, metadata } = action.payload;
         const drvName = metadata?.name || `${drvType} DRV`;
-        const message = `Deployed ${drvName} to ${orbit} orbit`;
+        const countryOrOperator = metadata?.country || metadata?.operator;
+        const message = countryOrOperator 
+          ? `Deployed ${drvName} (${countryOrOperator}) to ${orbit} orbit`
+          : `Deployed ${drvName} to ${orbit} orbit`;
         
         const details: Record<string, unknown> = {
           orbit,
@@ -79,6 +82,8 @@ export const eventSlice = createSlice({
           details.organization = metadata.organization;
           details.capture_system = metadata.capture_system;
           details.icon_suggestion = metadata.icon_suggestion;
+          if (metadata.operator) details.operator = metadata.operator;
+          if (metadata.country) details.country = metadata.country;
         }
         
         addEventToState(

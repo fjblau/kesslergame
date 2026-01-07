@@ -334,6 +334,8 @@ export const gameSlice = createSlice({
           organization: string;
           capture_system: string;
           icon_suggestion: string;
+          operator?: string;
+          country?: string;
         };
       }>) => {
         const { orbit, drvType, metadata } = action.payload;
@@ -366,9 +368,9 @@ export const gameSlice = createSlice({
         turn?: number;
         day?: number;
       }) => {
-        let metadata: { name: string; organization: string; capture_system: string; icon_suggestion: string } | undefined;
+        let metadata: { name: string; organization: string; capture_system: string; icon_suggestion: string; operator?: string; country?: string } | undefined;
         
-        if (payload.drvType === 'cooperative' || payload.drvType === 'uncooperative') {
+        if (payload.drvType === 'cooperative' || payload.drvType === 'uncooperative' || payload.drvType === 'refueling') {
           const selectedMetadata = selectDRVMetadata(payload.drvType);
           
           if (selectedMetadata) {
@@ -377,6 +379,8 @@ export const gameSlice = createSlice({
               organization: selectedMetadata.organization,
               capture_system: selectedMetadata.capture_system,
               icon_suggestion: selectedMetadata.icon_suggestion,
+              operator: selectedMetadata.operator,
+              country: selectedMetadata.country,
             };
           }
         }

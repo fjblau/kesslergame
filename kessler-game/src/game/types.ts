@@ -63,6 +63,8 @@ export interface DebrisRemovalVehicle {
     organization: string;
     capture_system: string;
     icon_suggestion: string;
+    operator?: string;
+    country?: string;
   };
 }
 

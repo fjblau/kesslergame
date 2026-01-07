@@ -160,9 +160,20 @@ export function useGameSpeed() {
           ? currentState.satellites.find(s => s.id === refueling.targetId)
           : currentState.debrisRemovalVehicles.find(d => d.id === refueling.targetId);
         
+        const refuelingVehicle = currentState.debrisRemovalVehicles.find(d => d.id === refueling.refuelingVehicleId);
+        
         let message = `Refueling vehicle refueled ${targetType} in ${refueling.layer} orbit`;
         
-        if (refueling.targetType === 'satellite' && target && 'purpose' in target && target.metadata) {
+        if (refuelingVehicle?.metadata) {
+          const vehicleName = refuelingVehicle.metadata.name;
+          const vehicleCountry = refuelingVehicle.metadata.country || refuelingVehicle.metadata.operator;
+          
+          if (refueling.targetType === 'satellite' && target && 'purpose' in target && target.metadata) {
+            message = `${vehicleName} (${vehicleCountry}) refueled '${target.metadata.name}' (${target.metadata.country}) in ${refueling.layer} orbit`;
+          } else {
+            message = `${vehicleName} (${vehicleCountry}) refueled ${targetType} in ${refueling.layer} orbit`;
+          }
+        } else if (refueling.targetType === 'satellite' && target && 'purpose' in target && target.metadata) {
           message = `Refueling vehicle refueled '${target.metadata.name}' (${target.metadata.country}) in ${refueling.layer} orbit`;
         }
         

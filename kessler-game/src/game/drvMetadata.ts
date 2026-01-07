@@ -1,9 +1,11 @@
 export interface DRVMetadata {
   vehicle_name: string;
   organization: string;
-  capture_type: 'cooperative' | 'non-cooperative';
+  capture_type: 'cooperative' | 'non-cooperative' | 'refueling';
   capture_system: string;
   icon_suggestion: string;
+  operator?: string;
+  country?: string;
 }
 
 export const DRV_METADATA: DRVMetadata[] = [
@@ -98,13 +100,54 @@ export const DRV_METADATA: DRVMetadata[] = [
     capture_system: 'Contactless laser ablation to alter debris trajectory',
     icon_suggestion: 'Dish/emitter with beam',
   },
+  {
+    vehicle_name: 'GEO Fuel Shuttle',
+    organization: 'Orbit Fab',
+    capture_type: 'refueling',
+    capture_system: 'Automated refueling interface',
+    icon_suggestion: 'Tanker with fuel ports',
+    operator: 'Orbit Fab',
+    country: 'USA',
+  },
+  {
+    vehicle_name: 'Fuel Tanker Depot',
+    organization: 'Orbit Fab',
+    capture_type: 'refueling',
+    capture_system: 'Depot-based fuel transfer system',
+    icon_suggestion: 'Large fuel depot station',
+    operator: 'Orbit Fab',
+    country: 'USA',
+  },
+  {
+    vehicle_name: 'Shijian-25',
+    organization: 'CNSA',
+    capture_type: 'refueling',
+    capture_system: 'On-orbit servicing and refueling system',
+    icon_suggestion: 'Multi-purpose servicer',
+    operator: 'CNSA',
+    country: 'China',
+  },
+  {
+    vehicle_name: 'Mission Extension Prototype Servicer for Refueling',
+    organization: 'Astroscale USA',
+    capture_type: 'refueling',
+    capture_system: 'Mission extension and refueling interface',
+    icon_suggestion: 'Advanced servicer with fuel ports',
+    operator: 'Astroscale USA',
+    country: 'USA',
+  },
 ];
 
 const COOPERATIVE_DRVS = DRV_METADATA.filter(drv => drv.capture_type === 'cooperative');
 const NON_COOPERATIVE_DRVS = DRV_METADATA.filter(drv => drv.capture_type === 'non-cooperative');
+const REFUELING_DRVS = DRV_METADATA.filter(drv => drv.capture_type === 'refueling');
 
-export function selectDRVMetadata(drvType: 'cooperative' | 'uncooperative'): DRVMetadata | undefined {
-  const pool = drvType === 'cooperative' ? COOPERATIVE_DRVS : NON_COOPERATIVE_DRVS;
+export function selectDRVMetadata(drvType: 'cooperative' | 'uncooperative' | 'refueling'): DRVMetadata | undefined {
+  const pool = drvType === 'cooperative' 
+    ? COOPERATIVE_DRVS 
+    : drvType === 'uncooperative' 
+      ? NON_COOPERATIVE_DRVS 
+      : REFUELING_DRVS;
   
   if (pool.length === 0) {
     return undefined;
