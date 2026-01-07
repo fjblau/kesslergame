@@ -17,6 +17,7 @@ export const DRVSprite = memo(function DRVSprite({ drv, x, y, isLaunching = fals
   const isGeoTug = drv.removalType === 'geotug';
   const isRefueling = drv.removalType === 'refueling';
   const hasCapturedObject = drv.capturedDebrisId !== undefined;
+  const displayType = isRefueling ? 'servicing' : drv.removalType;
   const color = isRefueling 
     ? '#67e8f9' 
     : hasCapturedObject 
@@ -69,7 +70,7 @@ export const DRVSprite = memo(function DRVSprite({ drv, x, y, isLaunching = fals
         scale: isLaunching ? { duration: 4, ease: [0.2, 0.8, 0.4, 1] } : { duration: 1, ease: 'linear' },
         opacity: { duration: 0.3 },
       }}
-      title={hasCapturedObject ? `${drv.removalType} DRV (${drv.layer}) - WITH CAPTURED SATELLITE` : `${drv.removalType} DRV (${drv.layer}) - Age: ${drv.age}/${drv.maxAge}`}
+      title={hasCapturedObject ? `${displayType} ADR (${drv.layer}) - WITH CAPTURED OBJECT` : `${displayType} ADR (${drv.layer}) - Age: ${drv.age}/${drv.maxAge}`}
     >
       <span style={{ position: 'relative', display: 'inline-block' }}>
         {capturedSatelliteIcon ? (

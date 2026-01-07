@@ -61,14 +61,14 @@ export function StatsPanel() {
               <tr className="bg-slate-900">
                 <th className="py-2 px-3 text-left text-white font-semibold border-b border-slate-700">Orbit Layer</th>
                 <th className="py-2 px-3 text-center text-white font-semibold border-b border-slate-700">Satellites</th>
-                <th colSpan={3} className="py-1 px-3 text-center text-white font-semibold border-b border-slate-700">DRV</th>
+                <th colSpan={3} className="py-1 px-3 text-center text-white font-semibold border-b border-slate-700">ADR</th>
               </tr>
               <tr className="bg-slate-900">
                 <th className="border-b border-slate-700"></th>
                 <th className="border-b border-slate-700"></th>
                 <th className="py-1 px-2 text-center text-white text-sm font-medium border-b border-slate-700 border-l border-slate-700">Cooperative</th>
                 <th className="py-1 px-2 text-center text-white text-sm font-medium border-b border-slate-700">Uncooperative</th>
-                <th className="py-1 px-2 text-center text-white text-sm font-medium border-b border-slate-700">Refueling</th>
+                <th className="py-1 px-2 text-center text-white text-sm font-medium border-b border-slate-700">Servicing</th>
               </tr>
             </thead>
             <tbody>

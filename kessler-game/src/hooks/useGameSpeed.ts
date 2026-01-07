@@ -155,26 +155,26 @@ export function useGameSpeed() {
       });
 
       currentState.recentRefuelings.forEach(refueling => {
-        const targetType = refueling.targetType === 'satellite' ? 'satellite' : 'DRV';
+        const targetType = refueling.targetType === 'satellite' ? 'satellite' : 'ADR';
         const target = refueling.targetType === 'satellite' 
           ? currentState.satellites.find(s => s.id === refueling.targetId)
           : currentState.debrisRemovalVehicles.find(d => d.id === refueling.targetId);
         
         const refuelingVehicle = currentState.debrisRemovalVehicles.find(d => d.id === refueling.refuelingVehicleId);
         
-        let message = `Refueling vehicle refueled ${targetType} in ${refueling.layer} orbit`;
+        let message = `Servicing vehicle serviced ${targetType} in ${refueling.layer} orbit`;
         
         if (refuelingVehicle?.metadata) {
           const vehicleName = refuelingVehicle.metadata.name;
           const vehicleCountry = refuelingVehicle.metadata.country || refuelingVehicle.metadata.operator;
           
           if (refueling.targetType === 'satellite' && target && 'purpose' in target && target.metadata) {
-            message = `${vehicleName} (${vehicleCountry}) refueled '${target.metadata.name}' (${target.metadata.country}) in ${refueling.layer} orbit`;
+            message = `${vehicleName} (${vehicleCountry}) serviced '${target.metadata.name}' (${target.metadata.country}) in ${refueling.layer} orbit`;
           } else {
-            message = `${vehicleName} (${vehicleCountry}) refueled ${targetType} in ${refueling.layer} orbit`;
+            message = `${vehicleName} (${vehicleCountry}) serviced ${targetType} in ${refueling.layer} orbit`;
           }
         } else if (refueling.targetType === 'satellite' && target && 'purpose' in target && target.metadata) {
-          message = `Refueling vehicle refueled '${target.metadata.name}' (${target.metadata.country}) in ${refueling.layer} orbit`;
+          message = `Servicing vehicle serviced '${target.metadata.name}' (${target.metadata.country}) in ${refueling.layer} orbit`;
         }
         
         dispatch(addEvent({

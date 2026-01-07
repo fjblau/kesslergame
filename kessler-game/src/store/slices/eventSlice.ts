@@ -66,7 +66,8 @@ export const eventSlice = createSlice({
       })
       .addCase(launchDRV, (state, action) => {
         const { drvType, orbit, turn, day, metadata } = action.payload;
-        const drvName = metadata?.name || `${drvType} DRV`;
+        const displayType = drvType === 'refueling' ? 'servicing' : drvType;
+        const drvName = metadata?.name || `${displayType} ADR`;
         const countryOrOperator = metadata?.country || metadata?.operator;
         const message = countryOrOperator 
           ? `Deployed ${drvName} (${countryOrOperator}) to ${orbit} orbit`
