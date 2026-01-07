@@ -167,7 +167,7 @@ function App() {
             <h2 className="text-3xl font-bold text-blue-400 mb-4">Game Overview</h2>
             <p className="text-gray-300 mb-4">
               Space Debris Removal is a simulation game where you manage Earth's orbital space by launching satellites
-              and deploying Debris Removal Vehicles (DRVs) to prevent catastrophic cascading collisions.
+              and deploying Active Debris Removal (ADR) vehicles to prevent catastrophic cascading collisions.
             </p>
           </section>
 
@@ -196,11 +196,12 @@ function App() {
               </div>
 
               <div className="mt-4 p-4 bg-gray-800 rounded-lg">
-                <h4 className="font-semibold text-purple-300 mb-2">Orbital Zones & Launch Costs</h4>
-                <ul className="space-y-1">
-                  <li><strong>LEO (Low Earth Orbit):</strong> $2M - Closest to Earth, higher collision risk</li>
-                  <li><strong>MEO (Medium Earth Orbit):</strong> $3M - Moderate altitude, balanced risk</li>
-                  <li><strong>GEO (Geostationary Orbit):</strong> $5M - Highest orbit, lower collision risk</li>
+                <h4 className="font-semibold text-purple-300 mb-2">Orbital Layers & Launch Costs</h4>
+                <ul className="space-y-1 text-sm">
+                  <li><strong>LEO (Low Earth Orbit):</strong> $2M launch, 20-turn lifespan, 6.4 km/s orbital speed - Closest to Earth, higher collision risk</li>
+                  <li><strong>MEO (Medium Earth Orbit):</strong> $3M launch, 40-turn lifespan, 4.0 km/s orbital speed - Moderate altitude, balanced risk</li>
+                  <li><strong>GEO (Geostationary Orbit):</strong> $5M launch, 60-turn lifespan, 2.4 km/s orbital speed - Highest orbit, lower collision risk</li>
+                  <li><strong>GRAVEYARD (Disposal Orbit):</strong> No direct launch, 999-turn lifespan, 2.2 km/s orbital speed - End-of-life parking orbit (satellites moved here by GeoTug)</li>
                 </ul>
               </div>
 
@@ -211,56 +212,85 @@ function App() {
                   <li><strong>Basic:</strong> $500K cost, $1M payout if destroyed</li>
                   <li><strong>Premium:</strong> $1M cost, $2.5M payout if destroyed</li>
                 </ul>
-                <p className="text-sm text-gray-400 mt-2">Insurance helps mitigate financial losses from collisions and solar storms.</p>
+                <p className="text-sm text-gray-400 mt-2">Insurance helps mitigate financial losses from collisions and solar flares.</p>
               </div>
             </div>
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-blue-400 mb-3">Debris Removal Vehicles (DRVs)</h2>
+            <h2 className="text-2xl font-bold text-blue-400 mb-3">Active Debris Removal (ADR) Vehicles</h2>
             <div className="space-y-4 text-gray-300">
-              <p className="mb-4">DRVs are specialized spacecraft designed to capture and remove space debris. Choose the right type based on the debris you need to clear.</p>
+              <p className="mb-4">ADR vehicles are specialized spacecraft designed to capture and remove space debris, relocate satellites, and extend operational lifespans. Choose the right type based on your mission objectives.</p>
               
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="p-4 bg-gray-800 rounded-lg">
-                  <h4 className="text-lg font-semibold text-green-400 mb-2">Cooperative DRVs</h4>
-                  <p className="mb-3">Designed for defunct satellites and larger, trackable debris that can be approached safely.</p>
+                  <h4 className="text-lg font-semibold text-green-400 mb-2">Cooperative ADR</h4>
+                  <p className="mb-3">Standard debris removal vehicle for cooperative debris (70% of total debris).</p>
                   <ul className="space-y-1 text-sm">
-                    <li><strong>Capacity:</strong> 2-3 debris pieces</li>
+                    <li><strong>Capacity:</strong> 2-3 debris/turn</li>
                     <li><strong>Success Rate:</strong> 85%</li>
                     <li><strong>Duration:</strong> 10 turns</li>
                     <li><strong>Costs:</strong></li>
                     <ul className="ml-4">
-                      <li>LEO: $4M</li>
-                      <li>MEO: $6M</li>
-                      <li>GEO: $10M</li>
+                      <li>LEO: $2M</li>
+                      <li>MEO: $3M</li>
+                      <li>GEO: $5M</li>
                     </ul>
                   </ul>
-                  <p className="text-xs text-gray-400 mt-2">Best for: Predictable, larger debris with known trajectories</p>
+                  <p className="text-xs text-gray-400 mt-2">Best for: Routine cleanup of cooperative debris with known trajectories</p>
                 </div>
 
                 <div className="p-4 bg-gray-800 rounded-lg">
-                  <h4 className="text-lg font-semibold text-orange-400 mb-2">Uncooperative DRVs</h4>
-                  <p className="mb-3">Advanced systems for tumbling, uncontrolled debris and small fragments that are harder to capture.</p>
+                  <h4 className="text-lg font-semibold text-orange-400 mb-2">Uncooperative ADR</h4>
+                  <p className="mb-3">High-capacity vehicle for tumbling/uncooperative debris (30% of total debris).</p>
                   <ul className="space-y-1 text-sm">
-                    <li><strong>Capacity:</strong> 6-9 debris pieces</li>
+                    <li><strong>Capacity:</strong> 6-9 debris/turn</li>
                     <li><strong>Success Rate:</strong> 90%</li>
                     <li><strong>Duration:</strong> 10 turns</li>
                     <li><strong>Costs:</strong></li>
                     <ul className="ml-4">
-                      <li>LEO: $7M</li>
-                      <li>MEO: $10.5M</li>
-                      <li>GEO: $17.5M</li>
+                      <li>LEO: $3.5M</li>
+                      <li>MEO: $5.25M</li>
+                      <li>GEO: $8.75M</li>
                     </ul>
                   </ul>
-                  <p className="text-xs text-gray-400 mt-2">Best for: Dangerous, unpredictable debris from collisions</p>
+                  <p className="text-xs text-gray-400 mt-2">Best for: Aggressive cleanup campaigns and difficult debris from collisions</p>
+                </div>
+
+                <div className="p-4 bg-gray-800 rounded-lg">
+                  <h4 className="text-lg font-semibold text-blue-400 mb-2">GeoTug</h4>
+                  <p className="mb-3">Satellite recovery vehicle that moves end-of-life satellites to GRAVEYARD orbit.</p>
+                  <ul className="space-y-1 text-sm">
+                    <li><strong>Capacity:</strong> 1 satellite/mission</li>
+                    <li><strong>Success Rate:</strong> 100%</li>
+                    <li><strong>Duration:</strong> Permanent (999 turns)</li>
+                    <li><strong>Cost:</strong> $25M (all orbits)</li>
+                  </ul>
+                  <p className="text-xs text-gray-400 mt-2">Best for: Moving satellites to GRAVEYARD to prevent future collisions</p>
+                </div>
+
+                <div className="p-4 bg-gray-800 rounded-lg">
+                  <h4 className="text-lg font-semibold text-purple-400 mb-2">Servicing Vehicle</h4>
+                  <p className="mb-3">Life extension service that extends satellite/ADR lifespan by 50%.</p>
+                  <ul className="space-y-1 text-sm">
+                    <li><strong>Capacity:</strong> 1 satellite/ADR per turn</li>
+                    <li><strong>Success Rate:</strong> 95%</li>
+                    <li><strong>Duration:</strong> 15 turns</li>
+                    <li><strong>Costs:</strong></li>
+                    <ul className="ml-4">
+                      <li>LEO: $1.5M</li>
+                      <li>MEO: $2.25M</li>
+                      <li>GEO: $3.75M</li>
+                    </ul>
+                  </ul>
+                  <p className="text-xs text-gray-400 mt-2">Best for: Extending lifespan of valuable satellites and maintaining ADR operations</p>
                 </div>
               </div>
 
               <div className="mt-4 p-4 bg-gray-800 rounded-lg">
-                <h4 className="font-semibold text-purple-300 mb-2">DRV Lifecycle</h4>
-                <p className="text-sm">DRVs are automatically decommissioned after a set number of turns (default: 10 turns, configurable in Configuration tab). They are completely removed from orbit and do not become debris—they safely deorbit and burn up in the atmosphere.</p>
-                <p className="text-sm text-gray-400 mt-2">Plan your DRV deployments strategically to ensure continuous debris removal coverage. Adjust decommission time in Configuration to fine-tune your strategy.</p>
+                <h4 className="font-semibold text-purple-300 mb-2">ADR Vehicle Lifecycle</h4>
+                <p className="text-sm">Most ADR vehicles are decommissioned after a set number of turns (default: 10 turns for cooperative/uncooperative, 15 for servicing, permanent for GeoTug). They are completely removed from orbit and do not become debris—they safely deorbit and burn up in the atmosphere.</p>
+                <p className="text-sm text-gray-400 mt-2">Plan your ADR vehicle deployments strategically to ensure continuous coverage. Adjust decommission time in Configuration to fine-tune your strategy.</p>
               </div>
             </div>
           </section>
@@ -270,7 +300,7 @@ function App() {
             <div className="space-y-4 text-gray-300">
               <div>
                 <h3 className="text-xl font-semibold text-purple-400 mb-2">Managing Risk</h3>
-                <p>Watch the collision risk indicator. High debris density increases the chance of collisions, which create more debris in a dangerous cascade. Deploy DRVs proactively when debris levels rise.</p>
+                <p>Watch the collision risk indicator. High debris density increases the chance of collisions, which create more debris in a dangerous cascade. Deploy ADR vehicles proactively when debris levels rise.</p>
               </div>
               <div>
                 <h3 className="text-xl font-semibold text-purple-400 mb-2">Completing Missions</h3>
@@ -278,7 +308,7 @@ function App() {
               </div>
               <div>
                 <h3 className="text-xl font-semibold text-purple-400 mb-2">Budget Management & Revenue</h3>
-                <p>Your budget is the lifeblood of your operations. Each satellite launch, DRV deployment, and insurance purchase costs money.</p>
+                <p>Your budget is the lifeblood of your operations. Each satellite launch, ADR vehicle deployment, and insurance purchase costs money.</p>
                 
                 <div className="mt-4 p-4 bg-gray-800 rounded-lg">
                   <h4 className="font-semibold text-purple-300 mb-2">Satellite Revenue (Per Turn)</h4>
@@ -324,7 +354,7 @@ function App() {
                 <h4 className="font-semibold text-purple-300 mb-2">Days vs. Turns</h4>
                 <ul className="space-y-2">
                   <li><strong>Days:</strong> Simulated time that advances every second when the game is not paused. Used for tracking mission progress and time-based objectives.</li>
-                  <li><strong>Turns:</strong> Game simulation steps where actions occur (collisions, debris removal, DRV operations). The game consists of up to 100 turns.</li>
+                  <li><strong>Turns:</strong> Game simulation steps where actions occur (collisions, debris removal, ADR operations). The game consists of up to 100 turns.</li>
                 </ul>
               </div>
 
@@ -367,7 +397,7 @@ function App() {
               <div className="space-y-3">
                 <div className="p-4 bg-red-900/30 border border-red-500/50 rounded-lg">
                   <h4 className="text-lg font-semibold text-red-300 mb-2">💸 Budget Depletion</h4>
-                  <p>The game ends if your budget drops below $0. Manage your finances carefully by balancing satellite launches, DRV deployments, and insurance costs with your revenue from satellites and periodic income bonuses.</p>
+                  <p>The game ends if your budget drops below $0. Manage your finances carefully by balancing satellite launches, ADR vehicle deployments, and insurance costs with your revenue from satellites and periodic income bonuses.</p>
                 </div>
 
                 <div className="p-4 bg-orange-900/30 border border-orange-500/50 rounded-lg">
@@ -377,7 +407,7 @@ function App() {
 
                 <div className="p-4 bg-yellow-900/30 border border-yellow-500/50 rounded-lg">
                   <h4 className="text-lg font-semibold text-yellow-300 mb-2">🌪️ Debris Cascade</h4>
-                  <p>The game ends if space debris exceeds 500 pieces. This represents an uncontrollable Kessler Syndrome scenario. Deploy DRVs proactively and monitor the debris count to prevent reaching this critical threshold.</p>
+                  <p>The game ends if space debris exceeds 250 pieces. This represents an uncontrollable Kessler Syndrome scenario. Deploy ADR vehicles proactively and monitor the debris count to prevent reaching this critical threshold.</p>
                 </div>
               </div>
 
@@ -400,12 +430,12 @@ function App() {
 
                 <div className="p-4 bg-gray-800 rounded-lg">
                   <h4 className="text-lg font-semibold text-blue-400 mb-2">Satellite Count Chart</h4>
-                  <p className="text-sm">Shows your active satellite population. Declining numbers indicate collisions or solar storm impacts affecting your assets.</p>
+                  <p className="text-sm">Shows your active satellite population. Declining numbers indicate collisions or solar flare impacts affecting your assets.</p>
                 </div>
 
                 <div className="p-4 bg-gray-800 rounded-lg">
                   <h4 className="text-lg font-semibold text-green-400 mb-2">Debris Removal Chart</h4>
-                  <p className="text-sm">Displays cumulative debris removed and active DRV count. Use this to assess the effectiveness of your cleanup efforts.</p>
+                  <p className="text-sm">Displays cumulative debris removed and active ADR vehicle count. Use this to assess the effectiveness of your cleanup efforts.</p>
                 </div>
               </div>
 
@@ -413,9 +443,9 @@ function App() {
                 <h4 className="font-semibold text-purple-300 mb-2">Using Analytics Effectively</h4>
                 <ul className="space-y-1 text-sm">
                   <li>• Compare debris growth rate vs. removal rate to gauge if you're winning or losing</li>
-                  <li>• Identify patterns before and after major events (collisions, solar storms)</li>
+                  <li>• Identify patterns before and after major events (collisions, solar flares)</li>
                   <li>• Track satellite losses to optimize insurance strategies</li>
-                  <li>• Monitor DRV performance to adjust deployment timing and quantities</li>
+                  <li>• Monitor ADR vehicle performance to adjust deployment timing and quantities</li>
                 </ul>
               </div>
             </div>
@@ -437,7 +467,7 @@ function App() {
                 <div className="p-4 bg-gray-800 rounded-lg">
                   <h4 className="text-lg font-semibold text-purple-300 mb-3">General Settings</h4>
                   <ul className="space-y-2 text-sm">
-                    <li><strong>DRV Decommission Time (5-20 turns):</strong> How many turns a DRV remains active before being decommissioned. Default is 10 turns. Increase for longer debris removal operations, decrease for faster DRV turnover.</li>
+                    <li><strong>ADR Decommission Time (5-20 turns):</strong> How many turns an ADR vehicle remains active before being decommissioned. Default is 10 turns. Increase for longer debris removal operations, decrease for faster ADR vehicle turnover.</li>
                   </ul>
                 </div>
 
@@ -461,9 +491,17 @@ function App() {
                 </div>
 
                 <div className="p-4 bg-gray-800 rounded-lg">
-                  <h4 className="text-lg font-semibold text-purple-300 mb-3">Solar Storm Settings</h4>
+                  <h4 className="text-lg font-semibold text-purple-300 mb-3">Solar Flare System</h4>
                   <ul className="space-y-2 text-sm">
-                    <li><strong>Storm Probability (0-100%):</strong> Chance of a solar storm occurring each turn. Solar storms can damage or destroy satellites, especially in LEO. Default is 10%.</li>
+                    <li><strong>Flare Probability (0-100%):</strong> Chance of a solar flare occurring each turn. Default is 10%.</li>
+                  </ul>
+                  <p className="text-xs text-gray-400 mt-3 mb-2">Solar flares are classified into 5 intensity classes based on X-ray flux:</p>
+                  <ul className="space-y-1 text-xs ml-4">
+                    <li><strong>Class A:</strong> Removes ~5% LEO debris (most common, 5% weight)</li>
+                    <li><strong>Class B:</strong> Removes ~10% LEO debris (common, 35% weight)</li>
+                    <li><strong>Class C:</strong> Removes ~20% LEO debris (moderate, 35% weight)</li>
+                    <li><strong>Class M:</strong> Removes ~35% LEO + ~5% MEO debris (rare, 20% weight)</li>
+                    <li><strong>Class X:</strong> Removes ~50% LEO + ~20% MEO + ~5% GEO debris (very rare, 5% weight)</li>
                   </ul>
                 </div>
 
@@ -478,13 +516,13 @@ function App() {
                 </div>
 
                 <div className="p-4 bg-gray-800 rounded-lg">
-                  <h4 className="text-lg font-semibold text-purple-300 mb-3">Uncooperative DRV Settings</h4>
+                  <h4 className="text-lg font-semibold text-purple-300 mb-3">Uncooperative ADR Settings</h4>
                   <ul className="space-y-2 text-sm">
-                    <li><strong>Capacity Min (1-15):</strong> Minimum debris pieces an uncooperative DRV can remove. Default is 6.</li>
-                    <li><strong>Capacity Max (1-15):</strong> Maximum debris pieces an uncooperative DRV can remove. Default is 9.</li>
-                    <li><strong>Success Rate (50-100%):</strong> Probability that an uncooperative DRV successfully captures targeted debris. Default is 90%.</li>
+                    <li><strong>Capacity Min (1-15):</strong> Minimum debris pieces an uncooperative ADR vehicle can remove. Default is 6.</li>
+                    <li><strong>Capacity Max (1-15):</strong> Maximum debris pieces an uncooperative ADR vehicle can remove. Default is 9.</li>
+                    <li><strong>Success Rate (50-100%):</strong> Probability that an uncooperative ADR vehicle successfully captures targeted debris. Default is 90%.</li>
                   </ul>
-                  <p className="text-xs text-gray-400 mt-2">Note: Cooperative DRV settings use fixed values from the game constants.</p>
+                  <p className="text-xs text-gray-400 mt-2">Note: Cooperative ADR settings use fixed values from the game constants.</p>
                 </div>
               </div>
             </div>
@@ -504,7 +542,7 @@ function App() {
             <ul className="list-disc list-inside space-y-2 text-gray-300">
               <li>Balance satellite launches with debris removal efforts</li>
               <li>Monitor the Analytics tab to track trends</li>
-              <li>Deploy DRVs proactively before debris levels become critical</li>
+              <li>Deploy ADR vehicles proactively before debris levels become critical</li>
               <li>Complete missions early for maximum score bonuses</li>
               <li>Use the Configuration tab to adjust difficulty settings</li>
             </ul>
