@@ -7,7 +7,6 @@ import { LaunchAnimation } from './LaunchAnimation';
 import { CollisionEffect } from './CollisionEffect';
 import { SolarStormEffect } from './SolarStormEffect';
 import { CascadeWarning } from './CascadeWarning';
-import RefuelingEffect from './RefuelingEffect';
 import { DaysCounter } from '../TimeControl/DaysCounter';
 import { SatellitesCounter } from '../TimeControl/SatellitesCounter';
 import { DRVsCounter } from '../TimeControl/DRVsCounter';
@@ -341,14 +340,6 @@ export function OrbitVisualization() {
         const capturedSatelliteIcon = capturedSatellite ? SATELLITE_PURPOSE_CONFIG[capturedSatellite.purpose].icon : undefined;
         return <DRVSprite key={drv.id} drv={drv} x={x} y={y} isLaunching={isLaunching} capturedSatelliteIcon={capturedSatelliteIcon} />;
       })}
-
-      {/* Refueling Effects */}
-      {debrisRemovalVehicles
-        .filter(drv => drv.removalType === 'refueling' && drv.capturedDebrisId && drv.captureOrbitsRemaining !== undefined)
-        .map(drv => {
-          const { x, y } = mapToPixels(drv, days, orbitalSpeeds);
-          return <RefuelingEffect key={`refuel-${drv.id}`} x={x} y={y} />;
-        })}
 
       {/* Solar Storm Effect */}
       {showSolarStorm && <SolarStormEffect key={solarStormKey} onComplete={handleSolarStormComplete} />}

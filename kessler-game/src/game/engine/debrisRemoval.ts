@@ -529,7 +529,7 @@ export function processRefuelingOperations(
   captureOrbitsRemaining: number | undefined;
   targetingTurnsRemaining: number | undefined;
 } {
-  const REFUEL_ORBITS = 1;
+  const REFUEL_ORBITS = 3;
   
   if (drv.capturedDebrisId) {
     const capturedSat = satellites.find(s => s.id === drv.capturedDebrisId);

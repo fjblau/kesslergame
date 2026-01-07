@@ -204,6 +204,14 @@ describe('Refueling Vehicle Integration Tests', () => {
 
       state = gameReducer(state, processDRVOperations());
       expect(state.debrisRemovalVehicles[0].capturedDebrisId).toBe(satelliteId);
+      expect(state.debrisRemovalVehicles[0].captureOrbitsRemaining).toBe(3);
+
+      state = gameReducer(state, processDRVOperations());
+      expect(state.debrisRemovalVehicles[0].capturedDebrisId).toBe(satelliteId);
+      expect(state.debrisRemovalVehicles[0].captureOrbitsRemaining).toBe(2);
+
+      state = gameReducer(state, processDRVOperations());
+      expect(state.debrisRemovalVehicles[0].capturedDebrisId).toBe(satelliteId);
       expect(state.debrisRemovalVehicles[0].captureOrbitsRemaining).toBe(1);
 
       state = gameReducer(state, processDRVOperations());
@@ -236,6 +244,12 @@ describe('Refueling Vehicle Integration Tests', () => {
 
       state = gameReducer(state, processDRVOperations());
       expect(state.debrisRemovalVehicles[1].targetDebrisId).toBe(cooperativeDrvId);
+
+      state = gameReducer(state, processDRVOperations());
+      expect(state.debrisRemovalVehicles[1].capturedDebrisId).toBe(cooperativeDrvId);
+
+      state = gameReducer(state, processDRVOperations());
+      expect(state.debrisRemovalVehicles[1].capturedDebrisId).toBe(cooperativeDrvId);
 
       state = gameReducer(state, processDRVOperations());
       expect(state.debrisRemovalVehicles[1].capturedDebrisId).toBe(cooperativeDrvId);

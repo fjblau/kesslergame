@@ -76,6 +76,9 @@ export const DRVSprite = memo(function DRVSprite({ drv, x, y, isLaunching = fals
           <span style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: '2px' }}>
             <span>⬟</span>
             <span style={{ fontSize: '14px' }}>{capturedSatelliteIcon}</span>
+            {isRefueling && (
+              <span style={{ fontSize: '12px', marginLeft: '-2px' }}>🔧</span>
+            )}
           </span>
         ) : (
           '⬟'

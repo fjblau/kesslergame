@@ -183,7 +183,7 @@ describe('processRefuelingOperations', () => {
       const result = processRefuelingOperations(drv, satellites, drvs, drvs);
 
       expect(result.capturedObjectId).toBe('sat1');
-      expect(result.captureOrbitsRemaining).toBe(1);
+      expect(result.captureOrbitsRemaining).toBe(3);
       expect(result.targetingTurnsRemaining).toBeUndefined();
       expect(result.newTargetId).toBeUndefined();
     });
