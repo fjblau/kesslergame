@@ -24,8 +24,6 @@ export function StatsPanel() {
   const debris = useAppSelector(state => state.game.debris);
   const satellites = useAppSelector(state => state.game.satellites);
   const drvs = useAppSelector(state => state.game.debrisRemovalVehicles);
-  const step = useAppSelector(state => state.game.step);
-  const maxSteps = useAppSelector(state => state.game.maxSteps);
   const riskLevel = useAppSelector(state => state.game.riskLevel);
 
   const totalDebris = debris.length;
@@ -93,16 +91,11 @@ export function StatsPanel() {
           </table>
         </div>
 
-        <div className="flex justify-between py-2 border-b border-slate-700/50">
+        <div className="flex justify-between py-2">
           <span className="text-gray-400">Risk Level:</span>
           <span className={`${risk.color} font-semibold inline-flex items-center gap-1`}>
             <span>{risk.emoji}</span> {risk.level}
           </span>
-        </div>
-
-        <div className="flex justify-between py-2">
-          <span className="text-gray-400">Step:</span>
-          <span className="text-gray-500">{step} / {maxSteps}</span>
         </div>
       </div>
     </div>
