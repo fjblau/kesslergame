@@ -18,7 +18,7 @@ export const DRVSprite = memo(function DRVSprite({ drv, x, y, isLaunching = fals
   const isRefueling = drv.removalType === 'refueling';
   const hasCapturedObject = drv.capturedDebrisId !== undefined;
   const color = isRefueling 
-    ? '#22d3ee' 
+    ? '#67e8f9' 
     : hasCapturedObject 
       ? '#ef4444' 
       : (isGeoTug ? '#a855f7' : (isCooperative ? '#34d399' : '#fb923c'));
@@ -42,7 +42,7 @@ export const DRVSprite = memo(function DRVSprite({ drv, x, y, isLaunching = fals
         position: 'absolute',
         color,
         fontSize: '16px',
-        filter: hasCapturedObject ? (isRefueling ? 'drop-shadow(0 0 8px #22d3ee)' : 'drop-shadow(0 0 8px #ef4444)') : 'none',
+        filter: hasCapturedObject ? (isRefueling ? 'drop-shadow(0 0 6px rgba(103, 232, 249, 0.5))' : 'drop-shadow(0 0 8px #ef4444)') : 'none',
       }}
       initial={isLaunching ? {
         left: 500,
