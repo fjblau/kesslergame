@@ -1,9 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { GameState, OrbitLayer, SatelliteType, InsuranceTier, DRVType, BudgetDifficulty, DebrisRemovalVehicle, ExpiredDRVInfo, DebrisRemovalInfo, SatelliteCaptureInfo, GraveyardMoveInfo } from '../../game/types';
-import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG, MAX_DEBRIS_LIMIT, ORBITAL_SPEEDS, CASCADE_THRESHOLD, RISK_SPEED_MULTIPLIERS, SATELLITE_REVENUE, OBJECT_RADII, CAPTURE_RADIUS_MULTIPLIER } from '../../game/constants';
+import type { GameState, OrbitLayer, SatelliteType, InsuranceTier, DRVType, BudgetDifficulty, DebrisRemovalVehicle, ExpiredDRVInfo, DebrisRemovalInfo, SatelliteCaptureInfo, GraveyardMoveInfo, RefuelingInfo } from '../../game/types';
+import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG, MAX_DEBRIS_LIMIT, ORBITAL_SPEEDS, CASCADE_THRESHOLD, RISK_SPEED_MULTIPLIERS, SATELLITE_REVENUE, OBJECT_RADII, CAPTURE_RADIUS_MULTIPLIER, SATELLITE_LIFESPAN } from '../../game/constants';
 import { detectCollisions, generateDebrisFromCollision, calculateTotalPayout } from '../../game/engine/collision';
-import { processDRVRemoval, processCooperativeDRVOperations, moveCooperativeDRV, processGeoTugOperations } from '../../game/engine/debrisRemoval';
+import { processDRVRemoval, processCooperativeDRVOperations, moveCooperativeDRV, processGeoTugOperations, processRefuelingOperations } from '../../game/engine/debrisRemoval';
 import { calculateRiskLevel } from '../../game/engine/risk';
 import { processSolarStorm, generateSolarFlare } from '../../game/engine/events';
 import { SATELLITE_METADATA } from '../../game/satelliteMetadata';
@@ -176,6 +176,8 @@ const initialState: GameState = {
   recentSatelliteCaptures: [],
   recentGraveyardMoves: [],
   recentlyLaunchedSatellites: [],
+  recentRefuelings: [],
+  satellitesExpired: 0,
   cascadeTriggered: false,
   lastCascadeTurn: undefined,
   totalCascades: 0,
@@ -293,6 +295,7 @@ export const gameSlice = createSlice({
           layer: orbit,
           purpose,
           age: 0,
+          maxAge: SATELLITE_LIFESPAN[orbit],
           insuranceTier,
           radius: OBJECT_RADII.satellite,
           captureRadius: OBJECT_RADII.satellite * CAPTURE_RADIUS_MULTIPLIER,
@@ -331,6 +334,8 @@ export const gameSlice = createSlice({
           organization: string;
           capture_system: string;
           icon_suggestion: string;
+          operator?: string;
+          country?: string;
         };
       }>) => {
         const { orbit, drvType, metadata } = action.payload;
@@ -363,9 +368,9 @@ export const gameSlice = createSlice({
         turn?: number;
         day?: number;
       }) => {
-        let metadata: { name: string; organization: string; capture_system: string; icon_suggestion: string } | undefined;
+        let metadata: { name: string; organization: string; capture_system: string; icon_suggestion: string; operator?: string; country?: string } | undefined;
         
-        if (payload.drvType === 'cooperative' || payload.drvType === 'uncooperative') {
+        if (payload.drvType === 'cooperative' || payload.drvType === 'uncooperative' || payload.drvType === 'refueling') {
           const selectedMetadata = selectDRVMetadata(payload.drvType);
           
           if (selectedMetadata) {
@@ -374,6 +379,8 @@ export const gameSlice = createSlice({
               organization: selectedMetadata.organization,
               capture_system: selectedMetadata.capture_system,
               icon_suggestion: selectedMetadata.icon_suggestion,
+              operator: selectedMetadata.operator,
+              country: selectedMetadata.country,
             };
           }
         }
@@ -402,6 +409,7 @@ export const gameSlice = createSlice({
       const removalEvents: DebrisRemovalInfo[] = [];
       const satelliteCaptures: SatelliteCaptureInfo[] = [];
       const graveyardMoves: GraveyardMoveInfo[] = [];
+      const refuelings: RefuelingInfo[] = [];
 
       activeDRVs.forEach(drv => {
         if (drv.removalType === 'cooperative') {
@@ -472,6 +480,46 @@ export const gameSlice = createSlice({
             drv.capturedDebrisId = undefined;
             drv.captureOrbitsRemaining = undefined;
           }
+        } else if (drv.removalType === 'refueling') {
+          const result = processRefuelingOperations(
+            drv, 
+            state.satellites, 
+            state.debrisRemovalVehicles,
+            state.debrisRemovalVehicles
+          );
+          
+          drv.targetDebrisId = result.newTargetId;
+          drv.capturedDebrisId = result.capturedObjectId;
+          drv.captureOrbitsRemaining = result.captureOrbitsRemaining;
+          drv.targetingTurnsRemaining = result.targetingTurnsRemaining;
+          
+          if (result.refueledSatelliteId) {
+            const satellite = state.satellites.find(s => s.id === result.refueledSatelliteId);
+            if (satellite) {
+              refuelings.push({
+                refuelingVehicleId: drv.id,
+                targetId: satellite.id,
+                targetType: 'satellite',
+                layer: drv.layer,
+                previousAge: result.previousAge ?? 0,
+                newAge: 0,
+              });
+            }
+          }
+          
+          if (result.refueledDRVId) {
+            const targetDRV = state.debrisRemovalVehicles.find(d => d.id === result.refueledDRVId);
+            if (targetDRV) {
+              refuelings.push({
+                refuelingVehicleId: drv.id,
+                targetId: targetDRV.id,
+                targetType: 'drv',
+                layer: drv.layer,
+                previousAge: result.previousAge ?? 0,
+                newAge: 0,
+              });
+            }
+          }
         } else {
           const result = processDRVRemoval(drv, state.debris);
           
@@ -498,6 +546,7 @@ export const gameSlice = createSlice({
       state.recentDebrisRemovals = removalEvents;
       state.recentSatelliteCaptures = satelliteCaptures;
       state.recentGraveyardMoves = graveyardMoves;
+      state.recentRefuelings = refuelings;
       state.riskLevel = calculateRiskLevel(state.debris.length);
     },
 
@@ -560,6 +609,17 @@ export const gameSlice = createSlice({
           let target = undefined;
           if (targetId) {
             target = state.debris.find(d => d.id === targetId) || state.satellites.find(s => s.id === targetId);
+          }
+          const newPosition = moveCooperativeDRV(drv, target);
+          drv.x = newPosition.x;
+          drv.y = newPosition.y;
+        } else if (drv.removalType === 'refueling') {
+          const targetId = drv.capturedDebrisId || drv.targetDebrisId;
+          let target = undefined;
+          if (targetId) {
+            const debrisTarget = state.debris.find(d => d.id === targetId);
+            const satelliteTarget = state.satellites.find(s => s.id === targetId);
+            target = debrisTarget || satelliteTarget;
           }
           const newPosition = moveCooperativeDRV(drv, target);
           drv.x = newPosition.x;
@@ -726,6 +786,20 @@ export const gameSlice = createSlice({
       state.debrisRemovalVehicles = remaining;
       state.recentlyExpiredDRVs = expired;
 
+      state.riskLevel = calculateRiskLevel(state.debris.length);
+    },
+
+    expireSatellites: (state) => {
+      const expiredCount = state.satellites.filter(sat => 
+        sat.age >= sat.maxAge && !sat.inGraveyard
+      ).length;
+      
+      state.satellites = state.satellites.filter(sat => 
+        sat.age < sat.maxAge || sat.inGraveyard
+      );
+      
+      state.satellitesExpired += expiredCount;
+      
       state.riskLevel = calculateRiskLevel(state.debris.length);
     },
 
@@ -912,6 +986,7 @@ export const {
   addSatelliteRevenue,
   processCollisions,
   decommissionExpiredDRVs,
+  expireSatellites,
   triggerSolarStorm,
   checkGameOver,
   clearOldCollisions,

@@ -28,6 +28,7 @@ export const SatelliteSprite = memo(function SatelliteSprite({ satellite, x, y, 
   const baseAngle = (satellite.x / 100) * 360;
   const speedMultiplier = getEntitySpeedMultiplier(satellite.id);
   const rotation = baseAngle + (days * orbitalSpeed * speedMultiplier * 3.6);
+  const isAging = satellite.age > satellite.maxAge * 0.5 && !satellite.inGraveyard;
   
   return (
     <motion.div
@@ -95,6 +96,19 @@ export const SatelliteSprite = memo(function SatelliteSprite({ satellite, x, y, 
             pointerEvents: 'none',
             animation: 'blink 0.8s infinite',
             boxShadow: '0 0 16px #ff0000, 0 0 24px #ff0000',
+          }} />
+        )}
+        {isAging && !isCaptured && !isTargeted && (
+          <span style={{ 
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '22px',
+            height: '22px',
+            border: '2px solid #fbbf24',
+            borderRadius: '50%',
+            pointerEvents: 'none',
           }} />
         )}
       </span>

@@ -1,9 +1,11 @@
 export interface DRVMetadata {
   vehicle_name: string;
   organization: string;
-  capture_type: 'cooperative' | 'non-cooperative';
+  capture_type: 'cooperative' | 'non-cooperative' | 'refueling';
   capture_system: string;
   icon_suggestion: string;
+  operator?: string;
+  country?: string;
 }
 
 export const DRV_METADATA: DRVMetadata[] = [
@@ -98,13 +100,135 @@ export const DRV_METADATA: DRVMetadata[] = [
     capture_system: 'Contactless laser ablation to alter debris trajectory',
     icon_suggestion: 'Dish/emitter with beam',
   },
+  {
+    vehicle_name: 'MEV-1',
+    organization: 'SpaceLogistics',
+    capture_type: 'refueling',
+    capture_system: 'Life extension and servicing system',
+    icon_suggestion: 'Mission extension servicer',
+    operator: 'SpaceLogistics',
+    country: 'USA',
+  },
+  {
+    vehicle_name: 'MEV-2',
+    organization: 'SpaceLogistics',
+    capture_type: 'refueling',
+    capture_system: 'Life extension and servicing system',
+    icon_suggestion: 'Mission extension servicer',
+    operator: 'SpaceLogistics',
+    country: 'USA',
+  },
+  {
+    vehicle_name: 'Mission Robotic Vehicle',
+    organization: 'SpaceLogistics',
+    capture_type: 'refueling',
+    capture_system: 'Robotic servicing system',
+    icon_suggestion: 'Robotic servicer',
+    operator: 'SpaceLogistics',
+    country: 'USA',
+  },
+  {
+    vehicle_name: 'Mission Extension Pod',
+    organization: 'SpaceLogistics',
+    capture_type: 'refueling',
+    capture_system: 'Propulsion and life extension system',
+    icon_suggestion: 'Propulsion servicer',
+    operator: 'SpaceLogistics',
+    country: 'USA',
+  },
+  {
+    vehicle_name: 'Life Extensio',
+    organization: 'Astroscale U',
+    capture_type: 'refueling',
+    capture_system: 'On-orbit servicing system',
+    icon_suggestion: 'Life extension servicer',
+    operator: 'Astroscale U',
+    country: 'USA',
+  },
+  {
+    vehicle_name: 'Orbit Transfer',
+    organization: 'Astroscale U',
+    capture_type: 'refueling',
+    capture_system: 'Orbit transfer and servicing system',
+    icon_suggestion: 'Orbit transfer servicer',
+    operator: 'Astroscale U',
+    country: 'USA',
+  },
+  {
+    vehicle_name: 'Endurance',
+    organization: 'Infinite Orbit',
+    capture_type: 'refueling',
+    capture_system: 'Extended mission servicing system',
+    icon_suggestion: 'Endurance servicer',
+    operator: 'Infinite Orbit',
+    country: 'France',
+  },
+  {
+    vehicle_name: 'Orbit Guard',
+    organization: 'Infinite Orbit',
+    capture_type: 'refueling',
+    capture_system: 'Inspection and servicing system',
+    icon_suggestion: 'Inspector servicer',
+    operator: 'Infinite Orbit',
+    country: 'France',
+  },
+  {
+    vehicle_name: 'GEO Fuel Shuttle',
+    organization: 'Orbit Fab',
+    capture_type: 'refueling',
+    capture_system: 'Automated refueling interface',
+    icon_suggestion: 'Fuel shuttle',
+    operator: 'Orbit Fab',
+    country: 'USA',
+  },
+  {
+    vehicle_name: 'Fuel Tanker',
+    organization: 'Orbit Fab',
+    capture_type: 'refueling',
+    capture_system: 'Depot-based fuel transfer system',
+    icon_suggestion: 'Fuel depot',
+    operator: 'Orbit Fab',
+    country: 'USA',
+  },
+  {
+    vehicle_name: 'Shijian-21',
+    organization: 'CNSA',
+    capture_type: 'refueling',
+    capture_system: 'On-orbit servicing system',
+    icon_suggestion: 'Multi-purpose servicer',
+    operator: 'CNSA',
+    country: 'China',
+  },
+  {
+    vehicle_name: 'Shijian-25',
+    organization: 'CNSA',
+    capture_type: 'refueling',
+    capture_system: 'On-orbit servicing and refueling system',
+    icon_suggestion: 'Multi-purpose servicer',
+    operator: 'CNSA',
+    country: 'China',
+  },
+  {
+    vehicle_name: 'Mission Extension Prototype Servicer for Refueling',
+    organization: 'Astroscale U USA',
+    capture_type: 'refueling',
+    capture_system: 'Mission extension and refueling interface',
+    icon_suggestion: 'Advanced servicer with fuel ports',
+    operator: 'Astroscale U USA',
+    country: 'USA',
+  },
 ];
 
 const COOPERATIVE_DRVS = DRV_METADATA.filter(drv => drv.capture_type === 'cooperative');
 const NON_COOPERATIVE_DRVS = DRV_METADATA.filter(drv => drv.capture_type === 'non-cooperative');
+const REFUELING_DRVS = DRV_METADATA.filter(drv => drv.capture_type === 'refueling');
 
-export function selectDRVMetadata(drvType: 'cooperative' | 'uncooperative'): DRVMetadata | undefined {
-  const pool = drvType === 'cooperative' ? COOPERATIVE_DRVS : NON_COOPERATIVE_DRVS;
+export function selectDRVMetadata(drvType: 'cooperative' | 'uncooperative' | 'refueling'): DRVMetadata | undefined {
+  const pool = drvType === 'cooperative' 
+    ? COOPERATIVE_DRVS 
+    : drvType === 'uncooperative' 
+      ? NON_COOPERATIVE_DRVS 
+      : REFUELING_DRVS;
   
   if (pool.length === 0) {
     return undefined;

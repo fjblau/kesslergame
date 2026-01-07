@@ -24,8 +24,6 @@ export function StatsPanel() {
   const debris = useAppSelector(state => state.game.debris);
   const satellites = useAppSelector(state => state.game.satellites);
   const drvs = useAppSelector(state => state.game.debrisRemovalVehicles);
-  const step = useAppSelector(state => state.game.step);
-  const maxSteps = useAppSelector(state => state.game.maxSteps);
   const riskLevel = useAppSelector(state => state.game.riskLevel);
 
   const totalDebris = debris.length;
@@ -38,7 +36,9 @@ export function StatsPanel() {
     const satelliteCount = satellites.filter(s => s.layer === layer).length;
     const cooperativeDRVs = drvs.filter(d => d.layer === layer && d.removalType === 'cooperative' && d.age < d.maxAge).length;
     const uncooperativeDRVs = drvs.filter(d => d.layer === layer && d.removalType === 'uncooperative' && d.age < d.maxAge).length;
-    return { satelliteCount, cooperativeDRVs, uncooperativeDRVs };
+    const servicingDRVs = drvs.filter(d => d.layer === layer && d.removalType === 'refueling' && d.age < d.maxAge).length;
+    const geoTugDRVs = drvs.filter(d => d.layer === layer && d.removalType === 'geotug' && d.age < d.maxAge).length;
+    return { satelliteCount, cooperativeDRVs, uncooperativeDRVs, servicingDRVs, geoTugDRVs };
   };
 
   return (
@@ -60,13 +60,17 @@ export function StatsPanel() {
               <tr className="bg-slate-900">
                 <th className="py-2 px-3 text-left text-white font-semibold border-b border-slate-700">Orbit Layer</th>
                 <th className="py-2 px-3 text-center text-white font-semibold border-b border-slate-700">Satellites</th>
-                <th colSpan={2} className="py-1 px-3 text-center text-white font-semibold border-b border-slate-700">DRV</th>
+                <th colSpan={2} className="py-1 px-3 text-center text-white font-semibold border-b border-slate-700">ADR</th>
+                <th className="py-2 px-3 text-center text-white font-semibold border-b border-slate-700">Servicing</th>
+                <th className="py-2 px-3 text-center text-white font-semibold border-b border-slate-700">GEO Tug</th>
               </tr>
               <tr className="bg-slate-900">
                 <th className="border-b border-slate-700"></th>
                 <th className="border-b border-slate-700"></th>
                 <th className="py-1 px-2 text-center text-white text-sm font-medium border-b border-slate-700 border-l border-slate-700">Cooperative</th>
                 <th className="py-1 px-2 text-center text-white text-sm font-medium border-b border-slate-700">Uncooperative</th>
+                <th className="border-b border-slate-700"></th>
+                <th className="border-b border-slate-700"></th>
               </tr>
             </thead>
             <tbody>
@@ -78,6 +82,8 @@ export function StatsPanel() {
                     <td className="py-1 px-3 text-center text-gray-300">{stats.satelliteCount}</td>
                     <td className="py-1 px-2 text-center text-gray-300 border-l border-slate-700">{stats.cooperativeDRVs}</td>
                     <td className="py-1 px-2 text-center text-gray-300">{stats.uncooperativeDRVs}</td>
+                    <td className="py-1 px-3 text-center text-gray-300 border-l border-slate-700">{stats.servicingDRVs}</td>
+                    <td className="py-1 px-3 text-center text-gray-300 border-l border-slate-700">{stats.geoTugDRVs}</td>
                   </tr>
                 );
               })}
@@ -85,16 +91,11 @@ export function StatsPanel() {
           </table>
         </div>
 
-        <div className="flex justify-between py-2 border-b border-slate-700/50">
+        <div className="flex justify-between py-2">
           <span className="text-gray-400">Risk Level:</span>
           <span className={`${risk.color} font-semibold inline-flex items-center gap-1`}>
             <span>{risk.emoji}</span> {risk.level}
           </span>
-        </div>
-
-        <div className="flex justify-between py-2">
-          <span className="text-gray-400">Step:</span>
-          <span className="text-gray-500">{step} / {maxSteps}</span>
         </div>
       </div>
     </div>
