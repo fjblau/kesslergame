@@ -350,7 +350,7 @@ export function useGameSpeed() {
         const expiredSatelliteCount = updatedState.satellitesExpired - (currentState.satellitesExpired || 0);
         if (expiredSatelliteCount > 0) {
           dispatch(addEvent({
-            type: 'collision',
+            type: 'satellite-expired',
             turn: updatedState.step,
             day: updatedState.days,
             message: `${expiredSatelliteCount} satellite${expiredSatelliteCount > 1 ? 's' : ''} expired and de-orbited`,

@@ -18,6 +18,7 @@ export const DRVSprite = memo(function DRVSprite({ drv, x, y, isLaunching = fals
   const isRefueling = drv.removalType === 'refueling';
   const hasCapturedObject = drv.capturedDebrisId !== undefined;
   const color = hasCapturedObject ? '#ef4444' : (isGeoTug ? '#a855f7' : (isRefueling ? '#22d3ee' : (isCooperative ? '#34d399' : '#fb923c')));
+  const isAging = drv.age > drv.maxAge * 0.5;
   const days = useAppSelector(state => state.game.days);
   const orbitalSpeed = useAppSelector(state => {
     switch (drv.layer) {
@@ -64,16 +65,31 @@ export const DRVSprite = memo(function DRVSprite({ drv, x, y, isLaunching = fals
         scale: isLaunching ? { duration: 4, ease: [0.2, 0.8, 0.4, 1] } : { duration: 1, ease: 'linear' },
         opacity: { duration: 0.3 },
       }}
-      title={hasCapturedObject ? `${drv.removalType} DRV (${drv.layer}) - WITH CAPTURED SATELLITE` : `${drv.removalType} DRV (${drv.layer})`}
+      title={hasCapturedObject ? `${drv.removalType} DRV (${drv.layer}) - WITH CAPTURED SATELLITE` : `${drv.removalType} DRV (${drv.layer}) - Age: ${drv.age}/${drv.maxAge}`}
     >
-      {capturedSatelliteIcon ? (
-        <span style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: '2px' }}>
-          <span>⬟</span>
-          <span style={{ fontSize: '14px' }}>{capturedSatelliteIcon}</span>
-        </span>
-      ) : (
-        '⬟'
-      )}
+      <span style={{ position: 'relative', display: 'inline-block' }}>
+        {capturedSatelliteIcon ? (
+          <span style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: '2px' }}>
+            <span>⬟</span>
+            <span style={{ fontSize: '14px' }}>{capturedSatelliteIcon}</span>
+          </span>
+        ) : (
+          '⬟'
+        )}
+        {isAging && !isGeoTug && (
+          <span style={{ 
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '22px',
+            height: '22px',
+            border: '2px solid #fbbf24',
+            borderRadius: '50%',
+            pointerEvents: 'none',
+          }} />
+        )}
+      </span>
     </motion.div>
   );
 });

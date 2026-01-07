@@ -497,7 +497,7 @@ export const gameSlice = createSlice({
                 targetId: satellite.id,
                 targetType: 'satellite',
                 layer: drv.layer,
-                previousAge: satellite.age,
+                previousAge: result.previousAge ?? 0,
                 newAge: 0,
               });
             }
@@ -511,7 +511,7 @@ export const gameSlice = createSlice({
                 targetId: targetDRV.id,
                 targetType: 'drv',
                 layer: drv.layer,
-                previousAge: targetDRV.age,
+                previousAge: result.previousAge ?? 0,
                 newAge: 0,
               });
             }

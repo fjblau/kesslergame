@@ -523,6 +523,7 @@ export function processRefuelingOperations(
 ): {
   refueledSatelliteId: string | undefined;
   refueledDRVId: string | undefined;
+  previousAge: number | undefined;
   newTargetId: string | undefined;
   capturedObjectId: string | undefined;
   captureOrbitsRemaining: number | undefined;
@@ -539,6 +540,7 @@ export function processRefuelingOperations(
       return {
         refueledSatelliteId: undefined,
         refueledDRVId: undefined,
+        previousAge: undefined,
         newTargetId: undefined,
         capturedObjectId: undefined,
         captureOrbitsRemaining: undefined,
@@ -549,11 +551,13 @@ export function processRefuelingOperations(
     const orbitsRemaining = (drv.captureOrbitsRemaining !== undefined ? drv.captureOrbitsRemaining : REFUEL_ORBITS) - 1;
     
     if (orbitsRemaining <= 0) {
+      const previousAge = capturedObject.age;
       capturedObject.age = 0;
       
       return {
         refueledSatelliteId: capturedSat?.id,
         refueledDRVId: capturedDRV?.id,
+        previousAge,
         newTargetId: undefined,
         capturedObjectId: undefined,
         captureOrbitsRemaining: undefined,
@@ -564,6 +568,7 @@ export function processRefuelingOperations(
     return {
       refueledSatelliteId: undefined,
       refueledDRVId: undefined,
+      previousAge: undefined,
       newTargetId: undefined,
       capturedObjectId: drv.capturedDebrisId,
       captureOrbitsRemaining: orbitsRemaining,
@@ -581,6 +586,7 @@ export function processRefuelingOperations(
       return {
         refueledSatelliteId: undefined,
         refueledDRVId: undefined,
+        previousAge: undefined,
         newTargetId: newTarget?.id,
         capturedObjectId: undefined,
         captureOrbitsRemaining: undefined,
@@ -594,6 +600,7 @@ export function processRefuelingOperations(
       return {
         refueledSatelliteId: undefined,
         refueledDRVId: undefined,
+        previousAge: undefined,
         newTargetId: undefined,
         capturedObjectId: currentTarget.id,
         captureOrbitsRemaining: REFUEL_ORBITS,
@@ -604,6 +611,7 @@ export function processRefuelingOperations(
     return {
       refueledSatelliteId: undefined,
       refueledDRVId: undefined,
+      previousAge: undefined,
       newTargetId: drv.targetDebrisId,
       capturedObjectId: undefined,
       captureOrbitsRemaining: undefined,
@@ -615,6 +623,7 @@ export function processRefuelingOperations(
   return {
     refueledSatelliteId: undefined,
     refueledDRVId: undefined,
+    previousAge: undefined,
     newTargetId: newTarget?.id,
     capturedObjectId: undefined,
     captureOrbitsRemaining: undefined,

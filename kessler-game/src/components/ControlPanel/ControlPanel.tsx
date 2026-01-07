@@ -159,7 +159,7 @@ export function ControlPanel() {
           <>
             <div className="space-y-2">
               <label className="text-base font-medium text-gray-300">DRV Type</label>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-3 gap-2">
                 {(['cooperative', 'uncooperative', 'refueling'] as DRVType[]).map(type => (
                   <button
                     key={type}
@@ -168,7 +168,7 @@ export function ControlPanel() {
                       drvType === type
                         ? 'bg-blue-600 text-white shadow-lg'
                         : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
-                    } ${type === 'refueling' ? 'col-span-2' : ''}`}
+                    }`}
                   >
                     {type}
                   </button>
