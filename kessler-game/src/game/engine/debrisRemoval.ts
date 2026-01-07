@@ -474,3 +474,150 @@ export function processGeoTugOperations(
     shouldDecommission: false
   };
 }
+
+export function selectRefuelingTarget(
+  drv: DebrisRemovalVehicle,
+  satellites: Satellite[],
+  drvs: DebrisRemovalVehicle[],
+  allDRVs?: DebrisRemovalVehicle[]
+): Satellite | DebrisRemovalVehicle | null {
+  const alreadyTargetedIds = new Set<string>();
+  if (allDRVs) {
+    allDRVs.forEach(otherDrv => {
+      if (otherDrv.id !== drv.id) {
+        if (otherDrv.targetDebrisId) alreadyTargetedIds.add(otherDrv.targetDebrisId);
+        if (otherDrv.capturedDebrisId) alreadyTargetedIds.add(otherDrv.capturedDebrisId);
+      }
+    });
+  }
+  
+  const satellitesNeedingRefuel = satellites.filter(s => 
+    s.layer === drv.layer && 
+    !s.inGraveyard &&
+    s.age > s.maxAge * 0.5 &&
+    !alreadyTargetedIds.has(s.id)
+  );
+  
+  const drvsNeedingRefuel = drvs.filter(d =>
+    d.layer === drv.layer &&
+    d.id !== drv.id &&
+    d.age > d.maxAge * 0.5 &&
+    d.removalType !== 'refueling' &&
+    !alreadyTargetedIds.has(d.id)
+  );
+  
+  const allTargets: (Satellite | DebrisRemovalVehicle)[] = [
+    ...satellitesNeedingRefuel,
+    ...drvsNeedingRefuel
+  ];
+  
+  if (allTargets.length === 0) return null;
+  return allTargets[Math.floor(Math.random() * allTargets.length)];
+}
+
+export function processRefuelingOperations(
+  drv: DebrisRemovalVehicle,
+  satellites: Satellite[],
+  drvs: DebrisRemovalVehicle[],
+  allDRVs?: DebrisRemovalVehicle[]
+): {
+  refueledSatelliteId: string | undefined;
+  refueledDRVId: string | undefined;
+  newTargetId: string | undefined;
+  capturedObjectId: string | undefined;
+  captureOrbitsRemaining: number | undefined;
+  targetingTurnsRemaining: number | undefined;
+} {
+  const REFUEL_ORBITS = 1;
+  
+  if (drv.capturedDebrisId) {
+    const capturedSat = satellites.find(s => s.id === drv.capturedDebrisId);
+    const capturedDRV = drvs.find(d => d.id === drv.capturedDebrisId);
+    const capturedObject = capturedSat || capturedDRV;
+    
+    if (!capturedObject) {
+      return {
+        refueledSatelliteId: undefined,
+        refueledDRVId: undefined,
+        newTargetId: undefined,
+        capturedObjectId: undefined,
+        captureOrbitsRemaining: undefined,
+        targetingTurnsRemaining: undefined
+      };
+    }
+    
+    const orbitsRemaining = (drv.captureOrbitsRemaining !== undefined ? drv.captureOrbitsRemaining : REFUEL_ORBITS) - 1;
+    
+    if (orbitsRemaining <= 0) {
+      capturedObject.age = 0;
+      
+      return {
+        refueledSatelliteId: capturedSat?.id,
+        refueledDRVId: capturedDRV?.id,
+        newTargetId: undefined,
+        capturedObjectId: undefined,
+        captureOrbitsRemaining: undefined,
+        targetingTurnsRemaining: undefined
+      };
+    }
+    
+    return {
+      refueledSatelliteId: undefined,
+      refueledDRVId: undefined,
+      newTargetId: undefined,
+      capturedObjectId: drv.capturedDebrisId,
+      captureOrbitsRemaining: orbitsRemaining,
+      targetingTurnsRemaining: undefined
+    };
+  }
+  
+  if (drv.targetDebrisId) {
+    const currentSat = satellites.find(s => s.id === drv.targetDebrisId);
+    const currentDRV = drvs.find(d => d.id === drv.targetDebrisId);
+    const currentTarget = currentSat || currentDRV;
+    
+    if (!currentTarget) {
+      const newTarget = selectRefuelingTarget(drv, satellites, drvs, allDRVs);
+      return {
+        refueledSatelliteId: undefined,
+        refueledDRVId: undefined,
+        newTargetId: newTarget?.id,
+        capturedObjectId: undefined,
+        captureOrbitsRemaining: undefined,
+        targetingTurnsRemaining: newTarget ? ORBITS_TO_TARGET : undefined
+      };
+    }
+    
+    const turnsRemaining = (drv.targetingTurnsRemaining !== undefined ? drv.targetingTurnsRemaining : ORBITS_TO_TARGET) - 1;
+    
+    if (turnsRemaining <= 0) {
+      return {
+        refueledSatelliteId: undefined,
+        refueledDRVId: undefined,
+        newTargetId: undefined,
+        capturedObjectId: currentTarget.id,
+        captureOrbitsRemaining: REFUEL_ORBITS,
+        targetingTurnsRemaining: undefined
+      };
+    }
+    
+    return {
+      refueledSatelliteId: undefined,
+      refueledDRVId: undefined,
+      newTargetId: drv.targetDebrisId,
+      capturedObjectId: undefined,
+      captureOrbitsRemaining: undefined,
+      targetingTurnsRemaining: turnsRemaining
+    };
+  }
+  
+  const newTarget = selectRefuelingTarget(drv, satellites, drvs, allDRVs);
+  return {
+    refueledSatelliteId: undefined,
+    refueledDRVId: undefined,
+    newTargetId: newTarget?.id,
+    capturedObjectId: undefined,
+    captureOrbitsRemaining: undefined,
+    targetingTurnsRemaining: newTarget ? ORBITS_TO_TARGET : undefined
+  };
+}

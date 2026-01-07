@@ -15,8 +15,9 @@ interface DRVSpriteProps {
 export const DRVSprite = memo(function DRVSprite({ drv, x, y, isLaunching = false, capturedSatelliteIcon }: DRVSpriteProps) {
   const isCooperative = drv.removalType === 'cooperative';
   const isGeoTug = drv.removalType === 'geotug';
+  const isRefueling = drv.removalType === 'refueling';
   const hasCapturedObject = drv.capturedDebrisId !== undefined;
-  const color = hasCapturedObject ? '#ef4444' : (isGeoTug ? '#a855f7' : (isCooperative ? '#34d399' : '#fb923c'));
+  const color = hasCapturedObject ? '#ef4444' : (isGeoTug ? '#a855f7' : (isRefueling ? '#22d3ee' : (isCooperative ? '#34d399' : '#fb923c')));
   const days = useAppSelector(state => state.game.days);
   const orbitalSpeed = useAppSelector(state => {
     switch (drv.layer) {

@@ -21,25 +21,28 @@ export const INSURANCE_CONFIG: Record<InsuranceTier, { cost: number; payout: num
 
 export const DRV_CONFIG = {
   costs: {
-    LEO: { cooperative: 2_000_000, uncooperative: 3_500_000, geotug: 25_000_000 },
-    MEO: { cooperative: 3_000_000, uncooperative: 5_250_000, geotug: 25_000_000 },
-    GEO: { cooperative: 5_000_000, uncooperative: 8_750_000, geotug: 25_000_000 },
-    GRAVEYARD: { cooperative: 0, uncooperative: 0, geotug: 0 },
+    LEO: { cooperative: 2_000_000, uncooperative: 3_500_000, geotug: 25_000_000, refueling: 1_500_000 },
+    MEO: { cooperative: 3_000_000, uncooperative: 5_250_000, geotug: 25_000_000, refueling: 2_250_000 },
+    GEO: { cooperative: 5_000_000, uncooperative: 8_750_000, geotug: 25_000_000, refueling: 3_750_000 },
+    GRAVEYARD: { cooperative: 0, uncooperative: 0, geotug: 0, refueling: 0 },
   },
   capacity: {
     cooperative: [2, 3] as [number, number],
     uncooperative: [6, 9] as [number, number],
     geotug: [1, 1] as [number, number],
+    refueling: [1, 1] as [number, number],
   },
   successRate: {
     cooperative: 0.85,
     uncooperative: 0.90,
     geotug: 1.0,
+    refueling: 0.95,
   },
   duration: {
     cooperative: 10,
     uncooperative: 10,
     geotug: 999,
+    refueling: 15,
   },
 };
 
@@ -130,6 +133,13 @@ export const DEBRIS_PER_COLLISION = 5;
 export const DEBRIS_TYPE_DISTRIBUTION = { cooperative: 0.70, uncooperative: 0.30 };
 export const MAX_STEPS = 100;
 export const LEO_LIFETIME = 20;
+
+export const SATELLITE_LIFESPAN: Record<OrbitLayer, number> = {
+  LEO: 20,
+  MEO: 40,
+  GEO: 60,
+  GRAVEYARD: 999,
+};
 
 export const SOLAR_STORM_PROBABILITY = 0.10;
 export const SOLAR_STORM_LEO_REMOVAL_RATE = 0.30;

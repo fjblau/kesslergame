@@ -159,16 +159,16 @@ export function ControlPanel() {
           <>
             <div className="space-y-2">
               <label className="text-base font-medium text-gray-300">DRV Type</label>
-              <div className="flex gap-3">
-                {(['cooperative', 'uncooperative'] as DRVType[]).map(type => (
+              <div className="grid grid-cols-2 gap-2">
+                {(['cooperative', 'uncooperative', 'refueling'] as DRVType[]).map(type => (
                   <button
                     key={type}
                     onClick={() => setDrvType(type)}
-                    className={`flex-1 py-[7px] px-6 rounded-xl font-medium capitalize transition-colors text-lg ${
+                    className={`py-[7px] px-3 rounded-xl font-medium capitalize transition-colors text-base ${
                       drvType === type
                         ? 'bg-blue-600 text-white shadow-lg'
                         : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
-                    }`}
+                    } ${type === 'refueling' ? 'col-span-2' : ''}`}
                   >
                     {type}
                   </button>

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
-import { advanceTurn, decommissionExpiredDRVs, triggerSolarStorm, incrementDays, processCollisions, processDRVOperations, addSatelliteRevenue, checkGameOver, setCollisionPauseCooldown, setBudgetPauseCooldown } from '../store/slices/gameSlice';
+import { advanceTurn, decommissionExpiredDRVs, expireSatellites, triggerSolarStorm, incrementDays, processCollisions, processDRVOperations, addSatelliteRevenue, checkGameOver, setCollisionPauseCooldown, setBudgetPauseCooldown } from '../store/slices/gameSlice';
 import { setGameSpeed } from '../store/slices/uiSlice';
 import { updateMissionProgress, notifyMissionComplete, selectActiveMissions } from '../store/slices/missionsSlice';
 import { addEvent } from '../store/slices/eventSlice';
@@ -150,6 +150,34 @@ export function useGameSpeed() {
               launch_vehicle: satellite.metadata.launch_vehicle,
               launch_site: satellite.metadata.launch_site,
             })
+          }
+        }));
+      });
+
+      currentState.recentRefuelings.forEach(refueling => {
+        const targetType = refueling.targetType === 'satellite' ? 'satellite' : 'DRV';
+        const target = refueling.targetType === 'satellite' 
+          ? currentState.satellites.find(s => s.id === refueling.targetId)
+          : currentState.debrisRemovalVehicles.find(d => d.id === refueling.targetId);
+        
+        let message = `Refueling vehicle refueled ${targetType} in ${refueling.layer} orbit`;
+        
+        if (refueling.targetType === 'satellite' && target && 'purpose' in target && target.metadata) {
+          message = `Refueling vehicle refueled '${target.metadata.name}' (${target.metadata.country}) in ${refueling.layer} orbit`;
+        }
+        
+        dispatch(addEvent({
+          type: 'debris-removal',
+          turn: currentState.step,
+          day: currentState.days,
+          message,
+          details: {
+            refuelingVehicleId: refueling.refuelingVehicleId,
+            targetId: refueling.targetId,
+            targetType: refueling.targetType,
+            layer: refueling.layer,
+            previousAge: refueling.previousAge,
+            newAge: refueling.newAge,
           }
         }));
       });
@@ -312,19 +340,35 @@ export function useGameSpeed() {
       }
 
       dispatch(updateMissionProgress(currentState));
+      dispatch(expireSatellites());
       dispatch(decommissionExpiredDRVs());
       dispatch(checkGameOver());
 
       setTimeout(() => {
         const updatedState = (store.getState() as RootState).game;
+        
+        const expiredSatelliteCount = updatedState.satellitesExpired - (currentState.satellitesExpired || 0);
+        if (expiredSatelliteCount > 0) {
+          dispatch(addEvent({
+            type: 'collision',
+            turn: updatedState.step,
+            day: updatedState.days,
+            message: `${expiredSatelliteCount} satellite${expiredSatelliteCount > 1 ? 's' : ''} expired and de-orbited`,
+            details: { expiredCount: expiredSatelliteCount }
+          }));
+        }
+        
         updatedState.recentlyExpiredDRVs.forEach(expiredDRV => {
           if (!loggedExpiredDRVIds.current.has(expiredDRV.id)) {
             loggedExpiredDRVIds.current.add(expiredDRV.id);
+            const drvTypeName = expiredDRV.type === 'cooperative' ? 'Cooperative' : 
+                               expiredDRV.type === 'refueling' ? 'Refueling' :
+                               expiredDRV.type === 'geotug' ? 'GeoTug' : 'Uncooperative';
             dispatch(addEvent({
               type: 'drv-expired',
               turn: updatedState.step,
               day: updatedState.days,
-              message: `${expiredDRV.type === 'cooperative' ? 'Cooperative' : 'Uncooperative'} DRV decommissioned in ${expiredDRV.layer} orbit (removed ${expiredDRV.debrisRemoved} debris)`,
+              message: `${drvTypeName} DRV decommissioned in ${expiredDRV.layer} orbit (removed ${expiredDRV.debrisRemoved} debris)`,
               details: { type: expiredDRV.type, layer: expiredDRV.layer, debrisRemoved: expiredDRV.debrisRemoved }
             }));
           }

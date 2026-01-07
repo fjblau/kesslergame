@@ -3,7 +3,7 @@ import type { SatelliteMetadata } from './satelliteMetadata';
 export type OrbitLayer = 'LEO' | 'MEO' | 'GEO' | 'GRAVEYARD';
 export type SatelliteType = 'Weather' | 'Comms' | 'GPS';
 export type InsuranceTier = 'none' | 'basic' | 'premium';
-export type DRVType = 'cooperative' | 'uncooperative' | 'geotug';
+export type DRVType = 'cooperative' | 'uncooperative' | 'geotug' | 'refueling';
 export type DebrisType = 'cooperative' | 'uncooperative';
 export type GameSpeed = 'paused' | 'normal' | 'fast';
 export type BudgetDifficulty = 'easy' | 'normal' | 'hard' | 'challenge';
@@ -17,6 +17,7 @@ export interface Satellite {
   layer: OrbitLayer;
   purpose: SatelliteType;
   age: number;
+  maxAge: number;
   insuranceTier: InsuranceTier;
   inGraveyard?: boolean;
   radius: number;
@@ -110,6 +111,15 @@ export interface SatelliteCaptureInfo {
   layer: OrbitLayer;
 }
 
+export interface RefuelingInfo {
+  refuelingVehicleId: string;
+  targetId: string;
+  targetType: 'satellite' | 'drv';
+  layer: OrbitLayer;
+  previousAge: number;
+  newAge: number;
+}
+
 export interface LaunchedSatelliteInfo {
   satellite: Satellite;
   turn: number;
@@ -147,6 +157,8 @@ export interface GameState {
   recentSatelliteCaptures: SatelliteCaptureInfo[];
   recentGraveyardMoves: GraveyardMoveInfo[];
   recentlyLaunchedSatellites: LaunchedSatelliteInfo[];
+  recentRefuelings: RefuelingInfo[];
+  satellitesExpired: number;
   collisionAngleThreshold: number;
   collisionRadiusMultiplier: number;
   debrisPerCollision: number;
