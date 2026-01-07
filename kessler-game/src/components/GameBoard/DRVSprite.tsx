@@ -76,7 +76,7 @@ export const DRVSprite = memo(function DRVSprite({ drv, x, y, isLaunching = fals
         ) : (
           '⬟'
         )}
-        {isAging && !isGeoTug && (
+        {isAging && !isGeoTug && !isRefueling && (
           <span style={{ 
             position: 'absolute',
             top: '50%',
