@@ -17,7 +17,11 @@ export const DRVSprite = memo(function DRVSprite({ drv, x, y, isLaunching = fals
   const isGeoTug = drv.removalType === 'geotug';
   const isRefueling = drv.removalType === 'refueling';
   const hasCapturedObject = drv.capturedDebrisId !== undefined;
-  const color = hasCapturedObject ? '#ef4444' : (isGeoTug ? '#a855f7' : (isRefueling ? '#22d3ee' : (isCooperative ? '#34d399' : '#fb923c')));
+  const color = isRefueling 
+    ? '#22d3ee' 
+    : hasCapturedObject 
+      ? '#ef4444' 
+      : (isGeoTug ? '#a855f7' : (isCooperative ? '#34d399' : '#fb923c'));
   const isAging = drv.age > drv.maxAge * 0.5;
   const days = useAppSelector(state => state.game.days);
   const orbitalSpeed = useAppSelector(state => {
@@ -38,7 +42,7 @@ export const DRVSprite = memo(function DRVSprite({ drv, x, y, isLaunching = fals
         position: 'absolute',
         color,
         fontSize: '16px',
-        filter: hasCapturedObject ? 'drop-shadow(0 0 8px #ef4444)' : 'none',
+        filter: hasCapturedObject ? (isRefueling ? 'drop-shadow(0 0 8px #22d3ee)' : 'drop-shadow(0 0 8px #ef4444)') : 'none',
       }}
       initial={isLaunching ? {
         left: 500,
