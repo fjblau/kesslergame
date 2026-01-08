@@ -217,9 +217,9 @@ export function OrbitVisualization() {
 
   return (
     <div 
-      className={`relative w-[1000px] h-[1000px] flex items-center justify-center bg-slate-900 border-[8px] ${getBorderColorClass(riskLevel)} rounded-xl overflow-hidden`}
+      className={`relative w-[1000px] h-[1000px] flex items-center justify-center bg-slate-900 border-[10px] ${getBorderColorClass(riskLevel)} rounded-xl overflow-hidden`}
       style={{
-        boxShadow: 'inset 0 6px 20px rgba(0,0,0,0.8), inset 0 -2px 10px rgba(255,255,255,0.15), inset 6px 0 20px rgba(0,0,0,0.7), inset -6px 0 20px rgba(0,0,0,0.7)'
+        boxShadow: 'inset 4px 4px 12px rgba(0,0,0,0.9), inset -4px -4px 12px rgba(255,255,255,0.2), 0 0 0 2px rgba(0,0,0,0.5)'
       }}
     >
       {/* Background tint ring */}
