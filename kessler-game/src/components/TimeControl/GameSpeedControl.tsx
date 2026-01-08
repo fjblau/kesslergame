@@ -47,7 +47,7 @@ export function GameSpeedControl({ onNewGame }: GameSpeedControlProps) {
       </button>
       <button
         onClick={handleReset}
-        className="flex-1 py-2 rounded-xl font-medium transition-all bg-red-600 text-white hover:bg-red-500"
+        className="flex-1 py-2 rounded-xl font-medium transition-all bg-red-500 text-white hover:bg-red-400"
         style={{
           boxShadow: '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)'
         }}
