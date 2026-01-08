@@ -216,7 +216,12 @@ export function OrbitVisualization() {
   }, [satellitesRecovered, gameOver]);
 
   return (
-    <div className={`relative w-[1000px] h-[1000px] flex items-center justify-center bg-slate-900 border-[3px] ${getBorderColorClass(riskLevel)} rounded-xl overflow-hidden`}>
+    <div 
+      className={`relative w-[1000px] h-[1000px] flex items-center justify-center bg-slate-900 border-[6px] ${getBorderColorClass(riskLevel)} rounded-xl overflow-hidden`}
+      style={{
+        boxShadow: 'inset 0 4px 12px rgba(0,0,0,0.5), inset 0 -4px 12px rgba(255,255,255,0.08)'
+      }}
+    >
       {/* Background tint ring */}
       <div 
         className="absolute inset-0 pointer-events-none"
