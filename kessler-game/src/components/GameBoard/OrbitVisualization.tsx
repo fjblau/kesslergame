@@ -219,7 +219,7 @@ export function OrbitVisualization() {
     <div 
       className={`relative w-[1000px] h-[1000px] flex items-center justify-center bg-slate-900 border-[10px] ${getBorderColorClass(riskLevel)} rounded-xl overflow-hidden`}
       style={{
-        boxShadow: 'inset 4px 4px 12px rgba(0,0,0,0.9), inset -4px -4px 12px rgba(255,255,255,0.2), 0 0 0 2px rgba(0,0,0,0.5)'
+        boxShadow: 'inset 10px 10px 30px rgba(0,0,0,0.95), inset -10px -10px 30px rgba(255,255,255,0.15)'
       }}
     >
       {/* Background tint ring */}
