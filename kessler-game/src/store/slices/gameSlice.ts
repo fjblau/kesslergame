@@ -790,12 +790,19 @@ export const gameSlice = createSlice({
     },
 
     expireSatellites: (state) => {
+      const capturedSatelliteIds = new Set<string>();
+      state.debrisRemovalVehicles.forEach(drv => {
+        if (drv.capturedDebrisId) {
+          capturedSatelliteIds.add(drv.capturedDebrisId);
+        }
+      });
+      
       const expiredCount = state.satellites.filter(sat => 
-        sat.age >= sat.maxAge && !sat.inGraveyard
+        sat.age >= sat.maxAge && !sat.inGraveyard && !capturedSatelliteIds.has(sat.id)
       ).length;
       
       state.satellites = state.satellites.filter(sat => 
-        sat.age < sat.maxAge || sat.inGraveyard
+        sat.age < sat.maxAge || sat.inGraveyard || capturedSatelliteIds.has(sat.id)
       );
       
       state.satellitesExpired += expiredCount;

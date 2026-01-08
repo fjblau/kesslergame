@@ -135,6 +135,77 @@ describe('Refueling Vehicle Integration Tests', () => {
       expect(state.satellites).toHaveLength(1);
       expect(state.satellitesExpired).toBe(0);
     });
+
+    it('should not expire satellites captured by a DRV', () => {
+      let state = gameReducer(initialState, launchSatellite({
+        orbit: 'LEO',
+        purpose: 'Comms',
+        insuranceTier: 'basic',
+      }));
+
+      const satelliteId = state.satellites[0].id;
+      state = {
+        ...state,
+        satellites: state.satellites.map(s => ({...s, age: 20}))
+      };
+
+      state = gameReducer(state, launchDRV({
+        orbit: 'LEO',
+        drvType: 'refueling',
+      }));
+
+      state = {
+        ...state,
+        debrisRemovalVehicles: state.debrisRemovalVehicles.map(drv => ({
+          ...drv,
+          capturedDebrisId: satelliteId,
+          captureOrbitsRemaining: 2
+        }))
+      };
+
+      state = gameReducer(state, expireSatellites());
+
+      expect(state.satellites).toHaveLength(1);
+      expect(state.satellitesExpired).toBe(0);
+    });
+
+    it('should not expire satellites being refueled even if age >= maxAge', () => {
+      let state = initialState;
+
+      state = gameReducer(state, launchSatellite({
+        orbit: 'LEO',
+        purpose: 'Comms',
+        insuranceTier: 'basic',
+      }));
+
+      const satelliteId = state.satellites[0].id;
+      state = {
+        ...state,
+        satellites: state.satellites.map(s => ({...s, age: 20}))
+      };
+
+      state = gameReducer(state, launchDRV({
+        orbit: 'LEO',
+        drvType: 'refueling',
+      }));
+
+      state = gameReducer(state, processDRVOperations());
+
+      state = gameReducer(state, processDRVOperations());
+
+      expect(state.debrisRemovalVehicles[0].capturedDebrisId).toBe(satelliteId);
+
+      state = gameReducer(state, expireSatellites());
+
+      expect(state.satellites).toHaveLength(1);
+      expect(state.satellitesExpired).toBe(0);
+
+      state = gameReducer(state, processDRVOperations());
+      state = gameReducer(state, processDRVOperations());
+      state = gameReducer(state, processDRVOperations());
+
+      expect(state.satellites[0].age).toBe(0);
+    });
   });
 
   describe('Refueling Vehicle Operations', () => {
