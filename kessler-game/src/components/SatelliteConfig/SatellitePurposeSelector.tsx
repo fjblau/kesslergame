@@ -24,9 +24,32 @@ export function SatellitePurposeSelector({ selected, onChange }: SatellitePurpos
               className={`
                 p-[7px] rounded-xl border-2 transition-all min-h-[54px] flex flex-col items-center justify-center
                 ${isSelected 
-                  ? 'border-blue-500 bg-blue-600 text-white shadow-lg' 
+                  ? 'border-blue-500 bg-blue-600 text-white' 
                   : 'border-slate-600 bg-slate-700 text-gray-300 hover:bg-slate-600 hover:border-slate-500'}
               `}
+              style={{
+                boxShadow: isSelected
+                  ? 'inset 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 2px rgba(0,0,0,0.2)'
+                  : '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)'
+              }}
+              onMouseEnter={(e) => {
+                if (!isSelected) {
+                  e.currentTarget.style.boxShadow = '0 6px 12px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.15)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isSelected) {
+                  e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)';
+                }
+              }}
+              onMouseDown={(e) => {
+                e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 2px rgba(0,0,0,0.2)';
+              }}
+              onMouseUp={(e) => {
+                if (!isSelected) {
+                  e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)';
+                }
+              }}
             >
               <div className="flex items-center justify-center gap-2">
                 <span className="text-2xl">{config.icon}</span>

@@ -121,11 +121,34 @@ export function ControlPanel() {
             <button
               key={type}
               onClick={() => setLaunchType(type)}
-              className={`py-[7px] px-3 rounded-xl font-medium transition-colors text-base flex flex-col items-center ${
+              className={`py-[7px] px-3 rounded-xl font-medium transition-all text-base flex flex-col items-center ${
                 launchType === type
-                  ? 'bg-blue-600 text-white shadow-lg'
+                  ? 'bg-blue-600 text-white'
                   : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
               }`}
+              style={{
+                boxShadow: launchType === type
+                  ? 'inset 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 2px rgba(0,0,0,0.2)'
+                  : '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)'
+              }}
+              onMouseEnter={(e) => {
+                if (launchType !== type) {
+                  e.currentTarget.style.boxShadow = '0 6px 12px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.15)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (launchType !== type) {
+                  e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)';
+                }
+              }}
+              onMouseDown={(e) => {
+                e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 2px rgba(0,0,0,0.2)';
+              }}
+              onMouseUp={(e) => {
+                if (launchType !== type) {
+                  e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)';
+                }
+              }}
             >
               <span>{type === 'satellite' ? 'Satellite' : type === 'drv' ? 'Active Debris Removal' : type === 'servicing' ? <><span style={{ color: '#67e8f9' }}>⬟</span> Servicing</> : <><span style={{ color: '#a855f7' }}>⬟</span> GEO Tug</>}</span>
               <span className="text-xs opacity-75 mt-1">
@@ -144,11 +167,36 @@ export function ControlPanel() {
               key={orbit}
               onClick={() => setSelectedOrbit(orbit)}
               disabled={launchType === 'geotug'}
-              className={`flex-1 py-[7px] px-6 rounded-xl font-medium transition-colors text-lg ${
+              className={`flex-1 py-[7px] px-6 rounded-xl font-medium transition-all text-lg ${
                 (launchType === 'geotug' ? 'GEO' : selectedOrbit) === orbit
-                  ? 'bg-blue-600 text-white shadow-lg'
+                  ? 'bg-blue-600 text-white'
                   : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
               } ${launchType === 'geotug' ? 'cursor-not-allowed opacity-60' : ''}`}
+              style={{
+                boxShadow: (launchType === 'geotug' ? 'GEO' : selectedOrbit) === orbit
+                  ? 'inset 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 2px rgba(0,0,0,0.2)'
+                  : '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)'
+              }}
+              onMouseEnter={(e) => {
+                if ((launchType === 'geotug' ? 'GEO' : selectedOrbit) !== orbit && launchType !== 'geotug') {
+                  e.currentTarget.style.boxShadow = '0 6px 12px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.15)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if ((launchType === 'geotug' ? 'GEO' : selectedOrbit) !== orbit && launchType !== 'geotug') {
+                  e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)';
+                }
+              }}
+              onMouseDown={(e) => {
+                if (launchType !== 'geotug') {
+                  e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 2px rgba(0,0,0,0.2)';
+                }
+              }}
+              onMouseUp={(e) => {
+                if ((launchType === 'geotug' ? 'GEO' : selectedOrbit) !== orbit && launchType !== 'geotug') {
+                  e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)';
+                }
+              }}
             >
               {orbit}
             </button>
@@ -171,11 +219,34 @@ export function ControlPanel() {
                   <button
                     key={type}
                     onClick={() => setDrvType(type)}
-                    className={`py-[7px] px-3 rounded-xl font-medium capitalize transition-colors text-base ${
+                    className={`py-[7px] px-3 rounded-xl font-medium capitalize transition-all text-base ${
                       drvType === type
-                        ? 'bg-blue-600 text-white shadow-lg'
+                        ? 'bg-blue-600 text-white'
                         : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
                     }`}
+                    style={{
+                      boxShadow: drvType === type
+                        ? 'inset 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 2px rgba(0,0,0,0.2)'
+                        : '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (drvType !== type) {
+                        e.currentTarget.style.boxShadow = '0 6px 12px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.15)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (drvType !== type) {
+                        e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)';
+                      }
+                    }}
+                    onMouseDown={(e) => {
+                      e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 2px rgba(0,0,0,0.2)';
+                    }}
+                    onMouseUp={(e) => {
+                      if (drvType !== type) {
+                        e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)';
+                      }
+                    }}
                   >
                     <span style={{ color: type === 'cooperative' ? '#34d399' : '#fb923c' }}>⬟</span> {type}
                   </button>
@@ -217,9 +288,34 @@ export function ControlPanel() {
           disabled={!canAfford}
           className={`w-full py-[11px] px-6 rounded-xl font-bold uppercase tracking-wide transition-all mt-[30px] text-lg ${
             canAfford
-              ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white shadow-lg hover:shadow-xl'
+              ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white'
               : 'bg-slate-700 text-slate-500 cursor-not-allowed'
           }`}
+          style={{
+            boxShadow: canAfford
+              ? '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)'
+              : 'none'
+          }}
+          onMouseEnter={(e) => {
+            if (canAfford) {
+              e.currentTarget.style.boxShadow = '0 6px 12px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.15)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (canAfford) {
+              e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)';
+            }
+          }}
+          onMouseDown={(e) => {
+            if (canAfford) {
+              e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 2px rgba(0,0,0,0.2)';
+            }
+          }}
+          onMouseUp={(e) => {
+            if (canAfford) {
+              e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)';
+            }
+          }}
         >
           {canAfford ? (launchType === 'satellite' ? 'Launch Satellite' : launchType === 'drv' ? 'Launch ADR' : launchType === 'servicing' ? 'Launch Servicing Vehicle' : 'Launch GEO Tug') : 'Insufficient Budget'}
         </button>
