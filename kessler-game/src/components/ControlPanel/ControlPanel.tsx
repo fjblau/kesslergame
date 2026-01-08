@@ -127,7 +127,7 @@ export function ControlPanel() {
                   : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
               }`}
             >
-              <span>{type === 'satellite' ? 'Satellite' : type === 'drv' ? '♻️ Active Debris Removal' : type === 'servicing' ? '🔧 Servicing' : '🚀 GEO Tug'}</span>
+              <span>{type === 'satellite' ? 'Satellite' : type === 'drv' ? <><span style={{ color: '#34d399' }}>⬟</span> Active Debris Removal</> : type === 'servicing' ? <><span style={{ color: '#67e8f9' }}>⬟</span> Servicing</> : <><span style={{ color: '#a855f7' }}>⬟</span> GEO Tug</>}</span>
               <span className="text-xs opacity-75 mt-1">
                 ${(getLaunchTypeCost(type) / 1e6).toFixed(1)}M
               </span>

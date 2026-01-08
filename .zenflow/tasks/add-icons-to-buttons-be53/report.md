@@ -8,15 +8,17 @@ Successfully added icons to three buttons in the ControlPanel component without 
 - **Line**: 130
 
 ## Icons Added
-1. **Active Debris Removal** button: ♻️ (recycling symbol)
-2. **Servicing** button: 🔧 (wrench)
-3. **GEO Tug** button: 🚀 (rocket)
+1. **Active Debris Removal** button: Green pentagon (⬟) - color: #34d399
+2. **Servicing** button: Cyan pentagon (⬟) - color: #67e8f9
+3. **GEO Tug** button: Purple pentagon (⬟) - color: #a855f7
 
 ## Icon Selection Rationale
-- All icons follow existing codebase conventions (emojis used throughout the project)
-- ♻️ is already used for debris removal/recycling in other components
-- 🔧 is already used for servicing/refueling operations in DRVSprite.tsx
-- 🚀 represents space propulsion/movement, fitting for the GEO Tug transport vehicle
+- Pentagon icons (⬟) match the DRV sprites used in the orbit visualization
+- Colors correspond exactly to their appearance in the game board:
+  - Green (#34d399): Cooperative ADR/debris removal vehicles
+  - Cyan (#67e8f9): Refueling/servicing vehicles
+  - Purple (#a855f7): GEO Tug vehicles
+- Maintains visual consistency between control panel and orbit visualization
 
 ## Verification
 - ✅ Build completed successfully (`npm run build`)
