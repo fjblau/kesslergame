@@ -90,6 +90,23 @@ export interface ExpiredDRVInfo {
   type: DRVType;
   layer: OrbitLayer;
   debrisRemoved: number;
+  metadata?: {
+    name: string;
+    organization: string;
+  };
+}
+
+export interface ExpiredSatelliteInfo {
+  id: string;
+  purpose: SatelliteType;
+  layer: OrbitLayer;
+  metadata?: {
+    name: string;
+    country: string;
+    weight_kg: number;
+    launch_vehicle: string;
+    launch_site: string;
+  };
 }
 
 export interface DebrisRemovalInfo {
@@ -155,6 +172,7 @@ export interface GameState {
   gameOver: boolean;
   recentCollisions: CollisionEvent[];
   recentlyExpiredDRVs: ExpiredDRVInfo[];
+  recentlyExpiredSatellites: ExpiredSatelliteInfo[];
   recentDebrisRemovals: DebrisRemovalInfo[];
   recentSatelliteCaptures: SatelliteCaptureInfo[];
   recentGraveyardMoves: GraveyardMoveInfo[];

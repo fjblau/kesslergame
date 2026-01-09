@@ -172,6 +172,7 @@ const initialState: GameState = {
   drvUncooperativeSuccessRate: savedDRVSettings.successRate,
   recentCollisions: [],
   recentlyExpiredDRVs: [],
+  recentlyExpiredSatellites: [],
   recentDebrisRemovals: [],
   recentSatelliteCaptures: [],
   recentGraveyardMoves: [],
@@ -217,6 +218,7 @@ export const gameSlice = createSlice({
         gameOver: false,
         recentCollisions: [],
         recentlyExpiredDRVs: [],
+        recentlyExpiredSatellites: [],
         recentDebrisRemovals: [],
         recentlyLaunchedSatellites: [],
         cascadeTriggered: false,
@@ -777,6 +779,7 @@ export const gameSlice = createSlice({
             type: drv.removalType,
             layer: drv.layer,
             debrisRemoved: drv.debrisRemoved,
+            metadata: drv.metadata,
           });
         } else {
           remaining.push(drv);
@@ -797,15 +800,22 @@ export const gameSlice = createSlice({
         }
       });
       
-      const expiredCount = state.satellites.filter(sat => 
+      const expiredSatellites = state.satellites.filter(sat => 
         sat.age >= sat.maxAge && !sat.inGraveyard && !capturedSatelliteIds.has(sat.id)
-      ).length;
+      );
+      
+      state.recentlyExpiredSatellites = expiredSatellites.map(sat => ({
+        id: sat.id,
+        purpose: sat.purpose,
+        layer: sat.layer,
+        metadata: sat.metadata
+      }));
       
       state.satellites = state.satellites.filter(sat => 
         sat.age < sat.maxAge || sat.inGraveyard || capturedSatelliteIds.has(sat.id)
       );
       
-      state.satellitesExpired += expiredCount;
+      state.satellitesExpired += expiredSatellites.length;
       
       state.riskLevel = calculateRiskLevel(state.debris.length);
     },

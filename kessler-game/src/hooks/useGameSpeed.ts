@@ -358,16 +358,32 @@ export function useGameSpeed() {
       setTimeout(() => {
         const updatedState = (store.getState() as RootState).game;
         
-        const expiredSatelliteCount = updatedState.satellitesExpired - (currentState.satellitesExpired || 0);
-        if (expiredSatelliteCount > 0) {
+        updatedState.recentlyExpiredSatellites.forEach(expiredSat => {
+          let message = `${expiredSat.purpose} satellite expired and de-orbited`;
+          
+          if (expiredSat.metadata) {
+            message = `'${expiredSat.metadata.name}' (${expiredSat.metadata.country}) expired and de-orbited`;
+          }
+          
           dispatch(addEvent({
             type: 'satellite-expired',
             turn: updatedState.step,
             day: updatedState.days,
-            message: `${expiredSatelliteCount} satellite${expiredSatelliteCount > 1 ? 's' : ''} expired and de-orbited`,
-            details: { expiredCount: expiredSatelliteCount }
+            message,
+            details: {
+              satelliteId: expiredSat.id,
+              purpose: expiredSat.purpose,
+              layer: expiredSat.layer,
+              ...(expiredSat.metadata && {
+                name: expiredSat.metadata.name,
+                country: expiredSat.metadata.country,
+                weight_kg: expiredSat.metadata.weight_kg,
+                launch_vehicle: expiredSat.metadata.launch_vehicle,
+                launch_site: expiredSat.metadata.launch_site,
+              })
+            }
           }));
-        }
+        });
         
         updatedState.recentlyExpiredDRVs.forEach(expiredDRV => {
           if (!loggedExpiredDRVIds.current.has(expiredDRV.id)) {
@@ -375,12 +391,27 @@ export function useGameSpeed() {
             const drvTypeName = expiredDRV.type === 'cooperative' ? 'Cooperative' : 
                                expiredDRV.type === 'refueling' ? 'Refueling' :
                                expiredDRV.type === 'geotug' ? 'GeoTug' : 'Uncooperative';
+            
+            let message = `${drvTypeName} DRV decommissioned in ${expiredDRV.layer} orbit (removed ${expiredDRV.debrisRemoved} debris)`;
+            
+            if (expiredDRV.metadata) {
+              message = `${drvTypeName} DRV '${expiredDRV.metadata.name}' decommissioned in ${expiredDRV.layer} orbit (removed ${expiredDRV.debrisRemoved} debris)`;
+            }
+            
             dispatch(addEvent({
               type: 'drv-expired',
               turn: updatedState.step,
               day: updatedState.days,
-              message: `${drvTypeName} DRV decommissioned in ${expiredDRV.layer} orbit (removed ${expiredDRV.debrisRemoved} debris)`,
-              details: { type: expiredDRV.type, layer: expiredDRV.layer, debrisRemoved: expiredDRV.debrisRemoved }
+              message,
+              details: {
+                type: expiredDRV.type,
+                layer: expiredDRV.layer,
+                debrisRemoved: expiredDRV.debrisRemoved,
+                ...(expiredDRV.metadata && {
+                  name: expiredDRV.metadata.name,
+                  organization: expiredDRV.metadata.organization,
+                })
+              }
             }));
           }
         });
