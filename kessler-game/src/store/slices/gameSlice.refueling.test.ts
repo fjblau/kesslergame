@@ -32,6 +32,7 @@ describe('Refueling Vehicle Integration Tests', () => {
       gameOver: false,
       recentCollisions: [],
       recentlyExpiredDRVs: [],
+      recentlyExpiredSatellites: [],
       recentDebrisRemovals: [],
       recentSatelliteCaptures: [],
       recentGraveyardMoves: [],
