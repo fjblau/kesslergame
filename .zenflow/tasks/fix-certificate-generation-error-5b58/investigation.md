@@ -76,3 +76,22 @@ This regex pattern `/((?!api).*)` matches all routes except those starting with 
 3. Verify API endpoint still works: `https://kesslergame.vercel.app/api/certificates/2ede270d-f146-4ff6-8fec-73dd4e12b4c9`
 4. Test root route still loads: `https://kesslergame.vercel.app/`
 5. Test QR code scanning flow end-to-end
+
+---
+
+## Implementation Notes
+
+**Date**: 2026-01-10
+
+**Changes Made**:
+1. Updated `kessler-game/vercel.json` to include `rewrites` configuration
+2. Added SPA routing support by rewriting all non-API routes to `/index.html`
+3. Pattern `/((?!api).*)` ensures API routes continue to function as serverless functions
+
+**Files Modified**:
+- `kessler-game/vercel.json`: Added rewrites configuration
+
+**Next Steps**:
+- Deploy to Vercel to apply the fix
+- Test the certificate URL and verify it now loads correctly
+- Confirm API endpoints remain functional
