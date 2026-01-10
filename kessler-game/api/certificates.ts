@@ -4,6 +4,18 @@ import { v4 as uuidv4 } from 'uuid';
 
 const CERTIFICATE_TTL = 90 * 24 * 60 * 60;
 
+let redis: Redis | null = null;
+try {
+  const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
+  
+  if (url && token) {
+    redis = new Redis({ url, token });
+  }
+} catch (error) {
+  console.error('Redis initialization failed:', error);
+}
+
 interface CertificateData {
   playerName: string;
   finalScore: number;
@@ -31,7 +43,12 @@ interface StoredCertificate extends CertificateData {
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  const origin = process.env.NODE_ENV === 'production' && req.headers.origin
+    ? req.headers.origin
+    : '*';
+  
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Origin', origin);
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
@@ -39,11 +56,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(200).end();
   }
 
-  if (req.method === 'POST') {
-    try {
+  if (!redis) {
+    return res.status(503).json({ 
+      success: false,
+      error: 'Database not configured',
+      code: 'DATABASE_UNAVAILABLE' 
+    });
+  }
+
+  try {
+    if (req.method === 'POST') {
       const certificateData = req.body as CertificateData;
       
-      if (!certificateData.playerName || certificateData.finalScore === undefined) {
+      if (!certificateData.playerName || 
+          certificateData.finalScore === undefined ||
+          typeof certificateData.finalScore !== 'number' ||
+          certificateData.finalScore < 0 ||
+          !certificateData.grade ||
+          !certificateData.scoreBreakdown) {
         return res.status(400).json({
           success: false,
           error: 'Invalid certificate data',
@@ -52,11 +82,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       const certificateId = uuidv4();
-      
-      const redis = new Redis({
-        url: process.env.UPSTASH_REDIS_REST_URL,
-        token: process.env.UPSTASH_REDIS_REST_TOKEN,
-      });
 
       const storageData: StoredCertificate = {
         ...certificateData,
@@ -84,16 +109,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         retrievalUrl,
         expiresAt,
       });
-
-    } catch (error) {
-      console.error('Certificate creation error:', error);
-      return res.status(500).json({
-        success: false,
-        error: 'Failed to create certificate',
-        code: 'STORAGE_FAILED'
-      });
     }
-  }
 
-  return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ error: 'Method not allowed' });
+  } catch (error) {
+    console.error('Certificate creation error:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Failed to create certificate',
+      code: 'STORAGE_FAILED'
+    });
+  }
 }

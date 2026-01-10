@@ -92,10 +92,6 @@ function App() {
     };
   }, []);
 
-  if (!gameStarted) {
-    return <GameSetupScreen onStart={() => setGameStarted(true)} />;
-  }
-
   const handleNewGame = () => {
     dispatch(resetGame());
     dispatch(resetScore());
@@ -775,23 +771,27 @@ function App() {
   return (
     <Routes>
       <Route path="/certificate/:id" element={<CertificateRetrievalPage />} />
-      <Route path="/" element={
-        <div className="min-h-screen p-8">
-          <div className="max-w-[2350px] mx-auto space-y-6">
-            <header className="relative text-center mb-8">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                Space Debris Removal
-              </h1>
-              <div className="absolute right-0 top-0">
-                <ScoreDisplay />
-              </div>
-            </header>
+      <Route path="/*" element={
+        !gameStarted ? (
+          <GameSetupScreen onStart={() => setGameStarted(true)} />
+        ) : (
+          <div className="min-h-screen p-8">
+            <div className="max-w-[2350px] mx-auto space-y-6">
+              <header className="relative text-center mb-8">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                  Space Debris Removal
+                </h1>
+                <div className="absolute right-0 top-0">
+                  <ScoreDisplay />
+                </div>
+              </header>
 
-            <Tabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
+              <Tabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
+            </div>
+
+            {gameOver && <GameOverModal onViewAnalytics={() => setActiveTab('analytics')} />}
           </div>
-
-          {gameOver && <GameOverModal onViewAnalytics={() => setActiveTab('analytics')} />}
-        </div>
+        )
       } />
     </Routes>
   );

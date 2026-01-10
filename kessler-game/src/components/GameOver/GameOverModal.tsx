@@ -30,6 +30,8 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
   const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
   const [showQRModal, setShowQRModal] = useState(false);
   const [certificateId, setCertificateId] = useState<string | null>(null);
+  const [certificateSaveError, setCertificateSaveError] = useState<string | null>(null);
+  const [isSavingCertificate, setIsSavingCertificate] = useState(false);
 
   const getGameOverReason = () => {
     if (budget < 0) {
@@ -108,6 +110,9 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
   };
 
   const handleShowQRCode = async () => {
+    setIsSavingCertificate(true);
+    setCertificateSaveError(null);
+
     try {
       const response = await fetch('/api/certificates', {
         method: 'POST',
@@ -140,9 +145,14 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
       if (data.success) {
         setCertificateId(data.certificateId);
         setShowQRModal(true);
+      } else {
+        setCertificateSaveError(data.error || 'Failed to save certificate');
       }
     } catch (error) {
       console.error('Failed to save certificate:', error);
+      setCertificateSaveError('Network error. Please check your connection and try again.');
+    } finally {
+      setIsSavingCertificate(false);
     }
   };
 
@@ -285,11 +295,22 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
               </button>
               <button
                 onClick={handleShowQRCode}
-                className="w-full py-4 px-8 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white rounded-xl font-bold text-xl uppercase tracking-wide transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                disabled={isSavingCertificate}
+                className={`w-full py-4 px-8 rounded-xl font-bold text-xl uppercase tracking-wide transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 ${
+                  isSavingCertificate
+                    ? 'bg-slate-600 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500'
+                } text-white`}
               >
                 <span>📱</span>
-                Get QR Code for Later
+                {isSavingCertificate ? 'Saving...' : 'Get QR Code for Later'}
               </button>
+              
+              {certificateSaveError && (
+                <div className="bg-red-900/50 border border-red-500/50 rounded-lg p-3">
+                  <p className="text-red-400 text-sm text-center">{certificateSaveError}</p>
+                </div>
+              )}
             </div>
           </div>
 
