@@ -51,7 +51,8 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Step: Implementation
+### [x] Step: Implementation
+<!-- chat-id: d5ac632d-75a1-4d4c-a25c-9e9d1dee409f -->
 
 Implement the task according to the technical specification and general engineering best practices.
 

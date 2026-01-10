@@ -24,9 +24,11 @@ import { useAppSelector, useAppDispatch } from './store/hooks';
 import { resetGame } from './store/slices/gameSlice';
 import { resetScore } from './store/slices/scoreSlice';
 import { GameOverModal } from './components/GameOver/GameOverModal';
+import { TutorialModal } from './components/Tutorial/TutorialModal';
 import { ScoreDisplay } from './components/Score/ScoreDisplay';
 import { HighScoresPanel } from './components/HighScores/HighScoresPanel';
 import { playBackgroundMusic, stopAllSounds, setSoundEnabled, pauseAllAudio, resumeAllAudio, playTargetingLoop, stopTargetingLoop } from './utils/audio';
+import { startTutorial } from './store/slices/uiSlice';
 
 function App() {
   const [gameStarted, setGameStarted] = useState(false);
@@ -36,10 +38,17 @@ function App() {
   const gameOver = useAppSelector(state => state.game.gameOver);
   const soundEnabledState = useAppSelector(state => state.game.soundEnabled);
   const gameSpeed = useAppSelector(state => state.ui.gameSpeed);
+  const tutorialCompleted = useAppSelector(state => state.ui.tutorialCompleted);
   const debrisRemovalVehicles = useAppSelector(state => state.game.debrisRemovalVehicles);
   const satellites = useAppSelector(state => state.game.satellites);
 
   useGameSpeed();
+
+  useEffect(() => {
+    if (gameStarted && !tutorialCompleted) {
+      dispatch(startTutorial());
+    }
+  }, [gameStarted, tutorialCompleted, dispatch]);
 
   useEffect(() => {
     setSoundEnabled(soundEnabledState);
@@ -786,6 +795,7 @@ function App() {
       </div>
 
       {gameOver && <GameOverModal onViewAnalytics={() => setActiveTab('analytics')} />}
+      <TutorialModal />
     </div>
   );
 }
