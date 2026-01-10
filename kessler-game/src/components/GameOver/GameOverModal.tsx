@@ -8,6 +8,7 @@ import { selectScore } from '../../store/slices/scoreSlice';
 import { generateCertificate } from '../../utils/certificate';
 import { saveHighScore } from '../../utils/highScores';
 import { submitFeedback, type Feedback } from '../../utils/feedback';
+import { QRCodeModal } from '../Certificate/QRCodeModal';
 
 interface GameOverModalProps {
   onViewAnalytics?: () => void;
@@ -27,6 +28,8 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
   const [feedbackError, setFeedbackError] = useState(false);
   const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
+  const [showQRModal, setShowQRModal] = useState(false);
+  const [certificateId, setCertificateId] = useState<string | null>(null);
 
   const getGameOverReason = () => {
     if (budget < 0) {
@@ -102,6 +105,45 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
       budgetManagementScore: scoreState.budgetManagementScore,
       survivalScore: scoreState.survivalScore,
     });
+  };
+
+  const handleShowQRCode = async () => {
+    try {
+      const response = await fetch('/api/certificates', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          playerName,
+          finalScore: scoreState.totalScore,
+          grade,
+          turnsSurvived: step,
+          maxTurns: maxSteps,
+          finalBudget: budget,
+          satellitesLaunched: satellites.length,
+          debrisRemoved: totalDebrisRemoved,
+          totalDebris: debris.length,
+          difficulty: budgetDifficulty,
+          scoreBreakdown: {
+            satelliteLaunchScore: scoreState.satelliteLaunchScore,
+            debrisRemovalScore: scoreState.debrisRemovalScore,
+            satelliteRecoveryScore: scoreState.satelliteRecoveryScore,
+            budgetManagementScore: scoreState.budgetManagementScore,
+            survivalScore: scoreState.survivalScore,
+          },
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        setCertificateId(data.certificateId);
+        setShowQRModal(true);
+      }
+    } catch (error) {
+      console.error('Failed to save certificate:', error);
+    }
   };
 
   const handleSubmitFeedback = async () => {
@@ -233,13 +275,20 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
           </div>
             </div>
 
-            <div>
+            <div className="space-y-3">
               <button
                 onClick={handleDownloadCertificate}
                 className="w-full py-4 px-8 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white rounded-xl font-bold text-xl uppercase tracking-wide transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
               >
                 <span>📄</span>
-                Download Mission Certificate
+                Download Certificate Now
+              </button>
+              <button
+                onClick={handleShowQRCode}
+                className="w-full py-4 px-8 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white rounded-xl font-bold text-xl uppercase tracking-wide transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+              >
+                <span>📱</span>
+                Get QR Code for Later
               </button>
             </div>
           </div>
@@ -367,6 +416,14 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
           </button>
         </div>
       </div>
+
+      {showQRModal && certificateId && (
+        <QRCodeModal
+          certificateId={certificateId}
+          onClose={() => setShowQRModal(false)}
+          onDownloadNow={handleDownloadCertificate}
+        />
+      )}
     </div>
   );
 }

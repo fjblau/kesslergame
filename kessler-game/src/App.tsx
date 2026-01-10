@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Routes, Route } from 'react-router-dom';
 import { GameSetupScreen } from './components/Setup/GameSetupScreen';
 import { ControlPanel } from './components/ControlPanel/ControlPanel';
 import { GameSpeedControl } from './components/TimeControl/GameSpeedControl';
@@ -26,6 +27,7 @@ import { resetScore } from './store/slices/scoreSlice';
 import { GameOverModal } from './components/GameOver/GameOverModal';
 import { ScoreDisplay } from './components/Score/ScoreDisplay';
 import { HighScoresPanel } from './components/HighScores/HighScoresPanel';
+import { CertificateRetrievalPage } from './pages/CertificateRetrievalPage';
 import { playBackgroundMusic, stopAllSounds, setSoundEnabled, pauseAllAudio, resumeAllAudio, playTargetingLoop, stopTargetingLoop } from './utils/audio';
 
 function App() {
@@ -771,22 +773,27 @@ function App() {
   ];
 
   return (
-    <div className="min-h-screen p-8">
-      <div className="max-w-[2350px] mx-auto space-y-6">
-        <header className="relative text-center mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-            Space Debris Removal
-          </h1>
-          <div className="absolute right-0 top-0">
-            <ScoreDisplay />
+    <Routes>
+      <Route path="/certificate/:id" element={<CertificateRetrievalPage />} />
+      <Route path="/" element={
+        <div className="min-h-screen p-8">
+          <div className="max-w-[2350px] mx-auto space-y-6">
+            <header className="relative text-center mb-8">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                Space Debris Removal
+              </h1>
+              <div className="absolute right-0 top-0">
+                <ScoreDisplay />
+              </div>
+            </header>
+
+            <Tabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
           </div>
-        </header>
 
-        <Tabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
-      </div>
-
-      {gameOver && <GameOverModal onViewAnalytics={() => setActiveTab('analytics')} />}
-    </div>
+          {gameOver && <GameOverModal onViewAnalytics={() => setActiveTab('analytics')} />}
+        </div>
+      } />
+    </Routes>
   );
 }
 
