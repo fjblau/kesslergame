@@ -65,9 +65,10 @@ kessler-game/
 ## Implementation Approach
 
 ### User Experience Flow
-1. **New User Detection**: 
-   - Check localStorage for `tutorialCompleted` flag
-   - If not present, show tutorial after game setup screen
+1. **Tutorial Button on Setup Screen**: 
+   - Add a "How to Play" or "Tutorial" button to the GameSetupScreen
+   - Button positioned prominently (e.g., below player name input or near "Start Game" button)
+   - Clicking the button opens the tutorial modal overlay
 
 2. **Tutorial Steps** (5 steps total):
    - **Step 1: Welcome** - Game overview and goals
@@ -78,13 +79,14 @@ kessler-game/
 
 3. **Tutorial Controls**:
    - "Next" button to advance
-   - "Skip Tutorial" button on all steps
+   - "Close" button on all steps to dismiss tutorial
    - "Previous" button (after step 1)
    - Progress indicator showing current step (1/5, 2/5, etc.)
 
-4. **Completion**:
-   - On completion or skip, set `tutorialCompleted: true` in localStorage
-   - Close tutorial modal and allow user to play
+4. **Closing Tutorial**:
+   - Close button returns user to setup screen
+   - User can re-open tutorial at any time before starting game
+   - No localStorage tracking needed (always available)
 
 ### Tutorial Content Strategy
 - **Concise**: Each step should have 2-3 key points
@@ -105,13 +107,11 @@ src/components/Tutorial/
 
 **State Management**:
 ```typescript
-// Add to uiSlice.ts
-interface UIState {
-  // ... existing state
-  tutorialActive: boolean;
-  tutorialStep: number;
-  tutorialCompleted: boolean;
-}
+// Local state in GameSetupScreen component (useState)
+const [showTutorial, setShowTutorial] = useState(false);
+const [tutorialStep, setTutorialStep] = useState(0);
+
+// No Redux state needed - tutorial is self-contained
 ```
 
 ---
@@ -171,20 +171,12 @@ export const TUTORIAL_STEPS: TutorialStepContent[] = [
 
 ### Files to Modify
 
-#### 1. `src/store/slices/uiSlice.ts`
+#### 1. `src/components/Setup/GameSetupScreen.tsx`
 **Changes**:
-- Add tutorial state properties
-- Add actions: `startTutorial()`, `nextTutorialStep()`, `previousTutorialStep()`, `skipTutorial()`, `completeTutorial()`
-- Load/save tutorial completion status from localStorage
-
-#### 2. `src/App.tsx`
-**Changes**:
-- Import and conditionally render `<TutorialModal />`
-- Show tutorial after game setup screen (when `gameStarted === true` and `!tutorialCompleted`)
-
-#### 3. `src/game/types.ts` (if needed)
-**Changes**:
-- Add tutorial-related type definitions if not covered in UIState
+- Add local state: `showTutorial` (boolean) and `tutorialStep` (number)
+- Add "How to Play" button below player name input or above "Start Game" button
+- Import and conditionally render `<TutorialModal />` when `showTutorial === true`
+- Pass state setters to TutorialModal for controlling visibility and step navigation
 
 ---
 
@@ -193,7 +185,7 @@ export const TUTORIAL_STEPS: TutorialStepContent[] = [
 ### New TypeScript Interfaces
 
 ```typescript
-// Tutorial step content
+// Tutorial step content (in tutorialContent.ts)
 export interface TutorialStepContent {
   title: string;
   description: string;
@@ -201,26 +193,18 @@ export interface TutorialStepContent {
   emoji?: string;
 }
 
-// UI State additions (in uiSlice.ts)
-interface UIState {
-  // ... existing properties
-  tutorialActive: boolean;
-  tutorialStep: number;        // Current step (0-indexed)
-  tutorialCompleted: boolean;  // Loaded from localStorage
-}
-
-// Actions
-export interface TutorialActions {
-  startTutorial: () => void;
-  nextTutorialStep: () => void;
-  previousTutorialStep: () => void;
-  skipTutorial: () => void;
-  completeTutorial: () => void;
+// TutorialModal Props
+interface TutorialModalProps {
+  currentStep: number;
+  onNext: () => void;
+  onPrevious: () => void;
+  onClose: () => void;
 }
 ```
 
-### LocalStorage Keys
-- `tutorialCompleted`: `'true' | 'false'` - Whether user has completed/skipped tutorial
+### No Redux State Changes
+- Tutorial is self-contained within GameSetupScreen using local useState
+- No localStorage persistence needed (tutorial always available)
 
 ---
 
@@ -276,27 +260,26 @@ export interface TutorialActions {
 ## Verification Approach
 
 ### Manual Testing
-1. **First-time User Flow**:
-   - Clear browser localStorage
-   - Start new game
-   - Verify tutorial appears after setup screen
-   - Navigate through all 5 steps
-   - Verify completion saves to localStorage
+1. **Button Visibility**:
+   - Open game setup screen
+   - Verify "How to Play" button is visible and accessible
+   - Button should be clearly styled and positioned
 
-2. **Returning User Flow**:
-   - With `tutorialCompleted=true` in localStorage
-   - Start new game
-   - Verify tutorial does NOT appear
+2. **Tutorial Opening**:
+   - Click "How to Play" button
+   - Verify tutorial modal opens with Step 1 content
+   - Verify backdrop overlay appears
 
-3. **Skip Functionality**:
-   - Start tutorial
-   - Click "Skip Tutorial" on any step
-   - Verify tutorial closes and marks as completed
-
-4. **Navigation**:
-   - Test "Next" button on each step
+3. **Navigation**:
+   - Test "Next" button on each step (1-5)
    - Test "Previous" button (should be disabled on step 1)
-   - Test progress indicator updates correctly
+   - Test progress indicator updates correctly (shows "Step X of 5")
+   - Verify all 5 steps display correct content
+
+4. **Closing**:
+   - Click "Close" button on any step
+   - Verify modal dismisses and returns to setup screen
+   - Re-open tutorial to verify it starts from Step 1 again
 
 ### Automated Testing
 ```bash
@@ -305,12 +288,12 @@ npm run test
 
 **Test Cases**:
 - `TutorialModal.test.tsx`:
-  - Renders correctly on first step
-  - Navigation buttons work correctly
-  - Skip button marks tutorial as completed
+  - Renders correctly with step content
+  - Navigation buttons call correct callbacks
+  - Close button triggers onClose callback
   - Previous button disabled on first step
-  - Next button advances steps
-  - Completion on last step saves to localStorage
+  - Progress indicator displays correct step number
+  - All 5 steps render without errors
 
 ### Code Quality
 ```bash
@@ -329,17 +312,16 @@ npm run build     # TypeScript compilation
 ## Implementation Considerations
 
 ### Design Decisions
-1. **Modal vs Inline**: Using modal overlay (like GameOverModal) for better focus and consistency
-2. **When to Show**: After game setup screen (not before) so user has context
-3. **Persistence**: LocalStorage for simplicity (matches existing pattern)
-4. **Content Length**: 5 concise steps to avoid overwhelming users
-5. **Skippable**: Always allow users to skip - respect user agency
+1. **Button-triggered**: Tutorial accessed via button on setup screen - non-intrusive, user-initiated
+2. **Modal overlay**: Using modal overlay (like GameOverModal) for better focus and consistency
+3. **No persistence**: Tutorial resets to Step 1 each time (simple, predictable)
+4. **Content length**: 5 concise steps to avoid overwhelming users
+5. **Always available**: Users can re-read tutorial before starting game
 
 ### Edge Cases
-- User closes browser during tutorial → Tutorial state persisted in localStorage
-- User clicks outside modal → Require explicit "Skip" or "Next" action
-- User returns after skipping → Tutorial doesn't reappear (completed=true)
-- Tutorial reset mechanism → Could add to Configuration tab or clear localStorage manually
+- User clicks outside modal → Require explicit "Close" button click (prevent accidental dismissal)
+- Multiple opens → Tutorial always starts from Step 1 (fresh experience each time)
+- Button styling → Should match existing button patterns in GameSetupScreen
 
 ### Accessibility
 - Keyboard navigation support (Tab, Enter, Escape)
@@ -348,16 +330,17 @@ npm run build     # TypeScript compilation
 - Clear visual hierarchy and contrast
 
 ### Performance
-- Minimal impact (single modal component)
+- Minimal impact (single modal component, only rendered when shown)
 - No animations that could cause lag
-- LocalStorage reads are synchronous but fast
+- Local state management (no Redux overhead)
 
 ---
 
 ## Future Enhancements (Out of Scope)
 - Interactive tutorial with game simulation
 - Video walkthrough option
-- "Replay Tutorial" option in Settings/Configuration
+- Tutorial button in-game (not just on setup screen)
 - Contextual tooltips on first interaction with UI elements
 - Multi-language support
 - Different tutorial tracks for different difficulty levels
+- "Don't show again" preference with localStorage
