@@ -92,7 +92,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       await redis.set(
         `certificate:${certificateId}`,
-        JSON.stringify(storageData),
+        storageData,
         { ex: CERTIFICATE_TTL }
       );
 

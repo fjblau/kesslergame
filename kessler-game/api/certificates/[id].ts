@@ -84,7 +84,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
     }
 
-    const certificate = JSON.parse(data as string) as StoredCertificate;
+    const certificate = data as StoredCertificate;
 
     if (format === 'json') {
       const ttl = await redis.ttl(`certificate:${id}`);
