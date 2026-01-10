@@ -1,58 +1,46 @@
-import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { nextTutorialStep, previousTutorialStep, skipTutorial, completeTutorial } from '../../store/slices/uiSlice';
 import { TutorialProgress } from './TutorialProgress';
 import { TutorialStep } from './TutorialStep';
 import { TUTORIAL_STEPS } from './tutorialContent';
 
-export function TutorialModal() {
-  const dispatch = useAppDispatch();
-  const { tutorialActive, tutorialStep } = useAppSelector(state => state.ui);
+interface TutorialModalProps {
+  currentStep: number;
+  onNext: () => void;
+  onPrevious: () => void;
+  onClose: () => void;
+}
 
-  if (!tutorialActive) {
-    return null;
-  }
-
-  const currentStepContent = TUTORIAL_STEPS[tutorialStep];
-  const isFirstStep = tutorialStep === 0;
-  const isLastStep = tutorialStep === TUTORIAL_STEPS.length - 1;
+export function TutorialModal({ currentStep, onNext, onPrevious, onClose }: TutorialModalProps) {
+  const currentStepContent = TUTORIAL_STEPS[currentStep];
+  const isFirstStep = currentStep === 0;
+  const isLastStep = currentStep === TUTORIAL_STEPS.length - 1;
 
   const handleNext = () => {
     if (isLastStep) {
-      dispatch(completeTutorial());
+      onClose();
     } else {
-      dispatch(nextTutorialStep());
+      onNext();
     }
-  };
-
-  const handlePrevious = () => {
-    if (!isFirstStep) {
-      dispatch(previousTutorialStep());
-    }
-  };
-
-  const handleSkip = () => {
-    dispatch(skipTutorial());
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center p-8 z-50 overflow-y-auto">
       <div className="max-w-4xl w-full bg-slate-800 border border-slate-700 rounded-xl p-10 shadow-2xl my-8">
-        <TutorialProgress currentStep={tutorialStep} totalSteps={TUTORIAL_STEPS.length} />
+        <TutorialProgress currentStep={currentStep} totalSteps={TUTORIAL_STEPS.length} />
         
         <TutorialStep stepContent={currentStepContent} />
 
         <div className="flex gap-4 mt-8">
           <button
-            onClick={handleSkip}
+            onClick={onClose}
             className="px-6 py-3 bg-slate-700 hover:bg-slate-600 text-gray-300 rounded-lg font-semibold transition-all"
           >
-            Skip Tutorial
+            Close
           </button>
           
           <div className="flex-1" />
           
           <button
-            onClick={handlePrevious}
+            onClick={onPrevious}
             disabled={isFirstStep}
             className={`px-6 py-3 rounded-lg font-semibold transition-all ${
               isFirstStep

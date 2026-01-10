@@ -2,7 +2,7 @@
 
 ## What Was Implemented
 
-Successfully implemented a comprehensive 5-step tutorial system for the Space Debris Removal game that guides new users through the game's core mechanics, interface, and objectives.
+Successfully implemented a user-initiated tutorial system for the Space Debris Removal game with a "How to Play" button on the GameSetupScreen that guides new users through the game's core mechanics, interface, and objectives via a 5-step tutorial.
 
 ### Created Components
 
@@ -21,24 +21,31 @@ Successfully implemented a comprehensive 5-step tutorial system for the Space De
 
 4. **TutorialModal** (`src/components/Tutorial/TutorialModal.tsx`)
    - Main tutorial container with full-screen modal overlay
-   - Navigation controls: Previous, Next/Get Started, and Skip Tutorial buttons
-   - Integrates with Redux state management
-   - Handles tutorial completion and persistence
+   - Props-based API: `currentStep`, `onNext`, `onPrevious`, `onClose`
+   - Navigation controls: Previous, Next/Get Started, and Close buttons
+   - Handles tutorial step navigation and dismissal
 
 ### Modified Files
 
-1. **UIState Types** (`src/game/types.ts`)
-   - Added `tutorialActive`, `tutorialStep`, and `tutorialCompleted` properties to UIState interface
+1. **GameSetupScreen** (`src/components/Setup/GameSetupScreen.tsx`)
+   - Added local state: `showTutorial` (boolean) and `tutorialStep` (number)
+   - Added "How to Play" button positioned next to "Start Game" button
+   - Implemented tutorial control handlers: `handleOpenTutorial`, `handleCloseTutorial`, `handleNextStep`, `handlePreviousStep`
+   - Conditionally renders TutorialModal when `showTutorial === true`
 
-2. **UI Slice** (`src/store/slices/uiSlice.ts`)
-   - Added tutorial state management with localStorage persistence
-   - Implemented actions: `startTutorial`, `nextTutorialStep`, `previousTutorialStep`, `skipTutorial`, `completeTutorial`
-   - Helper functions for loading/saving tutorial completion status
+### Design Approach
 
-3. **App Component** (`src/App.tsx`)
-   - Imported TutorialModal component
-   - Added useEffect to trigger tutorial on first game start
-   - Rendered TutorialModal in component tree
+**User-Initiated & Non-Intrusive:**
+- Tutorial accessed via prominent "How to Play" button on setup screen
+- No auto-popup or forced tutorial flow
+- Always available before starting the game
+- No localStorage tracking or persistence needed
+
+**Local State Management:**
+- Uses React useState hooks in GameSetupScreen
+- No Redux integration required
+- Tutorial state resets to Step 1 each time it's opened
+- Simple, predictable behavior
 
 ## How the Solution Was Tested
 
@@ -50,45 +57,70 @@ Successfully implemented a comprehensive 5-step tutorial system for the Space De
 
 ### Code Quality Verification
 - No TypeScript errors
-- No ESLint warnings (fixed empty catch block issue)
+- No ESLint warnings
 - Follows existing component patterns (similar to GameOverModal)
 - Consistent styling with existing codebase
+- Clean separation of concerns (modal receives props, doesn't manage global state)
 
 ### Implementation Verification
 The tutorial system:
-1. ✅ Automatically shows on first game start (when `tutorialCompleted` is not in localStorage)
-2. ✅ Persists completion status to localStorage
-3. ✅ Does not show for returning users
-4. ✅ Supports navigation between steps (Next, Previous buttons)
-5. ✅ Allows users to skip at any time
-6. ✅ Marks as completed when user reaches final step and clicks "Get Started!"
-7. ✅ Follows established modal pattern from GameOverModal
-8. ✅ Integrates cleanly with Redux state management
+1. ✅ "How to Play" button visible on GameSetupScreen
+2. ✅ Button triggers tutorial modal overlay
+3. ✅ Modal displays 5 tutorial steps with correct content
+4. ✅ Navigation works correctly (Next, Previous, Close buttons)
+5. ✅ Previous button disabled on first step
+6. ✅ "Get Started!" button on last step closes tutorial
+7. ✅ Tutorial resets to Step 1 when reopened
+8. ✅ No Redux or localStorage dependencies
+9. ✅ Modal follows established pattern from GameOverModal
+10. ✅ User can access tutorial multiple times before starting game
 
 ## Biggest Issues or Challenges Encountered
 
-### 1. Initial Build Environment Setup
-**Issue**: TypeScript compiler (`tsc`) was not available when first attempting to run build/lint commands.
+### 1. Specification Change Mid-Implementation
+**Issue**: Initial implementation used Redux state management with localStorage persistence (auto-show on first game start). Specification was updated to use a simpler, user-initiated approach with local state.
 
-**Resolution**: Ran `npm install` to install all project dependencies before running verification commands.
+**Resolution**: Refactored implementation to:
+- Remove tutorial state from UIState interface
+- Remove tutorial actions from uiSlice
+- Remove tutorial integration from App.tsx
+- Convert TutorialModal from Redux-connected to props-based
+- Add local state management in GameSetupScreen
+- Simpler, more maintainable solution
 
-### 2. ESLint Empty Block Statement Error
-**Issue**: ESLint flagged an empty catch block in the `saveTutorialCompleted` function.
+### 2. Component API Design
+**Decision**: TutorialModal accepts `currentStep`, `onNext`, `onPrevious`, `onClose` as props rather than managing its own state.
 
-**Resolution**: Added a comment `// Ignore localStorage errors` to satisfy the linter requirement while maintaining the intended behavior (silent failure for localStorage operations).
+**Rationale**: 
+- Parent component (GameSetupScreen) controls tutorial visibility and step
+- Cleaner separation of concerns
+- Easier to test and reason about
+- Follows React best practices for controlled components
 
-### 3. Tutorial Trigger Timing
-**Decision**: Tutorial appears after the game setup screen (when `gameStarted === true`) rather than before, so users have context about what they're learning.
+### 3. Button Layout
+**Decision**: Placed "How to Play" and "Start Game" buttons side-by-side with equal flex sizing.
 
-**Implementation**: Added `useEffect` hook in App.tsx that checks `gameStarted` and `tutorialCompleted` states to trigger `startTutorial()` action.
+**Rationale**:
+- Equal visual weight between tutorial and starting game
+- Clear, accessible positioning
+- Maintains existing button styling patterns
+- User can easily find tutorial before starting
 
 ## Summary
 
-The tutorial system was successfully implemented following all specifications. It provides a clean, user-friendly onboarding experience that:
-- Educates new users about game goals, interface, and mechanics
-- Respects user agency with skip functionality
-- Persists completion status across sessions
+The tutorial system was successfully refactored to match the updated specification. It provides a clean, user-friendly onboarding experience that:
+- Is non-intrusive and user-initiated (button-triggered)
+- Uses simple local state management (no Redux/localStorage overhead)
+- Educates users about game goals, interface, and mechanics
+- Respects user agency with easy close functionality
+- Always resets to Step 1 for consistent experience
 - Follows existing codebase patterns and conventions
 - Passes all quality checks (TypeScript, ESLint, tests, build)
 
 The implementation is production-ready and ready for deployment.
+
+### Final Architecture
+- **Tutorial Components**: Self-contained in `src/components/Tutorial/`
+- **State Management**: Local useState in GameSetupScreen
+- **No Global State**: No Redux or localStorage dependencies
+- **User Flow**: Setup Screen → Click "How to Play" → Tutorial Modal → Close → Back to Setup Screen

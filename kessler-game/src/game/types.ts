@@ -215,9 +215,6 @@ export interface UIState {
   autoPauseOnRiskChange: boolean;
   autoPauseOnBudgetLow: boolean;
   autoPauseOnMission: boolean;
-  tutorialActive: boolean;
-  tutorialStep: number;
-  tutorialCompleted: boolean;
 }
 
 export type MissionCategory = 'launch' | 'removal' | 'state' | 'multi-layer' | 'economic';
