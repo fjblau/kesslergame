@@ -6,6 +6,7 @@ export function AutoPauseSettings() {
   const autoPauseOnRiskChange = useAppSelector(state => state.ui.autoPauseOnRiskChange);
   const autoPauseOnBudgetLow = useAppSelector(state => state.ui.autoPauseOnBudgetLow);
   const autoPauseOnMission = useAppSelector(state => state.ui.autoPauseOnMission);
+  const autoPauseOnCascade = useAppSelector(state => state.ui.autoPauseOnCascade);
   const dispatch = useAppDispatch();
 
   return (
@@ -15,13 +16,24 @@ export function AutoPauseSettings() {
         <label className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
           <input
             type="checkbox"
+            checked={autoPauseOnCascade}
+            onChange={() => dispatch(toggleAutoPause('autoPauseOnCascade'))}
+            className="w-4 h-4 rounded bg-slate-700 border-slate-600 text-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer"
+          />
+          <span>Auto-Pause on Cascade</span>
+        </label>
+        <p className="text-xs text-gray-400 ml-6">Pause when collision cascade detected (3+ simultaneous collisions). Severe cascades (12+) always end the game.</p>
+
+        <label className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
+          <input
+            type="checkbox"
             checked={autoPauseOnCollision}
             onChange={() => dispatch(toggleAutoPause('autoPauseOnCollision'))}
             className="w-4 h-4 rounded bg-slate-700 border-slate-600 text-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer"
           />
           <span>Auto-Pause on Collision</span>
         </label>
-        <p className="text-xs text-gray-400 ml-6">Pause when collision detected (allows DRV launch for mitigation)</p>
+        <p className="text-xs text-gray-400 ml-6">Pause when any collision detected (allows DRV launch for mitigation)</p>
 
         <label className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
           <input

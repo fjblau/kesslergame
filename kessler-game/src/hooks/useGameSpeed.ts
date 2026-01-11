@@ -20,6 +20,7 @@ export function useGameSpeed() {
   const autoPauseBudgetLow = useAppSelector(state => state.ui.autoPauseOnBudgetLow);
   const autoPauseOnRiskChange = useAppSelector(state => state.ui.autoPauseOnRiskChange);
   const autoPauseOnCollision = useAppSelector(state => state.ui.autoPauseOnCollision);
+  const autoPauseOnCascade = useAppSelector(state => state.ui.autoPauseOnCascade);
   const collisionPauseCooldown = useAppSelector(state => state.game.collisionPauseCooldown);
   const budgetPauseCooldown = useAppSelector(state => state.game.budgetPauseCooldown);
   const dispatch = useAppDispatch();
@@ -271,7 +272,22 @@ export function useGameSpeed() {
           }
         });
 
-        if (autoPauseOnCollision && updatedState.recentCollisions.length > 0 && !updatedState.gameOver && updatedState.collisionPauseCooldown === 0) {
+        if (autoPauseOnCascade && updatedState.cascadeTriggered && !updatedState.severeCascadeTriggered && !updatedState.gameOver && updatedState.collisionPauseCooldown === 0) {
+          const collisionCount = updatedState.recentCollisions.length;
+          dispatch(setGameSpeed('paused'));
+          dispatch(setCollisionPauseCooldown(3));
+          dispatch(addEvent({
+            type: 'collision',
+            turn: updatedState.step,
+            day: updatedState.days,
+            message: `⚠️ CASCADE EVENT (${collisionCount} collisions)! Game paused. Deploy DRVs immediately or risk severe cascade.`,
+            details: { autoPause: true, collisionCount, cascade: true }
+          }));
+          clearInterval(interval);
+          return;
+        }
+
+        if (autoPauseOnCollision && updatedState.recentCollisions.length > 0 && !updatedState.cascadeTriggered && !updatedState.gameOver && updatedState.collisionPauseCooldown === 0) {
           dispatch(setGameSpeed('paused'));
           dispatch(setCollisionPauseCooldown(2));
           dispatch(addEvent({
@@ -419,5 +435,5 @@ export function useGameSpeed() {
     }, intervalDuration);
 
     return () => clearInterval(interval);
-  }, [speed, gameOver, budget, autoPauseBudgetLow, autoPauseOnCollision, collisionPauseCooldown, budgetPauseCooldown, riskSpeedMultipliers, riskLevel, dispatch, store]);
+  }, [speed, gameOver, budget, autoPauseBudgetLow, autoPauseOnCollision, autoPauseOnCascade, collisionPauseCooldown, budgetPauseCooldown, riskSpeedMultipliers, riskLevel, dispatch, store]);
 }

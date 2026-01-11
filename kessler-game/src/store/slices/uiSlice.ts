@@ -8,6 +8,7 @@ const initialState: UIState = {
   autoPauseOnRiskChange: false,
   autoPauseOnBudgetLow: true,
   autoPauseOnMission: true,
+  autoPauseOnCascade: true,
 };
 
 export const uiSlice = createSlice({
