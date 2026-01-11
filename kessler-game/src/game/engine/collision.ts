@@ -25,10 +25,10 @@ export interface CollisionPair {
   layer: OrbitLayer;
 }
 
-function areObjectsColliding(obj1: GameObject, obj2: GameObject): boolean {
+function areObjectsColliding(obj1: GameObject, obj2: GameObject, densityMultiplier: number = 1.0): boolean {
   const r1 = obj1.captureRadius ?? obj1.radius;
   const r2 = obj2.captureRadius ?? obj2.radius;
-  const captureDistance = r1 + r2;
+  const captureDistance = (r1 + r2) * densityMultiplier;
   const captureDistanceSquared = captureDistance * captureDistance;
   
   let dx = obj1.x - obj2.x;
@@ -40,6 +40,15 @@ function areObjectsColliding(obj1: GameObject, obj2: GameObject): boolean {
   const distanceSquared = dx * dx + dy * dy;
   
   return distanceSquared <= captureDistanceSquared;
+}
+
+function calculateDensityMultiplier(objectCount: number): number {
+  if (objectCount <= 5) return 1.0;
+  if (objectCount <= 10) return 1.1;
+  if (objectCount <= 20) return 1.2;
+  if (objectCount <= 30) return 1.3;
+  if (objectCount <= 40) return 1.4;
+  return 1.5;
 }
 
 function getBucketIndex(x: number, bucketSize: number): number {
@@ -102,6 +111,7 @@ export function detectCollisions(
   for (const layer of layers) {
     const objectsInLayer = allObjects.filter(obj => obj.layer === layer);
     const drvsInLayer = drvs.filter(drv => drv.layer === layer);
+    const densityMultiplier = calculateDensityMultiplier(objectsInLayer.length);
 
     const bucketSize = 10;
     const bucketCount = Math.ceil(100 / bucketSize);
@@ -132,7 +142,7 @@ export function detectCollisions(
           if (checkedPairs.has(pairKey)) continue;
           checkedPairs.add(pairKey);
 
-          if (areObjectsColliding(obj1, obj2)) {
+          if (areObjectsColliding(obj1, obj2, densityMultiplier)) {
             collisions.push({ obj1, obj2, layer });
           }
         }
@@ -148,7 +158,7 @@ export function detectCollisions(
         if (!bucket) continue;
         
         for (const obj of bucket.objects) {
-          if (areObjectsColliding(drv, obj)) {
+          if (areObjectsColliding(drv, obj, densityMultiplier)) {
             collisions.push({ obj1: drv, obj2: obj, layer });
           }
         }
