@@ -9,6 +9,7 @@ export type GameSpeed = 'paused' | 'normal' | 'fast';
 export type BudgetDifficulty = 'easy' | 'normal' | 'hard' | 'challenge';
 export type RiskLevel = 'LOW' | 'MEDIUM' | 'CRITICAL';
 export type SolarFlareClass = 'A' | 'B' | 'C' | 'M' | 'X';
+export type GameOverReason = 'budget' | 'max-turns' | 'debris-limit' | 'severe-cascade';
 
 export interface Satellite {
   id: string;
@@ -194,6 +195,9 @@ export interface GameState {
   cascadeTriggered: boolean;
   lastCascadeTurn?: number;
   totalCascades: number;
+  severeCascadeTriggered: boolean;
+  consecutiveCascadeTurns: number;
+  gameOverReason?: GameOverReason;
   satellitesRecovered: number;
   riskSpeedMultipliers: {
     LOW: number;
@@ -215,6 +219,7 @@ export interface UIState {
   autoPauseOnRiskChange: boolean;
   autoPauseOnBudgetLow: boolean;
   autoPauseOnMission: boolean;
+  autoPauseOnCascade: boolean;
 }
 
 export type MissionCategory = 'launch' | 'removal' | 'state' | 'multi-layer' | 'economic';

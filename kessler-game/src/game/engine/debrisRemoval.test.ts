@@ -51,8 +51,8 @@ describe('selectRefuelingTarget', () => {
   it('should return null when no satellites or DRVs need refueling', () => {
     const drv = createMockDRV('drv1', 'LEO', 'refueling', 0, 15);
     const satellites = [
-      createMockSatellite('sat1', 'LEO', 5, 20),
-      createMockSatellite('sat2', 'LEO', 8, 20),
+      createMockSatellite('sat1', 'LEO', 3, 20),
+      createMockSatellite('sat2', 'LEO', 5, 20),
     ];
     const drvs = [drv];
 
@@ -60,7 +60,7 @@ describe('selectRefuelingTarget', () => {
     expect(result).toBeNull();
   });
 
-  it('should select a satellite that is over 50% aged', () => {
+  it('should select a satellite that is over 25% aged', () => {
     const drv = createMockDRV('drv1', 'LEO', 'refueling', 0, 15);
     const satellites = [
       createMockSatellite('sat1', 'LEO', 5, 20),
@@ -73,7 +73,7 @@ describe('selectRefuelingTarget', () => {
     expect(result?.id).toBe('sat2');
   });
 
-  it('should select a DRV that is over 50% aged', () => {
+  it('should select a DRV that is over 25% aged', () => {
     const refuelingDrv = createMockDRV('drv1', 'LEO', 'refueling', 0, 15);
     const agingDrv = createMockDRV('drv2', 'LEO', 'cooperative', 8, 10);
     const satellites: Satellite[] = [];

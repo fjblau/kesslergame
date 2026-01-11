@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { GameState, OrbitLayer, SatelliteType, InsuranceTier, DRVType, BudgetDifficulty, DebrisRemovalVehicle, ExpiredDRVInfo, DebrisRemovalInfo, SatelliteCaptureInfo, GraveyardMoveInfo, RefuelingInfo } from '../../game/types';
-import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG, MAX_DEBRIS_LIMIT, ORBITAL_SPEEDS, CASCADE_THRESHOLD, RISK_SPEED_MULTIPLIERS, SATELLITE_REVENUE, OBJECT_RADII, CAPTURE_RADIUS_MULTIPLIER, SATELLITE_LIFESPAN } from '../../game/constants';
+import { BUDGET_DIFFICULTY_CONFIG, MAX_STEPS, LAYER_BOUNDS, DRV_CONFIG, MAX_DEBRIS_LIMIT, ORBITAL_SPEEDS, CASCADE_THRESHOLD, SEVERE_CASCADE_THRESHOLD, RISK_SPEED_MULTIPLIERS, SATELLITE_REVENUE, OBJECT_RADII, CAPTURE_RADIUS_MULTIPLIER, SATELLITE_LIFESPAN } from '../../game/constants';
 import { detectCollisions, generateDebrisFromCollision, calculateTotalPayout } from '../../game/engine/collision';
 import { processDRVRemoval, processCooperativeDRVOperations, moveCooperativeDRV, processGeoTugOperations, processRefuelingOperations } from '../../game/engine/debrisRemoval';
 import { calculateRiskLevel } from '../../game/engine/risk';
@@ -182,6 +182,9 @@ const initialState: GameState = {
   cascadeTriggered: false,
   lastCascadeTurn: undefined,
   totalCascades: 0,
+  severeCascadeTriggered: false,
+  consecutiveCascadeTurns: 0,
+  gameOverReason: undefined,
   satellitesRecovered: 0,
   riskSpeedMultipliers: {
     LOW: savedRiskSpeedSettings.LOW,
@@ -224,6 +227,9 @@ export const gameSlice = createSlice({
         cascadeTriggered: false,
         lastCascadeTurn: undefined,
         totalCascades: 0,
+        severeCascadeTriggered: false,
+        consecutiveCascadeTurns: 0,
+        gameOverReason: undefined,
         satellitesRecovered: 0,
       };
     },
@@ -257,6 +263,9 @@ export const gameSlice = createSlice({
       state.cascadeTriggered = false;
       state.lastCascadeTurn = undefined;
       state.totalCascades = 0;
+      state.severeCascadeTriggered = false;
+      state.consecutiveCascadeTurns = 0;
+      state.gameOverReason = undefined;
       state.satellitesRecovered = 0;
       state.availableSatellitePool = [...SATELLITE_METADATA];
     },
@@ -691,6 +700,7 @@ export const gameSlice = createSlice({
       );
 
       if (collisions.length === 0) {
+        state.consecutiveCascadeTurns = 0;
         return;
       }
 
@@ -698,6 +708,16 @@ export const gameSlice = createSlice({
         state.cascadeTriggered = true;
         state.lastCascadeTurn = state.step;
         state.totalCascades += 1;
+        state.consecutiveCascadeTurns += 1;
+      } else {
+        state.consecutiveCascadeTurns = 0;
+      }
+
+      if (collisions.length >= SEVERE_CASCADE_THRESHOLD) {
+        state.severeCascadeTriggered = true;
+        state.gameOver = true;
+        state.gameOverReason = 'severe-cascade';
+        return;
       }
 
       const destroyedSatelliteIds = new Set<string>();
@@ -829,8 +849,19 @@ export const gameSlice = createSlice({
     },
 
     checkGameOver: (state) => {
-      if (state.budget < 0 || state.step >= state.maxSteps || state.debris.length > MAX_DEBRIS_LIMIT) {
+      const isGameOver = 
+        state.budget < 0 || 
+        state.step >= state.maxSteps || 
+        state.debris.length > MAX_DEBRIS_LIMIT ||
+        state.severeCascadeTriggered;
+      
+      if (isGameOver && !state.gameOver) {
         state.gameOver = true;
+        if (!state.gameOverReason) {
+          if (state.budget < 0) state.gameOverReason = 'budget';
+          else if (state.step >= state.maxSteps) state.gameOverReason = 'max-turns';
+          else if (state.debris.length > MAX_DEBRIS_LIMIT) state.gameOverReason = 'debris-limit';
+        }
       }
     },
 

@@ -52,6 +52,9 @@ describe('Refueling Vehicle Integration Tests', () => {
       drvUncooperativeSuccessRate: 0.90,
       cascadeTriggered: false,
       totalCascades: 0,
+      severeCascadeTriggered: false,
+      consecutiveCascadeTurns: 0,
+      gameOverReason: undefined,
       satellitesRecovered: 0,
       riskSpeedMultipliers: {
         LOW: 1,

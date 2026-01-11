@@ -16,7 +16,7 @@ interface GameOverModalProps {
 
 export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
   const dispatch = useAppDispatch();
-  const { budget, step, maxSteps, debris, satellites, debrisRemovalVehicles, budgetDifficulty, playerName } = useAppSelector(state => state.game);
+  const { budget, step, maxSteps, debris, satellites, debrisRemovalVehicles, budgetDifficulty, playerName, gameOverReason } = useAppSelector(state => state.game);
   const scoreState = useAppSelector(selectScore);
   const [isVisible, setIsVisible] = useState(true);
   const hasSaved = useRef(false);
@@ -34,6 +34,18 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
   const [isSavingCertificate, setIsSavingCertificate] = useState(false);
 
   const getGameOverReason = () => {
+    if (gameOverReason === 'severe-cascade') {
+      return '💥 SEVERE CASCADE EVENT! Catastrophic collision cascade detected. The orbital environment has become unrecoverable.';
+    }
+    if (gameOverReason === 'debris-limit') {
+      return 'Debris Cascade! Too much space debris accumulated.';
+    }
+    if (gameOverReason === 'budget') {
+      return 'Budget Depleted! You ran out of funds.';
+    }
+    if (gameOverReason === 'max-turns') {
+      return "Time's Up! You reached the maximum turn limit.";
+    }
     if (budget < 0) {
       return 'Budget Depleted! You ran out of funds.';
     }
