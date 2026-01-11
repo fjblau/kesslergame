@@ -494,14 +494,14 @@ export function selectRefuelingTarget(
   const satellitesNeedingRefuel = satellites.filter(s => 
     s.layer === drv.layer && 
     !s.inGraveyard &&
-    s.age > s.maxAge * 0.5 &&
+    s.age > s.maxAge * 0.25 &&
     !alreadyTargetedIds.has(s.id)
   );
   
   const drvsNeedingRefuel = drvs.filter(d =>
     d.layer === drv.layer &&
     d.id !== drv.id &&
-    d.age > d.maxAge * 0.5 &&
+    d.age > d.maxAge * 0.25 &&
     d.removalType !== 'refueling' &&
     !alreadyTargetedIds.has(d.id)
   );
