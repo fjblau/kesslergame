@@ -91,9 +91,9 @@ kessler-game/
    - Default brand configuration (current branding)
    - Defines all colors, text, assets for generic version
 
-3. **`src/config/brands/customer-a.ts`** (example)
-   - Customer-specific brand configuration
-   - Demonstrates white-label customization
+3. **`src/config/brands/astroscale.ts`**
+   - Astroscale-specific brand configuration
+   - First customer white-label implementation
 
 4. **`src/config/brand.ts`**
    - Runtime brand selector using `import.meta.env.VITE_BRAND_ID`
@@ -103,8 +103,8 @@ kessler-game/
 5. **`src/assets/brands/default/logo.png`**
    - Default logo relocated to brand-specific folder
 
-6. **`src/assets/brands/customer-a/logo.png`** (example)
-   - Customer logo for white-label demo
+6. **`src/assets/brands/astroscale/logo.png`**
+   - Astroscale logo for white-label implementation
 
 ### Modified Files
 
@@ -189,7 +189,7 @@ interface ColorScale {
 
 ```bash
 # Brand Selection
-VITE_BRAND_ID=default|customer-a|customer-b
+VITE_BRAND_ID=default|astroscale
 
 # Redis configuration (existing, unchanged)
 UPSTASH_REDIS_REST_URL=...
@@ -220,8 +220,8 @@ VITE_BRAND_ID=customer-a npm run dev
 # Build with default brand
 npm run build
 
-# Build with customer brand
-VITE_BRAND_ID=customer-a npm run build
+# Build with Astroscale brand
+VITE_BRAND_ID=astroscale npm run build
 
 # Preview builds
 npm run preview
@@ -289,8 +289,8 @@ npm run build  # Includes TypeScript checking
 
 ### Phase 4: Testing & Validation
 - Test default brand (should match current appearance)
-- Create example customer brand
-- Validate no regressions
+- Create Astroscale brand configuration
+- Validate no regressions in either brand
 
 ## Risk Mitigation
 

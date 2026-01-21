@@ -34,7 +34,7 @@ Create the foundational brand configuration system:
 
 1. Create `src/config/brands/index.ts` with TypeScript interfaces
 2. Create `src/config/brands/default.ts` with current branding values
-3. Create `src/config/brands/customer-a.ts` as example white-label configuration
+3. Create `src/config/brands/astroscale.ts` with Astroscale branding
 4. Create `src/config/brand.ts` as runtime brand selector
 5. Update `.env.example` to document `VITE_BRAND_ID` variable
 
@@ -48,9 +48,9 @@ Create the foundational brand configuration system:
 
 Reorganize assets into brand-specific folders:
 
-1. Create directory structure: `src/assets/brands/default/` and `src/assets/brands/customer-a/`
+1. Create directory structure: `src/assets/brands/default/` and `src/assets/brands/astroscale/`
 2. Move `space-logo.png` to `src/assets/brands/default/logo.png`
-3. Add example customer logo to `src/assets/brands/customer-a/logo.png`
+3. Create/download Astroscale logo to `src/assets/brands/astroscale/logo.png`
 4. Update asset paths in brand configurations
 
 **Verification**:
@@ -109,7 +109,7 @@ Migrate remaining components to brand system:
 Comprehensive testing of white-label system:
 
 1. Test build with `VITE_BRAND_ID=default`
-2. Test build with `VITE_BRAND_ID=customer-a`
+2. Test build with `VITE_BRAND_ID=astroscale`
 3. Run test suite: `npm run test`
 4. Run linter: `npm run lint`
 5. Visual regression testing across both brands
