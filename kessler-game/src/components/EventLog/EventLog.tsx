@@ -6,7 +6,7 @@ export function EventLog() {
   const events = useAppSelector(selectAllEvents);
   
   return (
-    <div className="bg-deep-space-300 border-4 border-cyber-cyan-800 p-4 flex flex-col h-[530px] shadow-depth-lg relative overflow-hidden">
+    <div className="bg-deep-space-200 border-4 border-cyber-cyan-800 p-4 flex flex-col h-[530px] shadow-depth-lg relative overflow-hidden">
       <div className="absolute inset-0 opacity-5 pointer-events-none" style={{
         backgroundImage: 'linear-gradient(145deg, rgba(255,255,255,0.1) 0%, transparent 40%, rgba(0,217,255,0.05) 100%)',
       }}></div>
