@@ -42,8 +42,29 @@ export function StatsPanel() {
   };
 
   return (
-    <div className="bg-slate-800 border-2 border-slate-600 rounded-xl p-5 space-y-4 w-full h-[544px]">
-      <h2 className="text-xl font-bold text-blue-300 mb-3 pb-2 border-b-2 border-slate-700 uppercase tracking-wide">
+    <div className="bg-deep-space-100 border-4 border-cyber-cyan-800 p-5 space-y-4 w-full h-[544px] shadow-depth-lg relative overflow-hidden">
+      <div className="absolute inset-0 opacity-5 pointer-events-none" style={{
+        backgroundImage: 'linear-gradient(145deg, rgba(255,255,255,0.1) 0%, transparent 40%, rgba(0,217,255,0.05) 100%)',
+      }}></div>
+      {/* Phillips screw heads */}
+      <div className="absolute top-2 left-2 w-3 h-3 rounded-full bg-gray-600 shadow-inner pointer-events-none z-20 flex items-center justify-center">
+        <div className="absolute w-2 h-[1px] bg-gray-800"></div>
+        <div className="absolute w-[1px] h-2 bg-gray-800"></div>
+      </div>
+      <div className="absolute top-2 right-2 w-3 h-3 rounded-full bg-gray-600 shadow-inner pointer-events-none z-20 flex items-center justify-center">
+        <div className="absolute w-2 h-[1px] bg-gray-800"></div>
+        <div className="absolute w-[1px] h-2 bg-gray-800"></div>
+      </div>
+      <div className="absolute bottom-2 left-2 w-3 h-3 rounded-full bg-gray-600 shadow-inner pointer-events-none z-20 flex items-center justify-center">
+        <div className="absolute w-2 h-[1px] bg-gray-800"></div>
+        <div className="absolute w-[1px] h-2 bg-gray-800"></div>
+      </div>
+      <div className="absolute bottom-2 right-2 w-3 h-3 rounded-full bg-gray-600 shadow-inner pointer-events-none z-20 flex items-center justify-center">
+        <div className="absolute w-2 h-[1px] bg-gray-800"></div>
+        <div className="absolute w-[1px] h-2 bg-gray-800"></div>
+      </div>
+      <div className="relative z-10">
+      <h2 className="text-xl font-bold text-cyber-cyan-400 mb-3 pb-2 border-b-2 border-deep-space-50 uppercase tracking-wide">
         Orbital Status
       </h2>
       
@@ -54,36 +75,36 @@ export function StatsPanel() {
           total={totalDebris}
         />
 
-        <div className="border border-slate-700 rounded-lg overflow-hidden">
+        <div className="border border-deep-space-50 border-none overflow-hidden">
           <table className="w-full text-base">
             <thead>
               <tr className="bg-slate-900">
-                <th className="py-2 px-3 text-left text-white font-semibold border-b border-slate-700">Orbit Layer</th>
-                <th className="py-2 px-3 text-center text-white font-semibold border-b border-slate-700">Satellites</th>
-                <th colSpan={2} className="py-1 px-3 text-center text-white font-semibold border-b border-slate-700">ADR</th>
-                <th className="py-2 px-3 text-center text-white font-semibold border-b border-slate-700">Servicing</th>
-                <th className="py-2 px-3 text-center text-white font-semibold border-b border-slate-700">GEO Tug</th>
+                <th className="py-2 px-3 text-left text-white font-semibold border-b border-deep-space-50">Orbit Layer</th>
+                <th className="py-2 px-3 text-center text-white font-semibold border-b border-deep-space-50">Satellites</th>
+                <th colSpan={2} className="py-1 px-3 text-center text-white font-semibold border-b border-deep-space-50">ADR</th>
+                <th className="py-2 px-3 text-center text-white font-semibold border-b border-deep-space-50">Servicing</th>
+                <th className="py-2 px-3 text-center text-white font-semibold border-b border-deep-space-50">GEO Tug</th>
               </tr>
               <tr className="bg-slate-900">
-                <th className="border-b border-slate-700"></th>
-                <th className="border-b border-slate-700"></th>
-                <th className="py-1 px-2 text-center text-white text-sm font-medium border-b border-slate-700 border-l border-slate-700">Cooperative</th>
-                <th className="py-1 px-2 text-center text-white text-sm font-medium border-b border-slate-700">Uncooperative</th>
-                <th className="border-b border-slate-700"></th>
-                <th className="border-b border-slate-700"></th>
+                <th className="border-b border-deep-space-50"></th>
+                <th className="border-b border-deep-space-50"></th>
+                <th className="py-1 px-2 text-center text-white text-sm font-medium border-b border-deep-space-50 border-l border-deep-space-50">Cooperative</th>
+                <th className="py-1 px-2 text-center text-white text-sm font-medium border-b border-deep-space-50">Uncooperative</th>
+                <th className="border-b border-deep-space-50"></th>
+                <th className="border-b border-deep-space-50"></th>
               </tr>
             </thead>
             <tbody>
               {(['LEO', 'MEO', 'GEO'] as const).map((layer) => {
                 const stats = getLayerStats(layer);
                 return (
-                  <tr key={layer} className="hover:bg-slate-700/30">
-                    <td className="py-1 px-3 text-blue-400 font-semibold">{layer}</td>
+                  <tr key={layer} className="hover:bg-deep-space-100/30">
+                    <td className="py-1 px-3 text-cyber-cyan-500 font-semibold">{layer}</td>
                     <td className="py-1 px-3 text-center text-gray-300">{stats.satelliteCount}</td>
-                    <td className="py-1 px-2 text-center text-gray-300 border-l border-slate-700">{stats.cooperativeDRVs}</td>
+                    <td className="py-1 px-2 text-center text-gray-300 border-l border-deep-space-50">{stats.cooperativeDRVs}</td>
                     <td className="py-1 px-2 text-center text-gray-300">{stats.uncooperativeDRVs}</td>
-                    <td className="py-1 px-3 text-center text-gray-300 border-l border-slate-700">{stats.servicingDRVs}</td>
-                    <td className="py-1 px-3 text-center text-gray-300 border-l border-slate-700">{stats.geoTugDRVs}</td>
+                    <td className="py-1 px-3 text-center text-gray-300 border-l border-deep-space-50">{stats.servicingDRVs}</td>
+                    <td className="py-1 px-3 text-center text-gray-300 border-l border-deep-space-50">{stats.geoTugDRVs}</td>
                   </tr>
                 );
               })}
@@ -97,6 +118,7 @@ export function StatsPanel() {
             <span>{risk.emoji}</span> {risk.level}
           </span>
         </div>
+      </div>
       </div>
     </div>
   );

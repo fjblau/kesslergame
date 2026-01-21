@@ -208,8 +208,8 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center p-8 z-50 overflow-y-auto">
-      <div className="max-w-6xl w-full bg-slate-800 border border-slate-700 rounded-xl p-10 shadow-2xl my-8">
-        <h1 className="text-5xl font-bold text-center mb-6 bg-gradient-to-r from-red-400 to-orange-400 bg-clip-text text-transparent">
+      <div className="max-w-6xl w-full bg-deep-space-300 border border-deep-space-50 border-none p-10 shadow-2xl my-8">
+        <h1 className="text-5xl font-bold text-center mb-6 text-neon-orange-500">
           Game Over
         </h1>
         
@@ -219,7 +219,7 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
 
         <div className="grid lg:grid-cols-2 gap-8">
           <div className="space-y-8">
-            <div className="bg-gradient-to-br from-purple-900/50 to-pink-900/50 border-2 border-purple-500/50 rounded-xl p-6">
+            <div className="bg-deep-space-100 border-2 border-purple-500/50 border-none p-6">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="text-3xl font-bold text-white mb-2">Final Score</h2>
@@ -234,40 +234,40 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
           </div>
           
           <div className="space-y-2 mt-6">
-            <div className="flex justify-between items-center py-2 px-3 bg-slate-800/50 rounded-lg">
+            <div className="flex justify-between items-center py-2 px-3 bg-deep-space-300/50 border-none">
               <span className="text-gray-300 text-sm flex items-center gap-2">
                 <span>🛰️</span> Satellites
               </span>
-              <span className="text-blue-400 font-semibold">+{scoreState.satelliteLaunchScore.toLocaleString()}</span>
+              <span className="text-cyber-cyan-500 font-semibold">+{scoreState.satelliteLaunchScore.toLocaleString()}</span>
             </div>
-            <div className="flex justify-between items-center py-2 px-3 bg-slate-800/50 rounded-lg">
+            <div className="flex justify-between items-center py-2 px-3 bg-deep-space-300/50 border-none">
               <span className="text-gray-300 text-sm flex items-center gap-2">
                 <span>🧹</span> Debris Removal
               </span>
               <span className="text-green-400 font-semibold">+{scoreState.debrisRemovalScore.toLocaleString()}</span>
             </div>
-            <div className="flex justify-between items-center py-2 px-3 bg-slate-800/50 rounded-lg">
+            <div className="flex justify-between items-center py-2 px-3 bg-deep-space-300/50 border-none">
               <span className="text-gray-300 text-sm flex items-center gap-2">
                 <span>♻️</span> Satellites Recovered ({scoreState.satellitesRecovered})
               </span>
               <span className="text-cyan-400 font-semibold">+{scoreState.satelliteRecoveryScore.toLocaleString()}</span>
             </div>
-            <div className="flex justify-between items-center py-2 px-3 bg-slate-800/50 rounded-lg">
+            <div className="flex justify-between items-center py-2 px-3 bg-deep-space-300/50 border-none">
               <span className="text-gray-300 text-sm flex items-center gap-2">
                 <span>💰</span> Budget Management
               </span>
               <span className="text-yellow-400 font-semibold">+{scoreState.budgetManagementScore.toLocaleString()}</span>
             </div>
-            <div className="flex justify-between items-center py-2 px-3 bg-slate-800/50 rounded-lg">
+            <div className="flex justify-between items-center py-2 px-3 bg-deep-space-300/50 border-none">
               <span className="text-gray-300 text-sm flex items-center gap-2">
                 <span>⏱️</span> Survival
               </span>
-              <span className="text-purple-400 font-semibold">+{scoreState.survivalScore.toLocaleString()}</span>
+              <span className="text-electric-green-500 font-semibold">+{scoreState.survivalScore.toLocaleString()}</span>
             </div>
           </div>
             </div>
 
-            <div className="bg-slate-900 border border-slate-700 rounded-lg p-6">
+            <div className="bg-slate-900 border border-deep-space-50 border-none p-6">
               <h2 className="text-2xl font-bold text-gray-200 mb-4">Final Statistics</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -288,11 +288,11 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
             </div>
             <div>
               <p className="text-gray-400 text-sm">Satellites Launched</p>
-              <p className="text-2xl font-bold text-blue-400">{satellites.length}</p>
+              <p className="text-2xl font-bold text-cyber-cyan-500">{satellites.length}</p>
             </div>
             <div className="col-span-2">
               <p className="text-gray-400 text-sm">Debris Removed</p>
-              <p className="text-2xl font-bold text-purple-400">{totalDebrisRemoved} pieces</p>
+              <p className="text-2xl font-bold text-electric-green-500">{totalDebrisRemoved} pieces</p>
             </div>
           </div>
             </div>
@@ -300,7 +300,7 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
             <div className="space-y-3">
               <button
                 onClick={handleDownloadCertificate}
-                className="w-full py-4 px-8 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white rounded-xl font-bold text-xl uppercase tracking-wide transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                className="w-full py-4 px-8 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white border-none font-bold text-xl uppercase tracking-wide transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
               >
                 <span>📄</span>
                 Download Certificate Now
@@ -308,9 +308,9 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
               <button
                 onClick={handleShowQRCode}
                 disabled={isSavingCertificate}
-                className={`w-full py-4 px-8 rounded-xl font-bold text-xl uppercase tracking-wide transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 ${
+                className={`w-full py-4 px-8 border-none font-bold text-xl uppercase tracking-wide transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 ${
                   isSavingCertificate
-                    ? 'bg-slate-600 cursor-not-allowed'
+                    ? 'bg-deep-space-50 cursor-not-allowed'
                     : 'bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500'
                 } text-white`}
               >
@@ -319,7 +319,7 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
               </button>
               
               {certificateSaveError && (
-                <div className="bg-red-900/50 border border-red-500/50 rounded-lg p-3">
+                <div className="bg-red-900/50 border border-red-500/50 border-none p-3">
                   <p className="text-red-400 text-sm text-center">{certificateSaveError}</p>
                 </div>
               )}
@@ -327,11 +327,11 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
           </div>
 
           <div>
-            <div className="bg-slate-900 border border-slate-700 rounded-lg p-6">
+            <div className="bg-slate-900 border border-deep-space-50 border-none p-6">
           <h2 className="text-2xl font-bold text-gray-200 mb-4">Share Your Feedback</h2>
           
           {feedbackSubmitted ? (
-            <div className="bg-green-900/50 border border-green-500/50 rounded-lg p-4 text-center">
+            <div className="bg-green-900/50 border border-green-500/50 border-none p-4 text-center">
               <p className="text-green-400 font-semibold">✓ Thank you for your feedback!</p>
             </div>
           ) : (
@@ -345,10 +345,10 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
                     <button
                       key={rating}
                       onClick={() => setEnjoymentRating(rating as 1 | 2 | 3 | 4 | 5)}
-                      className={`flex-1 py-2 px-4 rounded-lg font-semibold transition-all ${
+                      className={`flex-1 py-2 px-4 border-none font-semibold transition-all ${
                         enjoymentRating === rating
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
+                          ? 'bg-cyber-cyan-600 text-white'
+                          : 'bg-deep-space-100 text-gray-300 hover:bg-deep-space-50'
                       }`}
                     >
                       {rating}
@@ -367,10 +367,10 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
                     <button
                       key={rating}
                       onClick={() => setLearningRating(rating as 1 | 2 | 3 | 4 | 5)}
-                      className={`flex-1 py-2 px-4 rounded-lg font-semibold transition-all ${
+                      className={`flex-1 py-2 px-4 border-none font-semibold transition-all ${
                         learningRating === rating
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
+                          ? 'bg-cyber-cyan-600 text-white'
+                          : 'bg-deep-space-100 text-gray-300 hover:bg-deep-space-50'
                       }`}
                     >
                       {rating}
@@ -387,7 +387,7 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
                 <select
                   value={userCategory}
                   onChange={(e) => setUserCategory(e.target.value as Feedback['userCategory'])}
-                  className="w-full py-2 px-4 bg-slate-700 text-gray-300 rounded-lg border border-slate-600 focus:border-blue-500 focus:outline-none"
+                  className="w-full py-2 px-4 bg-deep-space-100 text-gray-300 border-none border border-deep-space-50 focus:border-blue-500 focus:outline-none"
                 >
                   <option value="Student">Student</option>
                   <option value="Educator">Educator</option>
@@ -405,13 +405,13 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
                   value={comments}
                   onChange={(e) => setComments(e.target.value)}
                   placeholder="Share your thoughts about the game..."
-                  className="w-full py-2 px-4 bg-slate-700 text-gray-300 rounded-lg border border-slate-600 focus:border-blue-500 focus:outline-none resize-none"
+                  className="w-full py-2 px-4 bg-deep-space-100 text-gray-300 border-none border border-deep-space-50 focus:border-blue-500 focus:outline-none resize-none"
                   rows={4}
                 />
               </div>
 
               {feedbackError && (
-                <div className="bg-red-900/50 border border-red-500/50 rounded-lg p-3 text-center">
+                <div className="bg-red-900/50 border border-red-500/50 border-none p-3 text-center">
                   <p className="text-red-400 text-sm">Failed to submit feedback. Please try again.</p>
                 </div>
               )}
@@ -419,9 +419,9 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
               <button
                 onClick={handleSubmitFeedback}
                 disabled={!enjoymentRating || !learningRating || isSubmittingFeedback}
-                className={`w-full py-3 px-6 rounded-lg font-semibold transition-all ${
+                className={`w-full py-3 px-6 border-none font-semibold transition-all ${
                   !enjoymentRating || !learningRating || isSubmittingFeedback
-                    ? 'bg-slate-700 text-gray-500 cursor-not-allowed'
+                    ? 'bg-deep-space-100 text-gray-500 cursor-not-allowed'
                     : 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white shadow-lg hover:shadow-xl'
                 }`}
               >
@@ -437,13 +437,13 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
         <div className="flex gap-4 mt-8">
           <button
             onClick={handleClose}
-            className="flex-1 py-4 px-8 bg-slate-700 hover:bg-slate-600 text-white rounded-xl font-bold text-xl uppercase tracking-wide transition-all shadow-lg hover:shadow-xl"
+            className="flex-1 py-4 px-8 bg-deep-space-100 hover:bg-deep-space-50 text-white border-none font-bold text-xl uppercase tracking-wide transition-all shadow-lg hover:shadow-xl"
           >
             View Analytics
           </button>
           <button
             onClick={handlePlayAgain}
-            className="flex-1 py-4 px-8 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white rounded-xl font-bold text-xl uppercase tracking-wide transition-all shadow-lg hover:shadow-xl"
+            className="flex-1 py-4 px-8 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white border-none font-bold text-xl uppercase tracking-wide transition-all shadow-lg hover:shadow-xl"
           >
             Play Again
           </button>

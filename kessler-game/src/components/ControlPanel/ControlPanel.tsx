@@ -109,9 +109,30 @@ export function ControlPanel() {
 
   return (
     <>
-      <div className="bg-slate-800 border-2 border-slate-600 rounded-xl px-6 pt-1 pb-6 w-full h-[1100px] flex flex-col">
+      <div className="bg-deep-space-100 border-4 border-cyber-cyan-800 px-6 pt-1 pb-6 w-full h-[1100px] flex flex-col shadow-depth-lg relative overflow-hidden">
+        <div className="absolute inset-0 opacity-5 pointer-events-none" style={{
+          backgroundImage: 'linear-gradient(145deg, rgba(255,255,255,0.1) 0%, transparent 40%, rgba(0,217,255,0.05) 100%)',
+        }}></div>
+        {/* Phillips screw heads */}
+        <div className="absolute top-2 left-2 w-3 h-3 rounded-full bg-gray-600 shadow-inner pointer-events-none z-20 flex items-center justify-center">
+          <div className="absolute w-2 h-[1px] bg-gray-800"></div>
+          <div className="absolute w-[1px] h-2 bg-gray-800"></div>
+        </div>
+        <div className="absolute top-2 right-2 w-3 h-3 rounded-full bg-gray-600 shadow-inner pointer-events-none z-20 flex items-center justify-center">
+          <div className="absolute w-2 h-[1px] bg-gray-800"></div>
+          <div className="absolute w-[1px] h-2 bg-gray-800"></div>
+        </div>
+        <div className="absolute bottom-2 left-2 w-3 h-3 rounded-full bg-gray-600 shadow-inner pointer-events-none z-20 flex items-center justify-center">
+          <div className="absolute w-2 h-[1px] bg-gray-800"></div>
+          <div className="absolute w-[1px] h-2 bg-gray-800"></div>
+        </div>
+        <div className="absolute bottom-2 right-2 w-3 h-3 rounded-full bg-gray-600 shadow-inner pointer-events-none z-20 flex items-center justify-center">
+          <div className="absolute w-2 h-[1px] bg-gray-800"></div>
+          <div className="absolute w-[1px] h-2 bg-gray-800"></div>
+        </div>
+        <div className="relative z-10 flex flex-col h-full">
         <div className="mt-[17px]" style={{ marginBottom: 'calc(1.5rem - 27px)' }}>
-          <h2 className="text-xl font-bold text-blue-300 mb-4 pb-3 border-b-2 border-slate-700 uppercase tracking-wide">Launch Controls</h2>
+          <h2 className="text-xl font-bold text-cyber-cyan-500 mb-4 pb-3 border-b-2 border-deep-space-50 uppercase tracking-wide">Launch Controls</h2>
         </div>
 
         <div className="space-y-2 mb-6">
@@ -121,34 +142,11 @@ export function ControlPanel() {
             <button
               key={type}
               onClick={() => setLaunchType(type)}
-              className={`py-[7px] px-3 rounded-xl font-medium transition-all text-base flex flex-col items-center ${
+              className={`py-[7px] px-3 border-2 font-medium transition-all text-base flex flex-col items-center ${
                 launchType === type
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
+                  ? 'bg-cyber-cyan-600 text-deep-space-500 border-cyber-cyan-400 shadow-cyber'
+                  : 'bg-gray-700 text-gray-100 border-gray-600 hover:bg-cyber-cyan-900 hover:text-white hover:border-cyber-cyan-600 shadow-depth'
               }`}
-              style={{
-                boxShadow: launchType === type
-                  ? 'inset 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 2px rgba(0,0,0,0.2)'
-                  : '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)'
-              }}
-              onMouseEnter={(e) => {
-                if (launchType !== type) {
-                  e.currentTarget.style.boxShadow = '0 6px 12px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.15)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (launchType !== type) {
-                  e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)';
-                }
-              }}
-              onMouseDown={(e) => {
-                e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 2px rgba(0,0,0,0.2)';
-              }}
-              onMouseUp={(e) => {
-                if (launchType !== type) {
-                  e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)';
-                }
-              }}
             >
               <span>{type === 'satellite' ? 'Satellite' : type === 'drv' ? 'Active Debris Removal' : type === 'servicing' ? <><span style={{ color: '#67e8f9' }}>⬟</span> Servicing</> : <><span style={{ color: '#a855f7' }}>⬟</span> GEO Tug</>}</span>
               <span className="text-xs opacity-75 mt-1">
@@ -167,36 +165,11 @@ export function ControlPanel() {
               key={orbit}
               onClick={() => setSelectedOrbit(orbit)}
               disabled={launchType === 'geotug'}
-              className={`flex-1 py-[7px] px-6 rounded-xl font-medium transition-all text-lg ${
+              className={`flex-1 py-[7px] px-6 border-2 font-medium transition-all text-lg ${
                 (launchType === 'geotug' ? 'GEO' : selectedOrbit) === orbit
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
+                  ? 'bg-cyber-cyan-600 text-deep-space-500 border-cyber-cyan-400 shadow-cyber'
+                  : 'bg-gray-700 text-gray-100 border-gray-600 hover:bg-cyber-cyan-900 hover:text-white hover:border-cyber-cyan-600 shadow-depth'
               } ${launchType === 'geotug' ? 'cursor-not-allowed opacity-60' : ''}`}
-              style={{
-                boxShadow: (launchType === 'geotug' ? 'GEO' : selectedOrbit) === orbit
-                  ? 'inset 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 2px rgba(0,0,0,0.2)'
-                  : '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)'
-              }}
-              onMouseEnter={(e) => {
-                if ((launchType === 'geotug' ? 'GEO' : selectedOrbit) !== orbit && launchType !== 'geotug') {
-                  e.currentTarget.style.boxShadow = '0 6px 12px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.15)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if ((launchType === 'geotug' ? 'GEO' : selectedOrbit) !== orbit && launchType !== 'geotug') {
-                  e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)';
-                }
-              }}
-              onMouseDown={(e) => {
-                if (launchType !== 'geotug') {
-                  e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 2px rgba(0,0,0,0.2)';
-                }
-              }}
-              onMouseUp={(e) => {
-                if ((launchType === 'geotug' ? 'GEO' : selectedOrbit) !== orbit && launchType !== 'geotug') {
-                  e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)';
-                }
-              }}
             >
               {orbit}
             </button>
@@ -219,32 +192,32 @@ export function ControlPanel() {
                   <button
                     key={type}
                     onClick={() => setDrvType(type)}
-                    className={`py-[7px] px-3 rounded-xl font-medium capitalize transition-all text-base ${
+                    className={`py-[7px] px-3 border-2 font-medium capitalize transition-all text-base ${
                       drvType === type
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
+                        ? 'bg-cyber-cyan-600 text-deep-space-500 border-cyber-cyan-400'
+                        : 'bg-gray-700 text-gray-100 border-gray-600 hover:bg-cyber-cyan-900 hover:text-white hover:border-cyber-cyan-600'
                     }`}
                     style={{
                       boxShadow: drvType === type
-                        ? 'inset 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 2px rgba(0,0,0,0.2)'
-                        : '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)'
+                        ? '0 0 30px rgba(0, 217, 255, 0.5), inset 0 4px 12px rgba(0,0,0,0.8), inset 0 2px 6px rgba(0,0,0,0.6)'
+                        : '0 8px 16px rgba(0,0,0,0.9), 0 4px 8px rgba(0,0,0,0.7), 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.1)'
                     }}
                     onMouseEnter={(e) => {
                       if (drvType !== type) {
-                        e.currentTarget.style.boxShadow = '0 6px 12px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.15)';
+                        e.currentTarget.style.boxShadow = '0 10px 20px rgba(0,0,0,0.95), 0 6px 12px rgba(0,0,0,0.8), 0 3px 6px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.15)';
                       }
                     }}
                     onMouseLeave={(e) => {
                       if (drvType !== type) {
-                        e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)';
+                        e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.9), 0 4px 8px rgba(0,0,0,0.7), 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.1)';
                       }
                     }}
                     onMouseDown={(e) => {
-                      e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 2px rgba(0,0,0,0.2)';
+                      e.currentTarget.style.boxShadow = 'inset 0 4px 12px rgba(0,0,0,0.8), inset 0 2px 6px rgba(0,0,0,0.6)';
                     }}
                     onMouseUp={(e) => {
                       if (drvType !== type) {
-                        e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)';
+                        e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.9), 0 4px 8px rgba(0,0,0,0.7), 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.1)';
                       }
                     }}
                   >
@@ -257,21 +230,21 @@ export function ControlPanel() {
         ) : launchType === 'servicing' ? (
           <div className="space-y-2">
             <label className="text-base font-medium text-gray-300">Servicing Vehicle Configuration</label>
-            <div className="bg-slate-700/50 rounded-xl p-4 text-gray-400 text-sm">
+            <div className="bg-deep-space-100/50 border-2 p-4 text-gray-400 text-sm">
               Servicing vehicles extend the operational lifespan of satellites and ADRs by resetting their age to zero.
             </div>
           </div>
         ) : (
           <div className="space-y-2">
             <label className="text-base font-medium text-gray-300">GEO Tug Configuration</label>
-            <div className="bg-slate-700/50 rounded-xl p-4 text-gray-400 text-sm">
+            <div className="bg-deep-space-100/50 border-2 p-4 text-gray-400 text-sm">
               GEO Tugs transport end-of-life satellites to graveyard orbit, preventing them from becoming debris.
             </div>
           </div>
         )}
       </div>
 
-      <div className="pt-4 border-t border-slate-700" style={{ marginTop: launchType === 'drv' ? '5px' : '0' }}>
+      <div className="pt-4 border-t border-deep-space-50" style={{ marginTop: launchType === 'drv' ? '5px' : '0' }}>
         <div className="flex justify-between text-base mb-[2px]">
           <span className="text-gray-400">Total Cost:</span>
           <span className="font-bold text-yellow-400">${(totalCost / 1e6).toFixed(1)}M</span>
@@ -286,39 +259,40 @@ export function ControlPanel() {
         <button
           onClick={handleLaunch}
           disabled={!canAfford}
-          className={`w-full py-[11px] px-6 rounded-xl font-bold uppercase tracking-wide transition-all mt-[30px] text-lg ${
+          className={`w-[calc(100%-10px)] mx-auto block py-[11px] px-6 border-2 font-bold uppercase tracking-wide transition-all mt-[20px] text-xl ${
             canAfford
-              ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white'
-              : 'bg-slate-700 text-slate-500 cursor-not-allowed'
+              ? 'bg-electric-green-700 hover:bg-electric-green-600 border-electric-green-500 text-white'
+              : 'bg-deep-space-100 text-slate-500 border-deep-space-50 cursor-not-allowed'
           }`}
           style={{
             boxShadow: canAfford
-              ? '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)'
-              : 'none'
+              ? '0 0 40px rgba(0, 255, 136, 0.6), 0 10px 20px rgba(0,0,0,0.95), 0 6px 12px rgba(0,0,0,0.8), inset 0 -3px 6px rgba(0,0,0,0.3), inset 0 2px 3px rgba(255,255,255,0.15)'
+              : 'inset 0 4px 12px rgba(0,0,0,0.8)'
           }}
           onMouseEnter={(e) => {
             if (canAfford) {
-              e.currentTarget.style.boxShadow = '0 6px 12px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.15)';
+              e.currentTarget.style.boxShadow = '0 0 50px rgba(0, 255, 136, 0.7), 0 12px 24px rgba(0,0,0,0.98), 0 8px 16px rgba(0,0,0,0.85), inset 0 -3px 6px rgba(0,0,0,0.3), inset 0 2px 3px rgba(255,255,255,0.2)';
             }
           }}
           onMouseLeave={(e) => {
             if (canAfford) {
-              e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)';
+              e.currentTarget.style.boxShadow = '0 0 40px rgba(0, 255, 136, 0.6), 0 10px 20px rgba(0,0,0,0.95), 0 6px 12px rgba(0,0,0,0.8), inset 0 -3px 6px rgba(0,0,0,0.3), inset 0 2px 3px rgba(255,255,255,0.15)';
             }
           }}
           onMouseDown={(e) => {
             if (canAfford) {
-              e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 2px rgba(0,0,0,0.2)';
+              e.currentTarget.style.boxShadow = '0 0 30px rgba(0, 255, 136, 0.5), inset 0 5px 15px rgba(0,0,0,0.9), inset 0 3px 8px rgba(0,0,0,0.7)';
             }
           }}
           onMouseUp={(e) => {
             if (canAfford) {
-              e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)';
+              e.currentTarget.style.boxShadow = '0 0 40px rgba(0, 255, 136, 0.6), 0 10px 20px rgba(0,0,0,0.95), 0 6px 12px rgba(0,0,0,0.8), inset 0 -3px 6px rgba(0,0,0,0.3), inset 0 2px 3px rgba(255,255,255,0.15)';
             }
           }}
         >
           {canAfford ? (launchType === 'satellite' ? 'Launch Satellite' : launchType === 'drv' ? 'Launch ADR' : launchType === 'servicing' ? 'Launch Servicing Vehicle' : 'Launch GEO Tug') : 'Insufficient Budget'}
         </button>
+      </div>
       </div>
     </div>
     <div className="text-sm text-gray-500 mt-2">Version: v{__APP_VERSION__}</div>

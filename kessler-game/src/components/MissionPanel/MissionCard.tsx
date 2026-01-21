@@ -14,7 +14,7 @@ export function MissionCard({ mission }: MissionCardProps) {
   const borderColor = completed ? 'border-green-500' : failed ? 'border-red-500' : 'border-yellow-400';
   
   return (
-    <div className={`bg-slate-700 border-l-4 ${borderColor} rounded-lg p-4 transition-all hover:translate-x-1`}>
+    <div className={`bg-deep-space-100 border-l-4 ${borderColor} p-4 transition-all hover:translate-x-1 shadow-depth`}>
       <div className="flex items-center gap-3 mb-2">
         <div className={`w-5 h-5 rounded border-2 flex items-center justify-center text-sm ${
           completed 
@@ -51,7 +51,7 @@ export function MissionCard({ mission }: MissionCardProps) {
             Progress: {currentProgress}/{target}
             {turnLimit && ` (Turn ${currentTurn}/${turnLimit})`}
           </div>
-          <div className="h-1.5 bg-slate-800 rounded-full ml-8 mt-2 overflow-hidden">
+          <div className="h-1.5 bg-deep-space-300 rounded-full ml-8 mt-2 overflow-hidden">
             <div 
               className="h-full bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-full transition-all duration-300"
               style={{ width: `${progressPercent}%` }}

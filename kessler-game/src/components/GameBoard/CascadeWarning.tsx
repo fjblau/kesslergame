@@ -40,7 +40,7 @@ export function CascadeWarning({ onComplete }: CascadeWarningProps) {
           initial={{ scale: 0.5, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.4, ease: 'easeOut' }}
-          className="bg-red-600/90 px-8 py-4 rounded-lg shadow-2xl"
+          className="bg-red-600/90 px-8 py-4 border-none shadow-2xl"
         >
           <motion.h2
             animate={{ 

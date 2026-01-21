@@ -1,8 +1,78 @@
 @import "tailwindcss";
 
+@theme {
+  --color-cyber-cyan-50: #e6f9ff;
+  --color-cyber-cyan-100: #b3edff;
+  --color-cyber-cyan-200: #80e1ff;
+  --color-cyber-cyan-300: #4dd5ff;
+  --color-cyber-cyan-400: #1ac9ff;
+  --color-cyber-cyan-500: #00d9ff;
+  --color-cyber-cyan-600: #00b8d4;
+  --color-cyber-cyan-700: #0097a9;
+  --color-cyber-cyan-800: #00767f;
+  --color-cyber-cyan-900: #005554;
+  
+  --color-electric-green-50: #e6fff5;
+  --color-electric-green-100: #b3ffe0;
+  --color-electric-green-200: #80ffcb;
+  --color-electric-green-300: #4dffb6;
+  --color-electric-green-400: #1affa1;
+  --color-electric-green-500: #00ff88;
+  --color-electric-green-600: #00cc6a;
+  --color-electric-green-700: #00994d;
+  --color-electric-green-800: #006630;
+  --color-electric-green-900: #003318;
+  
+  --color-neon-orange-50: #fff3ed;
+  --color-neon-orange-100: #ffdcc8;
+  --color-neon-orange-200: #ffc5a3;
+  --color-neon-orange-300: #ffae7e;
+  --color-neon-orange-400: #ff9759;
+  --color-neon-orange-500: #ff6b35;
+  --color-neon-orange-600: #ff4500;
+  --color-neon-orange-700: #cc3700;
+  --color-neon-orange-800: #992900;
+  --color-neon-orange-900: #661b00;
+  
+  --color-deep-space-50: #2d3548;
+  --color-deep-space-100: #252b3d;
+  --color-deep-space-200: #1f2433;
+  --color-deep-space-300: #1a1f2e;
+  --color-deep-space-400: #151922;
+  --color-deep-space-500: #0a0e1a;
+  --color-deep-space-600: #080c15;
+  --color-deep-space-700: #060910;
+  --color-deep-space-800: #04070b;
+  --color-deep-space-900: #020406;
+}
+
+:root {
+  --color-primary: #00d9ff;
+  --color-primary-dark: #00b8d4;
+  --color-secondary: #00ff88;
+  --color-secondary-dark: #00cc6a;
+  --color-accent: #ff6b35;
+  --color-accent-dark: #ff4500;
+  
+  --color-bg-base: #0a0e1a;
+  --color-bg-surface: #1a1f2e;
+  --color-bg-elevated: #2d3548;
+  --color-bg-hover: #363d52;
+  
+  --color-border-default: #1e3a52;
+  --color-border-highlight: var(--color-primary);
+  --color-border-muted: #3a4556;
+  
+  --color-text-primary: #f1f5f9;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #64748b;
+}
+
 @layer base {
   body {
-    @apply bg-slate-900 text-gray-100 min-h-screen;
+    background-color: #050810;
+    color: var(--color-text-primary);
+    @apply min-h-screen;
     font-family: Calibri, Candara, 'Segoe UI', Arial, sans-serif;
   }
 }

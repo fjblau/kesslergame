@@ -91,7 +91,7 @@ export function CertificateRetrievalPage() {
   if (state.status === 'not_found' || state.status === 'error') {
     return (
       <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
-        <div className="bg-slate-800 rounded-xl p-8 max-w-md w-full border border-red-500/50">
+        <div className="bg-deep-space-300 border-none p-8 max-w-md w-full border border-red-500/50">
           <h1 className="text-2xl font-bold text-red-400 mb-4">Certificate Not Found</h1>
           <p className="text-gray-300 mb-4">
             {state.error || 'This certificate may have expired or the link is invalid.'}
@@ -116,7 +116,7 @@ export function CertificateRetrievalPage() {
 
   return (
     <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
-      <div className="bg-slate-800 rounded-xl p-8 max-w-2xl w-full border border-slate-700">
+      <div className="bg-deep-space-300 border-none p-8 max-w-2xl w-full border border-slate-700">
         <h1 className="text-3xl font-bold text-white mb-2 text-center">
           🎖️ Mission Certificate
         </h1>
@@ -124,7 +124,7 @@ export function CertificateRetrievalPage() {
           Space Debris Management Program
         </p>
 
-        <div className="bg-gradient-to-br from-purple-900/50 to-pink-900/50 border-2 border-purple-500/50 rounded-xl p-6 mb-6">
+        <div className="bg-gradient-to-br from-purple-900/50 to-pink-900/50 border-2 border-purple-500/50 border-none p-6 mb-6">
           <h2 className="text-2xl font-bold text-white mb-4">{certificate.playerName}</h2>
           
           <div className="grid grid-cols-2 gap-4 text-sm">
@@ -153,14 +153,14 @@ export function CertificateRetrievalPage() {
 
         <button
           onClick={handleDownload}
-          className="w-full py-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white rounded-xl font-bold text-xl transition-all shadow-lg hover:shadow-xl mb-4"
+          className="w-full py-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white border-none font-bold text-xl transition-all shadow-lg hover:shadow-xl mb-4"
         >
           📄 Download Certificate PDF
         </button>
 
         <Link
           to="/"
-          className="block w-full py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-xl font-semibold text-center transition-all"
+          className="block w-full py-3 bg-deep-space-100 hover:bg-slate-600 text-white border-none font-semibold text-center transition-all"
         >
           🚀 Play the Game
         </Link>

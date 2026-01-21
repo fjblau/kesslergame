@@ -8,8 +8,8 @@ interface ChartProps {
 export function DebrisRemovalChart({ data }: ChartProps) {
   if (data.length === 0) {
     return (
-      <div className="bg-slate-800 border border-slate-700 rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-blue-300 mb-4">
+      <div className="bg-deep-space-300 border border-deep-space-50 border-none p-6">
+        <h2 className="text-lg font-semibold text-cyber-cyan-400 mb-4">
           Debris Removal Over Time
         </h2>
         <div className="h-[300px] flex items-center justify-center text-gray-400">
@@ -25,8 +25,8 @@ export function DebrisRemovalChart({ data }: ChartProps) {
   const avgPerTurn = latestData.turn > 0 ? (totalRemoved / latestData.turn).toFixed(1) : '0.0';
 
   return (
-    <div className="bg-slate-800 border border-slate-700 rounded-xl p-6">
-      <h2 className="text-lg font-semibold text-blue-300 mb-4">
+    <div className="bg-deep-space-300 border border-deep-space-50 border-none p-6">
+      <h2 className="text-lg font-semibold text-cyber-cyan-400 mb-4">
         Debris Removal Over Time
       </h2>
       <div role="img" aria-label="Cumulative debris removed over time chart">
@@ -64,7 +64,7 @@ export function DebrisRemovalChart({ data }: ChartProps) {
         </ResponsiveContainer>
       </div>
 
-      <div className="flex justify-around mt-6 pt-6 border-t border-slate-700">
+      <div className="flex justify-around mt-6 pt-6 border-t border-deep-space-50">
         <div className="text-center">
           <div className="text-xs text-gray-400 mb-2">Total Removed</div>
           <div className="text-2xl font-bold text-green-400">{totalRemoved}</div>

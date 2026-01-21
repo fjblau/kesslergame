@@ -12,8 +12,8 @@ export function BudgetDifficultySettings({ selected, onChange }: BudgetDifficult
 
   return (
     <div className="space-y-5">
-      <div className="bg-gradient-to-r from-slate-700 to-slate-800 p-4 rounded-xl border border-slate-600">
-        <h3 className="text-2xl font-bold text-blue-300 mb-1">Budget Difficulty</h3>
+      <div className="bg-deep-space-100 p-4 border-2 border-deep-space-50">
+        <h3 className="text-2xl font-bold text-cyber-cyan-500 mb-1">Budget Difficulty</h3>
         <p className="text-sm text-gray-400">Choose your economic challenge level</p>
       </div>
       <div className="space-y-3">

@@ -9,7 +9,7 @@ export function DebrisBreakdown({ cooperative, uncooperative, total }: DebrisBre
   const uncooperativePercent = total > 0 ? Math.round((uncooperative / total) * 100) : 0;
 
   return (
-    <div className="mt-4 p-4 bg-slate-900/50 rounded-lg border border-slate-600">
+    <div className="mt-4 p-4 bg-slate-900/50 border-none border border-deep-space-50">
       <div className="text-lg font-semibold text-yellow-400 mb-3">
         Total Debris: {total}
       </div>

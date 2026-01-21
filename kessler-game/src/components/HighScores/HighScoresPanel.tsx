@@ -33,7 +33,7 @@ export function HighScoresPanel() {
   const getDifficultyColor = (difficulty: string): string => {
     switch (difficulty.toLowerCase()) {
       case 'easy': return 'text-green-400';
-      case 'normal': return 'text-blue-400';
+      case 'normal': return 'text-cyber-cyan-500';
       case 'hard': return 'text-orange-400';
       case 'challenge': return 'text-red-400';
       default: return 'text-gray-400';
@@ -52,17 +52,17 @@ export function HighScoresPanel() {
   return (
     <div className="p-8 space-y-8 max-w-[1200px] mx-auto">
       <div className="mb-6">
-        <h2 className="text-4xl font-bold text-blue-400 mb-2">High Scores</h2>
+        <h2 className="text-4xl font-bold text-cyber-cyan-500 mb-2">High Scores</h2>
         <p className="text-gray-400">Top 10 scores from all completed games</p>
       </div>
 
       {loading ? (
-        <div className="bg-slate-800 border border-slate-700 rounded-xl p-12 text-center">
+        <div className="bg-deep-space-300 border border-deep-space-50 border-none p-12 text-center">
           <div className="text-6xl mb-4">⏳</div>
           <h3 className="text-2xl font-bold text-gray-300 mb-2">Loading High Scores...</h3>
         </div>
       ) : highScores.length === 0 ? (
-        <div className="bg-slate-800 border border-slate-700 rounded-xl p-12 text-center">
+        <div className="bg-deep-space-300 border border-deep-space-50 border-none p-12 text-center">
           <div className="text-6xl mb-4">🏆</div>
           <h3 className="text-2xl font-bold text-gray-300 mb-2">No High Scores Yet</h3>
           <p className="text-gray-400">Complete a game to see your score here!</p>
@@ -72,9 +72,9 @@ export function HighScoresPanel() {
           {highScores.map((score, index) => (
             <div
               key={index}
-              className={`bg-slate-800 border ${
-                index < 3 ? 'border-yellow-500/50' : 'border-slate-700'
-              } rounded-xl p-6 hover:bg-slate-750 transition-all ${
+              className={`bg-deep-space-300 border ${
+                index < 3 ? 'border-yellow-500/50' : 'border-deep-space-50'
+              } border-none p-6 hover:bg-slate-750 transition-all ${
                 index < 3 ? 'shadow-lg shadow-yellow-500/20' : ''
               }`}
             >
@@ -117,8 +117,8 @@ export function HighScoresPanel() {
         </div>
       )}
 
-      <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 mt-8">
-        <h3 className="text-xl font-bold text-blue-400 mb-4">Grade Thresholds</h3>
+      <div className="bg-deep-space-300 border border-deep-space-50 border-none p-6 mt-8">
+        <h3 className="text-xl font-bold text-cyber-cyan-500 mb-4">Grade Thresholds</h3>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <div className="text-center">
             <div className="text-3xl font-bold bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">

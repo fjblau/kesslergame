@@ -162,7 +162,7 @@ function App() {
       content: (
         <div className="p-8 space-y-8 max-w-[1500px] mx-auto">
           <section>
-            <h2 className="text-3xl font-bold text-blue-400 mb-4">Game Overview</h2>
+            <h2 className="text-3xl font-bold text-cyber-cyan-500 mb-4">Game Overview</h2>
             <p className="text-gray-300 mb-4">
               Space Debris Removal is a simulation game where you manage Earth's orbital space by launching satellites
               and deploying Active Debris Removal (ADR) vehicles to prevent catastrophic cascading collisions.
@@ -170,31 +170,31 @@ function App() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-blue-400 mb-3">Satellites</h2>
+            <h2 className="text-2xl font-bold text-cyber-cyan-500 mb-3">Satellites</h2>
             <div className="space-y-4 text-gray-300">
               <p className="mb-4">Satellites are your primary assets in orbit. Each serves a specific purpose and contributes to your score.</p>
               
               <div className="ml-4 space-y-3">
                 <div>
-                  <h4 className="text-lg font-semibold text-purple-300">☁️ Weather Satellites</h4>
+                  <h4 className="text-lg font-semibold text-electric-green-400">☁️ Weather Satellites</h4>
                   <p>Monitor atmospheric conditions, track storms, and provide climate data. Essential for meteorological services.</p>
                 </div>
                 <div>
-                  <h4 className="text-lg font-semibold text-purple-300">📡 Communication Satellites</h4>
+                  <h4 className="text-lg font-semibold text-electric-green-400">📡 Communication Satellites</h4>
                   <p>Enable global telecommunications, broadcast services, and internet connectivity. Critical infrastructure for modern society.</p>
                 </div>
                 <div>
-                  <h4 className="text-lg font-semibold text-purple-300">🛰️ GPS Satellites</h4>
+                  <h4 className="text-lg font-semibold text-electric-green-400">🛰️ GPS Satellites</h4>
                   <p>Provide positioning, navigation, and timing services. Used for mapping, transportation, and military applications.</p>
                 </div>
                 <div>
-                  <h4 className="text-lg font-semibold text-purple-300">🎲 Random Purpose (10% Discount)</h4>
+                  <h4 className="text-lg font-semibold text-electric-green-400">🎲 Random Purpose (10% Discount)</h4>
                   <p>Let the system assign a random purpose. Receive a 10% launch cost discount for the flexibility.</p>
                 </div>
               </div>
 
-              <div className="mt-4 p-4 bg-gray-800 rounded-lg">
-                <h4 className="font-semibold text-purple-300 mb-2">Orbital Layers & Launch Costs</h4>
+              <div className="mt-4 p-4 bg-deep-space-100 border border-deep-space-50">
+                <h4 className="font-semibold text-electric-green-400 mb-2">Orbital Layers & Launch Costs</h4>
                 <ul className="space-y-1 text-sm">
                   <li><strong>LEO (Low Earth Orbit):</strong> $2M launch, 20-turn lifespan, 6.4 km/s orbital speed - Closest to Earth, higher collision risk</li>
                   <li><strong>MEO (Medium Earth Orbit):</strong> $3M launch, 40-turn lifespan, 4.0 km/s orbital speed - Moderate altitude, balanced risk</li>
@@ -203,8 +203,8 @@ function App() {
                 </ul>
               </div>
 
-              <div className="mt-4 p-4 bg-gray-800 rounded-lg">
-                <h4 className="font-semibold text-purple-300 mb-2">Insurance Options</h4>
+              <div className="mt-4 p-4 bg-deep-space-100 border border-deep-space-50">
+                <h4 className="font-semibold text-electric-green-400 mb-2">Insurance Options</h4>
                 <ul className="space-y-1">
                   <li><strong>None:</strong> No cost, no payout if destroyed</li>
                   <li><strong>Basic:</strong> $500K cost, $1M payout if destroyed</li>
@@ -216,12 +216,12 @@ function App() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-blue-400 mb-3">Active Debris Removal (ADR) Vehicles</h2>
+            <h2 className="text-2xl font-bold text-cyber-cyan-500 mb-3">Active Debris Removal (ADR) Vehicles</h2>
             <div className="space-y-4 text-gray-300">
               <p className="mb-4">ADR vehicles are specialized spacecraft designed to capture and remove space debris, relocate satellites, and extend operational lifespans. Choose the right type based on your mission objectives.</p>
               
               <div className="grid md:grid-cols-2 gap-4">
-                <div className="p-4 bg-gray-800 rounded-lg">
+                <div className="p-4 bg-deep-space-100 border border-deep-space-50">
                   <h4 className="text-lg font-semibold text-green-400 mb-2">Cooperative ADR</h4>
                   <p className="mb-3">Standard debris removal vehicle for cooperative debris (70% of total debris).</p>
                   <ul className="space-y-1 text-sm">
@@ -238,7 +238,7 @@ function App() {
                   <p className="text-xs text-gray-400 mt-2">Best for: Routine cleanup of cooperative debris with known trajectories</p>
                 </div>
 
-                <div className="p-4 bg-gray-800 rounded-lg">
+                <div className="p-4 bg-deep-space-100 border border-deep-space-50">
                   <h4 className="text-lg font-semibold text-orange-400 mb-2">Uncooperative ADR</h4>
                   <p className="mb-3">High-capacity vehicle for tumbling/uncooperative debris (30% of total debris).</p>
                   <ul className="space-y-1 text-sm">
@@ -255,8 +255,8 @@ function App() {
                   <p className="text-xs text-gray-400 mt-2">Best for: Aggressive cleanup campaigns and difficult debris from collisions</p>
                 </div>
 
-                <div className="p-4 bg-gray-800 rounded-lg">
-                  <h4 className="text-lg font-semibold text-blue-400 mb-2">GeoTug</h4>
+                <div className="p-4 bg-deep-space-100 border border-deep-space-50">
+                  <h4 className="text-lg font-semibold text-cyber-cyan-500 mb-2">GeoTug</h4>
                   <p className="mb-3">Satellite recovery vehicle that moves end-of-life satellites to GRAVEYARD orbit.</p>
                   <ul className="space-y-1 text-sm">
                     <li><strong>Capacity:</strong> 1 satellite/mission</li>
@@ -267,8 +267,8 @@ function App() {
                   <p className="text-xs text-gray-400 mt-2">Best for: Moving satellites to GRAVEYARD to prevent future collisions</p>
                 </div>
 
-                <div className="p-4 bg-gray-800 rounded-lg">
-                  <h4 className="text-lg font-semibold text-purple-400 mb-2">Servicing Vehicle</h4>
+                <div className="p-4 bg-deep-space-100 border border-deep-space-50">
+                  <h4 className="text-lg font-semibold text-electric-green-500 mb-2">Servicing Vehicle</h4>
                   <p className="mb-3">Life extension service that extends satellite/ADR lifespan by 50%.</p>
                   <ul className="space-y-1 text-sm">
                     <li><strong>Capacity:</strong> 1 satellite/ADR per turn</li>
@@ -285,8 +285,8 @@ function App() {
                 </div>
               </div>
 
-              <div className="mt-4 p-4 bg-gray-800 rounded-lg">
-                <h4 className="font-semibold text-purple-300 mb-2">ADR Vehicle Lifecycle</h4>
+              <div className="mt-4 p-4 bg-deep-space-100 border border-deep-space-50">
+                <h4 className="font-semibold text-electric-green-400 mb-2">ADR Vehicle Lifecycle</h4>
                 <p className="text-sm">Most ADR vehicles are decommissioned after a set number of turns (default: 10 turns for cooperative/uncooperative, 15 for servicing, permanent for GeoTug). They are completely removed from orbit and do not become debris—they safely deorbit and burn up in the atmosphere.</p>
                 <p className="text-sm text-gray-400 mt-2">Plan your ADR vehicle deployments strategically to ensure continuous coverage. Adjust decommission time in Configuration to fine-tune your strategy.</p>
               </div>
@@ -294,40 +294,40 @@ function App() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-blue-400 mb-3">How to Play</h2>
+            <h2 className="text-2xl font-bold text-cyber-cyan-500 mb-3">How to Play</h2>
             <div className="space-y-4 text-gray-300">
               <div>
-                <h3 className="text-xl font-semibold text-purple-400 mb-2">Managing Risk</h3>
+                <h3 className="text-xl font-semibold text-electric-green-500 mb-2">Managing Risk</h3>
                 <p>Watch the collision risk indicator. High debris density increases the chance of collisions, which create more debris in a dangerous cascade. Deploy ADR vehicles proactively when debris levels rise.</p>
               </div>
               <div>
-                <h3 className="text-xl font-semibold text-purple-400 mb-2">Completing Missions</h3>
+                <h3 className="text-xl font-semibold text-electric-green-500 mb-2">Completing Missions</h3>
                 <p>Complete missions to earn bonus points and unlock achievements. Missions vary from launching specific satellites to maintaining low debris levels.</p>
               </div>
               <div>
-                <h3 className="text-xl font-semibold text-purple-400 mb-2">Budget Management & Revenue</h3>
+                <h3 className="text-xl font-semibold text-electric-green-500 mb-2">Budget Management & Revenue</h3>
                 <p>Your budget is the lifeblood of your operations. Each satellite launch, ADR vehicle deployment, and insurance purchase costs money.</p>
                 
-                <div className="mt-4 p-4 bg-gray-800 rounded-lg">
-                  <h4 className="font-semibold text-purple-300 mb-2">Satellite Revenue (Per Turn)</h4>
+                <div className="mt-4 p-4 bg-deep-space-100 border border-deep-space-50">
+                  <h4 className="font-semibold text-electric-green-400 mb-2">Satellite Revenue (Per Turn)</h4>
                   <p className="mb-2 text-sm">Each active satellite generates revenue every turn based on its type:</p>
                   <ul className="space-y-1 ml-4 text-sm">
-                    <li>☁️ <strong className="text-blue-300">Weather:</strong> $100,000 per turn</li>
+                    <li>☁️ <strong className="text-cyber-cyan-400">Weather:</strong> $100,000 per turn</li>
                     <li>📡 <strong className="text-green-300">Communications:</strong> $150,000 per turn</li>
                     <li>🛰️ <strong className="text-yellow-300">GPS:</strong> $200,000 per turn</li>
                   </ul>
                   <p className="mt-2 text-xs text-gray-400">Example: 5 Weather + 3 Comms + 2 GPS satellites = $1.35M revenue per turn</p>
                 </div>
 
-                <div className="mt-4 p-4 bg-gray-800 rounded-lg">
-                  <h4 className="font-semibold text-purple-300 mb-2">Bonus Income (Difficulty-Based)</h4>
+                <div className="mt-4 p-4 bg-deep-space-100 border border-deep-space-50">
+                  <h4 className="font-semibold text-electric-green-400 mb-2">Bonus Income (Difficulty-Based)</h4>
                   <p className="mb-2 text-sm">In addition to satellite revenue, you receive periodic bonus income based on difficulty:</p>
                   <div className="space-y-2 ml-4">
                     <div className="text-sm">
                       <strong className="text-green-400">Easy Mode:</strong> $10M bonus every 10 turns
                     </div>
                     <div className="text-sm">
-                      <strong className="text-blue-400">Normal Mode:</strong> $5M bonus every 20 turns
+                      <strong className="text-cyber-cyan-500">Normal Mode:</strong> $5M bonus every 20 turns
                     </div>
                     <div className="text-sm">
                       <strong className="text-orange-400">Hard Mode:</strong> No bonus income
@@ -346,18 +346,18 @@ function App() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-blue-400 mb-3">Game Timing & Progression</h2>
+            <h2 className="text-2xl font-bold text-cyber-cyan-500 mb-3">Game Timing & Progression</h2>
             <div className="space-y-4 text-gray-300">
-              <div className="p-4 bg-gray-800 rounded-lg">
-                <h4 className="font-semibold text-purple-300 mb-2">Days vs. Turns</h4>
+              <div className="p-4 bg-deep-space-100 border border-deep-space-50">
+                <h4 className="font-semibold text-electric-green-400 mb-2">Days vs. Turns</h4>
                 <ul className="space-y-2">
                   <li><strong>Days:</strong> Simulated time that advances every second when the game is not paused. Used for tracking mission progress and time-based objectives.</li>
                   <li><strong>Turns:</strong> Game simulation steps where actions occur (collisions, debris removal, ADR operations). The game consists of up to 100 turns.</li>
                 </ul>
               </div>
 
-              <div className="p-4 bg-gray-800 rounded-lg">
-                <h4 className="font-semibold text-purple-300 mb-2">Simulation Speed</h4>
+              <div className="p-4 bg-deep-space-100 border border-deep-space-50">
+                <h4 className="font-semibold text-electric-green-400 mb-2">Simulation Speed</h4>
                 <ul className="space-y-2">
                   <li><strong>Paused:</strong> No turns advance, but you can still configure launches</li>
                   <li><strong>Normal:</strong> Turns advance every 4 seconds (base speed)</li>
@@ -374,8 +374,8 @@ function App() {
                 <p className="text-sm text-gray-400 mt-2">This gives you more time to react during high-risk situations.</p>
               </div>
 
-              <div className="p-4 bg-gray-800 rounded-lg">
-                <h4 className="font-semibold text-purple-300 mb-2">Auto-Pause Options</h4>
+              <div className="p-4 bg-deep-space-100 border border-deep-space-50">
+                <h4 className="font-semibold text-electric-green-400 mb-2">Auto-Pause Options</h4>
                 <p className="mb-2">Configure automatic pausing when important events occur:</p>
                 <ul className="space-y-1 text-sm">
                   <li>• Pause on collision detected</li>
@@ -388,7 +388,7 @@ function App() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-blue-400 mb-3">Game Ending Conditions</h2>
+            <h2 className="text-2xl font-bold text-cyber-cyan-500 mb-3">Game Ending Conditions</h2>
             <div className="space-y-4 text-gray-300">
               <p className="mb-4">The game ends when any of the following conditions are met. Your final score and statistics will be displayed in the Game Over screen.</p>
               
@@ -416,29 +416,29 @@ function App() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-blue-400 mb-3">Analytics Tab</h2>
+            <h2 className="text-2xl font-bold text-cyber-cyan-500 mb-3">Analytics Tab</h2>
             <div className="space-y-4 text-gray-300">
               <p className="mb-4">The Analytics tab provides three time-series charts to help you track the simulation's progress and identify trends.</p>
               
               <div className="grid md:grid-cols-3 gap-4">
-                <div className="p-4 bg-gray-800 rounded-lg">
+                <div className="p-4 bg-deep-space-100 border border-deep-space-50">
                   <h4 className="text-lg font-semibold text-red-400 mb-2">Debris Count Chart</h4>
                   <p className="text-sm">Tracks the total number of debris pieces in orbit over time. Watch for exponential growth that signals the onset of Kessler Syndrome.</p>
                 </div>
 
-                <div className="p-4 bg-gray-800 rounded-lg">
-                  <h4 className="text-lg font-semibold text-blue-400 mb-2">Satellite Count Chart</h4>
+                <div className="p-4 bg-deep-space-100 border border-deep-space-50">
+                  <h4 className="text-lg font-semibold text-cyber-cyan-500 mb-2">Satellite Count Chart</h4>
                   <p className="text-sm">Shows your active satellite population. Declining numbers indicate collisions or solar flare impacts affecting your assets.</p>
                 </div>
 
-                <div className="p-4 bg-gray-800 rounded-lg">
+                <div className="p-4 bg-deep-space-100 border border-deep-space-50">
                   <h4 className="text-lg font-semibold text-green-400 mb-2">Debris Removal Chart</h4>
                   <p className="text-sm">Displays cumulative debris removed and active ADR vehicle count. Use this to assess the effectiveness of your cleanup efforts.</p>
                 </div>
               </div>
 
-              <div className="mt-4 p-4 bg-gray-800 rounded-lg">
-                <h4 className="font-semibold text-purple-300 mb-2">Using Analytics Effectively</h4>
+              <div className="mt-4 p-4 bg-deep-space-100 border border-deep-space-50">
+                <h4 className="font-semibold text-electric-green-400 mb-2">Using Analytics Effectively</h4>
                 <ul className="space-y-1 text-sm">
                   <li>• Compare debris growth rate vs. removal rate to gauge if you're winning or losing</li>
                   <li>• Identify patterns before and after major events (collisions, solar flares)</li>
@@ -450,27 +450,27 @@ function App() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-blue-400 mb-3">Configuration Parameters</h2>
+            <h2 className="text-2xl font-bold text-cyber-cyan-500 mb-3">Configuration Parameters</h2>
             <div className="space-y-4 text-gray-300">
               <p className="mb-4">The Configuration tab allows you to customize various game mechanics to adjust difficulty and simulation behavior. All settings are automatically saved and persist between sessions.</p>
               
               <div className="space-y-6">
-                <div className="p-4 bg-gray-800 rounded-lg">
-                  <h4 className="text-lg font-semibold text-purple-300 mb-3">Sound Settings</h4>
+                <div className="p-4 bg-deep-space-100 border border-deep-space-50">
+                  <h4 className="text-lg font-semibold text-electric-green-400 mb-3">Sound Settings</h4>
                   <ul className="space-y-2 text-sm">
                     <li><strong>Sound Effects:</strong> Toggle all game sound effects ON/OFF including background music, collision sounds, launch sounds, and event notifications.</li>
                   </ul>
                 </div>
 
-                <div className="p-4 bg-gray-800 rounded-lg">
-                  <h4 className="text-lg font-semibold text-purple-300 mb-3">General Settings</h4>
+                <div className="p-4 bg-deep-space-100 border border-deep-space-50">
+                  <h4 className="text-lg font-semibold text-electric-green-400 mb-3">General Settings</h4>
                   <ul className="space-y-2 text-sm">
                     <li><strong>ADR Decommission Time (5-20 turns):</strong> How many turns an ADR vehicle remains active before being decommissioned. Default is 10 turns. Increase for longer debris removal operations, decrease for faster ADR vehicle turnover.</li>
                   </ul>
                 </div>
 
-                <div className="p-4 bg-gray-800 rounded-lg">
-                  <h4 className="text-lg font-semibold text-purple-300 mb-3">Collision Settings</h4>
+                <div className="p-4 bg-deep-space-100 border border-deep-space-50">
+                  <h4 className="text-lg font-semibold text-electric-green-400 mb-3">Collision Settings</h4>
                   <ul className="space-y-2 text-sm">
                     <li><strong>Angle Threshold (1-60°):</strong> Maximum angle difference between object trajectories for a collision to occur. Lower values make collisions less likely, higher values increase collision probability.</li>
                     <li><strong>Radius Multiplier (0.1-5.0x):</strong> Adjusts the collision detection radius around objects. Higher values increase the effective "size" of objects for collision purposes.</li>
@@ -478,8 +478,8 @@ function App() {
                   </ul>
                 </div>
 
-                <div className="p-4 bg-gray-800 rounded-lg">
-                  <h4 className="text-lg font-semibold text-purple-300 mb-3">Orbital Speed Settings</h4>
+                <div className="p-4 bg-deep-space-100 border border-deep-space-50">
+                  <h4 className="text-lg font-semibold text-electric-green-400 mb-3">Orbital Speed Settings</h4>
                   <ul className="space-y-2 text-sm">
                     <li><strong>LEO Speed (2-12):</strong> Orbital speed for Low Earth Orbit objects. Higher speeds increase collision frequency in LEO.</li>
                     <li><strong>MEO Speed (1-8):</strong> Orbital speed for Medium Earth Orbit objects.</li>
@@ -488,8 +488,8 @@ function App() {
                   <p className="text-xs text-gray-400 mt-2">Tip: Realistic ratios are LEO:MEO:GEO ≈ 2.67:1.67:1. Faster speeds make the game more challenging.</p>
                 </div>
 
-                <div className="p-4 bg-gray-800 rounded-lg">
-                  <h4 className="text-lg font-semibold text-purple-300 mb-3">Solar Flare System</h4>
+                <div className="p-4 bg-deep-space-100 border border-deep-space-50">
+                  <h4 className="text-lg font-semibold text-electric-green-400 mb-3">Solar Flare System</h4>
                   <ul className="space-y-2 text-sm">
                     <li><strong>Flare Probability (0-100%):</strong> Chance of a solar flare occurring each turn. Default is 10%.</li>
                   </ul>
@@ -503,8 +503,8 @@ function App() {
                   </ul>
                 </div>
 
-                <div className="p-4 bg-gray-800 rounded-lg">
-                  <h4 className="text-lg font-semibold text-purple-300 mb-3">Risk-Based Speed Settings</h4>
+                <div className="p-4 bg-deep-space-100 border border-deep-space-50">
+                  <h4 className="text-lg font-semibold text-electric-green-400 mb-3">Risk-Based Speed Settings</h4>
                   <ul className="space-y-2 text-sm">
                     <li><strong>LOW Risk Multiplier (0.5-2.0x):</strong> Turn duration multiplier when debris risk is LOW. Default is 1.0x (normal speed).</li>
                     <li><strong>MEDIUM Risk Multiplier (0.5-3.0x):</strong> Turn duration multiplier when debris risk is MEDIUM. Default is 1.5x (50% slower).</li>
@@ -513,8 +513,8 @@ function App() {
                   <p className="text-xs text-gray-400 mt-2">Higher multipliers give you more time to react during dangerous situations.</p>
                 </div>
 
-                <div className="p-4 bg-gray-800 rounded-lg">
-                  <h4 className="text-lg font-semibold text-purple-300 mb-3">Uncooperative ADR Settings</h4>
+                <div className="p-4 bg-deep-space-100 border border-deep-space-50">
+                  <h4 className="text-lg font-semibold text-electric-green-400 mb-3">Uncooperative ADR Settings</h4>
                   <ul className="space-y-2 text-sm">
                     <li><strong>Capacity Min (1-15):</strong> Minimum debris pieces an uncooperative ADR vehicle can remove. Default is 6.</li>
                     <li><strong>Capacity Max (1-15):</strong> Maximum debris pieces an uncooperative ADR vehicle can remove. Default is 9.</li>
@@ -527,7 +527,7 @@ function App() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-blue-400 mb-3">Game Mechanics</h2>
+            <h2 className="text-2xl font-bold text-cyber-cyan-500 mb-3">Game Mechanics</h2>
             <ul className="list-disc list-inside space-y-2 text-gray-300">
               <li><strong>Resources:</strong> Budget and launch capacity limit your actions</li>
               <li><strong>Events:</strong> Random events like solar storms can affect your satellites</li>
@@ -536,7 +536,7 @@ function App() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-blue-400 mb-3">Tips for Success</h2>
+            <h2 className="text-2xl font-bold text-cyber-cyan-500 mb-3">Tips for Success</h2>
             <ul className="list-disc list-inside space-y-2 text-gray-300">
               <li>Balance satellite launches with debris removal efforts</li>
               <li>Monitor the Analytics tab to track trends</li>
@@ -559,7 +559,7 @@ function App() {
       content: (
         <div className="p-8 space-y-8 max-w-[1500px] mx-auto">
           <section>
-            <h2 className="text-3xl font-bold text-blue-400 mb-4">About Kessler Syndrome</h2>
+            <h2 className="text-3xl font-bold text-cyber-cyan-500 mb-4">About Kessler Syndrome</h2>
             <p className="text-gray-300 mb-4">
               The Kessler Syndrome, proposed by NASA scientist Donald J. Kessler in 1978, describes a catastrophic 
               scenario where the density of objects in low Earth orbit (LEO) becomes high enough that collisions 
@@ -575,7 +575,7 @@ function App() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-blue-400 mb-3">Current State of Space Debris</h2>
+            <h2 className="text-2xl font-bold text-cyber-cyan-500 mb-3">Current State of Space Debris</h2>
             <p className="text-gray-300 mb-4">
               As of 2024, there are millions of pieces of space debris orbiting Earth:
             </p>
@@ -591,33 +591,33 @@ function App() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-blue-400 mb-3">Space Debris Removal</h2>
+            <h2 className="text-2xl font-bold text-cyber-cyan-500 mb-3">Space Debris Removal</h2>
             <p className="text-gray-300 mb-4">
               Active debris removal (ADR) is crucial for the long-term sustainability of space activities. Several 
               methods are being developed:
             </p>
             <div className="space-y-3 text-gray-300">
               <div>
-                <h3 className="text-lg font-semibold text-purple-400">Robotic Arms & Nets</h3>
+                <h3 className="text-lg font-semibold text-electric-green-500">Robotic Arms & Nets</h3>
                 <p>Spacecraft equipped with robotic arms or nets can capture larger debris objects and de-orbit them.</p>
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-purple-400">Harpoons</h3>
+                <h3 className="text-lg font-semibold text-electric-green-500">Harpoons</h3>
                 <p>Harpoon systems can pierce and capture defunct satellites or large debris pieces.</p>
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-purple-400">Laser Systems</h3>
+                <h3 className="text-lg font-semibold text-electric-green-500">Laser Systems</h3>
                 <p>Ground-based or space-based lasers can nudge debris into lower orbits where they burn up in the atmosphere.</p>
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-purple-400">Electrodynamic Tethers</h3>
+                <h3 className="text-lg font-semibold text-electric-green-500">Electrodynamic Tethers</h3>
                 <p>Long conductive tethers can generate drag to de-orbit debris or use electromagnetic forces for capture.</p>
               </div>
             </div>
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-blue-400 mb-3">The Future of Orbital Space</h2>
+            <h2 className="text-2xl font-bold text-cyber-cyan-500 mb-3">The Future of Orbital Space</h2>
             <p className="text-gray-300">
               International cooperation and responsible space practices are essential. This includes designing satellites 
               to de-orbit after their mission, implementing "design for demise" principles, and developing effective 
@@ -627,20 +627,20 @@ function App() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-blue-400 mb-3">Learn More</h2>
+            <h2 className="text-2xl font-bold text-cyber-cyan-500 mb-3">Learn More</h2>
             <p className="text-gray-300 mb-4">
               Explore these authoritative sources to learn more about space debris and Kessler Syndrome:
             </p>
             
             <div className="space-y-4">
-              <div className="p-4 bg-gray-800 rounded-lg">
-                <h4 className="font-semibold text-purple-300 mb-2">Space Agencies & Organizations</h4>
+              <div className="p-4 bg-deep-space-100 border border-deep-space-50">
+                <h4 className="font-semibold text-electric-green-400 mb-2">Space Agencies & Organizations</h4>
                 <ul className="space-y-2 text-gray-300">
                   <li>
                     <a href="https://www.nasa.gov/mission_pages/station/news/orbital_debris.html" 
                        target="_blank" 
                        rel="noopener noreferrer"
-                       className="text-blue-400 hover:text-blue-300 underline">
+                       className="text-cyber-cyan-500 hover:text-cyber-cyan-400 underline">
                       NASA Orbital Debris Program Office
                     </a>
                     {' '}- Official NASA resource on space debris tracking and mitigation
@@ -649,7 +649,7 @@ function App() {
                     <a href="https://www.esa.int/Safety_Security/Space_Debris" 
                        target="_blank" 
                        rel="noopener noreferrer"
-                       className="text-blue-400 hover:text-blue-300 underline">
+                       className="text-cyber-cyan-500 hover:text-cyber-cyan-400 underline">
                       ESA Space Debris Office
                     </a>
                     {' '}- European Space Agency's space debris research and initiatives
@@ -658,7 +658,7 @@ function App() {
                     <a href="https://www.unoosa.org/oosa/en/ourwork/topics/space-debris/index.html" 
                        target="_blank" 
                        rel="noopener noreferrer"
-                       className="text-blue-400 hover:text-blue-300 underline">
+                       className="text-cyber-cyan-500 hover:text-cyber-cyan-400 underline">
                       UN Office for Outer Space Affairs
                     </a>
                     {' '}- International guidelines and space debris mitigation policies
@@ -666,14 +666,14 @@ function App() {
                 </ul>
               </div>
 
-              <div className="p-4 bg-gray-800 rounded-lg">
-                <h4 className="font-semibold text-purple-300 mb-2">Real-Time Tracking & Data</h4>
+              <div className="p-4 bg-deep-space-100 border border-deep-space-50">
+                <h4 className="font-semibold text-electric-green-400 mb-2">Real-Time Tracking & Data</h4>
                 <ul className="space-y-2 text-gray-300">
                   <li>
                     <a href="https://www.space-track.org/" 
                        target="_blank" 
                        rel="noopener noreferrer"
-                       className="text-blue-400 hover:text-blue-300 underline">
+                       className="text-cyber-cyan-500 hover:text-cyber-cyan-400 underline">
                       Space-Track.org
                     </a>
                     {' '}- Track satellites and debris in real-time (free registration required)
@@ -682,7 +682,7 @@ function App() {
                     <a href="https://platform.leolabs.space/visualization" 
                        target="_blank" 
                        rel="noopener noreferrer"
-                       className="text-blue-400 hover:text-blue-300 underline">
+                       className="text-cyber-cyan-500 hover:text-cyber-cyan-400 underline">
                       LeoLabs Visualization Platform
                     </a>
                     {' '}- Interactive visualization of objects in low Earth orbit
@@ -690,14 +690,14 @@ function App() {
                 </ul>
               </div>
 
-              <div className="p-4 bg-gray-800 rounded-lg">
-                <h4 className="font-semibold text-purple-300 mb-2">Research & Academic Resources</h4>
+              <div className="p-4 bg-deep-space-100 border border-deep-space-50">
+                <h4 className="font-semibold text-electric-green-400 mb-2">Research & Academic Resources</h4>
                 <ul className="space-y-2 text-gray-300">
                   <li>
                     <a href="https://doi.org/10.1016/0021-9169(78)90057-1" 
                        target="_blank" 
                        rel="noopener noreferrer"
-                       className="text-blue-400 hover:text-blue-300 underline">
+                       className="text-cyber-cyan-500 hover:text-cyber-cyan-400 underline">
                       Original Kessler Syndrome Paper (1978)
                     </a>
                     {' '}- Donald J. Kessler's foundational research on collision cascading
@@ -706,7 +706,7 @@ function App() {
                     <a href="https://www.esa.int/ESA_Multimedia/Images/2023/11/Distribution_of_space_debris_in_orbit" 
                        target="_blank" 
                        rel="noopener noreferrer"
-                       className="text-blue-400 hover:text-blue-300 underline">
+                       className="text-cyber-cyan-500 hover:text-cyber-cyan-400 underline">
                       ESA Space Debris Distribution Maps
                     </a>
                     {' '}- Visual data on current debris populations by altitude
@@ -714,14 +714,14 @@ function App() {
                 </ul>
               </div>
 
-              <div className="p-4 bg-gray-800 rounded-lg">
-                <h4 className="font-semibold text-purple-300 mb-2">Active Debris Removal Missions</h4>
+              <div className="p-4 bg-deep-space-100 border border-deep-space-50">
+                <h4 className="font-semibold text-electric-green-400 mb-2">Active Debris Removal Missions</h4>
                 <ul className="space-y-2 text-gray-300">
                   <li>
                     <a href="https://clearspace.today/" 
                        target="_blank" 
                        rel="noopener noreferrer"
-                       className="text-blue-400 hover:text-blue-300 underline">
+                       className="text-cyber-cyan-500 hover:text-cyber-cyan-400 underline">
                       ClearSpace-1
                     </a>
                     {' '}- ESA's first debris removal mission (planned for 2026)
@@ -730,7 +730,7 @@ function App() {
                     <a href="https://astroscale.com/missions/" 
                        target="_blank" 
                        rel="noopener noreferrer"
-                       className="text-blue-400 hover:text-blue-300 underline">
+                       className="text-cyber-cyan-500 hover:text-cyber-cyan-400 underline">
                       Astroscale ELSA-d
                     </a>
                     {' '}- Demonstration of magnetic capture technology for debris removal
@@ -739,7 +739,7 @@ function App() {
                     <a href="https://www.removerisdebris.space/" 
                        target="_blank" 
                        rel="noopener noreferrer"
-                       className="text-blue-400 hover:text-blue-300 underline">
+                       className="text-cyber-cyan-500 hover:text-cyber-cyan-400 underline">
                       RemoveDEBRIS Mission
                     </a>
                     {' '}- UK-led project testing net capture, harpoon, and vision-based navigation
@@ -750,7 +750,7 @@ function App() {
           </section>
 
           <section className="border-t border-gray-700 pt-6">
-            <h2 className="text-2xl font-bold text-blue-400 mb-3">Credits</h2>
+            <h2 className="text-2xl font-bold text-cyber-cyan-500 mb-3">Credits</h2>
             <p className="text-gray-300 mb-3">
               This application was written by <strong>Frank Blau</strong>, <strong>Tim Quick</strong>, and{' '}
               <strong>Gallya Todorova</strong> for the EIIS Space Entrepreneurship Master's Program. Thanks to{' '}
@@ -778,7 +778,7 @@ function App() {
           <div className="min-h-screen p-8">
             <div className="max-w-[2350px] mx-auto space-y-6">
               <header className="relative text-center mb-8">
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                <h1 className="text-4xl font-bold text-cyber-cyan-500" style={{ textShadow: '0 0 15px rgba(0, 217, 255, 0.4)' }}>
                   Space Debris Removal
                 </h1>
                 <div className="absolute right-0 top-0">

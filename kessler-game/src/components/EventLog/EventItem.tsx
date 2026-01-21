@@ -8,11 +8,11 @@ const eventColorMap = {
   'satellite-launch': { border: 'border-green-500', bg: 'bg-green-500/10', text: 'text-green-400' },
   'drv-launch': { border: 'border-green-500', bg: 'bg-green-500/10', text: 'text-green-400' },
   'collision': { border: 'border-red-500', bg: 'bg-red-500/10', text: 'text-red-400' },
-  'debris-removal': { border: 'border-blue-500', bg: 'bg-blue-500/10', text: 'text-blue-400' },
+  'debris-removal': { border: 'border-blue-500', bg: 'bg-cyber-cyan-500/10', text: 'text-cyber-cyan-500' },
   'mission-complete': { border: 'border-yellow-400', bg: 'bg-yellow-400/10', text: 'text-yellow-400' },
   'drv-expired': { border: 'border-gray-500', bg: 'bg-gray-500/10', text: 'text-gray-400' },
   'solar-storm': { border: 'border-orange-500', bg: 'bg-orange-500/10', text: 'text-orange-400' },
-  'satellite-graveyard': { border: 'border-purple-500', bg: 'bg-purple-500/10', text: 'text-purple-400' },
+  'satellite-graveyard': { border: 'border-purple-500', bg: 'bg-purple-500/10', text: 'text-electric-green-500' },
   'geotug-decommission': { border: 'border-gray-500', bg: 'bg-gray-500/10', text: 'text-gray-400' },
   'satellite-expired': { border: 'border-gray-500', bg: 'bg-gray-500/10', text: 'text-gray-400' },
 };
@@ -30,7 +30,7 @@ export function EventItem({ event, showDetails = false }: EventItemProps & { sho
   const colors = eventColorMap[event.type];
   
   return (
-    <div className={`${colors.bg} border-l-4 ${colors.border} rounded-lg pl-[10px] pr-[5px] py-[5px] transition-all hover:translate-x-1`}>
+    <div className={`${colors.bg} border-l-4 ${colors.border} border-none pl-[10px] pr-[5px] py-[5px] transition-all hover:translate-x-1`}>
       <div className="flex items-center gap-3">
         <div className={`text-sm font-mono ${colors.text} font-semibold min-w-[110px]`}>
           {showDetails ? `T${event.turn} • ` : ''}Day {event.day} • {formatTimestamp(event.timestamp)}

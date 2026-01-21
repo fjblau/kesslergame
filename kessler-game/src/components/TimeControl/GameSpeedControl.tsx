@@ -29,32 +29,32 @@ export function GameSpeedControl({ onNewGame }: GameSpeedControlProps) {
   };
 
   return (
-    <div className="flex gap-3 bg-slate-800 border border-slate-700 rounded-xl p-3">
+    <div className="flex gap-3 bg-deep-space-300 border-2 border-deep-space-50 p-3 shadow-depth">
       <button
         onClick={onNewGame}
-        className="flex-1 py-2 rounded-xl font-medium transition-all bg-slate-700 text-white hover:bg-slate-600"
+        className="flex-1 py-2 border-none font-medium transition-all bg-deep-space-100 text-white hover:bg-deep-space-50"
         title="Return to start screen"
         style={{
-          boxShadow: '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)'
+          boxShadow: '0 8px 16px rgba(0,0,0,0.9), 0 4px 8px rgba(0,0,0,0.7), 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.1)'
         }}
-        onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 6px 12px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.15)'}
-        onMouseLeave={(e) => e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)'}
-        onMouseDown={(e) => e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 2px rgba(0,0,0,0.2)'}
-        onMouseUp={(e) => e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)'}
+        onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 10px 20px rgba(0,0,0,0.95), 0 6px 12px rgba(0,0,0,0.8), 0 3px 6px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.15)'}
+        onMouseLeave={(e) => e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.9), 0 4px 8px rgba(0,0,0,0.7), 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.1)'}
+        onMouseDown={(e) => e.currentTarget.style.boxShadow = 'inset 0 4px 12px rgba(0,0,0,0.8), inset 0 2px 6px rgba(0,0,0,0.6)'}
+        onMouseUp={(e) => e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.9), 0 4px 8px rgba(0,0,0,0.7), 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.1)'}
       >
         <span className="mr-2">🏠</span>
         New Game
       </button>
       <button
         onClick={handleReset}
-        className="flex-1 py-2 rounded-xl font-medium transition-all bg-red-500 text-white hover:bg-red-400"
+        className="flex-1 py-2 border-none font-medium transition-all bg-red-500 text-white hover:bg-red-400"
         style={{
-          boxShadow: '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)'
+          boxShadow: '0 0 30px rgba(239, 68, 68, 0.5), 0 8px 16px rgba(0,0,0,0.9), 0 4px 8px rgba(0,0,0,0.7), inset 0 -2px 4px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.1)'
         }}
-        onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 6px 12px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.15)'}
-        onMouseLeave={(e) => e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)'}
-        onMouseDown={(e) => e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 2px rgba(0,0,0,0.2)'}
-        onMouseUp={(e) => e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)'}
+        onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 0 40px rgba(239, 68, 68, 0.6), 0 10px 20px rgba(0,0,0,0.95), 0 6px 12px rgba(0,0,0,0.8), inset 0 -2px 4px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.15)'}
+        onMouseLeave={(e) => e.currentTarget.style.boxShadow = '0 0 30px rgba(239, 68, 68, 0.5), 0 8px 16px rgba(0,0,0,0.9), 0 4px 8px rgba(0,0,0,0.7), inset 0 -2px 4px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.1)'}
+        onMouseDown={(e) => e.currentTarget.style.boxShadow = 'inset 0 4px 12px rgba(0,0,0,0.8), inset 0 2px 6px rgba(0,0,0,0.6)'}
+        onMouseUp={(e) => e.currentTarget.style.boxShadow = '0 0 30px rgba(239, 68, 68, 0.5), 0 8px 16px rgba(0,0,0,0.9), 0 4px 8px rgba(0,0,0,0.7), inset 0 -2px 4px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.1)'}
       >
         <span className="mr-2">🔄</span>
         Reset
@@ -63,32 +63,32 @@ export function GameSpeedControl({ onNewGame }: GameSpeedControlProps) {
         <button
           key={value}
           onClick={() => dispatch(setGameSpeed(value))}
-          className={`flex-1 py-2 rounded-xl font-medium transition-all ${
+          className={`flex-1 py-2 border-2 font-medium transition-all ${
             speed === value
-              ? 'bg-blue-600 text-white'
-              : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
+              ? 'bg-cyber-cyan-600 text-deep-space-500 border-cyber-cyan-400'
+              : 'bg-gray-700 text-gray-100 border-gray-600 hover:bg-cyber-cyan-900 hover:text-white hover:border-cyber-cyan-600'
           }`}
           style={{
             boxShadow: speed === value
-              ? 'inset 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 2px rgba(0,0,0,0.2)'
-              : '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)'
+              ? '0 0 30px rgba(0, 217, 255, 0.5), inset 0 4px 12px rgba(0,0,0,0.8), inset 0 2px 6px rgba(0,0,0,0.6)'
+              : '0 8px 16px rgba(0,0,0,0.9), 0 4px 8px rgba(0,0,0,0.7), 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.1)'
           }}
           onMouseEnter={(e) => {
             if (speed !== value) {
-              e.currentTarget.style.boxShadow = '0 6px 12px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.15)';
+              e.currentTarget.style.boxShadow = '0 10px 20px rgba(0,0,0,0.95), 0 6px 12px rgba(0,0,0,0.8), 0 3px 6px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.15)';
             }
           }}
           onMouseLeave={(e) => {
             if (speed !== value) {
-              e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)';
+              e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.9), 0 4px 8px rgba(0,0,0,0.7), 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.1)';
             }
           }}
           onMouseDown={(e) => {
-            e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 2px rgba(0,0,0,0.2)';
+            e.currentTarget.style.boxShadow = 'inset 0 4px 12px rgba(0,0,0,0.8), inset 0 2px 6px rgba(0,0,0,0.6)';
           }}
           onMouseUp={(e) => {
             if (speed !== value) {
-              e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)';
+              e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.9), 0 4px 8px rgba(0,0,0,0.7), 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.1)';
             }
           }}
         >
