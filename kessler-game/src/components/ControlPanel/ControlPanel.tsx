@@ -109,7 +109,7 @@ export function ControlPanel() {
 
   return (
     <>
-      <div className="bg-deep-space-300 border-2 border-cyber-cyan-800 px-6 pt-1 pb-6 w-full h-[1100px] flex flex-col">
+      <div className="bg-deep-space-300 border-2 border-cyber-cyan-800 px-6 pt-1 pb-6 w-full h-[1100px] flex flex-col shadow-depth-lg">
         <div className="mt-[17px]" style={{ marginBottom: 'calc(1.5rem - 27px)' }}>
           <h2 className="text-xl font-bold text-cyber-cyan-500 mb-4 pb-3 border-b-2 border-deep-space-50 uppercase tracking-wide">Launch Controls</h2>
         </div>
@@ -123,8 +123,8 @@ export function ControlPanel() {
               onClick={() => setLaunchType(type)}
               className={`py-[7px] px-3 border-2 font-medium transition-all text-base flex flex-col items-center ${
                 launchType === type
-                  ? 'bg-cyber-cyan-600 text-deep-space-500 border-cyber-cyan-400'
-                  : 'bg-deep-space-100 text-gray-300 border-deep-space-50 hover:bg-deep-space-50 hover:border-cyber-cyan-700'
+                  ? 'bg-cyber-cyan-600 text-deep-space-500 border-cyber-cyan-400 shadow-cyber'
+                  : 'bg-deep-space-100 text-gray-300 border-deep-space-50 hover:bg-deep-space-50 hover:border-cyber-cyan-700 shadow-inset-depth'
               }`}
             >
               <span>{type === 'satellite' ? 'Satellite' : type === 'drv' ? 'Active Debris Removal' : type === 'servicing' ? <><span style={{ color: '#67e8f9' }}>⬟</span> Servicing</> : <><span style={{ color: '#a855f7' }}>⬟</span> GEO Tug</>}</span>
@@ -146,8 +146,8 @@ export function ControlPanel() {
               disabled={launchType === 'geotug'}
               className={`flex-1 py-[7px] px-6 border-2 font-medium transition-all text-lg ${
                 (launchType === 'geotug' ? 'GEO' : selectedOrbit) === orbit
-                  ? 'bg-cyber-cyan-600 text-deep-space-500 border-cyber-cyan-400'
-                  : 'bg-deep-space-100 text-gray-300 border-deep-space-50 hover:bg-deep-space-50 hover:border-cyber-cyan-700'
+                  ? 'bg-cyber-cyan-600 text-deep-space-500 border-cyber-cyan-400 shadow-cyber'
+                  : 'bg-deep-space-100 text-gray-300 border-deep-space-50 hover:bg-deep-space-50 hover:border-cyber-cyan-700 shadow-inset-depth'
               } ${launchType === 'geotug' ? 'cursor-not-allowed opacity-60' : ''}`}
             >
               {orbit}

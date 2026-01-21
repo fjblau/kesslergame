@@ -7,7 +7,7 @@ export function MissionPanel() {
   
   return (
     <div className="max-w-lg mx-auto">
-      <div className="bg-deep-space-300 border border-deep-space-50 border-none p-6">
+      <div className="bg-deep-space-300 border-2 border-deep-space-50 p-6 shadow-depth-lg">
         <h2 className="text-xl font-bold text-cyber-cyan-400 mb-5 pb-3 border-b-2 border-deep-space-50 uppercase tracking-wide">
           Missions
         </h2>

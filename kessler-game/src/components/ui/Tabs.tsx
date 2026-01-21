@@ -15,7 +15,7 @@ export function Tabs({ tabs, activeTab, onTabChange }: TabsProps) {
 
   return (
     <div className="w-full">
-      <div className="flex gap-2 mb-6 bg-deep-space-300 p-2 border-2 border-deep-space-50">
+      <div className="flex gap-2 mb-6 bg-deep-space-300 p-2 border-2 border-deep-space-50 shadow-depth">
         {tabs.map(tab => (
           <button
             key={tab.id}
@@ -23,8 +23,8 @@ export function Tabs({ tabs, activeTab, onTabChange }: TabsProps) {
             className={`
               flex-1 py-3 font-semibold text-lg transition-all duration-200 border-2
               ${activeTab === tab.id 
-                ? 'bg-cyber-cyan-600 text-deep-space-500 border-cyber-cyan-400' 
-                : 'bg-deep-space-100 text-gray-300 border-deep-space-50 hover:bg-deep-space-50 hover:text-white hover:border-cyber-cyan-700'
+                ? 'bg-cyber-cyan-600 text-deep-space-500 border-cyber-cyan-400 shadow-cyber' 
+                : 'bg-deep-space-100 text-gray-300 border-deep-space-50 hover:bg-deep-space-50 hover:text-white hover:border-cyber-cyan-700 shadow-inset-depth'
               }
             `}
           >

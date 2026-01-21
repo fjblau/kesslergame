@@ -14,7 +14,7 @@ export function MissionCard({ mission }: MissionCardProps) {
   const borderColor = completed ? 'border-green-500' : failed ? 'border-red-500' : 'border-yellow-400';
   
   return (
-    <div className={`bg-deep-space-100 border-l-4 ${borderColor} border-none p-4 transition-all hover:translate-x-1`}>
+    <div className={`bg-deep-space-100 border-l-4 ${borderColor} p-4 transition-all hover:translate-x-1 shadow-depth`}>
       <div className="flex items-center gap-3 mb-2">
         <div className={`w-5 h-5 rounded border-2 flex items-center justify-center text-sm ${
           completed 

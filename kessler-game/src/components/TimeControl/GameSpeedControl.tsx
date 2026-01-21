@@ -29,7 +29,7 @@ export function GameSpeedControl({ onNewGame }: GameSpeedControlProps) {
   };
 
   return (
-    <div className="flex gap-3 bg-deep-space-300 border border-deep-space-50 border-none p-3">
+    <div className="flex gap-3 bg-deep-space-300 border-2 border-deep-space-50 p-3 shadow-depth">
       <button
         onClick={onNewGame}
         className="flex-1 py-2 border-none font-medium transition-all bg-deep-space-100 text-white hover:bg-deep-space-50"

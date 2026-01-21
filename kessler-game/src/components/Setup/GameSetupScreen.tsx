@@ -48,7 +48,7 @@ export function GameSetupScreen({ onStart }: GameSetupScreenProps) {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-8 pl-16">
-      <div className="max-w-3xl w-full bg-deep-space-300 border-2 border-cyber-cyan-800 p-10 shadow-2xl">
+      <div className="max-w-3xl w-full bg-deep-space-300 border-2 border-cyber-cyan-800 p-10 shadow-cyber-lg">
         <h1 className="text-6xl font-bold text-center mb-3 text-cyber-cyan-500" style={{ textShadow: '0 0 20px rgba(0, 217, 255, 0.5)' }}>
           Space Debris Removal
         </h1>
@@ -78,14 +78,14 @@ export function GameSetupScreen({ onStart }: GameSetupScreenProps) {
         <div className="flex gap-4 mt-10">
           <button
             onClick={handleOpenTutorial}
-            className="flex-1 py-4 px-8 bg-deep-space-100 border-2 border-deep-space-50 hover:bg-deep-space-50 hover:border-electric-green-700 text-white font-bold text-xl uppercase tracking-wide transition-all"
+            className="flex-1 py-4 px-8 bg-deep-space-100 border-2 border-deep-space-50 hover:bg-deep-space-50 hover:border-electric-green-700 text-white font-bold text-xl uppercase tracking-wide transition-all shadow-depth hover:shadow-green"
           >
             How to Play
           </button>
           <button
             onClick={handleStart}
             disabled={!isNameValid}
-            className="flex-1 py-4 px-8 bg-cyber-cyan-600 border-2 border-cyber-cyan-400 hover:bg-cyber-cyan-500 text-deep-space-500 font-bold text-xl uppercase tracking-wide transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-cyber-cyan-600"
+            className="flex-1 py-4 px-8 bg-cyber-cyan-600 border-2 border-cyber-cyan-400 hover:bg-cyber-cyan-500 text-deep-space-500 font-bold text-xl uppercase tracking-wide transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-cyber-cyan-600 shadow-cyber"
           >
             Start Game
           </button>

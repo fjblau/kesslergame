@@ -42,7 +42,7 @@ export function StatsPanel() {
   };
 
   return (
-    <div className="bg-deep-space-300 border-2 border-deep-space-50 border-none p-5 space-y-4 w-full h-[544px]">
+    <div className="bg-deep-space-300 border-2 border-deep-space-50 p-5 space-y-4 w-full h-[544px] shadow-depth-lg">
       <h2 className="text-xl font-bold text-cyber-cyan-400 mb-3 pb-2 border-b-2 border-deep-space-50 uppercase tracking-wide">
         Orbital Status
       </h2>

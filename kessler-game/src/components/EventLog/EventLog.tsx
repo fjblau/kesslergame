@@ -6,7 +6,7 @@ export function EventLog() {
   const events = useAppSelector(selectAllEvents);
   
   return (
-    <div className="bg-deep-space-300 border border-deep-space-50 border-none p-4 flex flex-col h-[530px]">
+    <div className="bg-deep-space-300 border-2 border-deep-space-50 p-4 flex flex-col h-[530px] shadow-depth-lg">
       <h2 className="text-lg font-bold text-cyber-cyan-400 mb-3 pb-2 border-b-2 border-deep-space-50 uppercase tracking-wide">
         Event Log
       </h2>
