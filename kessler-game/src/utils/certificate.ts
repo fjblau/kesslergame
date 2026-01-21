@@ -223,9 +223,6 @@ export async function generateCertificate(data: CertificateData): Promise<void> 
   doc.setTextColor(148, 163, 184);
   doc.text(`Issued on ${dateStr}`, pageWidth / 2, pageHeight - 20, { align: 'center' });
 
-  doc.setFontSize(8);
-  doc.text(brand.text.organizationName, pageWidth / 2, pageHeight - 15, { align: 'center' });
-
   const fileName = `Mission_Complete_${data.playerName.replace(/\s+/g, '_')}_${today.getTime()}.pdf`;
   doc.save(fileName);
 }
