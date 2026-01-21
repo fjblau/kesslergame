@@ -82,6 +82,55 @@ npm run build
 - ✅ Tailwind CSS styling
 - ✅ All files < 200 lines (concise & focused)
 
+## White-Label Branding
+
+The application supports white-label branding for customer deployments. Use the `VITE_BRAND_ID` environment variable to select a brand configuration.
+
+### Available Brands
+
+- **default**: Generic Space Debris Management branding
+- **astroscale**: Astroscale Holdings Inc. branding
+
+### Usage
+
+**Development**:
+```bash
+# Default brand
+npm run dev
+
+# Astroscale brand
+VITE_BRAND_ID=astroscale npm run dev
+```
+
+**Production Build**:
+```bash
+# Default brand
+npm run build
+
+# Astroscale brand
+VITE_BRAND_ID=astroscale npm run build
+```
+
+**Using .env file**:
+```bash
+# Create .env.local
+echo "VITE_BRAND_ID=astroscale" > .env.local
+
+# Run normally
+npm run dev
+```
+
+### Adding New Brands
+
+1. Create brand configuration in `src/config/brands/newbrand.ts`
+2. Add brand assets to `public/brands/newbrand/`
+3. Register brand in `src/config/brand.ts`
+4. Test: `VITE_BRAND_ID=newbrand npm run build`
+
+See `.zenflow/tasks/white-label-test-7142/report.md` for detailed documentation.
+
+---
+
 ## Next Steps
 
 Phase 2 & 3 inputs can be added by extending existing patterns in:

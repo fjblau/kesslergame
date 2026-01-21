@@ -1,5 +1,5 @@
 import { jsPDF } from 'jspdf';
-import missionPatchImage from '../assets/space-logo.png';
+import { brand } from '../config/brand';
 
 interface CertificateData {
   playerName: string;
@@ -68,17 +68,18 @@ export async function generateCertificate(data: CertificateData): Promise<void> 
   doc.setLineWidth(1);
   doc.rect(12, 12, pageWidth - 24, pageHeight - 24);
 
-  const imageDataUrl = await loadImageAsDataURL(missionPatchImage);
+  const logoPath = brand.assets.certificateLogo;
+  const imageDataUrl = await loadImageAsDataURL(logoPath);
   doc.addImage(imageDataUrl, 'PNG', 25, 25, 36, 36);
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(36);
   doc.setTextColor(96, 165, 250);
-  doc.text('MISSION COMPLETE', pageWidth / 2, 30, { align: 'center' });
+  doc.text(brand.text.certificateTitle, pageWidth / 2, 30, { align: 'center' });
 
   doc.setFontSize(24);
   doc.setTextColor(167, 139, 250);
-  doc.text('Space Debris Removal Certificate', pageWidth / 2, 42, { align: 'center' });
+  doc.text(brand.text.certificateSubtitle, pageWidth / 2, 42, { align: 'center' });
 
   doc.setFontSize(14);
   doc.setFont('helvetica', 'normal');
@@ -93,7 +94,8 @@ export async function generateCertificate(data: CertificateData): Promise<void> 
   doc.setFontSize(12);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(203, 213, 225);
-  doc.text('has successfully completed a mission in the Space Debris Management Program', pageWidth / 2, 77, { align: 'center' });
+  const missionText = `has successfully completed a mission in the ${brand.name} Program`;
+  doc.text(missionText, pageWidth / 2, 77, { align: 'center' });
 
   const leftCol = 30;
   const rightCol = pageWidth / 2 + 10;
@@ -214,7 +216,7 @@ export async function generateCertificate(data: CertificateData): Promise<void> 
   doc.text(`Issued on ${dateStr}`, pageWidth / 2, pageHeight - 20, { align: 'center' });
 
   doc.setFontSize(8);
-  doc.text('Space Debris Management Program - Earth Orbital Safety Division', pageWidth / 2, pageHeight - 15, { align: 'center' });
+  doc.text(brand.text.organizationName, pageWidth / 2, pageHeight - 15, { align: 'center' });
 
   const fileName = `Mission_Complete_${data.playerName.replace(/\s+/g, '_')}_${today.getTime()}.pdf`;
   doc.save(fileName);

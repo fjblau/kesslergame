@@ -5,6 +5,9 @@ import { Provider } from 'react-redux'
 import { store } from './store'
 import './index.css'
 import App from './App.tsx'
+import { applyBrandTheme } from './utils/applyBrandTheme'
+
+applyBrandTheme();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
