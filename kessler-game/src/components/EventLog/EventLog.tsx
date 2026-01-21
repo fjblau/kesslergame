@@ -25,6 +25,7 @@ export function EventLog() {
           ))
         )}
       </div>
+      </div>
     </div>
   );
 }
