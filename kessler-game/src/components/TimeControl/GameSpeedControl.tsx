@@ -66,7 +66,7 @@ export function GameSpeedControl({ onNewGame }: GameSpeedControlProps) {
           className={`flex-1 py-2 border-2 font-medium transition-all ${
             speed === value
               ? 'bg-cyber-cyan-600 text-deep-space-500 border-cyber-cyan-400'
-              : 'bg-deep-space-50 text-gray-200 border-cyber-cyan-900 hover:bg-cyber-cyan-900 hover:text-white hover:border-cyber-cyan-600'
+              : 'bg-gray-700 text-gray-100 border-gray-600 hover:bg-cyber-cyan-900 hover:text-white hover:border-cyber-cyan-600'
           }`}
           style={{
             boxShadow: speed === value

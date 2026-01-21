@@ -124,7 +124,7 @@ export function ControlPanel() {
               className={`py-[7px] px-3 border-2 font-medium transition-all text-base flex flex-col items-center ${
                 launchType === type
                   ? 'bg-cyber-cyan-600 text-deep-space-500 border-cyber-cyan-400 shadow-cyber'
-                  : 'bg-deep-space-50 text-gray-200 border-cyber-cyan-900 hover:bg-cyber-cyan-900 hover:text-white hover:border-cyber-cyan-600 shadow-depth'
+                  : 'bg-gray-700 text-gray-100 border-gray-600 hover:bg-cyber-cyan-900 hover:text-white hover:border-cyber-cyan-600 shadow-depth'
               }`}
             >
               <span>{type === 'satellite' ? 'Satellite' : type === 'drv' ? 'Active Debris Removal' : type === 'servicing' ? <><span style={{ color: '#67e8f9' }}>⬟</span> Servicing</> : <><span style={{ color: '#a855f7' }}>⬟</span> GEO Tug</>}</span>
@@ -147,7 +147,7 @@ export function ControlPanel() {
               className={`flex-1 py-[7px] px-6 border-2 font-medium transition-all text-lg ${
                 (launchType === 'geotug' ? 'GEO' : selectedOrbit) === orbit
                   ? 'bg-cyber-cyan-600 text-deep-space-500 border-cyber-cyan-400 shadow-cyber'
-                  : 'bg-deep-space-50 text-gray-200 border-cyber-cyan-900 hover:bg-cyber-cyan-900 hover:text-white hover:border-cyber-cyan-600 shadow-depth'
+                  : 'bg-gray-700 text-gray-100 border-gray-600 hover:bg-cyber-cyan-900 hover:text-white hover:border-cyber-cyan-600 shadow-depth'
               } ${launchType === 'geotug' ? 'cursor-not-allowed opacity-60' : ''}`}
             >
               {orbit}
@@ -174,7 +174,7 @@ export function ControlPanel() {
                     className={`py-[7px] px-3 border-2 font-medium capitalize transition-all text-base ${
                       drvType === type
                         ? 'bg-cyber-cyan-600 text-deep-space-500 border-cyber-cyan-400'
-                        : 'bg-deep-space-50 text-gray-200 border-cyber-cyan-900 hover:bg-cyber-cyan-900 hover:text-white hover:border-cyber-cyan-600'
+                        : 'bg-gray-700 text-gray-100 border-gray-600 hover:bg-cyber-cyan-900 hover:text-white hover:border-cyber-cyan-600'
                     }`}
                     style={{
                       boxShadow: drvType === type
