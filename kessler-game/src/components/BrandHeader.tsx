@@ -12,7 +12,7 @@ export function BrandHeader() {
             className="h-12 object-contain brightness-0 invert"
           />
           <h1 className="text-4xl font-bold text-cyber-cyan-500" style={{ textShadow: '0 0 15px rgba(0, 217, 255, 0.4)' }}>
-            {brand.text.appName}
+            Space Debris Removal
           </h1>
         </div>
         <ScoreDisplay />
