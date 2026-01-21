@@ -19,7 +19,7 @@ interface CertificateData {
   survivalScore: number;
 }
 
-async function loadImageAsDataURL(imageUrl: string): Promise<string> {
+async function loadImageAsDataURL(imageUrl: string, invert: boolean = false): Promise<{ dataUrl: string; aspectRatio: number }> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => {
@@ -32,9 +32,15 @@ async function loadImageAsDataURL(imageUrl: string): Promise<string> {
           reject(new Error('Failed to get canvas context'));
           return;
         }
+        
+        if (invert) {
+          ctx.filter = 'brightness(0) invert(1)';
+        }
+        
         ctx.drawImage(img, 0, 0);
+        const aspectRatio = img.naturalWidth / img.naturalHeight;
         const dataUrl = canvas.toDataURL('image/png');
-        resolve(dataUrl);
+        resolve({ dataUrl, aspectRatio });
       } catch (error) {
         reject(error);
       }
@@ -69,8 +75,10 @@ export async function generateCertificate(data: CertificateData): Promise<void> 
   doc.rect(12, 12, pageWidth - 24, pageHeight - 24);
 
   const logoPath = brand.assets.certificateLogo;
-  const imageDataUrl = await loadImageAsDataURL(logoPath);
-  doc.addImage(imageDataUrl, 'PNG', 25, 25, 36, 36);
+  const { dataUrl: imageDataUrl, aspectRatio } = await loadImageAsDataURL(logoPath, true);
+  const logoHeight = 30;
+  const logoWidth = logoHeight * aspectRatio;
+  doc.addImage(imageDataUrl, 'PNG', 25, 25, logoWidth, logoHeight);
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(36);
