@@ -778,8 +778,9 @@ function App() {
           <GameSetupScreen onStart={() => setGameStarted(true)} />
         ) : (
           <div className="min-h-screen p-8">
-            <BrandHeader />
             <div className="max-w-[2350px] mx-auto space-y-6">
+              <BrandHeader />
+              
               <header className="relative text-center mb-8">
                 <h1 className="text-4xl font-bold text-cyber-cyan-500" style={{ textShadow: '0 0 15px rgba(0, 217, 255, 0.4)' }}>
                   {brand.text.appName}
