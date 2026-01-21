@@ -63,10 +63,10 @@ export function GameSpeedControl({ onNewGame }: GameSpeedControlProps) {
         <button
           key={value}
           onClick={() => dispatch(setGameSpeed(value))}
-          className={`flex-1 py-2 border-none font-medium transition-all ${
+          className={`flex-1 py-2 border-2 font-medium transition-all ${
             speed === value
-              ? 'bg-cyber-cyan-600 text-white'
-              : 'bg-deep-space-100 text-gray-300 hover:bg-deep-space-50'
+              ? 'bg-cyber-cyan-600 text-deep-space-500 border-cyber-cyan-400'
+              : 'bg-deep-space-50 text-gray-200 border-cyber-cyan-900 hover:bg-cyber-cyan-900 hover:text-white hover:border-cyber-cyan-600'
           }`}
           style={{
             boxShadow: speed === value

@@ -124,7 +124,7 @@ export function ControlPanel() {
               className={`py-[7px] px-3 border-2 font-medium transition-all text-base flex flex-col items-center ${
                 launchType === type
                   ? 'bg-cyber-cyan-600 text-deep-space-500 border-cyber-cyan-400 shadow-cyber'
-                  : 'bg-deep-space-100 text-gray-300 border-deep-space-50 hover:bg-deep-space-50 hover:border-cyber-cyan-700 shadow-inset-depth'
+                  : 'bg-deep-space-50 text-gray-200 border-cyber-cyan-900 hover:bg-cyber-cyan-900 hover:text-white hover:border-cyber-cyan-600 shadow-depth'
               }`}
             >
               <span>{type === 'satellite' ? 'Satellite' : type === 'drv' ? 'Active Debris Removal' : type === 'servicing' ? <><span style={{ color: '#67e8f9' }}>⬟</span> Servicing</> : <><span style={{ color: '#a855f7' }}>⬟</span> GEO Tug</>}</span>
@@ -147,7 +147,7 @@ export function ControlPanel() {
               className={`flex-1 py-[7px] px-6 border-2 font-medium transition-all text-lg ${
                 (launchType === 'geotug' ? 'GEO' : selectedOrbit) === orbit
                   ? 'bg-cyber-cyan-600 text-deep-space-500 border-cyber-cyan-400 shadow-cyber'
-                  : 'bg-deep-space-100 text-gray-300 border-deep-space-50 hover:bg-deep-space-50 hover:border-cyber-cyan-700 shadow-inset-depth'
+                  : 'bg-deep-space-50 text-gray-200 border-cyber-cyan-900 hover:bg-cyber-cyan-900 hover:text-white hover:border-cyber-cyan-600 shadow-depth'
               } ${launchType === 'geotug' ? 'cursor-not-allowed opacity-60' : ''}`}
             >
               {orbit}
@@ -173,30 +173,30 @@ export function ControlPanel() {
                     onClick={() => setDrvType(type)}
                     className={`py-[7px] px-3 border-2 font-medium capitalize transition-all text-base ${
                       drvType === type
-                        ? 'bg-cyber-cyan-600 text-white'
-                        : 'bg-deep-space-100 text-gray-300 hover:bg-deep-space-50'
+                        ? 'bg-cyber-cyan-600 text-deep-space-500 border-cyber-cyan-400'
+                        : 'bg-deep-space-50 text-gray-200 border-cyber-cyan-900 hover:bg-cyber-cyan-900 hover:text-white hover:border-cyber-cyan-600'
                     }`}
                     style={{
                       boxShadow: drvType === type
-                        ? 'inset 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 2px rgba(0,0,0,0.2)'
-                        : '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)'
+                        ? '0 0 25px rgba(0, 217, 255, 0.4), inset 0 3px 8px rgba(0,0,0,0.7), inset 0 1px 4px rgba(0,0,0,0.5)'
+                        : '0 6px 12px rgba(0,0,0,0.8), 0 3px 6px rgba(0,0,0,0.6)'
                     }}
                     onMouseEnter={(e) => {
                       if (drvType !== type) {
-                        e.currentTarget.style.boxShadow = '0 6px 12px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.15)';
+                        e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.9), 0 4px 8px rgba(0,0,0,0.7)';
                       }
                     }}
                     onMouseLeave={(e) => {
                       if (drvType !== type) {
-                        e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)';
+                        e.currentTarget.style.boxShadow = '0 6px 12px rgba(0,0,0,0.8), 0 3px 6px rgba(0,0,0,0.6)';
                       }
                     }}
                     onMouseDown={(e) => {
-                      e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 2px rgba(0,0,0,0.2)';
+                      e.currentTarget.style.boxShadow = 'inset 0 3px 8px rgba(0,0,0,0.7), inset 0 1px 4px rgba(0,0,0,0.5)';
                     }}
                     onMouseUp={(e) => {
                       if (drvType !== type) {
-                        e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)';
+                        e.currentTarget.style.boxShadow = '0 6px 12px rgba(0,0,0,0.8), 0 3px 6px rgba(0,0,0,0.6)';
                       }
                     }}
                   >
