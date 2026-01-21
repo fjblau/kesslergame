@@ -109,7 +109,11 @@ export function ControlPanel() {
 
   return (
     <>
-      <div className="bg-deep-space-300 border-2 border-cyber-cyan-800 px-6 pt-1 pb-6 w-full h-[1100px] flex flex-col shadow-depth-lg">
+      <div className="bg-deep-space-300 border-4 border-cyber-cyan-800 px-6 pt-1 pb-6 w-full h-[1100px] flex flex-col shadow-depth-lg relative overflow-hidden">
+        <div className="absolute inset-0 opacity-5 pointer-events-none" style={{
+          backgroundImage: 'linear-gradient(145deg, rgba(255,255,255,0.1) 0%, transparent 40%, rgba(0,217,255,0.05) 100%)',
+        }}></div>
+        <div className="relative z-10 flex flex-col h-full">
         <div className="mt-[17px]" style={{ marginBottom: 'calc(1.5rem - 27px)' }}>
           <h2 className="text-xl font-bold text-cyber-cyan-500 mb-4 pb-3 border-b-2 border-deep-space-50 uppercase tracking-wide">Launch Controls</h2>
         </div>
@@ -271,6 +275,7 @@ export function ControlPanel() {
         >
           {canAfford ? (launchType === 'satellite' ? 'Launch Satellite' : launchType === 'drv' ? 'Launch ADR' : launchType === 'servicing' ? 'Launch Servicing Vehicle' : 'Launch GEO Tug') : 'Insufficient Budget'}
         </button>
+      </div>
       </div>
     </div>
     <div className="text-sm text-gray-500 mt-2">Version: v{__APP_VERSION__}</div>
