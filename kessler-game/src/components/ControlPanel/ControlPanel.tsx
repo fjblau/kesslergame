@@ -113,6 +113,23 @@ export function ControlPanel() {
         <div className="absolute inset-0 opacity-5 pointer-events-none" style={{
           backgroundImage: 'linear-gradient(145deg, rgba(255,255,255,0.1) 0%, transparent 40%, rgba(0,217,255,0.05) 100%)',
         }}></div>
+        {/* Phillips screw heads */}
+        <div className="absolute top-2 left-2 w-3 h-3 rounded-full bg-gray-600 shadow-inner pointer-events-none z-20 flex items-center justify-center">
+          <div className="absolute w-2 h-[1px] bg-gray-800"></div>
+          <div className="absolute w-[1px] h-2 bg-gray-800"></div>
+        </div>
+        <div className="absolute top-2 right-2 w-3 h-3 rounded-full bg-gray-600 shadow-inner pointer-events-none z-20 flex items-center justify-center">
+          <div className="absolute w-2 h-[1px] bg-gray-800"></div>
+          <div className="absolute w-[1px] h-2 bg-gray-800"></div>
+        </div>
+        <div className="absolute bottom-2 left-2 w-3 h-3 rounded-full bg-gray-600 shadow-inner pointer-events-none z-20 flex items-center justify-center">
+          <div className="absolute w-2 h-[1px] bg-gray-800"></div>
+          <div className="absolute w-[1px] h-2 bg-gray-800"></div>
+        </div>
+        <div className="absolute bottom-2 right-2 w-3 h-3 rounded-full bg-gray-600 shadow-inner pointer-events-none z-20 flex items-center justify-center">
+          <div className="absolute w-2 h-[1px] bg-gray-800"></div>
+          <div className="absolute w-[1px] h-2 bg-gray-800"></div>
+        </div>
         <div className="relative z-10 flex flex-col h-full">
         <div className="mt-[17px]" style={{ marginBottom: 'calc(1.5rem - 27px)' }}>
           <h2 className="text-xl font-bold text-cyber-cyan-500 mb-4 pb-3 border-b-2 border-deep-space-50 uppercase tracking-wide">Launch Controls</h2>
@@ -242,7 +259,7 @@ export function ControlPanel() {
         <button
           onClick={handleLaunch}
           disabled={!canAfford}
-          className={`w-full py-[11px] px-6 border-2 font-bold uppercase tracking-wide transition-all mt-[30px] text-lg ${
+          className={`w-full py-[11px] px-6 border-2 font-bold uppercase tracking-wide transition-all mt-[20px] text-lg ${
             canAfford
               ? 'bg-electric-green-600 hover:bg-electric-green-500 border-electric-green-400 text-deep-space-500'
               : 'bg-deep-space-100 text-slate-500 border-deep-space-50 cursor-not-allowed'
