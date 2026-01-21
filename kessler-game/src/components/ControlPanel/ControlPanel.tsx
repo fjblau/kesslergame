@@ -109,9 +109,9 @@ export function ControlPanel() {
 
   return (
     <>
-      <div className="bg-slate-800 border-2 border-slate-600 rounded-xl px-6 pt-1 pb-6 w-full h-[1100px] flex flex-col">
+      <div className="bg-deep-space-300 border-2 border-cyber-cyan-800 px-6 pt-1 pb-6 w-full h-[1100px] flex flex-col">
         <div className="mt-[17px]" style={{ marginBottom: 'calc(1.5rem - 27px)' }}>
-          <h2 className="text-xl font-bold text-blue-300 mb-4 pb-3 border-b-2 border-slate-700 uppercase tracking-wide">Launch Controls</h2>
+          <h2 className="text-xl font-bold text-cyber-cyan-500 mb-4 pb-3 border-b-2 border-deep-space-50 uppercase tracking-wide">Launch Controls</h2>
         </div>
 
         <div className="space-y-2 mb-6">
@@ -121,34 +121,11 @@ export function ControlPanel() {
             <button
               key={type}
               onClick={() => setLaunchType(type)}
-              className={`py-[7px] px-3 rounded-xl font-medium transition-all text-base flex flex-col items-center ${
+              className={`py-[7px] px-3 border-2 font-medium transition-all text-base flex flex-col items-center ${
                 launchType === type
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
+                  ? 'bg-cyber-cyan-600 text-deep-space-500 border-cyber-cyan-400'
+                  : 'bg-deep-space-100 text-gray-300 border-deep-space-50 hover:bg-deep-space-50 hover:border-cyber-cyan-700'
               }`}
-              style={{
-                boxShadow: launchType === type
-                  ? 'inset 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 2px rgba(0,0,0,0.2)'
-                  : '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)'
-              }}
-              onMouseEnter={(e) => {
-                if (launchType !== type) {
-                  e.currentTarget.style.boxShadow = '0 6px 12px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.15)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (launchType !== type) {
-                  e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)';
-                }
-              }}
-              onMouseDown={(e) => {
-                e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 2px rgba(0,0,0,0.2)';
-              }}
-              onMouseUp={(e) => {
-                if (launchType !== type) {
-                  e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)';
-                }
-              }}
             >
               <span>{type === 'satellite' ? 'Satellite' : type === 'drv' ? 'Active Debris Removal' : type === 'servicing' ? <><span style={{ color: '#67e8f9' }}>⬟</span> Servicing</> : <><span style={{ color: '#a855f7' }}>⬟</span> GEO Tug</>}</span>
               <span className="text-xs opacity-75 mt-1">
@@ -167,36 +144,11 @@ export function ControlPanel() {
               key={orbit}
               onClick={() => setSelectedOrbit(orbit)}
               disabled={launchType === 'geotug'}
-              className={`flex-1 py-[7px] px-6 rounded-xl font-medium transition-all text-lg ${
+              className={`flex-1 py-[7px] px-6 border-2 font-medium transition-all text-lg ${
                 (launchType === 'geotug' ? 'GEO' : selectedOrbit) === orbit
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
+                  ? 'bg-cyber-cyan-600 text-deep-space-500 border-cyber-cyan-400'
+                  : 'bg-deep-space-100 text-gray-300 border-deep-space-50 hover:bg-deep-space-50 hover:border-cyber-cyan-700'
               } ${launchType === 'geotug' ? 'cursor-not-allowed opacity-60' : ''}`}
-              style={{
-                boxShadow: (launchType === 'geotug' ? 'GEO' : selectedOrbit) === orbit
-                  ? 'inset 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 2px rgba(0,0,0,0.2)'
-                  : '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)'
-              }}
-              onMouseEnter={(e) => {
-                if ((launchType === 'geotug' ? 'GEO' : selectedOrbit) !== orbit && launchType !== 'geotug') {
-                  e.currentTarget.style.boxShadow = '0 6px 12px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.15)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if ((launchType === 'geotug' ? 'GEO' : selectedOrbit) !== orbit && launchType !== 'geotug') {
-                  e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)';
-                }
-              }}
-              onMouseDown={(e) => {
-                if (launchType !== 'geotug') {
-                  e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 2px rgba(0,0,0,0.2)';
-                }
-              }}
-              onMouseUp={(e) => {
-                if ((launchType === 'geotug' ? 'GEO' : selectedOrbit) !== orbit && launchType !== 'geotug') {
-                  e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)';
-                }
-              }}
             >
               {orbit}
             </button>
@@ -219,10 +171,10 @@ export function ControlPanel() {
                   <button
                     key={type}
                     onClick={() => setDrvType(type)}
-                    className={`py-[7px] px-3 rounded-xl font-medium capitalize transition-all text-base ${
+                    className={`py-[7px] px-3 border-2 font-medium capitalize transition-all text-base ${
                       drvType === type
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
+                        ? 'bg-cyber-cyan-600 text-white'
+                        : 'bg-deep-space-100 text-gray-300 hover:bg-deep-space-50'
                     }`}
                     style={{
                       boxShadow: drvType === type
@@ -257,21 +209,21 @@ export function ControlPanel() {
         ) : launchType === 'servicing' ? (
           <div className="space-y-2">
             <label className="text-base font-medium text-gray-300">Servicing Vehicle Configuration</label>
-            <div className="bg-slate-700/50 rounded-xl p-4 text-gray-400 text-sm">
+            <div className="bg-deep-space-100/50 border-2 p-4 text-gray-400 text-sm">
               Servicing vehicles extend the operational lifespan of satellites and ADRs by resetting their age to zero.
             </div>
           </div>
         ) : (
           <div className="space-y-2">
             <label className="text-base font-medium text-gray-300">GEO Tug Configuration</label>
-            <div className="bg-slate-700/50 rounded-xl p-4 text-gray-400 text-sm">
+            <div className="bg-deep-space-100/50 border-2 p-4 text-gray-400 text-sm">
               GEO Tugs transport end-of-life satellites to graveyard orbit, preventing them from becoming debris.
             </div>
           </div>
         )}
       </div>
 
-      <div className="pt-4 border-t border-slate-700" style={{ marginTop: launchType === 'drv' ? '5px' : '0' }}>
+      <div className="pt-4 border-t border-deep-space-50" style={{ marginTop: launchType === 'drv' ? '5px' : '0' }}>
         <div className="flex justify-between text-base mb-[2px]">
           <span className="text-gray-400">Total Cost:</span>
           <span className="font-bold text-yellow-400">${(totalCost / 1e6).toFixed(1)}M</span>
@@ -286,10 +238,10 @@ export function ControlPanel() {
         <button
           onClick={handleLaunch}
           disabled={!canAfford}
-          className={`w-full py-[11px] px-6 rounded-xl font-bold uppercase tracking-wide transition-all mt-[30px] text-lg ${
+          className={`w-full py-[11px] px-6 border-2 font-bold uppercase tracking-wide transition-all mt-[30px] text-lg ${
             canAfford
-              ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white'
-              : 'bg-slate-700 text-slate-500 cursor-not-allowed'
+              ? 'bg-electric-green-600 hover:bg-electric-green-500 border-electric-green-400 text-deep-space-500'
+              : 'bg-deep-space-100 text-slate-500 border-deep-space-50 cursor-not-allowed'
           }`}
           style={{
             boxShadow: canAfford

@@ -8,8 +8,8 @@ interface ChartProps {
 export function SatelliteChart({ data }: ChartProps) {
   if (data.length === 0) {
     return (
-      <div className="bg-slate-800 border border-slate-700 rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-blue-300 mb-4">
+      <div className="bg-deep-space-300 border border-deep-space-50 border-none p-6">
+        <h2 className="text-lg font-semibold text-cyber-cyan-400 mb-4">
           Satellite Count
         </h2>
         <div className="h-[300px] flex items-center justify-center text-gray-400">
@@ -20,8 +20,8 @@ export function SatelliteChart({ data }: ChartProps) {
   }
 
   return (
-    <div className="bg-slate-800 border border-slate-700 rounded-xl p-6">
-      <h2 className="text-lg font-semibold text-blue-300 mb-4">
+    <div className="bg-deep-space-300 border border-deep-space-50 border-none p-6">
+      <h2 className="text-lg font-semibold text-cyber-cyan-400 mb-4">
         Satellite Count
       </h2>
       <div role="img" aria-label="Satellite count over time chart">

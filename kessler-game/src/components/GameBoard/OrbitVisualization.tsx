@@ -217,7 +217,7 @@ export function OrbitVisualization() {
 
   return (
     <div 
-      className={`relative w-[1000px] h-[1000px] flex items-center justify-center bg-slate-900 border-[7px] ${getBorderColorClass(riskLevel)} rounded-xl overflow-hidden`}
+      className={`relative w-[1000px] h-[1000px] flex items-center justify-center bg-slate-900 border-[7px] ${getBorderColorClass(riskLevel)} border-none overflow-hidden`}
       style={{
         boxShadow: 'inset 8px 8px 24px rgba(0,0,0,0.9), inset -8px -8px 24px rgba(255,255,255,0.25), inset 0 0 60px rgba(0,0,0,0.4)'
       }}

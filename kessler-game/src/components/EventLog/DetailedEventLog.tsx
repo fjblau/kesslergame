@@ -6,8 +6,8 @@ export function DetailedEventLog() {
   const events = useAppSelector(selectAllEvents);
   
   return (
-    <div className="bg-slate-800 border border-slate-700 rounded-xl p-4 flex flex-col">
-      <h2 className="text-lg font-bold text-blue-300 mb-3 pb-2 border-b-2 border-slate-700 uppercase tracking-wide">
+    <div className="bg-deep-space-300 border border-deep-space-50 border-none p-4 flex flex-col">
+      <h2 className="text-lg font-bold text-cyber-cyan-400 mb-3 pb-2 border-b-2 border-deep-space-50 uppercase tracking-wide">
         Detailed Event Log
       </h2>
       <div className="overflow-y-auto space-y-2 pr-2 max-h-[600px]">

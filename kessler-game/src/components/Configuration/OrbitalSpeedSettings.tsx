@@ -8,7 +8,7 @@ export function OrbitalSpeedSettings() {
   const dispatch = useAppDispatch();
 
   return (
-    <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 space-y-4">
+    <div className="bg-deep-space-300 border border-deep-space-50 border-none p-6 space-y-4">
       <h2 className="text-xl font-bold text-white mb-4">Orbital Speed Settings</h2>
       <div className="space-y-4">
         <div className="flex items-center gap-4">

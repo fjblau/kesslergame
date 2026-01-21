@@ -10,7 +10,7 @@ export function AutoPauseSettings() {
   const dispatch = useAppDispatch();
 
   return (
-    <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 space-y-4">
+    <div className="bg-deep-space-300 border border-deep-space-50 border-none p-6 space-y-4">
       <h2 className="text-xl font-bold text-white mb-4">Auto-Pause Settings</h2>
       <div className="space-y-3">
         <label className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
@@ -18,7 +18,7 @@ export function AutoPauseSettings() {
             type="checkbox"
             checked={autoPauseOnCascade}
             onChange={() => dispatch(toggleAutoPause('autoPauseOnCascade'))}
-            className="w-4 h-4 rounded bg-slate-700 border-slate-600 text-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer"
+            className="w-4 h-4 rounded bg-deep-space-100 border-deep-space-50 text-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer"
           />
           <span>Auto-Pause on Cascade</span>
         </label>
@@ -29,7 +29,7 @@ export function AutoPauseSettings() {
             type="checkbox"
             checked={autoPauseOnCollision}
             onChange={() => dispatch(toggleAutoPause('autoPauseOnCollision'))}
-            className="w-4 h-4 rounded bg-slate-700 border-slate-600 text-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer"
+            className="w-4 h-4 rounded bg-deep-space-100 border-deep-space-50 text-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer"
           />
           <span>Auto-Pause on Collision</span>
         </label>
@@ -40,7 +40,7 @@ export function AutoPauseSettings() {
             type="checkbox"
             checked={autoPauseOnRiskChange}
             onChange={() => dispatch(toggleAutoPause('autoPauseOnRiskChange'))}
-            className="w-4 h-4 rounded bg-slate-700 border-slate-600 text-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer"
+            className="w-4 h-4 rounded bg-deep-space-100 border-deep-space-50 text-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer"
           />
           <span>Auto-Pause on Risk Change</span>
         </label>
@@ -51,7 +51,7 @@ export function AutoPauseSettings() {
             type="checkbox"
             checked={autoPauseOnBudgetLow}
             onChange={() => dispatch(toggleAutoPause('autoPauseOnBudgetLow'))}
-            className="w-4 h-4 rounded bg-slate-700 border-slate-600 text-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer"
+            className="w-4 h-4 rounded bg-deep-space-100 border-deep-space-50 text-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer"
           />
           <span>Auto-Pause on Low Budget</span>
         </label>
@@ -62,7 +62,7 @@ export function AutoPauseSettings() {
             type="checkbox"
             checked={autoPauseOnMission}
             onChange={() => dispatch(toggleAutoPause('autoPauseOnMission'))}
-            className="w-4 h-4 rounded bg-slate-700 border-slate-600 text-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer"
+            className="w-4 h-4 rounded bg-deep-space-100 border-deep-space-50 text-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer"
           />
           <span>Auto-Pause on Mission</span>
         </label>

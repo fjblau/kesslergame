@@ -22,10 +22,10 @@ export function SatellitePurposeSelector({ selected, onChange }: SatellitePurpos
               key={option}
               onClick={() => onChange(option)}
               className={`
-                p-[7px] rounded-xl border-2 transition-all min-h-[54px] flex flex-col items-center justify-center
+                p-[7px] border-none border-2 transition-all min-h-[54px] flex flex-col items-center justify-center
                 ${isSelected 
-                  ? 'border-blue-500 bg-blue-600 text-white' 
-                  : 'border-slate-600 bg-slate-700 text-gray-300 hover:bg-slate-600 hover:border-slate-500'}
+                  ? 'border-blue-500 bg-cyber-cyan-600 text-white' 
+                  : 'border-deep-space-50 bg-deep-space-100 text-gray-300 hover:bg-deep-space-50 hover:border-cyber-cyan-800'}
               `}
               style={{
                 boxShadow: isSelected

@@ -16,7 +16,7 @@ interface ScoreCategoryProps {
 
 function ScoreCategory({ label, score, description, icon, color }: ScoreCategoryProps) {
   return (
-    <div className="flex items-center justify-between py-3 px-4 bg-slate-800 rounded-lg hover:bg-slate-750 transition-colors">
+    <div className="flex items-center justify-between py-3 px-4 bg-deep-space-300 border-none hover:bg-slate-750 transition-colors">
       <div className="flex items-center gap-3 flex-1">
         <span className="text-2xl">{icon}</span>
         <div>
@@ -38,7 +38,7 @@ export function ScoreBreakdown({ scoreState, onClose }: ScoreBreakdownProps) {
       score: scoreState.satelliteLaunchScore,
       description: `${SCORE_CONFIG.SATELLITE_LAUNCH.BASE} points per satellite + layer bonuses`,
       icon: '🛰️',
-      color: 'text-blue-400',
+      color: 'text-cyber-cyan-500',
     },
     {
       label: 'Debris Removal',
@@ -66,7 +66,7 @@ export function ScoreBreakdown({ scoreState, onClose }: ScoreBreakdownProps) {
       score: scoreState.survivalScore,
       description: `${SCORE_CONFIG.SURVIVAL.BASE} points per day with late-game multipliers`,
       icon: '⏱️',
-      color: 'text-purple-400',
+      color: 'text-electric-green-500',
     },
   ];
 
@@ -76,14 +76,14 @@ export function ScoreBreakdown({ scoreState, onClose }: ScoreBreakdownProps) {
       onClick={onClose}
     >
       <div 
-        className="max-w-2xl w-full bg-slate-900 border-2 border-slate-700 rounded-xl p-6 shadow-2xl"
+        className="max-w-2xl w-full bg-slate-900 border-2 border-deep-space-50 border-none p-6 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-white">Score Breakdown</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-white text-2xl font-bold px-3 py-1 hover:bg-slate-800 rounded transition-colors"
+            className="text-gray-400 hover:text-white text-2xl font-bold px-3 py-1 hover:bg-deep-space-300 rounded transition-colors"
           >
             ×
           </button>
@@ -95,8 +95,8 @@ export function ScoreBreakdown({ scoreState, onClose }: ScoreBreakdownProps) {
           ))}
         </div>
 
-        <div className="border-t-2 border-slate-700 pt-4 mt-4">
-          <div className="flex justify-between items-center px-4 py-3 bg-gradient-to-r from-purple-900/50 to-pink-900/50 rounded-lg">
+        <div className="border-t-2 border-deep-space-50 pt-4 mt-4">
+          <div className="flex justify-between items-center px-4 py-3 bg-gradient-to-r from-purple-900/50 to-pink-900/50 border-none">
             <span className="text-xl font-bold text-white">Total Score</span>
             <span className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
               {scoreState.totalScore.toLocaleString()}
@@ -107,7 +107,7 @@ export function ScoreBreakdown({ scoreState, onClose }: ScoreBreakdownProps) {
         <div className="mt-6 text-center">
           <button
             onClick={onClose}
-            className="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg transition-colors"
+            className="px-6 py-2 bg-cyber-cyan-600 hover:bg-cyber-cyan-500 text-white font-semibold border-none transition-colors"
           >
             Close
           </button>

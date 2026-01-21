@@ -14,7 +14,7 @@ export function RiskBasedSpeedSettings() {
   };
 
   return (
-    <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 space-y-4">
+    <div className="bg-deep-space-300 border border-deep-space-50 border-none p-6 space-y-4">
       <h2 className="text-xl font-bold text-white mb-4">Risk-Based Game Speed</h2>
       <p className="text-sm text-gray-400 mb-4">
         Control how fast the game progresses at different risk levels. Higher multipliers = slower game speed = more time to react.

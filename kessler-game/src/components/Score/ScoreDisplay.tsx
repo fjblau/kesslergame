@@ -15,7 +15,7 @@ export function ScoreDisplay() {
   return (
     <>
       <div 
-        className="p-4 bg-slate-900/50 rounded-lg border border-slate-600 cursor-pointer hover:bg-slate-900/70 transition-all"
+        className="p-4 bg-slate-900/50 border-none border border-deep-space-50 cursor-pointer hover:bg-slate-900/70 transition-all"
         onClick={() => setShowBreakdown(true)}
         style={{
           boxShadow: '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)'
@@ -35,7 +35,7 @@ export function ScoreDisplay() {
       >
         <div className="flex items-center gap-4">
           <span className="text-4xl text-gray-400">Turns Remaining: </span>
-          <span className="text-4xl font-bold text-blue-400">{turnsRemaining}</span>
+          <span className="text-4xl font-bold text-cyber-cyan-500">{turnsRemaining}</span>
           <span className="text-4xl text-gray-400 ml-8">Total Score:  </span>
           <span className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
             {Math.round(totalScore).toLocaleString()}

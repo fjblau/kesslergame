@@ -48,8 +48,8 @@ export function GameSetupScreen({ onStart }: GameSetupScreenProps) {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-8 pl-16">
-      <div className="max-w-3xl w-full bg-slate-800 border border-slate-700 rounded-xl p-10 shadow-2xl">
-        <h1 className="text-6xl font-bold text-center mb-3 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+      <div className="max-w-3xl w-full bg-deep-space-300 border-2 border-cyber-cyan-800 p-10 shadow-2xl">
+        <h1 className="text-6xl font-bold text-center mb-3 text-cyber-cyan-500" style={{ textShadow: '0 0 20px rgba(0, 217, 255, 0.5)' }}>
           Space Debris Removal
         </h1>
         <p className="text-center text-gray-400 mb-10 text-lg">Space Debris Management Game</p>
@@ -66,7 +66,7 @@ export function GameSetupScreen({ onStart }: GameSetupScreenProps) {
             placeholder="Enter your name"
             maxLength={50}
             autoFocus
-            className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-3 bg-deep-space-100 border-2 border-deep-space-50 text-white placeholder-gray-400 focus:outline-none focus:border-cyber-cyan-500"
           />
           {playerName.length > 0 && !isNameValid && (
             <p className="mt-2 text-sm text-red-400">Name must be between 1 and 50 characters</p>
@@ -78,14 +78,14 @@ export function GameSetupScreen({ onStart }: GameSetupScreenProps) {
         <div className="flex gap-4 mt-10">
           <button
             onClick={handleOpenTutorial}
-            className="flex-1 py-4 px-8 bg-slate-700 hover:bg-slate-600 text-white rounded-xl font-bold text-xl uppercase tracking-wide transition-all shadow-lg hover:shadow-xl"
+            className="flex-1 py-4 px-8 bg-deep-space-100 border-2 border-deep-space-50 hover:bg-deep-space-50 hover:border-electric-green-700 text-white font-bold text-xl uppercase tracking-wide transition-all"
           >
             How to Play
           </button>
           <button
             onClick={handleStart}
             disabled={!isNameValid}
-            className="flex-1 py-4 px-8 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white rounded-xl font-bold text-xl uppercase tracking-wide transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-blue-600 disabled:hover:to-purple-600"
+            className="flex-1 py-4 px-8 bg-cyber-cyan-600 border-2 border-cyber-cyan-400 hover:bg-cyber-cyan-500 text-deep-space-500 font-bold text-xl uppercase tracking-wide transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-cyber-cyan-600"
           >
             Start Game
           </button>
