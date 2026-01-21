@@ -76,9 +76,9 @@ export async function generateCertificate(data: CertificateData): Promise<void> 
 
   const logoPath = brand.assets.certificateLogo;
   const { dataUrl: imageDataUrl, aspectRatio } = await loadImageAsDataURL(logoPath, true);
-  const logoHeight = 30;
+  const logoHeight = 15;
   const logoWidth = logoHeight * aspectRatio;
-  doc.addImage(imageDataUrl, 'PNG', 25, 25, logoWidth, logoHeight);
+  doc.addImage(imageDataUrl, 'PNG', 20, 20, logoWidth, logoHeight);
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(36);
