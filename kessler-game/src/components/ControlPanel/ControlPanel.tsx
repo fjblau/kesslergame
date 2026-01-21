@@ -259,7 +259,7 @@ export function ControlPanel() {
         <button
           onClick={handleLaunch}
           disabled={!canAfford}
-          className={`w-[calc(100%-10px)] mx-auto py-[11px] px-6 border-2 font-bold uppercase tracking-wide transition-all mt-[20px] text-lg ${
+          className={`w-auto mx-auto block py-[11px] px-6 border-2 font-bold uppercase tracking-wide transition-all mt-[20px] text-lg ${
             canAfford
               ? 'bg-electric-green-700 hover:bg-electric-green-600 border-electric-green-500 text-white'
               : 'bg-deep-space-100 text-slate-500 border-deep-space-50 cursor-not-allowed'
