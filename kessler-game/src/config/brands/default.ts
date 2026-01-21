@@ -62,8 +62,8 @@ export const defaultBrand: BrandConfig = {
   },
   
   text: {
-    appName: 'Space Debris Management',
-    appTitle: 'Kessler Game - Space Debris Management',
+    appName: 'Space Debris Removal',
+    appTitle: 'Kessler Game - Space Debris Removal',
     certificateTitle: 'MISSION COMPLETE',
     certificateSubtitle: 'Space Debris Removal Certificate',
     organizationName: 'Space Debris Management Program - Earth Orbital Safety Division',
