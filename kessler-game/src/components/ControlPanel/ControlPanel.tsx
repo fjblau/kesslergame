@@ -178,25 +178,25 @@ export function ControlPanel() {
                     }`}
                     style={{
                       boxShadow: drvType === type
-                        ? '0 0 25px rgba(0, 217, 255, 0.4), inset 0 3px 8px rgba(0,0,0,0.7), inset 0 1px 4px rgba(0,0,0,0.5)'
-                        : '0 6px 12px rgba(0,0,0,0.8), 0 3px 6px rgba(0,0,0,0.6)'
+                        ? '0 0 30px rgba(0, 217, 255, 0.5), inset 0 4px 12px rgba(0,0,0,0.8), inset 0 2px 6px rgba(0,0,0,0.6)'
+                        : '0 8px 16px rgba(0,0,0,0.9), 0 4px 8px rgba(0,0,0,0.7), 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.1)'
                     }}
                     onMouseEnter={(e) => {
                       if (drvType !== type) {
-                        e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.9), 0 4px 8px rgba(0,0,0,0.7)';
+                        e.currentTarget.style.boxShadow = '0 10px 20px rgba(0,0,0,0.95), 0 6px 12px rgba(0,0,0,0.8), 0 3px 6px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.15)';
                       }
                     }}
                     onMouseLeave={(e) => {
                       if (drvType !== type) {
-                        e.currentTarget.style.boxShadow = '0 6px 12px rgba(0,0,0,0.8), 0 3px 6px rgba(0,0,0,0.6)';
+                        e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.9), 0 4px 8px rgba(0,0,0,0.7), 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.1)';
                       }
                     }}
                     onMouseDown={(e) => {
-                      e.currentTarget.style.boxShadow = 'inset 0 3px 8px rgba(0,0,0,0.7), inset 0 1px 4px rgba(0,0,0,0.5)';
+                      e.currentTarget.style.boxShadow = 'inset 0 4px 12px rgba(0,0,0,0.8), inset 0 2px 6px rgba(0,0,0,0.6)';
                     }}
                     onMouseUp={(e) => {
                       if (drvType !== type) {
-                        e.currentTarget.style.boxShadow = '0 6px 12px rgba(0,0,0,0.8), 0 3px 6px rgba(0,0,0,0.6)';
+                        e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.9), 0 4px 8px rgba(0,0,0,0.7), 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.1)';
                       }
                     }}
                   >
@@ -245,27 +245,27 @@ export function ControlPanel() {
           }`}
           style={{
             boxShadow: canAfford
-              ? '0 0 30px rgba(0, 255, 136, 0.5), 0 8px 16px rgba(0,0,0,0.8), 0 4px 8px rgba(0,0,0,0.6)'
-              : 'inset 0 2px 6px rgba(0,0,0,0.5)'
+              ? '0 0 40px rgba(0, 255, 136, 0.6), 0 10px 20px rgba(0,0,0,0.95), 0 6px 12px rgba(0,0,0,0.8), inset 0 -3px 6px rgba(0,0,0,0.3), inset 0 2px 3px rgba(255,255,255,0.15)'
+              : 'inset 0 4px 12px rgba(0,0,0,0.8)'
           }}
           onMouseEnter={(e) => {
             if (canAfford) {
-              e.currentTarget.style.boxShadow = '0 0 40px rgba(0, 255, 136, 0.6), 0 10px 20px rgba(0,0,0,0.9), 0 5px 10px rgba(0,0,0,0.7)';
+              e.currentTarget.style.boxShadow = '0 0 50px rgba(0, 255, 136, 0.7), 0 12px 24px rgba(0,0,0,0.98), 0 8px 16px rgba(0,0,0,0.85), inset 0 -3px 6px rgba(0,0,0,0.3), inset 0 2px 3px rgba(255,255,255,0.2)';
             }
           }}
           onMouseLeave={(e) => {
             if (canAfford) {
-              e.currentTarget.style.boxShadow = '0 0 30px rgba(0, 255, 136, 0.5), 0 8px 16px rgba(0,0,0,0.8), 0 4px 8px rgba(0,0,0,0.6)';
+              e.currentTarget.style.boxShadow = '0 0 40px rgba(0, 255, 136, 0.6), 0 10px 20px rgba(0,0,0,0.95), 0 6px 12px rgba(0,0,0,0.8), inset 0 -3px 6px rgba(0,0,0,0.3), inset 0 2px 3px rgba(255,255,255,0.15)';
             }
           }}
           onMouseDown={(e) => {
             if (canAfford) {
-              e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 2px rgba(0,0,0,0.2)';
+              e.currentTarget.style.boxShadow = '0 0 30px rgba(0, 255, 136, 0.5), inset 0 5px 15px rgba(0,0,0,0.9), inset 0 3px 8px rgba(0,0,0,0.7)';
             }
           }}
           onMouseUp={(e) => {
             if (canAfford) {
-              e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)';
+              e.currentTarget.style.boxShadow = '0 0 40px rgba(0, 255, 136, 0.6), 0 10px 20px rgba(0,0,0,0.95), 0 6px 12px rgba(0,0,0,0.8), inset 0 -3px 6px rgba(0,0,0,0.3), inset 0 2px 3px rgba(255,255,255,0.15)';
             }
           }}
         >
