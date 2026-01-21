@@ -6,16 +6,16 @@ export const astroscaleBrand: BrandConfig = {
   
   colors: {
     primary: {
-      50: '#eff6ff',
-      100: '#dbeafe',
-      200: '#bfdbfe',
-      300: '#93c5fd',
-      400: '#60a5fa',
-      500: '#3b82f6',
-      600: '#2563eb',
-      700: '#1d4ed8',
-      800: '#1e40af',
-      900: '#1e3a8a',
+      50: '#f0f7ff',
+      100: '#e3f0ff',
+      200: '#cce4ff',
+      300: '#a6d1fe',
+      400: '#70b2fc',
+      500: '#4d94f8',
+      600: '#3b82f6',
+      700: '#2563eb',
+      800: '#1d4ed8',
+      900: '#1e40af',
     },
     success: {
       50: '#f0fdf4',
