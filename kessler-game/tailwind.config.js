@@ -59,6 +59,10 @@ export default {
           900: '#020406',
         },
       },
+      backgroundImage: {
+        'metallic': 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 50%, rgba(255,255,255,0.05) 100%)',
+        'metallic-panel': 'linear-gradient(145deg, rgba(255,255,255,0.08) 0%, transparent 40%, rgba(255,255,255,0.03) 100%)',
+      },
       borderRadius: {
         'none': '0',
         'sm': '2px',
