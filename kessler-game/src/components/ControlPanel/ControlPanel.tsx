@@ -245,17 +245,17 @@ export function ControlPanel() {
           }`}
           style={{
             boxShadow: canAfford
-              ? '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)'
-              : 'none'
+              ? '0 0 30px rgba(0, 255, 136, 0.5), 0 8px 16px rgba(0,0,0,0.8), 0 4px 8px rgba(0,0,0,0.6)'
+              : 'inset 0 2px 6px rgba(0,0,0,0.5)'
           }}
           onMouseEnter={(e) => {
             if (canAfford) {
-              e.currentTarget.style.boxShadow = '0 6px 12px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.15)';
+              e.currentTarget.style.boxShadow = '0 0 40px rgba(0, 255, 136, 0.6), 0 10px 20px rgba(0,0,0,0.9), 0 5px 10px rgba(0,0,0,0.7)';
             }
           }}
           onMouseLeave={(e) => {
             if (canAfford) {
-              e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)';
+              e.currentTarget.style.boxShadow = '0 0 30px rgba(0, 255, 136, 0.5), 0 8px 16px rgba(0,0,0,0.8), 0 4px 8px rgba(0,0,0,0.6)';
             }
           }}
           onMouseDown={(e) => {
