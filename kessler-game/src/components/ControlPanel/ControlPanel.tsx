@@ -109,7 +109,7 @@ export function ControlPanel() {
 
   return (
     <>
-      <div className="bg-deep-space-200 border-4 border-cyber-cyan-800 px-6 pt-1 pb-6 w-full h-[1100px] flex flex-col shadow-depth-lg relative overflow-hidden">
+      <div className="bg-deep-space-100 border-4 border-cyber-cyan-800 px-6 pt-1 pb-6 w-full h-[1100px] flex flex-col shadow-depth-lg relative overflow-hidden">
         <div className="absolute inset-0 opacity-5 pointer-events-none" style={{
           backgroundImage: 'linear-gradient(145deg, rgba(255,255,255,0.1) 0%, transparent 40%, rgba(0,217,255,0.05) 100%)',
         }}></div>
