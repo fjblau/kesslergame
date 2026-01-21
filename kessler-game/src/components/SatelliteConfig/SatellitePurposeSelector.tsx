@@ -24,7 +24,7 @@ export function SatellitePurposeSelector({ selected, onChange }: SatellitePurpos
               className={`
                 p-[7px] border-none border-2 transition-all min-h-[54px] flex flex-col items-center justify-center
                 ${isSelected 
-                  ? 'border-blue-500 bg-cyber-cyan-600 text-white' 
+                  ? 'border-blue-500 bg-cyber-cyan-600 text-deep-space-500' 
                   : 'border-deep-space-50 bg-deep-space-100 text-gray-300 hover:bg-deep-space-50 hover:border-cyber-cyan-800'}
               `}
               style={{
