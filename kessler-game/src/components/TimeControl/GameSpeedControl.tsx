@@ -17,7 +17,7 @@ export function GameSpeedControl({ onNewGame }: GameSpeedControlProps) {
   const speeds: { value: GameSpeed; label: string; icon: string }[] = [
     { value: 'paused', label: 'Pause', icon: '⏸' },
     { value: 'normal', label: 'Play', icon: '▶' },
-    { value: 'fast', label: 'Fast (2s)', icon: '⏩' },
+    { value: 'fast', label: '2x', icon: '' },
   ];
 
   const handleReset = () => {
@@ -42,7 +42,6 @@ export function GameSpeedControl({ onNewGame }: GameSpeedControlProps) {
         onMouseDown={(e) => e.currentTarget.style.boxShadow = 'inset 0 4px 12px rgba(0,0,0,0.8), inset 0 2px 6px rgba(0,0,0,0.6)'}
         onMouseUp={(e) => e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.9), 0 4px 8px rgba(0,0,0,0.7), 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.1)'}
       >
-        <span className="mr-2">🏠</span>
         New Game
       </button>
       <button
@@ -56,7 +55,6 @@ export function GameSpeedControl({ onNewGame }: GameSpeedControlProps) {
         onMouseDown={(e) => e.currentTarget.style.boxShadow = 'inset 0 4px 12px rgba(0,0,0,0.8), inset 0 2px 6px rgba(0,0,0,0.6)'}
         onMouseUp={(e) => e.currentTarget.style.boxShadow = '0 0 30px rgba(239, 68, 68, 0.5), 0 8px 16px rgba(0,0,0,0.9), 0 4px 8px rgba(0,0,0,0.7), inset 0 -2px 4px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.1)'}
       >
-        <span className="mr-2">🔄</span>
         Reset
       </button>
       {speeds.map(({ value, label, icon }) => (
@@ -92,7 +90,7 @@ export function GameSpeedControl({ onNewGame }: GameSpeedControlProps) {
             }
           }}
         >
-          <span className="mr-2">{icon}</span>
+          {icon && <span className="mr-2">{icon}</span>}
           {label}
         </button>
       ))}
