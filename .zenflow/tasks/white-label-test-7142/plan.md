@@ -18,47 +18,120 @@ Do not make assumptions on important decisions — get clarification first.
 
 ## Workflow Steps
 
-### [ ] Step: Technical Specification
+### [x] Step: Technical Specification
+<!-- chat-id: a20866f7-c817-4899-9b50-247b6339144d -->
 
-Assess the task's difficulty, as underestimating it leads to poor outcomes.
-- easy: Straightforward implementation, trivial bug fix or feature
-- medium: Moderate complexity, some edge cases or caveats to consider
-- hard: Complex logic, many caveats, architectural considerations, or high-risk changes
-
-Create a technical specification for the task that is appropriate for the complexity level:
-- Review the existing codebase architecture and identify reusable components.
-- Define the implementation approach based on established patterns in the project.
-- Identify all source code files that will be created or modified.
-- Define any necessary data model, API, or interface changes.
-- Describe verification steps using the project's test and lint commands.
-
-Save the output to `{@artifacts_path}/spec.md` with:
-- Technical context (language, dependencies)
-- Implementation approach
-- Source code structure changes
-- Data model / API / interface changes
-- Verification approach
-
-If the task is complex enough, create a detailed implementation plan based on `{@artifacts_path}/spec.md`:
-- Break down the work into concrete tasks (incrementable, testable milestones)
-- Each task should reference relevant contracts and include verification steps
-- Replace the Implementation step below with the planned tasks
-
-Rule of thumb for step size: each step should represent a coherent unit of work (e.g., implement a component, add an API endpoint, write tests for a module). Avoid steps that are too granular (single function).
-
-Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warrant this breakdown, keep the Implementation step below as is.
+✅ **Completed**: Technical specification created at `spec.md`
+- **Complexity**: Medium
+- **Approach**: Multi-tenant configuration system using environment variables
+- **Implementation time**: 8-12 hours estimated
 
 ---
 
-### [ ] Step: Implementation
+### [ ] Step 1: Setup Brand Configuration Infrastructure
 
-Implement the task according to the technical specification and general engineering best practices.
+Create the foundational brand configuration system:
 
-1. Break the task into steps where possible.
-2. Implement the required changes in the codebase.
-3. Add and run relevant tests and linters.
-4. Perform basic manual verification if applicable.
-5. After completion, write a report to `{@artifacts_path}/report.md` describing:
-   - What was implemented
-   - How the solution was tested
-   - The biggest issues or challenges encountered
+1. Create `src/config/brands/index.ts` with TypeScript interfaces
+2. Create `src/config/brands/default.ts` with current branding values
+3. Create `src/config/brands/customer-a.ts` as example white-label configuration
+4. Create `src/config/brand.ts` as runtime brand selector
+5. Update `.env.example` to document `VITE_BRAND_ID` variable
+
+**Verification**: 
+- TypeScript compilation succeeds
+- Brand interfaces properly define all required properties
+
+---
+
+### [ ] Step 2: Organize Brand Assets
+
+Reorganize assets into brand-specific folders:
+
+1. Create directory structure: `src/assets/brands/default/` and `src/assets/brands/customer-a/`
+2. Move `space-logo.png` to `src/assets/brands/default/logo.png`
+3. Add example customer logo to `src/assets/brands/customer-a/logo.png`
+4. Update asset paths in brand configurations
+
+**Verification**:
+- Assets load correctly in development mode
+- No broken image references
+
+---
+
+### [ ] Step 3: Implement Dynamic Theming
+
+Update Tailwind and CSS to support dynamic brand colors:
+
+1. Modify `tailwind.config.js` to generate CSS custom properties from brand colors
+2. Update `src/index.css` (or main stylesheet) with CSS custom property definitions
+3. Create utility to inject brand colors as CSS variables at runtime
+
+**Verification**:
+- Default brand colors render correctly
+- CSS variables are accessible in browser DevTools
+
+---
+
+### [ ] Step 4: Migrate Core Components to Brand System
+
+Update certificate generation and key UI components:
+
+1. Update `src/utils/certificate.ts` to use brand configuration for logo and text
+2. Update `index.html` to use brand title (via Vite plugin if needed)
+3. Update main App component to reference brand configuration
+4. Migrate 5-10 high-impact components to use brand colors via CSS custom properties
+
+**Verification**:
+- Certificate generates with correct logo
+- Page title displays brand name
+- Components render with brand colors
+
+---
+
+### [ ] Step 5: Comprehensive Component Migration
+
+Migrate remaining components to brand system:
+
+1. Identify and update remaining components using hardcoded colors (40+ files)
+2. Replace color class references with semantic CSS custom properties
+3. Update any hardcoded text to use brand configuration
+4. Ensure all icon/asset references use brand system
+
+**Verification**:
+- All components render correctly with default brand
+- No hardcoded brand-specific values remain in components
+
+---
+
+### [ ] Step 6: Testing and Validation
+
+Comprehensive testing of white-label system:
+
+1. Test build with `VITE_BRAND_ID=default`
+2. Test build with `VITE_BRAND_ID=customer-a`
+3. Run test suite: `npm run test`
+4. Run linter: `npm run lint`
+5. Visual regression testing across both brands
+6. Test certificate generation with both brands
+7. Verify no console errors in either configuration
+
+**Verification**:
+- All tests pass
+- No linting errors
+- Both brands render correctly
+- No visual regressions in default brand
+
+---
+
+### [ ] Step 7: Documentation and Completion
+
+Document the white-label system:
+
+1. Update README with instructions for creating new brands
+2. Add comments to brand configuration files
+3. Create `report.md` with:
+   - Implementation summary
+   - Testing results
+   - Usage instructions for customers
+   - Known limitations or future enhancements
