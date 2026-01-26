@@ -30,6 +30,12 @@ jobs:
         env:
           VITE_BRAND_ID: default
       
+      - name: Copy Vercel config and API
+        working-directory: ./kessler-game
+        run: |
+          cp vercel.json dist/
+          cp -r api dist/
+      
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
       
@@ -62,6 +68,12 @@ jobs:
         run: npm run build
         env:
           VITE_BRAND_ID: astroscale
+      
+      - name: Copy Vercel config and API
+        working-directory: ./kessler-game
+        run: |
+          cp vercel.json dist/
+          cp -r api dist/
       
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
