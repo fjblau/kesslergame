@@ -29,6 +29,7 @@ import { HighScoresPanel } from './components/HighScores/HighScoresPanel';
 import { CertificateRetrievalPage } from './pages/CertificateRetrievalPage';
 import { playBackgroundMusic, stopAllSounds, setSoundEnabled, pauseAllAudio, resumeAllAudio, playTargetingLoop, stopTargetingLoop } from './utils/audio';
 import { BrandHeader } from './components/BrandHeader';
+import { logPlayEnd, getActiveSession } from './utils/plays';
 
 function App() {
   const [gameStarted, setGameStarted] = useState(false);
@@ -91,6 +92,23 @@ function App() {
       stopAllSounds();
     };
   }, []);
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      const session = getActiveSession();
+      if (session && gameStarted && !gameOver) {
+        logPlayEnd({
+          completed: false,
+          gameOverReason: 'interrupted',
+        });
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [gameStarted, gameOver]);
 
   const handleNewGame = () => {
     dispatch(resetGame());
