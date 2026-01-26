@@ -21,14 +21,14 @@ jobs:
         working-directory: ./kessler-game
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_DEFAULT }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCELPROJECTID_DEFAULT }}
       
       - name: Build (Default Brand)
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
         working-directory: ./kessler-game
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_DEFAULT }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCELPROJECTID_DEFAULT }}
           VITE_BRAND_ID: default
       
       - name: Deploy to Vercel (Default)
@@ -36,7 +36,7 @@ jobs:
         working-directory: ./kessler-game
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_DEFAULT }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCELPROJECTID_DEFAULT }}
 
   deploy-astroscale:
     name: Deploy Astroscale Brand
@@ -52,14 +52,14 @@ jobs:
         working-directory: ./kessler-game
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_ASTROSCALE }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCELPROJECTID_ASTROSCALE }}
       
       - name: Build (Astroscale Brand)
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
         working-directory: ./kessler-game
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_ASTROSCALE }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCELPROJECTID_ASTROSCALE }}
           VITE_BRAND_ID: astroscale
       
       - name: Deploy to Vercel (Astroscale)
@@ -67,4 +67,4 @@ jobs:
         working-directory: ./kessler-game
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_ASTROSCALE }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCELPROJECTID_ASTROSCALE }}
