@@ -30,18 +30,12 @@ jobs:
         env:
           VITE_BRAND_ID: default
       
-      - name: Copy Vercel config and API
-        working-directory: ./kessler-game
-        run: |
-          cp vercel.json dist/
-          cp -r api dist/
-      
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
       
       - name: Deploy to Vercel (Default)
         working-directory: ./kessler-game
-        run: vercel deploy ./dist --prod --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCELPROJECTID_DEFAULT }}
@@ -69,18 +63,12 @@ jobs:
         env:
           VITE_BRAND_ID: astroscale
       
-      - name: Copy Vercel config and API
-        working-directory: ./kessler-game
-        run: |
-          cp vercel.json dist/
-          cp -r api dist/
-      
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
       
       - name: Deploy to Vercel (Astroscale)
         working-directory: ./kessler-game
-        run: vercel deploy ./dist --prod --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCELPROJECTID_ASTROSCALE }}
