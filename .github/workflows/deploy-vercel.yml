@@ -35,7 +35,7 @@ jobs:
       
       - name: Deploy to Vercel (Default)
         working-directory: ./kessler-game
-        run: vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel deploy ./dist --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCELPROJECTID_DEFAULT }}
@@ -68,7 +68,7 @@ jobs:
       
       - name: Deploy to Vercel (Astroscale)
         working-directory: ./kessler-game
-        run: vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel deploy ./dist --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCELPROJECTID_ASTROSCALE }}
