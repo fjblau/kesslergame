@@ -4,6 +4,13 @@ import { Redis } from '@upstash/redis';
 export interface PlayRecord {
   playerName: string;
   date: string;
+  startTime?: string;
+  endTime?: string;
+  duration?: number;
+  completed?: boolean;
+  turnsSurvived?: number;
+  finalScore?: number;
+  gameOverReason?: string;
 }
 
 const MAX_PLAYS = 1000;

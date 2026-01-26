@@ -9,6 +9,7 @@ import { generateCertificate } from '../../utils/certificate';
 import { saveHighScore } from '../../utils/highScores';
 import { submitFeedback, type Feedback } from '../../utils/feedback';
 import { QRCodeModal } from '../Certificate/QRCodeModal';
+import { logPlayEnd } from '../../utils/plays';
 
 interface GameOverModalProps {
   onViewAnalytics?: () => void;
@@ -87,6 +88,19 @@ export function GameOverModal({ onViewAnalytics }: GameOverModalProps) {
       });
     };
     saveScore();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    const logEnd = async () => {
+      await logPlayEnd({
+        completed: true,
+        turnsSurvived: step,
+        finalScore: scoreState.totalScore,
+        gameOverReason: gameOverReason || undefined,
+      });
+    };
+    logEnd();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
