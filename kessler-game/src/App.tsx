@@ -25,10 +25,10 @@ import { useAppSelector, useAppDispatch } from './store/hooks';
 import { resetGame } from './store/slices/gameSlice';
 import { resetScore } from './store/slices/scoreSlice';
 import { GameOverModal } from './components/GameOver/GameOverModal';
-import { ScoreDisplay } from './components/Score/ScoreDisplay';
 import { HighScoresPanel } from './components/HighScores/HighScoresPanel';
 import { CertificateRetrievalPage } from './pages/CertificateRetrievalPage';
 import { playBackgroundMusic, stopAllSounds, setSoundEnabled, pauseAllAudio, resumeAllAudio, playTargetingLoop, stopTargetingLoop } from './utils/audio';
+import { BrandHeader } from './components/BrandHeader';
 
 function App() {
   const [gameStarted, setGameStarted] = useState(false);
@@ -777,14 +777,7 @@ function App() {
         ) : (
           <div className="min-h-screen p-8">
             <div className="max-w-[2350px] mx-auto space-y-6">
-              <header className="relative text-center mb-8">
-                <h1 className="text-4xl font-bold text-cyber-cyan-500" style={{ textShadow: '0 0 15px rgba(0, 217, 255, 0.4)' }}>
-                  Space Debris Removal
-                </h1>
-                <div className="absolute right-0 top-0">
-                  <ScoreDisplay />
-                </div>
-              </header>
+              <BrandHeader />
 
               <Tabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
             </div>

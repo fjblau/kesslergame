@@ -1,5 +1,5 @@
 import { jsPDF } from 'jspdf';
-import missionPatchImage from '../assets/space-logo.png';
+import { brand } from '../config/brand';
 
 interface CertificateData {
   playerName: string;
@@ -19,7 +19,7 @@ interface CertificateData {
   survivalScore: number;
 }
 
-async function loadImageAsDataURL(imageUrl: string): Promise<string> {
+async function loadImageAsDataURL(imageUrl: string, invert: boolean = false): Promise<{ dataUrl: string; aspectRatio: number }> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => {
@@ -32,9 +32,15 @@ async function loadImageAsDataURL(imageUrl: string): Promise<string> {
           reject(new Error('Failed to get canvas context'));
           return;
         }
+        
+        if (invert) {
+          ctx.filter = 'brightness(0) invert(1)';
+        }
+        
         ctx.drawImage(img, 0, 0);
+        const aspectRatio = img.naturalWidth / img.naturalHeight;
         const dataUrl = canvas.toDataURL('image/png');
-        resolve(dataUrl);
+        resolve({ dataUrl, aspectRatio });
       } catch (error) {
         reject(error);
       }
@@ -68,17 +74,20 @@ export async function generateCertificate(data: CertificateData): Promise<void> 
   doc.setLineWidth(1);
   doc.rect(12, 12, pageWidth - 24, pageHeight - 24);
 
-  const imageDataUrl = await loadImageAsDataURL(missionPatchImage);
-  doc.addImage(imageDataUrl, 'PNG', 25, 25, 36, 36);
+  const logoPath = brand.assets.certificateLogo;
+  const { dataUrl: imageDataUrl, aspectRatio } = await loadImageAsDataURL(logoPath, true);
+  const logoHeight = 15;
+  const logoWidth = logoHeight * aspectRatio;
+  doc.addImage(imageDataUrl, 'PNG', 20, 20, logoWidth, logoHeight);
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(36);
   doc.setTextColor(96, 165, 250);
-  doc.text('MISSION COMPLETE', pageWidth / 2, 30, { align: 'center' });
+  doc.text(brand.text.certificateTitle, pageWidth / 2, 30, { align: 'center' });
 
   doc.setFontSize(24);
   doc.setTextColor(167, 139, 250);
-  doc.text('Space Debris Removal Certificate', pageWidth / 2, 42, { align: 'center' });
+  doc.text(brand.text.certificateSubtitle, pageWidth / 2, 42, { align: 'center' });
 
   doc.setFontSize(14);
   doc.setFont('helvetica', 'normal');
@@ -93,7 +102,8 @@ export async function generateCertificate(data: CertificateData): Promise<void> 
   doc.setFontSize(12);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(203, 213, 225);
-  doc.text('has successfully completed a mission in the Space Debris Management Program', pageWidth / 2, 77, { align: 'center' });
+  const missionText = `has successfully completed a mission in the ${brand.name} Program`;
+  doc.text(missionText, pageWidth / 2, 77, { align: 'center' });
 
   const leftCol = 30;
   const rightCol = pageWidth / 2 + 10;
@@ -212,9 +222,6 @@ export async function generateCertificate(data: CertificateData): Promise<void> 
   doc.setFont('helvetica', 'italic');
   doc.setTextColor(148, 163, 184);
   doc.text(`Issued on ${dateStr}`, pageWidth / 2, pageHeight - 20, { align: 'center' });
-
-  doc.setFontSize(8);
-  doc.text('Space Debris Management Program - Earth Orbital Safety Division', pageWidth / 2, pageHeight - 15, { align: 'center' });
 
   const fileName = `Mission_Complete_${data.playerName.replace(/\s+/g, '_')}_${today.getTime()}.pdf`;
   doc.save(fileName);
