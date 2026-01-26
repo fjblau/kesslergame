@@ -25,12 +25,10 @@ import { useAppSelector, useAppDispatch } from './store/hooks';
 import { resetGame } from './store/slices/gameSlice';
 import { resetScore } from './store/slices/scoreSlice';
 import { GameOverModal } from './components/GameOver/GameOverModal';
-import { ScoreDisplay } from './components/Score/ScoreDisplay';
 import { HighScoresPanel } from './components/HighScores/HighScoresPanel';
 import { CertificateRetrievalPage } from './pages/CertificateRetrievalPage';
 import { playBackgroundMusic, stopAllSounds, setSoundEnabled, pauseAllAudio, resumeAllAudio, playTargetingLoop, stopTargetingLoop } from './utils/audio';
 import { BrandHeader } from './components/BrandHeader';
-import { brand } from './config/brand';
 
 function App() {
   const [gameStarted, setGameStarted] = useState(false);
